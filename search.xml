@@ -464,21 +464,6 @@ session.commit()
       </tags>
   </entry>
   <entry>
-    <title>Fix memory error caused by memory overflowing</title>
-    <url>/2019/04/06/2019-04-06-17-38-45/</url>
-    <content><![CDATA[<p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
-<p><a href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
-<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
-<p>After doing some research, i come up with a solution.</p>
-<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
-<p><a href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
-<p><a href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
     <title>use table partition to increase inserting performance</title>
     <url>/2019/04/06/2019-04-06-18-00-02/</url>
     <content><![CDATA[<p>when the number of data excess 5 million. mysql database will face a significant drop down in inserting speed. </p>
@@ -535,6 +520,21 @@ alter table fingerprints drop partition p20
       <tags>
         <tag>mysql</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Fix memory error caused by memory overflowing</title>
+    <url>/2019/04/06/2019-04-06-17-38-45/</url>
+    <content><![CDATA[<p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
+<p><a href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
+<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
+<p>After doing some research, i come up with a solution.</p>
+<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
+<p><a href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
+<p><a href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
   </entry>
   <entry>
     <title>Problem about install windows 10 in mac os with bootcamp.</title>
@@ -1014,20 +1014,6 @@ server {
       </tags>
   </entry>
   <entry>
-    <title>change git password in idea</title>
-    <url>/2019/10/26/2019-10-26-21-00-50/</url>
-    <content><![CDATA[<p>in terminal</p>
-<p>type</p>
-<p>git fetch</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>jetbrain</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
     <url>/2019/10/29/2019-10-29-17-03-47/</url>
     <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
@@ -1047,6 +1033,20 @@ server {
       <tags>
         <tag>solution</tag>
         <tag>game</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>change git password in idea</title>
+    <url>/2019/10/26/2019-10-26-21-00-50/</url>
+    <content><![CDATA[<p>in terminal</p>
+<p>type</p>
+<p>git fetch</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>jetbrain</tag>
       </tags>
   </entry>
   <entry>
@@ -1379,19 +1379,19 @@ https://www.bsfdvbsbilibili.com
 <ul>
 <li>download file from upper directory using <code>../</code></li>
 </ul>
-<p><img src="/Untitled%201.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled1.png" alt="Untitled"></p>
 <p><strong>configBase also combine directly with the directory</strong></p>
 <ul>
 <li>list upper level directory using <code>../</code></li>
 </ul>
-<p><img src="/Untitled%202.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled2.png" alt="Untitled"></p>
 <h1 id="stego"><a href="#stego" class="headerlink" title="stego"></a>stego</h1><p>@Filip do the stego on the <code>advisories.png</code> and found two important information, the v1.0 are deployed in the <code>archive</code> subdomain. And the flag is encrypted using zero-width steganography.</p>
-<p><img src="/Untitled%203.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled3.png" alt="Untitled"></p>
 <h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><p>use <code>archive.pwnieconfig.tmctf.trendmicro.com</code> to access v1.0 web with security issues.</p>
 <p>using admin backend, we got the username and password (jeoqj/hisgqjqlcg)</p>
-<p><img src="/Untitled%204.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled4.png" alt="Untitled"></p>
 <p>then login the system, find the flag file location using <code>list?configBase=../</code> and download the java class file <code>http://archive.pwnieconfig.tmctf.trendmicro.com/download?id=-1&amp;filename=../RetrieveFlag.class</code></p>
-<p><img src="/Untitled%205.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled5.png" alt="Untitled"></p>
 <p>after decompile the java class file. we get the flag content whiich is locate at <code>/view/3ec4e19a-2a70-4aac-9893-ac3712473928/b64content</code></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// </span><br><span class="line">// Decompiled by Procyon v0.5.36</span><br><span class="line">// </span><br><span class="line"></span><br><span class="line">package com.tmctf.pwnieconfig.flag;</span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.ResponseBody;</span><br><span class="line">import org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.util.Base64;</span><br><span class="line">import java.io.Reader;</span><br><span class="line">import java.io.BufferedReader;</span><br><span class="line">import java.io.InputStreamReader;</span><br><span class="line">import org.springframework.stereotype.Controller;</span><br><span class="line"></span><br><span class="line">@Controller</span><br><span class="line">public class RetrieveFlag</span><br><span class="line">&#123;</span><br><span class="line">    @GetMapping(&#123; &quot;/view/3ec4e19a-2a70-4aac-9893-ac3712473928/b64content&quot; &#125;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String content() throws IOException &#123;</span><br><span class="line">        final String note_fyi = &quot;TrendCTF requires flag format&quot;;</span><br><span class="line">        note_fyi.concat(&quot;to be formatted as TMCTF&#123;flag&#125;.&quot;);</span><br><span class="line">        note_fyi.concat(&quot;Keep this in mind!&quot;);</span><br><span class="line">        String b64_flag = &quot;&quot;;</span><br><span class="line">        final String salt = &quot;ac3712473928&quot;;</span><br><span class="line">        final ProcessBuilder pb = new ProcessBuilder(new String[] &#123; &quot;python&quot;, System.getProperty(&quot;user.dir&quot;) + &quot;/4aac-9893/decoder.py&quot;, salt &#125;);</span><br><span class="line">        final Process process = pb.start();</span><br><span class="line">        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));</span><br><span class="line">        final StringBuilder builder = new StringBuilder();</span><br><span class="line">        builder.append(reader.read());</span><br><span class="line">        b64_flag = Base64.getEncoder().encodeToString(builder.toString().getBytes());</span><br><span class="line">        return b64_flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1401,7 +1401,7 @@ https://www.bsfdvbsbilibili.com
 
 <p>note that every 8 unicode character is separate by <code>&quot;\u200d&quot;</code> </p>
 <p>so separate characters by <code>&quot;\u200d&quot;</code> and replace <code>&quot;\u200c&quot;</code> with 0 and <code>&quot;\u200b&quot;</code> with 1. we get the flag</p>
-<p><img src="/Untitled%206.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled6.png" alt="Untitled"></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data = <span class="string">&quot;SGVsbG8sIOKAjOKAi+KAjOKAi+KAjOKAi+KAjOKAjOKAjeKAjOKAi+KAjOKAjOKAi+KAi+KAjOKAi1RyZW5kTWljcm8g4oCN4oCM4oCL4oCM4oCM4oCM4oCM4oCL4oCL4oCN4oCM4oCL4oCM4oCL4oCM4oCL4oCMQ1RGIOKAjOKAjeKAjOKAi+KAjOKAjOKAjOKAi+KAi+KAjOKAjeKAjOKAi+KAi+KAi+KAi+KAjHJlcXVpcmVzIOKAi+KAi+KAjeKAjOKAi+KAjOKAjOKAi+KAjOKAi+KAjOKAjeKAjOKAi+KAi+KAjOKAjHRoZSDigIzigIzigIvigI3igIzigIvigIvigIvigIzigIvigIvigIzigI3igIzigIvigIzigIxmbGFnIOKAjOKAjOKAjOKAjOKAjeKAjOKAi+KAjOKAi+KAjOKAi+KAi+KAi+KAjeKAjOKAi+KAi3RvIOKAjOKAjOKAi+KAjOKAi+KAjeKAjOKAi+KAi+KAjOKAjOKAjOKAi+KAjOKAjeKAjOKAi2JlIOKAjOKAjOKAjOKAjOKAjOKAi+KAjeKAjOKAi+KAi+KAi+KAjOKAjOKAjOKAjOKAjeKAjGluIOKAi+KAi+KAi+KAjOKAjOKAjOKAjOKAjeKAjOKAi+KAjOKAi+KAjOKAjOKAi+KAi+KAjXRoZSDigIzigIvigIvigIvigIzigIzigIzigIzigI3igIzigIvigIvigIzigIvigIvigIzigIxmb3JtYXQg4oCN4oCM4oCM4oCL4oCL4oCM4oCM4oCM4oCM4oCN4oCM4oCL4oCL4oCM4oCL4oCM4oCMVE1DVEZ7ZmxhZ30uIOKAi+KAjeKAjOKAi+KAi+KAi+KAjOKAi+KAjOKAjOKAjeKAjOKAi+KAi+KAi+KAi+KAjERvIOKAi+KAjOKAjeKAjOKAi+KAjOKAjOKAjOKAjOKAi+KAi+KAjeKAjOKAi+KAi+KAjOKAi3lvdSDigIzigIzigIzigI3igIzigIzigIvigIvigIzigIvigIzigIzigI3igIzigIvigIvigIxzZWUg4oCL4oCM4oCM4oCL4oCN4oCM4oCL4oCL4oCM4oCL4oCL4oCL4oCM4oCN4oCM4oCL4oCM4oCL4oCL4oCM4oCL4oCM4oCN4oCM4oCL4oCL4oCL4oCL4oCL4oCM4oCLaXQ/IA==&quot;</span></span><br><span class="line">data1 = base64.b64decode(data)</span><br><span class="line">a = data1.decode()</span><br><span class="line"><span class="comment"># remove standard unicode character</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(s) &gt; <span class="number">128</span>:</span><br><span class="line">        uns.append(s)</span><br><span class="line">unss = <span class="string">&quot;&quot;</span>.join(uns)</span><br><span class="line">uns1 = unss.split(<span class="string">&quot;\u200d&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(uns1),uns1,unss.count(<span class="string">&quot;\u200d&quot;</span>))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">replacer</span>(<span class="params">s:<span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="keyword">return</span> s.replace(<span class="string">&quot;\u200c&quot;</span>,<span class="string">&quot;0&quot;</span>).replace(<span class="string">&quot;\u200b&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> uns1:</span><br><span class="line">    sss = replacer(s)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(<span class="built_in">int</span>(sss,<span class="number">2</span>)),end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># TMCTF&#123;Jav@WebAppSpl0itzCh4inZ&#125;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
@@ -1417,11 +1417,11 @@ https://www.bsfdvbsbilibili.com
 <p>First, this is a typical pyinstaller program.</p>
 <p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled.png" alt="Untitled"></p>
 <p>So first we need find the source code.</p>
-<p><img src="/Untitled%201.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled1.png" alt="Untitled"></p>
 <span id="more"></span>
 
 <p>The source code is in <code>pypuzzle.pyc</code> and the python version is python3.7 according to <code>python37.dll</code> </p>
-<p><img src="/Untitled%202.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled2.png" alt="Untitled"></p>
 <p>Due to bytecode header, using decompyle3 will show error.</p>
 <p>So, in order to decompile, we need to bytecode header first.</p>
 <ol>
@@ -1429,19 +1429,19 @@ https://www.bsfdvbsbilibili.com
 <li>open <a href="http://pypuzzle.py/">PyPuzzle.py</a> suing hex editor</li>
 </ol>
 <p>not that, the file in base_library contains bytecode header. which is <code>42 0D 0D 0A 01 00 00 00</code> for python 3.7</p>
-<p><img src="/Untitled%203.png" alt="Untitled"></p>
-<p><img src="/Untitled%204.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled3.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled4.png" alt="Untitled"></p>
 <ol>
 <li>we need add <code>42 0D 0D 0A 01 00 00 00</code> to the <a href="http://pypuzzle.py/">PyPuzzle.py</a> file and remove extra 0s</li>
 </ol>
-<p><img src="/Untitled%205.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled5.png" alt="Untitled"></p>
 <ol>
 <li>save <a href="http://pypuzzle.py/">PyPuzzle.py</a> and decompile again.</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># uncompyle6 version 3.7.4</span></span><br><span class="line"><span class="comment"># Python bytecode 3.7 (3394)</span></span><br><span class="line"><span class="comment"># Decompiled from: Python 3.8.10 (default, Jun  2 2021, 10:49:15)</span></span><br><span class="line"><span class="comment"># [GCC 9.4.0]</span></span><br><span class="line"><span class="comment"># Embedded file name: PyPuzzle.py</span></span><br><span class="line"><span class="comment"># Compiled at: 1975-05-06 10:59:01</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        slideTo = <span class="literal">None</span></span><br><span class="line">        msg = <span class="string">&#x27;Click tile or press arrow keys to slide.&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> mainBoard == SOLVEDBOARD:</span><br><span class="line">            msg = <span class="string">&#x27;Solved! But Wait you need to decrypt the flag *_^&#x27;</span></span><br><span class="line">            flag = <span class="string">&#x27;3blKlvIKqQoG0D6B4XDcZxQjbLbg4KVJQzbm8b&#x27;</span></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br></pre></td></tr></table></figure>
 
 <p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
-<p><img src="/Untitled%206.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled6.png" alt="Untitled"></p>
 ]]></content>
       <tags>
         <tag>ctf</tag>
