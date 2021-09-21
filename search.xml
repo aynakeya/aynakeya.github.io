@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>ceshi</title>
-    <url>/2018/09/19/2018-09-19-11-06-38/</url>
-    <content><![CDATA[<p>ceshi</p>
-]]></content>
-      <categories>
-        <category>保护</category>
-      </categories>
-  </entry>
-  <entry>
     <title>hello</title>
     <url>/2018/09/29/2018-09-29-01-59-09/</url>
     <content><![CDATA[<p>#HelloWorld<br><em>HelloWorld</em></p>
@@ -40,6 +31,15 @@
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>ceshi</title>
+    <url>/2018/09/19/2018-09-19-11-06-38/</url>
+    <content><![CDATA[<p>ceshi</p>
+]]></content>
+      <categories>
+        <category>保护</category>
       </categories>
   </entry>
   <entry>
@@ -1014,6 +1014,20 @@ server {
       </tags>
   </entry>
   <entry>
+    <title>change git password in idea</title>
+    <url>/2019/10/26/2019-10-26-21-00-50/</url>
+    <content><![CDATA[<p>in terminal</p>
+<p>type</p>
+<p>git fetch</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>jetbrain</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
     <url>/2019/10/29/2019-10-29-17-03-47/</url>
     <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
@@ -1033,20 +1047,6 @@ server {
       <tags>
         <tag>solution</tag>
         <tag>game</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>change git password in idea</title>
-    <url>/2019/10/26/2019-10-26-21-00-50/</url>
-    <content><![CDATA[<p>in terminal</p>
-<p>type</p>
-<p>git fetch</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>jetbrain</tag>
       </tags>
   </entry>
   <entry>
