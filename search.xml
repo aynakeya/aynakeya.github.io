@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>ceshi</title>
+    <url>/2018/09/19/2018-09-19-11-06-38/</url>
+    <content><![CDATA[<p>ceshi</p>
+]]></content>
+      <categories>
+        <category>保护</category>
+      </categories>
+  </entry>
+  <entry>
     <title>hello</title>
     <url>/2018/09/29/2018-09-29-01-59-09/</url>
     <content><![CDATA[<p>#HelloWorld<br><em>HelloWorld</em></p>
@@ -34,15 +43,6 @@
       </categories>
   </entry>
   <entry>
-    <title>ceshi</title>
-    <url>/2018/09/19/2018-09-19-11-06-38/</url>
-    <content><![CDATA[<p>ceshi</p>
-]]></content>
-      <categories>
-        <category>保护</category>
-      </categories>
-  </entry>
-  <entry>
     <title>我是茄子</title>
     <url>/2018/10/03/2018-10-03-22-50-44/</url>
     <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
@@ -62,21 +62,21 @@
       </categories>
   </entry>
   <entry>
-    <title>1122</title>
-    <url>/2018/11/22/2018-11-22-14-11-04/</url>
-    <content><![CDATA[<p>无聊=自闭<br><br>自闭=抑郁<br><br>抑郁=自杀<br></p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-  </entry>
-  <entry>
     <title>新功能上线，文件分享</title>
     <url>/2018/11/27/2018-11-27-20-57-44/</url>
     <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>1122</title>
+    <url>/2018/11/22/2018-11-22-14-11-04/</url>
+    <content><![CDATA[<p>无聊=自闭<br><br>自闭=抑郁<br><br>抑郁=自杀<br></p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
+      <categories>
+        <category>Life</category>
       </categories>
   </entry>
   <entry>
@@ -734,40 +734,6 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
-    <title>记一次阿里云学生服务器白嫖</title>
-    <url>/2019/09/03/2019-09-03-20-51-24/</url>
-    <content><![CDATA[<h3 id="购买服务器-白嫖"><a href="#购买服务器-白嫖" class="headerlink" title="购买服务器 (白嫖)"></a>购买服务器 (白嫖)</h3><hr>
-<p>首先，打开白嫖连接: <a href="https://promotion.aliyun.com/ntms/act/campus2018.html">https://promotion.aliyun.com/ntms/act/campus2018.html</a></p>
-<p>购买一个服务器，云服务器EMC和轻量应用服务器都行，购买完成后进入管理界面</p>
-<span id="more"></span>
-
-<p><img src="https://i.loli.net/2019/09/03/hgd3LOTRyqDWluN.png" alt="1.png"></p>
-<h3 id="设置ssh连接"><a href="#设置ssh连接" class="headerlink" title="设置ssh连接"></a>设置ssh连接</h3><hr>
-<ol>
-<li>进入服务器运维-远程连接。</li>
-<li>设置密码, 设置一个服务器密码。<br><img src="https://i.loli.net/2019/09/03/guaXENAjPkxsGVm.png" alt="D223E1E8-AD8E-46DB-B505-9AEFC7274AD1.png"></li>
-<li>检查服务器是否允许用密码登陆ssh</li>
-<li>点击 使用浏览器发起安全连接（推荐）<br><img src="https://i.loli.net/2019/09/03/nQyRkcB1WMrKfp4.png" alt="9153CC24-DE77-45B8-B92F-A66FFB5DF064.png"></li>
-<li><code>sudo nano /etc/ssh/sshd_config</code> 进入配置文件</li>
-<li>改 <code>/etc/ssh/sshd_config </code> 文件中的<code>PasswordAuthentication no</code>改为<code>PasswordAuthentication yes</code>并保存<br><img src="https://i.loli.net/2019/09/03/o1gSpWdxmbchkDt.png" alt="4BF7B8D5-70D6-4133-ABD9-AD605A684456.png"></li>
-<li>重启sshd服务<code>sudo systemctl restart sshd.service</code></li>
-</ol>
-<h3 id="测试ssh连接"><a href="#测试ssh连接" class="headerlink" title="测试ssh连接"></a>测试ssh连接</h3><hr>
-<ol>
-<li>在 服务器运维-远程连接 中找到连接ip<br><img src="https://i.loli.net/2019/09/03/d9uIcLsJxmNHDF8.png" alt="E4930553-853D-4403-9529-EAB84D8FA7F0.png"></li>
-<li>客户端中测试连接<br><img src="https://i.loli.net/2019/09/03/TnYGO9QFCdulEBr.png" alt="22F9B590-D826-4DE0-BBEA-3FDE18566A5B.png"></li>
-<li>完成<del>撒花</del>ε==(づ′▽`)づ<br><img src="https://i.loli.net/2019/09/03/QEhJtPYWDSMwcuk.png" alt="12331145-394B-48BB-9588-32AEE510BB73.png"></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>白嫖</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Aria2 在 Macos上的安装</title>
     <url>/2019/09/03/2019-09-03-20-59-14/</url>
     <content><![CDATA[<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><hr>
@@ -843,6 +809,40 @@ file-allocation=prealloc
       <tags>
         <tag>macos</tag>
         <tag>aria2</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记一次阿里云学生服务器白嫖</title>
+    <url>/2019/09/03/2019-09-03-20-51-24/</url>
+    <content><![CDATA[<h3 id="购买服务器-白嫖"><a href="#购买服务器-白嫖" class="headerlink" title="购买服务器 (白嫖)"></a>购买服务器 (白嫖)</h3><hr>
+<p>首先，打开白嫖连接: <a href="https://promotion.aliyun.com/ntms/act/campus2018.html">https://promotion.aliyun.com/ntms/act/campus2018.html</a></p>
+<p>购买一个服务器，云服务器EMC和轻量应用服务器都行，购买完成后进入管理界面</p>
+<span id="more"></span>
+
+<p><img src="https://i.loli.net/2019/09/03/hgd3LOTRyqDWluN.png" alt="1.png"></p>
+<h3 id="设置ssh连接"><a href="#设置ssh连接" class="headerlink" title="设置ssh连接"></a>设置ssh连接</h3><hr>
+<ol>
+<li>进入服务器运维-远程连接。</li>
+<li>设置密码, 设置一个服务器密码。<br><img src="https://i.loli.net/2019/09/03/guaXENAjPkxsGVm.png" alt="D223E1E8-AD8E-46DB-B505-9AEFC7274AD1.png"></li>
+<li>检查服务器是否允许用密码登陆ssh</li>
+<li>点击 使用浏览器发起安全连接（推荐）<br><img src="https://i.loli.net/2019/09/03/nQyRkcB1WMrKfp4.png" alt="9153CC24-DE77-45B8-B92F-A66FFB5DF064.png"></li>
+<li><code>sudo nano /etc/ssh/sshd_config</code> 进入配置文件</li>
+<li>改 <code>/etc/ssh/sshd_config </code> 文件中的<code>PasswordAuthentication no</code>改为<code>PasswordAuthentication yes</code>并保存<br><img src="https://i.loli.net/2019/09/03/o1gSpWdxmbchkDt.png" alt="4BF7B8D5-70D6-4133-ABD9-AD605A684456.png"></li>
+<li>重启sshd服务<code>sudo systemctl restart sshd.service</code></li>
+</ol>
+<h3 id="测试ssh连接"><a href="#测试ssh连接" class="headerlink" title="测试ssh连接"></a>测试ssh连接</h3><hr>
+<ol>
+<li>在 服务器运维-远程连接 中找到连接ip<br><img src="https://i.loli.net/2019/09/03/d9uIcLsJxmNHDF8.png" alt="E4930553-853D-4403-9529-EAB84D8FA7F0.png"></li>
+<li>客户端中测试连接<br><img src="https://i.loli.net/2019/09/03/TnYGO9QFCdulEBr.png" alt="22F9B590-D826-4DE0-BBEA-3FDE18566A5B.png"></li>
+<li>完成<del>撒花</del>ε==(づ′▽`)づ<br><img src="https://i.loli.net/2019/09/03/QEhJtPYWDSMwcuk.png" alt="12331145-394B-48BB-9588-32AEE510BB73.png"></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>白嫖</tag>
       </tags>
   </entry>
   <entry>
@@ -1282,6 +1282,17 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>Docker Desktop setting won&#39;t open in windows 10</title>
+    <url>/2021/09/21/docker-desktop-setting-won-t-open-in-windows-10/</url>
+    <content><![CDATA[<p>If you stuck on the setting menu.</p>
+<p>try to use</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd &quot;C:\Program Files\Docker\Docker&quot;</span><br><span class="line"></span><br><span class="line">./DockerCli.exe -SwitchDaemon</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>windows</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>通过GameGuardian来绕过Il2CppDumper反编译时遇到文件保护</title>
     <url>/2020/11/29/il2cppdumper-ni-xiang-shi-li/</url>
     <content><![CDATA[<p>在利用Il2CppDumper进行反编译的时候可能会出现Error的情况</p>
@@ -1353,6 +1364,25 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>linux</tag>
         <tag>ubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Wired Python lambda scope (lambda closure)</title>
+    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
+    <content><![CDATA[<p>think of this two code</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<p>What do you expect the result.</p>
+<p>The result is 512 and 512.  Not 8 and 8</p>
+<p>The reason is lambda didn’t evaluate i immediately.</p>
+<blockquote>
+<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
+</blockquote>
+<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
+<p>the correct implementation should be</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
