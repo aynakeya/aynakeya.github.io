@@ -43,15 +43,6 @@
       </categories>
   </entry>
   <entry>
-    <title>我是茄子</title>
-    <url>/2018/10/03/2018-10-03-22-50-44/</url>
-    <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
     <title>新的小工具--quizlet单词获取器</title>
     <url>/2018/10/21/2018-10-21-00-21-20/</url>
     <content><![CDATA[<p>#quizlet单词获取器<br><del>感觉博客空荡荡的，所以发一个</del><br><br><del>反正没人看</del><br><br>就是一个小工具，输入地址，然后就把单词和意思跳出来。可以做单词表用，其他没什么用处emmmmm。<br><br>感觉还真没什么用处。。。。<br><br><em>谁会来用这个啊喂</em><br><br>还是放点图出来吧。。。<br><br>输入链接<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c734014.png" alt="输入链接"><br>获取成功<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c6e3346.png" alt="获取成功"><br>随机生成<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c726d72.png" alt="随机生成"></p>
@@ -59,6 +50,15 @@
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>我是茄子</title>
+    <url>/2018/10/03/2018-10-03-22-50-44/</url>
+    <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
+]]></content>
+      <categories>
+        <category>系统默认</category>
       </categories>
   </entry>
   <entry>
@@ -978,6 +978,15 @@ server {
       </tags>
   </entry>
   <entry>
+    <title>utf-8 乱码表</title>
+    <url>/2019/09/06/2019-09-06-10-34-25/</url>
+    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+  </entry>
+  <entry>
     <title>add cdn for live2d models</title>
     <url>/2019/09/16/2019-09-16-22-32-00/</url>
     <content><![CDATA[<p>add cdn for live2d models</p>
@@ -985,15 +994,6 @@ server {
 ]]></content>
       <categories>
         <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>utf-8 乱码表</title>
-    <url>/2019/09/06/2019-09-06-10-34-25/</url>
-    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
       </categories>
   </entry>
   <entry>
@@ -1374,24 +1374,24 @@ https://www.bsfdvbsbilibili.com
 <h1 id="code-review"><a href="#code-review" class="headerlink" title="code review"></a>code review</h1><p>open <code>pwnieconfig-1.0.jar</code></p>
 <p>There are some easily spotted exploits.</p>
 <p><strong>Admin backend -  login with out password</strong></p>
-<p><img src="Untitled.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmicro-2021-osint2-400/Untitled.png" alt="Untitled"></p>
 <p><strong>filename is used directly in the combination of file path</strong></p>
 <ul>
 <li>download file from upper directory using <code>../</code></li>
 </ul>
-<p><img src="Untitled%201.png" alt="Untitled"></p>
+<p><img src="/Untitled%201.png" alt="Untitled"></p>
 <p><strong>configBase also combine directly with the directory</strong></p>
 <ul>
 <li>list upper level directory using <code>../</code></li>
 </ul>
-<p><img src="Untitled%202.png" alt="Untitled"></p>
+<p><img src="/Untitled%202.png" alt="Untitled"></p>
 <h1 id="stego"><a href="#stego" class="headerlink" title="stego"></a>stego</h1><p>@Filip do the stego on the <code>advisories.png</code> and found two important information, the v1.0 are deployed in the <code>archive</code> subdomain. And the flag is encrypted using zero-width steganography.</p>
-<p><img src="Untitled%203.png" alt="Untitled"></p>
+<p><img src="/Untitled%203.png" alt="Untitled"></p>
 <h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><p>use <code>archive.pwnieconfig.tmctf.trendmicro.com</code> to access v1.0 web with security issues.</p>
 <p>using admin backend, we got the username and password (jeoqj/hisgqjqlcg)</p>
-<p><img src="Untitled%204.png" alt="Untitled"></p>
+<p><img src="/Untitled%204.png" alt="Untitled"></p>
 <p>then login the system, find the flag file location using <code>list?configBase=../</code> and download the java class file <code>http://archive.pwnieconfig.tmctf.trendmicro.com/download?id=-1&amp;filename=../RetrieveFlag.class</code></p>
-<p><img src="Untitled%205.png" alt="Untitled"></p>
+<p><img src="/Untitled%205.png" alt="Untitled"></p>
 <p>after decompile the java class file. we get the flag content whiich is locate at <code>/view/3ec4e19a-2a70-4aac-9893-ac3712473928/b64content</code></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// </span><br><span class="line">// Decompiled by Procyon v0.5.36</span><br><span class="line">// </span><br><span class="line"></span><br><span class="line">package com.tmctf.pwnieconfig.flag;</span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.ResponseBody;</span><br><span class="line">import org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.util.Base64;</span><br><span class="line">import java.io.Reader;</span><br><span class="line">import java.io.BufferedReader;</span><br><span class="line">import java.io.InputStreamReader;</span><br><span class="line">import org.springframework.stereotype.Controller;</span><br><span class="line"></span><br><span class="line">@Controller</span><br><span class="line">public class RetrieveFlag</span><br><span class="line">&#123;</span><br><span class="line">    @GetMapping(&#123; &quot;/view/3ec4e19a-2a70-4aac-9893-ac3712473928/b64content&quot; &#125;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String content() throws IOException &#123;</span><br><span class="line">        final String note_fyi = &quot;TrendCTF requires flag format&quot;;</span><br><span class="line">        note_fyi.concat(&quot;to be formatted as TMCTF&#123;flag&#125;.&quot;);</span><br><span class="line">        note_fyi.concat(&quot;Keep this in mind!&quot;);</span><br><span class="line">        String b64_flag = &quot;&quot;;</span><br><span class="line">        final String salt = &quot;ac3712473928&quot;;</span><br><span class="line">        final ProcessBuilder pb = new ProcessBuilder(new String[] &#123; &quot;python&quot;, System.getProperty(&quot;user.dir&quot;) + &quot;/4aac-9893/decoder.py&quot;, salt &#125;);</span><br><span class="line">        final Process process = pb.start();</span><br><span class="line">        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));</span><br><span class="line">        final StringBuilder builder = new StringBuilder();</span><br><span class="line">        builder.append(reader.read());</span><br><span class="line">        b64_flag = Base64.getEncoder().encodeToString(builder.toString().getBytes());</span><br><span class="line">        return b64_flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -1401,7 +1401,7 @@ https://www.bsfdvbsbilibili.com
 
 <p>note that every 8 unicode character is separate by <code>&quot;\u200d&quot;</code> </p>
 <p>so separate characters by <code>&quot;\u200d&quot;</code> and replace <code>&quot;\u200c&quot;</code> with 0 and <code>&quot;\u200b&quot;</code> with 1. we get the flag</p>
-<p><img src="Untitled%206.png" alt="Untitled"></p>
+<p><img src="/Untitled%206.png" alt="Untitled"></p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">data = <span class="string">&quot;SGVsbG8sIOKAjOKAi+KAjOKAi+KAjOKAi+KAjOKAjOKAjeKAjOKAi+KAjOKAjOKAi+KAi+KAjOKAi1RyZW5kTWljcm8g4oCN4oCM4oCL4oCM4oCM4oCM4oCM4oCL4oCL4oCN4oCM4oCL4oCM4oCL4oCM4oCL4oCMQ1RGIOKAjOKAjeKAjOKAi+KAjOKAjOKAjOKAi+KAi+KAjOKAjeKAjOKAi+KAi+KAi+KAi+KAjHJlcXVpcmVzIOKAi+KAi+KAjeKAjOKAi+KAjOKAjOKAi+KAjOKAi+KAjOKAjeKAjOKAi+KAi+KAjOKAjHRoZSDigIzigIzigIvigI3igIzigIvigIvigIvigIzigIvigIvigIzigI3igIzigIvigIzigIxmbGFnIOKAjOKAjOKAjOKAjOKAjeKAjOKAi+KAjOKAi+KAjOKAi+KAi+KAi+KAjeKAjOKAi+KAi3RvIOKAjOKAjOKAi+KAjOKAi+KAjeKAjOKAi+KAi+KAjOKAjOKAjOKAi+KAjOKAjeKAjOKAi2JlIOKAjOKAjOKAjOKAjOKAjOKAi+KAjeKAjOKAi+KAi+KAi+KAjOKAjOKAjOKAjOKAjeKAjGluIOKAi+KAi+KAi+KAjOKAjOKAjOKAjOKAjeKAjOKAi+KAjOKAi+KAjOKAjOKAi+KAi+KAjXRoZSDigIzigIvigIvigIvigIzigIzigIzigIzigI3igIzigIvigIvigIzigIvigIvigIzigIxmb3JtYXQg4oCN4oCM4oCM4oCL4oCL4oCM4oCM4oCM4oCM4oCN4oCM4oCL4oCL4oCM4oCL4oCM4oCMVE1DVEZ7ZmxhZ30uIOKAi+KAjeKAjOKAi+KAi+KAi+KAjOKAi+KAjOKAjOKAjeKAjOKAi+KAi+KAi+KAi+KAjERvIOKAi+KAjOKAjeKAjOKAi+KAjOKAjOKAjOKAjOKAi+KAi+KAjeKAjOKAi+KAi+KAjOKAi3lvdSDigIzigIzigIzigI3igIzigIzigIvigIvigIzigIvigIzigIzigI3igIzigIvigIvigIxzZWUg4oCL4oCM4oCM4oCL4oCN4oCM4oCL4oCL4oCM4oCL4oCL4oCL4oCM4oCN4oCM4oCL4oCM4oCL4oCL4oCM4oCL4oCM4oCN4oCM4oCL4oCL4oCL4oCL4oCL4oCM4oCLaXQ/IA==&quot;</span></span><br><span class="line">data1 = base64.b64decode(data)</span><br><span class="line">a = data1.decode()</span><br><span class="line"><span class="comment"># remove standard unicode character</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(s) &gt; <span class="number">128</span>:</span><br><span class="line">        uns.append(s)</span><br><span class="line">unss = <span class="string">&quot;&quot;</span>.join(uns)</span><br><span class="line">uns1 = unss.split(<span class="string">&quot;\u200d&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(uns1),uns1,unss.count(<span class="string">&quot;\u200d&quot;</span>))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">replacer</span>(<span class="params">s:<span class="built_in">str</span></span>):</span></span><br><span class="line">    <span class="keyword">return</span> s.replace(<span class="string">&quot;\u200c&quot;</span>,<span class="string">&quot;0&quot;</span>).replace(<span class="string">&quot;\u200b&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> uns1:</span><br><span class="line">    sss = replacer(s)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(<span class="built_in">int</span>(sss,<span class="number">2</span>)),end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># TMCTF&#123;Jav@WebAppSpl0itzCh4inZ&#125;</span></span><br></pre></td></tr></table></figure>
 ]]></content>
       <tags>
@@ -1415,13 +1415,13 @@ https://www.bsfdvbsbilibili.com
     <url>/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/</url>
     <content><![CDATA[<p><strong>Main concept: how to decompile pyinstaller program</strong></p>
 <p>First, this is a typical pyinstaller program.</p>
-<p><img src="Untitled.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled.png" alt="Untitled"></p>
 <p>So first we need find the source code.</p>
-<p><img src="Untitled%201.png" alt="Untitled"></p>
+<p><img src="/Untitled%201.png" alt="Untitled"></p>
 <span id="more"></span>
 
 <p>The source code is in <code>pypuzzle.pyc</code> and the python version is python3.7 according to <code>python37.dll</code> </p>
-<p><img src="Untitled%202.png" alt="Untitled"></p>
+<p><img src="/Untitled%202.png" alt="Untitled"></p>
 <p>Due to bytecode header, using decompyle3 will show error.</p>
 <p>So, in order to decompile, we need to bytecode header first.</p>
 <ol>
@@ -1429,19 +1429,19 @@ https://www.bsfdvbsbilibili.com
 <li>open <a href="http://pypuzzle.py/">PyPuzzle.py</a> suing hex editor</li>
 </ol>
 <p>not that, the file in base_library contains bytecode header. which is <code>42 0D 0D 0A 01 00 00 00</code> for python 3.7</p>
-<p><img src="Untitled%203.png" alt="Untitled"></p>
-<p><img src="Untitled%204.png" alt="Untitled"></p>
+<p><img src="/Untitled%203.png" alt="Untitled"></p>
+<p><img src="/Untitled%204.png" alt="Untitled"></p>
 <ol>
 <li>we need add <code>42 0D 0D 0A 01 00 00 00</code> to the <a href="http://pypuzzle.py/">PyPuzzle.py</a> file and remove extra 0s</li>
 </ol>
-<p><img src="Untitled%205.png" alt="Untitled"></p>
+<p><img src="/Untitled%205.png" alt="Untitled"></p>
 <ol>
 <li>save <a href="http://pypuzzle.py/">PyPuzzle.py</a> and decompile again.</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># uncompyle6 version 3.7.4</span></span><br><span class="line"><span class="comment"># Python bytecode 3.7 (3394)</span></span><br><span class="line"><span class="comment"># Decompiled from: Python 3.8.10 (default, Jun  2 2021, 10:49:15)</span></span><br><span class="line"><span class="comment"># [GCC 9.4.0]</span></span><br><span class="line"><span class="comment"># Embedded file name: PyPuzzle.py</span></span><br><span class="line"><span class="comment"># Compiled at: 1975-05-06 10:59:01</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        slideTo = <span class="literal">None</span></span><br><span class="line">        msg = <span class="string">&#x27;Click tile or press arrow keys to slide.&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> mainBoard == SOLVEDBOARD:</span><br><span class="line">            msg = <span class="string">&#x27;Solved! But Wait you need to decrypt the flag *_^&#x27;</span></span><br><span class="line">            flag = <span class="string">&#x27;3blKlvIKqQoG0D6B4XDcZxQjbLbg4KVJQzbm8b&#x27;</span></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br></pre></td></tr></table></figure>
 
 <p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
-<p><img src="Untitled%206.png" alt="Untitled"></p>
+<p><img src="/Untitled%206.png" alt="Untitled"></p>
 ]]></content>
       <tags>
         <tag>ctf</tag>
