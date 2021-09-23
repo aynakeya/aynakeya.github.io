@@ -24,15 +24,6 @@
       </categories>
   </entry>
   <entry>
-    <title>Is it useful?</title>
-    <url>/2018/09/29/2018-09-29-02-05-47/</url>
-    <content><![CDATA[<p>#Why?<br>Why even learn to code? People have been communication big ideas for centuries <em>without</em> needing to learn a new language. <br><br>What do you think?</p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
     <title>图片呀</title>
     <url>/2018/09/29/2018-09-29-11-25-22/</url>
     <content><![CDATA[<p>##图片图片！</p>
@@ -52,22 +43,12 @@
       </categories>
   </entry>
   <entry>
-    <title>新的小工具--quizlet单词获取器</title>
-    <url>/2018/10/21/2018-10-21-00-21-20/</url>
-    <content><![CDATA[<p>#quizlet单词获取器<br><del>感觉博客空荡荡的，所以发一个</del><br><br><del>反正没人看</del><br><br>就是一个小工具，输入地址，然后就把单词和意思跳出来。可以做单词表用，其他没什么用处emmmmm。<br><br>感觉还真没什么用处。。。。<br><br><em>谁会来用这个啊喂</em><br><br>还是放点图出来吧。。。<br><br>输入链接<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c734014.png" alt="输入链接"><br>获取成功<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c6e3346.png" alt="获取成功"><br>随机生成<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c726d72.png" alt="随机生成"></p>
-<p>体验地址：<br><a href="https://www.lxgshadow.us/projects/dynamic/python/quizlet_words">https://www.lxgshadow.us/projects/dynamic/python/quizlet_words</a><br><br>平板写真tm难受<br></p>
+    <title>Is it useful?</title>
+    <url>/2018/09/29/2018-09-29-02-05-47/</url>
+    <content><![CDATA[<p>#Why?<br>Why even learn to code? People have been communication big ideas for centuries <em>without</em> needing to learn a new language. <br><br>What do you think?</p>
 ]]></content>
       <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>新功能上线，文件分享</title>
-    <url>/2018/11/27/2018-11-27-20-57-44/</url>
-    <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
+        <category>系统默认</category>
       </categories>
   </entry>
   <entry>
@@ -77,6 +58,15 @@
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
       <categories>
         <category>Life</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>新功能上线，文件分享</title>
+    <url>/2018/11/27/2018-11-27-20-57-44/</url>
+    <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
       </categories>
   </entry>
   <entry>
@@ -120,6 +110,16 @@ import subprocess
       </categories>
   </entry>
   <entry>
+    <title>新的小工具--quizlet单词获取器</title>
+    <url>/2018/10/21/2018-10-21-00-21-20/</url>
+    <content><![CDATA[<p>#quizlet单词获取器<br><del>感觉博客空荡荡的，所以发一个</del><br><br><del>反正没人看</del><br><br>就是一个小工具，输入地址，然后就把单词和意思跳出来。可以做单词表用，其他没什么用处emmmmm。<br><br>感觉还真没什么用处。。。。<br><br><em>谁会来用这个啊喂</em><br><br>还是放点图出来吧。。。<br><br>输入链接<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c734014.png" alt="输入链接"><br>获取成功<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c6e3346.png" alt="获取成功"><br>随机生成<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c726d72.png" alt="随机生成"></p>
+<p>体验地址：<br><a href="https://www.lxgshadow.us/projects/dynamic/python/quizlet_words">https://www.lxgshadow.us/projects/dynamic/python/quizlet_words</a><br><br>平板写真tm难受<br></p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
     <title>检测浏览器切换页面</title>
     <url>/2019/01/04/2019-01-04-21-35-30/</url>
     <content><![CDATA[<p>本页面以加载以下代码，切换标签页看看吧.</p>
@@ -152,15 +152,6 @@ document.addEventListener('visibilitychange',function(){
 </script>]]></content>
       <categories>
         <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>我日你妈的seminar</title>
-    <url>/2019/01/16/2019-01-16-19-53-24/</url>
-    <content><![CDATA[<p>#傻逼seminar我日你妈、</p>
-]]></content>
-      <categories>
-        <category>隐藏</category>
       </categories>
   </entry>
   <entry>
@@ -203,6 +194,15 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       <tags>
         <tag>shazam</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>我日你妈的seminar</title>
+    <url>/2019/01/16/2019-01-16-19-53-24/</url>
+    <content><![CDATA[<p>#傻逼seminar我日你妈、</p>
+]]></content>
+      <categories>
+        <category>隐藏</category>
+      </categories>
   </entry>
   <entry>
     <title>shazam听歌识曲算法解析+python实现-2 生成指纹</title>
@@ -369,32 +369,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>Solution to mplayer playing voice and picture out of sync</title>
-    <url>/2019/02/11/2019-02-11-22-53-22/</url>
-    <content><![CDATA[<p>when i was playing with mplayer in my ras pi. I found that it always appear warning “Your system is too slow to play this”. And voice often play faster than the video.</p>
-<p>after some modifying with config and option, i found nothing was helpful.</p>
-<p>(Btw, you should tune the speed of lcd screen at least 48000000, but you may find some strange colour behaviour appear lol)</p>
-<p>So, finally, i tried to re encode my video.</p>
-<p>result turns out that we can simply solve this problem by encode the video into the older encoding format like <strong>mpg</strong> or <strong>ogg</strong>.</p>
-<p><strong>don’t</strong> use format like <strong>mp4</strong> or <strong>flv</strong></p>
-<p>Result:</p>
-<p><code>mplayer -nolirc -vo fbdev2:/dev/fb1 -fs -zoom -x 480 -y 320 ~/Videos/BadApple.mpg</code></p>
-<p>ogg format:<br><img src="https://i.loli.net/2019/02/11/5c618bdf1bc7a.jpg" alt="ogg.JPG"></p>
-<p>mpg format:<br><img src="https://i.loli.net/2019/02/11/5c618bdf2f6b5.jpg" alt="mpg.JPG"></p>
-<p>flv format:<br><img src="https://i.loli.net/2019/02/11/5c618bdf26da4.jpg" alt="flv.JPG"></p>
-<p>Look at the a-v,<br>You can see a significant difference between the mpg and flv.</p>
-<p>Which means flv always face sync problem while mpg not.</p>
-<p>Update:</p>
-<p>add <code>-lavdopts skipframe=nonref:skiploopfilter=all</code> may helo</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>raspberryPi</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Electron packaging</title>
     <url>/2019/03/16/2019-03-16-20-39-27/</url>
     <content><![CDATA[<p>Two method, electron-builder or electron-packager</p>
@@ -422,6 +396,21 @@ def generateFilehash(filepath, blocksize=2 ** 16):
         <tag>javascript</tag>
         <tag>electron</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Fix memory error caused by memory overflowing</title>
+    <url>/2019/04/06/2019-04-06-17-38-45/</url>
+    <content><![CDATA[<p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
+<p><a href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
+<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
+<p>After doing some research, i come up with a solution.</p>
+<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
+<p><a href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
+<p><a href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
   </entry>
   <entry>
     <title>Improving sqlalchemy inserting performance for large set of data</title>
@@ -520,21 +509,6 @@ alter table fingerprints drop partition p20
       <tags>
         <tag>mysql</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Fix memory error caused by memory overflowing</title>
-    <url>/2019/04/06/2019-04-06-17-38-45/</url>
-    <content><![CDATA[<p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
-<p><a href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
-<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
-<p>After doing some research, i come up with a solution.</p>
-<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
-<p><a href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
-<p><a href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
   </entry>
   <entry>
     <title>Problem about install windows 10 in mac os with bootcamp.</title>
@@ -642,6 +616,32 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
+    <title>Solution to mplayer playing voice and picture out of sync</title>
+    <url>/2019/02/11/2019-02-11-22-53-22/</url>
+    <content><![CDATA[<p>when i was playing with mplayer in my ras pi. I found that it always appear warning “Your system is too slow to play this”. And voice often play faster than the video.</p>
+<p>after some modifying with config and option, i found nothing was helpful.</p>
+<p>(Btw, you should tune the speed of lcd screen at least 48000000, but you may find some strange colour behaviour appear lol)</p>
+<p>So, finally, i tried to re encode my video.</p>
+<p>result turns out that we can simply solve this problem by encode the video into the older encoding format like <strong>mpg</strong> or <strong>ogg</strong>.</p>
+<p><strong>don’t</strong> use format like <strong>mp4</strong> or <strong>flv</strong></p>
+<p>Result:</p>
+<p><code>mplayer -nolirc -vo fbdev2:/dev/fb1 -fs -zoom -x 480 -y 320 ~/Videos/BadApple.mpg</code></p>
+<p>ogg format:<br><img src="https://i.loli.net/2019/02/11/5c618bdf1bc7a.jpg" alt="ogg.JPG"></p>
+<p>mpg format:<br><img src="https://i.loli.net/2019/02/11/5c618bdf2f6b5.jpg" alt="mpg.JPG"></p>
+<p>flv format:<br><img src="https://i.loli.net/2019/02/11/5c618bdf26da4.jpg" alt="flv.JPG"></p>
+<p>Look at the a-v,<br>You can see a significant difference between the mpg and flv.</p>
+<p>Which means flv always face sync problem while mpg not.</p>
+<p>Update:</p>
+<p>add <code>-lavdopts skipframe=nonref:skiploopfilter=all</code> may helo</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>raspberryPi</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Landwave Word Test Cracking</title>
     <url>/2019/07/22/2019-07-22-14-37-59/</url>
     <content><![CDATA[<h2 id="Warning"><a href="#Warning" class="headerlink" title="Warning"></a>Warning</h2><p>This method can only be used for learning purpose.</p>
@@ -662,49 +662,6 @@ alter table fingerprints drop partition p20
         <tag>toefl</tag>
         <tag>crack</tag>
         <tag>landwave</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Shadowsocks problem with config file</title>
-    <url>/2019/09/03/2019-09-03-13-45-23/</url>
-    <content><![CDATA[<p>In the default shadowsocks config file, the server ip is 127.0.0.1</p>
-<pre>
-#config file example
-{
-    "server":["::1", "127.0.0.1"],
-    "mode":"tcp_and_udp",
-    "server_port":PORT,
-    "local_port":1080,
-    "password":"password",
-    "timeout":60,
-    "method":"chacha20-ietf-poly1305"
-}
-</pre>
-
-<p>However, 127.0.0.1 only allow the local connection, so you can’t connect to the server from client.</p>
-<p>Therefore, to fix this problem, you should change the ip 127.0.0.1 into 0.0.0.0</p>
-<pre>
-#config file example
-{
-    "server":["::1", "0.0.0.0"],
-    "mode":"tcp_and_udp",
-    "server_port":PORT,
-    "local_port":1080,
-    "password":"password",
-    "timeout":60,
-    "method":"chacha20-ietf-poly1305"
-}
-</pre>
-
-<p>Restart the ss-server, you can now connect to your shadowsocks server successfully.</p>
-]]></content>
-      <categories>
-        <category>Developing</category>
-      </categories>
-      <tags>
-        <tag>tutorial</tag>
-        <tag>shadowsocks</tag>
-        <tag>solution</tag>
       </tags>
   </entry>
   <entry>
@@ -846,6 +803,49 @@ file-allocation=prealloc
       </tags>
   </entry>
   <entry>
+    <title>Shadowsocks problem with config file</title>
+    <url>/2019/09/03/2019-09-03-13-45-23/</url>
+    <content><![CDATA[<p>In the default shadowsocks config file, the server ip is 127.0.0.1</p>
+<pre>
+#config file example
+{
+    "server":["::1", "127.0.0.1"],
+    "mode":"tcp_and_udp",
+    "server_port":PORT,
+    "local_port":1080,
+    "password":"password",
+    "timeout":60,
+    "method":"chacha20-ietf-poly1305"
+}
+</pre>
+
+<p>However, 127.0.0.1 only allow the local connection, so you can’t connect to the server from client.</p>
+<p>Therefore, to fix this problem, you should change the ip 127.0.0.1 into 0.0.0.0</p>
+<pre>
+#config file example
+{
+    "server":["::1", "0.0.0.0"],
+    "mode":"tcp_and_udp",
+    "server_port":PORT,
+    "local_port":1080,
+    "password":"password",
+    "timeout":60,
+    "method":"chacha20-ietf-poly1305"
+}
+</pre>
+
+<p>Restart the ss-server, you can now connect to your shadowsocks server successfully.</p>
+]]></content>
+      <categories>
+        <category>Developing</category>
+      </categories>
+      <tags>
+        <tag>tutorial</tag>
+        <tag>shadowsocks</tag>
+        <tag>solution</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Fix bug with Chinese input in tags system (中文标签问题)</title>
     <url>/2019/09/03/2019-09-03-22-22-55/</url>
     <content><![CDATA[<p>Tags system not work properly with Chinese character.</p>
@@ -874,38 +874,6 @@ tag = urllib.parse.unquote(url)
       </categories>
       <tags>
         <tag>toefl</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>How to change ssh port or add ssh port</title>
-    <url>/2019/09/04/2019-09-04-14-19-40/</url>
-    <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
-<li>make sure you have ssh service installed properly.</li>
-<li>sudo nano /etc/ssh/sshd_config to edit the config file</li>
-<li>add new port by adding new line of “Port 2222” (in this case, 2222 is your new ssh port)<br><img src="https://i.loli.net/2019/09/04/Gt216fFeRrCvj9I.png" alt="29917F88-7D25-417A-B5C0-17D497D0C221.png"></li>
-<li>restart ssh service by using “sudo systemctl restart sshd.service”</li>
-</ol>
-<span id="more"></span>
-
-<hr>
-<h3 id="Set-new-firewall-rule"><a href="#Set-new-firewall-rule" class="headerlink" title="Set new firewall rule"></a>Set new firewall rule</h3><ol>
-<li>Go to aliyun console.</li>
-<li>Go to firewall setting and press new rule. 进入安全-防火墙，点击添加规则<br><img src="https://i.loli.net/2019/09/04/cEjxnfQTJ4uUBAd.png" alt="1"></li>
-<li>Add a new rule for 2222. 添加自定义规则，Tcp，端口号 (本例中是2222) 你可以自行替换<br><img src="https://i.loli.net/2019/09/04/1uMqxkYKvm3FPiN.png" alt="2"></li>
-</ol>
-<hr>
-<h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><ol>
-<li>ssh username@youip -p 2222</li>
-<li>success~<br><img src="https://i.loli.net/2019/09/04/ZwxHVLobiaTBz27.png" alt="4FEAF6A4-1755-4587-8E33-87F88C3DA09B.png"></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Developing</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>ssh</tag>
-        <tag>server</tag>
       </tags>
   </entry>
   <entry>
@@ -973,28 +941,41 @@ server {
         <category>Developing</category>
       </categories>
       <tags>
-        <tag>server</tag>
         <tag>nginx</tag>
+        <tag>server</tag>
       </tags>
   </entry>
   <entry>
-    <title>utf-8 乱码表</title>
-    <url>/2019/09/06/2019-09-06-10-34-25/</url>
-    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
+    <title>How to change ssh port or add ssh port</title>
+    <url>/2019/09/04/2019-09-04-14-19-40/</url>
+    <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
+<li>make sure you have ssh service installed properly.</li>
+<li>sudo nano /etc/ssh/sshd_config to edit the config file</li>
+<li>add new port by adding new line of “Port 2222” (in this case, 2222 is your new ssh port)<br><img src="https://i.loli.net/2019/09/04/Gt216fFeRrCvj9I.png" alt="29917F88-7D25-417A-B5C0-17D497D0C221.png"></li>
+<li>restart ssh service by using “sudo systemctl restart sshd.service”</li>
+</ol>
+<span id="more"></span>
+
+<hr>
+<h3 id="Set-new-firewall-rule"><a href="#Set-new-firewall-rule" class="headerlink" title="Set new firewall rule"></a>Set new firewall rule</h3><ol>
+<li>Go to aliyun console.</li>
+<li>Go to firewall setting and press new rule. 进入安全-防火墙，点击添加规则<br><img src="https://i.loli.net/2019/09/04/cEjxnfQTJ4uUBAd.png" alt="1"></li>
+<li>Add a new rule for 2222. 添加自定义规则，Tcp，端口号 (本例中是2222) 你可以自行替换<br><img src="https://i.loli.net/2019/09/04/1uMqxkYKvm3FPiN.png" alt="2"></li>
+</ol>
+<hr>
+<h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><ol>
+<li>ssh username@youip -p 2222</li>
+<li>success~<br><img src="https://i.loli.net/2019/09/04/ZwxHVLobiaTBz27.png" alt="4FEAF6A4-1755-4587-8E33-87F88C3DA09B.png"></li>
+</ol>
 ]]></content>
       <categories>
-        <category>Programming</category>
+        <category>Developing</category>
       </categories>
-  </entry>
-  <entry>
-    <title>add cdn for live2d models</title>
-    <url>/2019/09/16/2019-09-16-22-32-00/</url>
-    <content><![CDATA[<p>add cdn for live2d models</p>
-<p>now you can load live2d model faster.</p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>server</tag>
+        <tag>ssh</tag>
+      </tags>
   </entry>
   <entry>
     <title>Python input function not work properly in linux</title>
@@ -1048,6 +1029,15 @@ server {
         <tag>solution</tag>
         <tag>game</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>utf-8 乱码表</title>
+    <url>/2019/09/06/2019-09-06-10-34-25/</url>
+    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
   </entry>
   <entry>
     <title>简析b站关于站内链接的正则匹配</title>
@@ -1253,6 +1243,27 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>add cdn for live2d models</title>
+    <url>/2019/09/16/2019-09-16-22-32-00/</url>
+    <content><![CDATA[<p>add cdn for live2d models</p>
+<p>now you can load live2d model faster.</p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Docker Desktop setting won&#39;t open in windows 10</title>
+    <url>/2021/09/21/docker-desktop-setting-won-t-open-in-windows-10/</url>
+    <content><![CDATA[<p>If you stuck on the setting menu.</p>
+<p>try to use</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd &quot;C:\Program Files\Docker\Docker&quot;</span><br><span class="line"></span><br><span class="line">./DockerCli.exe -SwitchDaemon</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>windows</tag>
+        <tag>docker</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>The First post from hexo</title>
     <url>/2020/11/23/b/</url>
     <content><![CDATA[<h1 id="Hexo-blog"><a href="#Hexo-blog" class="headerlink" title="Hexo blog"></a>Hexo blog</h1><p>Start to converting my original blog into current one.</p>
@@ -1280,42 +1291,6 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>bilibili</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Docker Desktop setting won&#39;t open in windows 10</title>
-    <url>/2021/09/21/docker-desktop-setting-won-t-open-in-windows-10/</url>
-    <content><![CDATA[<p>If you stuck on the setting menu.</p>
-<p>try to use</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">cd &quot;C:\Program Files\Docker\Docker&quot;</span><br><span class="line"></span><br><span class="line">./DockerCli.exe -SwitchDaemon</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>windows</tag>
-        <tag>docker</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>通过GameGuardian来绕过Il2CppDumper反编译时遇到文件保护</title>
-    <url>/2020/11/29/il2cppdumper-ni-xiang-shi-li/</url>
-    <content><![CDATA[<p>在利用Il2CppDumper进行反编译的时候可能会出现Error的情况</p>
-<p>以明日方舟为例子</p>
-<p>本文主要介绍了在出现</p>
-<p>ERROR: This file may be protected. 时</p>
-<p>如何使用GameGuardian直接从内存中dump libil2cpp.so 来绕过文件保护。</p>
-<span id="more"></span>
-
-<h3 id="问题说明"><a href="#问题说明" class="headerlink" title="问题说明"></a>问题说明</h3><p>直接通过Il2CppDumper解包明日方舟apk中提取的libil2cpp.so文件会跳出</p>
-<p><code>ERROR: This file may be protected.</code></p>
-<p><img src="/images/202011291.png" alt="问题"></p>
-<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><p>根据README所说的<a href="https://github.com/Perfare/Il2CppDumper">Il2CppDumper</a>，出现<code>ERROR: This file may be protected.</code>时可以使用GameGuardian直接从内存中dump libil2cpp.so来绕过文件保护</p>
-<p><img src="/images/202011292.png" alt="solution"></p>
-<h3 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h3><p>首先开启GameGuardian，打开明日方舟后点击导出内存</p>
-<p><img src="/images/pasted-2.png" alt="导出内存"></p>
-<p>开始的内存地址选择libil2cpp.so第一次出现的地方（这里是<strong>976C8000</strong>），</p>
-<p>结束的内存地址尽量选大一点防止文件没有被读完</p>
-<p><img src="/images/202011294.png" alt="导出内存2"></p>
-<p><img src="/images/202011295.png" alt="导出内存3"></p>
-<p>导出之后得到的是一个bin结尾的文件，用Il2CppDumper加载这个bin文件和<strong>global-metadata.dat</strong>。输入开始地址<strong>976C8000</strong>，就可以成功绕过了。</p>
-<p><img src="/images/202011296.png" alt="成功"></p>
-]]></content>
   </entry>
   <entry>
     <title>解决Jupyterlab build 出现 DecodeError</title>
@@ -1367,12 +1342,38 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>通过GameGuardian来绕过Il2CppDumper反编译时遇到文件保护</title>
+    <url>/2020/11/29/il2cppdumper-ni-xiang-shi-li/</url>
+    <content><![CDATA[<p>在利用Il2CppDumper进行反编译的时候可能会出现Error的情况</p>
+<p>以明日方舟为例子</p>
+<p>本文主要介绍了在出现</p>
+<p>ERROR: This file may be protected. 时</p>
+<p>如何使用GameGuardian直接从内存中dump libil2cpp.so 来绕过文件保护。</p>
+<span id="more"></span>
+
+<h3 id="问题说明"><a href="#问题说明" class="headerlink" title="问题说明"></a>问题说明</h3><p>直接通过Il2CppDumper解包明日方舟apk中提取的libil2cpp.so文件会跳出</p>
+<p><code>ERROR: This file may be protected.</code></p>
+<p><img src="/images/202011291.png" alt="问题"></p>
+<h3 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h3><p>根据README所说的<a href="https://github.com/Perfare/Il2CppDumper">Il2CppDumper</a>，出现<code>ERROR: This file may be protected.</code>时可以使用GameGuardian直接从内存中dump libil2cpp.so来绕过文件保护</p>
+<p><img src="/images/202011292.png" alt="solution"></p>
+<h3 id="具体过程"><a href="#具体过程" class="headerlink" title="具体过程"></a>具体过程</h3><p>首先开启GameGuardian，打开明日方舟后点击导出内存</p>
+<p><img src="/images/pasted-2.png" alt="导出内存"></p>
+<p>开始的内存地址选择libil2cpp.so第一次出现的地方（这里是<strong>976C8000</strong>），</p>
+<p>结束的内存地址尽量选大一点防止文件没有被读完</p>
+<p><img src="/images/202011294.png" alt="导出内存2"></p>
+<p><img src="/images/202011295.png" alt="导出内存3"></p>
+<p>导出之后得到的是一个bin结尾的文件，用Il2CppDumper加载这个bin文件和<strong>global-metadata.dat</strong>。输入开始地址<strong>976C8000</strong>，就可以成功绕过了。</p>
+<p><img src="/images/202011296.png" alt="成功"></p>
+]]></content>
+  </entry>
+  <entry>
     <title>Wired Python lambda scope (lambda closure)</title>
     <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
     <content><![CDATA[<p>think of this two code</p>
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
 
 <p>What do you expect the result.</p>
+<span id="more"></span>
 <p>The result is 512 and 512.  Not 8 and 8</p>
 <p>The reason is lambda didn’t evaluate i immediately.</p>
 <blockquote>
@@ -1384,6 +1385,80 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>python</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>trendmirco 2021 rev 1 100 PyPuzzle</title>
+    <url>/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/</url>
+    <content><![CDATA[<p><strong>Main concept: how to decompile pyinstaller program</strong></p>
+<p>First, this is a typical pyinstaller program.</p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled.png" alt="Untitled"></p>
+<p>So first we need find the source code.</p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled1.png" alt="Untitled"></p>
+<span id="more"></span>
+
+<p>The source code is in <code>pypuzzle.pyc</code> and the python version is python3.7 according to <code>python37.dll</code> </p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled2.png" alt="Untitled"></p>
+<p>Due to bytecode header, using decompyle3 will show error.</p>
+<p>So, in order to decompile, we need to bytecode header first.</p>
+<ol>
+<li>unzip base_library.zip, open any file using hex editor</li>
+<li>open <a href="http://pypuzzle.py/">PyPuzzle.py</a> suing hex editor</li>
+</ol>
+<p>not that, the file in base_library contains bytecode header. which is <code>42 0D 0D 0A 01 00 00 00</code> for python 3.7</p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled3.png" alt="Untitled"></p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled4.png" alt="Untitled"></p>
+<ol>
+<li>we need add <code>42 0D 0D 0A 01 00 00 00</code> to the <a href="http://pypuzzle.py/">PyPuzzle.py</a> file and remove extra 0s</li>
+</ol>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled5.png" alt="Untitled"></p>
+<ol>
+<li>save <a href="http://pypuzzle.py/">PyPuzzle.py</a> and decompile again.</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># uncompyle6 version 3.7.4</span></span><br><span class="line"><span class="comment"># Python bytecode 3.7 (3394)</span></span><br><span class="line"><span class="comment"># Decompiled from: Python 3.8.10 (default, Jun  2 2021, 10:49:15)</span></span><br><span class="line"><span class="comment"># [GCC 9.4.0]</span></span><br><span class="line"><span class="comment"># Embedded file name: PyPuzzle.py</span></span><br><span class="line"><span class="comment"># Compiled at: 1975-05-06 10:59:01</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        slideTo = <span class="literal">None</span></span><br><span class="line">        msg = <span class="string">&#x27;Click tile or press arrow keys to slide.&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> mainBoard == SOLVEDBOARD:</span><br><span class="line">            msg = <span class="string">&#x27;Solved! But Wait you need to decrypt the flag *_^&#x27;</span></span><br><span class="line">            flag = <span class="string">&#x27;3blKlvIKqQoG0D6B4XDcZxQjbLbg4KVJQzbm8b&#x27;</span></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br></pre></td></tr></table></figure>
+
+<p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
+<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled6.png" alt="Untitled"></p>
+]]></content>
+      <tags>
+        <tag>trendmirco</tag>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>好想死</title>
+    <url>/2021/02/23/hao-xiang-si/</url>
+    <content><![CDATA[<p>想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>数据火葬场~~~</title>
+    <url>/2021/05/22/shu-ju-huo-zang-chang/</url>
+    <content><![CDATA[<p>喵喵咪的，vps提供商断电了，博客全没了</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>活着好累</title>
+    <url>/2021/03/23/huo-zhao-hao-lei/</url>
+    <content><![CDATA[<p>活着好累，要是能死就好了</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>自制新插件添加~</title>
+    <url>/2020/11/25/zi-zhi-cha-jian-tian-jia/</url>
+    <content><![CDATA[<p>大概自己做了一个小插件</p>
+<p>目前可以换背景和添加网易云歌单~</p>
+<p>插件已经装上啦~</p>
+<span id="more"></span>
+
+<p>github地址: <a href="https://github.com/LXG-Shadow/hexo-background-plus">https://github.com/LXG-Shadow/hexo-background-plus</a></p>
+<p><strong>安装方式</strong></p>
+<ol>
+<li><code>cd node_modules</code></li>
+<li><code>git clone https://github.com/LXG-Shadow/hexo-background-plus</code></li>
+<li>打开package.json,<br> 在dependencies中添加<code>&quot;hexo-background-plus&quot;:&quot;^0.0.1&quot;</code></li>
+</ol>
+]]></content>
   </entry>
   <entry>
     <title>[Trendmicro 2021] OSINTⅡ 400</title>
@@ -1439,80 +1514,6 @@ https://www.bsfdvbsbilibili.com
         <tag>writeup</tag>
         <tag>trendmicro</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>trendmirco 2021 rev 1 100 PyPuzzle</title>
-    <url>/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/</url>
-    <content><![CDATA[<p><strong>Main concept: how to decompile pyinstaller program</strong></p>
-<p>First, this is a typical pyinstaller program.</p>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled.png" alt="Untitled"></p>
-<p>So first we need find the source code.</p>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled1.png" alt="Untitled"></p>
-<span id="more"></span>
-
-<p>The source code is in <code>pypuzzle.pyc</code> and the python version is python3.7 according to <code>python37.dll</code> </p>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled2.png" alt="Untitled"></p>
-<p>Due to bytecode header, using decompyle3 will show error.</p>
-<p>So, in order to decompile, we need to bytecode header first.</p>
-<ol>
-<li>unzip base_library.zip, open any file using hex editor</li>
-<li>open <a href="http://pypuzzle.py/">PyPuzzle.py</a> suing hex editor</li>
-</ol>
-<p>not that, the file in base_library contains bytecode header. which is <code>42 0D 0D 0A 01 00 00 00</code> for python 3.7</p>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled3.png" alt="Untitled"></p>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled4.png" alt="Untitled"></p>
-<ol>
-<li>we need add <code>42 0D 0D 0A 01 00 00 00</code> to the <a href="http://pypuzzle.py/">PyPuzzle.py</a> file and remove extra 0s</li>
-</ol>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled5.png" alt="Untitled"></p>
-<ol>
-<li>save <a href="http://pypuzzle.py/">PyPuzzle.py</a> and decompile again.</li>
-</ol>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment"># uncompyle6 version 3.7.4</span></span><br><span class="line"><span class="comment"># Python bytecode 3.7 (3394)</span></span><br><span class="line"><span class="comment"># Decompiled from: Python 3.8.10 (default, Jun  2 2021, 10:49:15)</span></span><br><span class="line"><span class="comment"># [GCC 9.4.0]</span></span><br><span class="line"><span class="comment"># Embedded file name: PyPuzzle.py</span></span><br><span class="line"><span class="comment"># Compiled at: 1975-05-06 10:59:01</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        slideTo = <span class="literal">None</span></span><br><span class="line">        msg = <span class="string">&#x27;Click tile or press arrow keys to slide.&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> mainBoard == SOLVEDBOARD:</span><br><span class="line">            msg = <span class="string">&#x27;Solved! But Wait you need to decrypt the flag *_^&#x27;</span></span><br><span class="line">            flag = <span class="string">&#x27;3blKlvIKqQoG0D6B4XDcZxQjbLbg4KVJQzbm8b&#x27;</span></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br></pre></td></tr></table></figure>
-
-<p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
-<p><img src="/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/Untitled6.png" alt="Untitled"></p>
-]]></content>
-      <tags>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>trendmirco</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>好想死</title>
-    <url>/2021/02/23/hao-xiang-si/</url>
-    <content><![CDATA[<p>想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>数据火葬场~~~</title>
-    <url>/2021/05/22/shu-ju-huo-zang-chang/</url>
-    <content><![CDATA[<p>喵喵咪的，vps提供商断电了，博客全没了</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>活着好累</title>
-    <url>/2021/03/23/huo-zhao-hao-lei/</url>
-    <content><![CDATA[<p>活着好累，要是能死就好了</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>自制新插件添加~</title>
-    <url>/2020/11/25/zi-zhi-cha-jian-tian-jia/</url>
-    <content><![CDATA[<p>大概自己做了一个小插件</p>
-<p>目前可以换背景和添加网易云歌单~</p>
-<p>插件已经装上啦~</p>
-<span id="more"></span>
-
-<p>github地址: <a href="https://github.com/LXG-Shadow/hexo-background-plus">https://github.com/LXG-Shadow/hexo-background-plus</a></p>
-<p><strong>安装方式</strong></p>
-<ol>
-<li><code>cd node_modules</code></li>
-<li><code>git clone https://github.com/LXG-Shadow/hexo-background-plus</code></li>
-<li>打开package.json,<br> 在dependencies中添加<code>&quot;hexo-background-plus&quot;:&quot;^0.0.1&quot;</code></li>
-</ol>
-]]></content>
   </entry>
   <entry>
     <title>【转载】iptables 详解</title>
