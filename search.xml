@@ -33,16 +33,6 @@
       </categories>
   </entry>
   <entry>
-    <title>图片呀</title>
-    <url>/2018/09/29/2018-09-29-11-25-22/</url>
-    <content><![CDATA[<p>##图片图片！</p>
-<p><img src="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg" alt="心华"><a href="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg">https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg</a></p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
     <title>我是茄子</title>
     <url>/2018/10/03/2018-10-03-22-50-44/</url>
     <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
@@ -59,6 +49,25 @@
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>图片呀</title>
+    <url>/2018/09/29/2018-09-29-11-25-22/</url>
+    <content><![CDATA[<p>##图片图片！</p>
+<p><img src="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg" alt="心华"><a href="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg">https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg</a></p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>1122</title>
+    <url>/2018/11/22/2018-11-22-14-11-04/</url>
+    <content><![CDATA[<p>无聊=自闭<br><br>自闭=抑郁<br><br>抑郁=自杀<br></p>
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
+      <categories>
+        <category>Life</category>
       </categories>
   </entry>
   <entry>
@@ -84,15 +93,6 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
 </pre>]]></content>
       <categories>
         <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>1122</title>
-    <url>/2018/11/22/2018-11-22-14-11-04/</url>
-    <content><![CDATA[<p>无聊=自闭<br><br>自闭=抑郁<br><br>抑郁=自杀<br></p>
-<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
-      <categories>
-        <category>Life</category>
       </categories>
   </entry>
   <entry>
@@ -339,21 +339,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>raspberry pi using vnc, can&#39;t log in.</title>
-    <url>/2019/02/09/2019-02-09-20-53-39/</url>
-    <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
-<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
-<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
-<p><code>rm -rf /home/pi/.Xauthority</code></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>raspberryPi</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Fininshing Update Shazam analysis(chinese version)</title>
     <url>/2019/02/09/2019-02-09-20-46-15/</url>
     <content><![CDATA[<p>See </p>
@@ -366,6 +351,21 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </categories>
       <tags>
         <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>raspberry pi using vnc, can&#39;t log in.</title>
+    <url>/2019/02/09/2019-02-09-20-53-39/</url>
+    <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
+<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
+<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
+<p><code>rm -rf /home/pi/.Xauthority</code></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>raspberryPi</tag>
       </tags>
   </entry>
   <entry>
@@ -2113,7 +2113,7 @@ https://www.bsfdvbsbilibili.com
       </categories>
   </entry>
   <entry>
-    <title>the process of Return to dl-resolve</title>
+    <title>Pwn - Return to dl-resolve Technique</title>
     <url>/2021/11/18/ret2-dl-resolve-example-silent-rop/</url>
     <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
 <p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address/version. Therefore, normal way of ret2libc didn’t work in this case, because we can’t get the address of <code>system</code> function.</p>
