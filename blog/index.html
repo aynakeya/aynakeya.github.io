@@ -202,6 +202,76 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/11/18/ret2-dl-resolve-example-silent-rop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/11/18/ret2-dl-resolve-example-silent-rop/" class="post-title-link" itemprop="url">the process of Return to dl-resolve</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-11-18 12:31:58 / 修改时间：14:52:07" itemprop="dateCreated datePublished" datetime="2021-11-18T12:31:58-08:00">2021-11-18</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
+<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address/version. Therefore, normal way of ret2libc didn’t work in this case, because we can’t get the address of <code>system</code> function.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">:&gt; ii</span><br><span class="line">[Imports]</span><br><span class="line">nth vaddr      bind   type   lib name</span><br><span class="line">―――――――――――――――――――――――――――――――――――――</span><br><span class="line">1   0x08049070 GLOBAL FUNC       read</span><br><span class="line">2   0x00000000 WEAK   NOTYPE     __gmon_start__</span><br><span class="line">3   0x08049080 GLOBAL FUNC       __libc_start_main</span><br><span class="line">4   0x00000000 GLOBAL OBJ        stdin</span><br><span class="line">5   0x08049090 GLOBAL FUNC       setvbuf</span><br><span class="line">6   0x00000000 GLOBAL OBJ        stdout</span><br></pre></td></tr></table></figure>
+
+<p>To solve this question, it required technique called <strong>ret2dlresolve</strong>, after serveral hour of reading article, i finally understand the process of return to dl resolve</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/11/18/ret2-dl-resolve-example-silent-rop/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/10/31/hacker-lu-2021-secure-prototype/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -227,7 +297,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-10-31 16:07:32 / 修改时间：16:32:20" itemprop="dateCreated datePublished" datetime="2021-10-31T16:07:32-06:00">2021-10-31</time>
+              <time title="创建时间：2021-10-31 16:07:32 / 修改时间：15:32:20" itemprop="dateCreated datePublished" datetime="2021-10-31T16:07:32-07:00">2021-10-31</time>
             </span>
 
           
@@ -295,16 +365,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2021-10-28 23:39:47" itemprop="dateCreated datePublished" datetime="2021-10-28T23:39:47-06:00">2021-10-28</time>
+              <time title="创建时间：2021-10-28 23:39:47 / 修改时间：23:21:23" itemprop="dateCreated datePublished" datetime="2021-10-28T23:39:47-07:00">2021-10-28</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-29 00:21:23" itemprop="dateModified" datetime="2021-10-29T00:21:23-06:00">2021-10-29</time>
-              </span>
 
           
 
@@ -372,7 +436,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-10-18 00:47:39 / 修改时间：01:00:16" itemprop="dateCreated datePublished" datetime="2021-10-18T00:47:39-06:00">2021-10-18</time>
+              <time title="创建时间：2021-10-18 00:47:39 / 修改时间：00:00:16" itemprop="dateCreated datePublished" datetime="2021-10-18T00:47:39-07:00">2021-10-18</time>
             </span>
 
           
@@ -446,7 +510,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-10-14 09:22:15 / 修改时间：11:23:34" itemprop="dateCreated datePublished" datetime="2021-10-14T09:22:15-06:00">2021-10-14</time>
+              <time title="创建时间：2021-10-14 09:22:15 / 修改时间：10:23:34" itemprop="dateCreated datePublished" datetime="2021-10-14T09:22:15-07:00">2021-10-14</time>
             </span>
 
           
@@ -519,14 +583,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-09 14:06:08" itemprop="dateCreated datePublished" datetime="2021-10-09T14:06:08-06:00">2021-10-09</time>
+              <time title="创建时间：2021-10-09 14:06:08" itemprop="dateCreated datePublished" datetime="2021-10-09T14:06:08-07:00">2021-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-14 09:28:41" itemprop="dateModified" datetime="2021-10-14T09:28:41-06:00">2021-10-14</time>
+                <time title="修改时间：2021-10-14 08:28:41" itemprop="dateModified" datetime="2021-10-14T08:28:41-07:00">2021-10-14</time>
               </span>
 
           
@@ -595,14 +659,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-09 13:01:03" itemprop="dateCreated datePublished" datetime="2021-10-09T13:01:03-06:00">2021-10-09</time>
+              <time title="创建时间：2021-10-09 13:01:03" itemprop="dateCreated datePublished" datetime="2021-10-09T13:01:03-07:00">2021-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-14 09:28:48" itemprop="dateModified" datetime="2021-10-14T09:28:48-06:00">2021-10-14</time>
+                <time title="修改时间：2021-10-14 08:28:48" itemprop="dateModified" datetime="2021-10-14T08:28:48-07:00">2021-10-14</time>
               </span>
 
           
@@ -669,14 +733,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-09 13:00:57" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:57-06:00">2021-10-09</time>
+              <time title="创建时间：2021-10-09 13:00:57" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:57-07:00">2021-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-14 12:53:26" itemprop="dateModified" datetime="2021-10-14T12:53:26-06:00">2021-10-14</time>
+                <time title="修改时间：2021-10-14 11:53:26" itemprop="dateModified" datetime="2021-10-14T11:53:26-07:00">2021-10-14</time>
               </span>
 
           
@@ -742,14 +806,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-09 13:00:46" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:46-06:00">2021-10-09</time>
+              <time title="创建时间：2021-10-09 13:00:46" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:46-07:00">2021-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-14 09:28:54" itemprop="dateModified" datetime="2021-10-14T09:28:54-06:00">2021-10-14</time>
+                <time title="修改时间：2021-10-14 08:28:54" itemprop="dateModified" datetime="2021-10-14T08:28:54-07:00">2021-10-14</time>
               </span>
 
           
@@ -817,14 +881,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-10-09 13:00:35" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:35-06:00">2021-10-09</time>
+              <time title="创建时间：2021-10-09 13:00:35" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:35-07:00">2021-10-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-14 12:52:24" itemprop="dateModified" datetime="2021-10-14T12:52:24-06:00">2021-10-14</time>
+                <time title="修改时间：2021-10-14 11:52:24" itemprop="dateModified" datetime="2021-10-14T11:52:24-07:00">2021-10-14</time>
               </span>
 
           
@@ -852,72 +916,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/10/04/bie-zai-tu-shu-guan-xiu-en-ai/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/10/04/bie-zai-tu-shu-guan-xiu-en-ai/" class="post-title-link" itemprop="url">别在图书馆秀恩爱</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-10-04 18:18:36" itemprop="dateCreated datePublished" datetime="2021-10-04T18:18:36-06:00">2021-10-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-10-14 09:28:35" itemprop="dateModified" datetime="2021-10-14T09:28:35-06:00">2021-10-14</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>我真是服了，图书馆里能不能好好学习，别秀恩爱了，要秀去房间里秀，给我整吐了。</p>
-<p>真的麻了，那男的5分钟摸一次女生头发，还搁那讨论，我要气死了。</p>
-
       
     </div>
 
@@ -1003,7 +1001,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">66</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1016,7 +1014,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags">
           
-        <span class="site-state-item-count">45</span>
+        <span class="site-state-item-count">46</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
