@@ -202,6 +202,109 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/03/2019-09-03-13-45-23/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2019/09/03/2019-09-03-13-45-23/" class="post-title-link" itemprop="url">Shadowsocks problem with config file</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-09-03 13:45:23" itemprop="dateCreated datePublished" datetime="2019-09-03T13:45:23-07:00">2019-09-03</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-21 09:39:37" itemprop="dateModified" datetime="2021-05-21T09:39:37-07:00">2021-05-21</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Developing/" itemprop="url" rel="index"><span itemprop="name">Developing</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>In the default shadowsocks config file, the server ip is 127.0.0.1</p>
+<pre>
+#config file example
+{
+    "server":["::1", "127.0.0.1"],
+    "mode":"tcp_and_udp",
+    "server_port":PORT,
+    "local_port":1080,
+    "password":"password",
+    "timeout":60,
+    "method":"chacha20-ietf-poly1305"
+}
+</pre>
+
+<p>However, 127.0.0.1 only allow the local connection, so you can’t connect to the server from client.</p>
+<p>Therefore, to fix this problem, you should change the ip 127.0.0.1 into 0.0.0.0</p>
+<pre>
+#config file example
+{
+    "server":["::1", "0.0.0.0"],
+    "mode":"tcp_and_udp",
+    "server_port":PORT,
+    "local_port":1080,
+    "password":"password",
+    "timeout":60,
+    "method":"chacha20-ietf-poly1305"
+}
+</pre>
+
+<p>Restart the ss-server, you can now connect to your shadowsocks server successfully.</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/07/22/2019-07-22-14-37-59/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1052,83 +1155,6 @@ session.commit()
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/2019-02-09-20-53-39/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/02/09/2019-02-09-20-53-39/" class="post-title-link" itemprop="url">raspberry pi using vnc, can't log in.</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-02-09 20:53:39" itemprop="dateCreated datePublished" datetime="2019-02-09T20:53:39-08:00">2019-02-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-21 09:39:37" itemprop="dateModified" datetime="2021-05-21T09:39:37-07:00">2021-05-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
-<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
-<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
-<p><code>rm -rf /home/pi/.Xauthority</code></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1200,7 +1226,7 @@ session.commit()
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">66</span>
+          <span class="site-state-item-count">67</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

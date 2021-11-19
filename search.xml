@@ -33,16 +33,6 @@
       </categories>
   </entry>
   <entry>
-    <title>图片呀</title>
-    <url>/2018/09/29/2018-09-29-11-25-22/</url>
-    <content><![CDATA[<p>##图片图片！</p>
-<p><img src="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg" alt="心华"><a href="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg">https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg</a></p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
     <title>我是茄子</title>
     <url>/2018/10/03/2018-10-03-22-50-44/</url>
     <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
@@ -56,6 +46,16 @@
     <url>/2018/10/21/2018-10-21-00-21-20/</url>
     <content><![CDATA[<p>#quizlet单词获取器<br><del>感觉博客空荡荡的，所以发一个</del><br><br><del>反正没人看</del><br><br>就是一个小工具，输入地址，然后就把单词和意思跳出来。可以做单词表用，其他没什么用处emmmmm。<br><br>感觉还真没什么用处。。。。<br><br><em>谁会来用这个啊喂</em><br><br>还是放点图出来吧。。。<br><br>输入链接<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c734014.png" alt="输入链接"><br>获取成功<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c6e3346.png" alt="获取成功"><br>随机生成<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c726d72.png" alt="随机生成"></p>
 <p>体验地址：<br><a href="https://www.lxgshadow.us/projects/dynamic/python/quizlet_words">https://www.lxgshadow.us/projects/dynamic/python/quizlet_words</a><br><br>平板写真tm难受<br></p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>图片呀</title>
+    <url>/2018/09/29/2018-09-29-11-25-22/</url>
+    <content><![CDATA[<p>##图片图片！</p>
+<p><img src="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg" alt="心华"><a href="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg">https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg</a></p>
 ]]></content>
       <categories>
         <category>SiteDev</category>
@@ -464,6 +464,21 @@ session.commit()
       </tags>
   </entry>
   <entry>
+    <title>Fix memory error caused by memory overflowing</title>
+    <url>/2019/04/06/2019-04-06-17-38-45/</url>
+    <content><![CDATA[<p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
+<p><a href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
+<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
+<p>After doing some research, i come up with a solution.</p>
+<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
+<p><a href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
+<p><a href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+  </entry>
+  <entry>
     <title>use table partition to increase inserting performance</title>
     <url>/2019/04/06/2019-04-06-18-00-02/</url>
     <content><![CDATA[<p>when the number of data excess 5 million. mysql database will face a significant drop down in inserting speed. </p>
@@ -520,21 +535,6 @@ alter table fingerprints drop partition p20
       <tags>
         <tag>mysql</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Fix memory error caused by memory overflowing</title>
-    <url>/2019/04/06/2019-04-06-17-38-45/</url>
-    <content><![CDATA[<p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
-<p><a href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
-<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
-<p>After doing some research, i come up with a solution.</p>
-<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
-<p><a href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
-<p><a href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
   </entry>
   <entry>
     <title>Problem about install windows 10 in mac os with bootcamp.</title>
@@ -877,6 +877,38 @@ tag = urllib.parse.unquote(url)
       </tags>
   </entry>
   <entry>
+    <title>How to change ssh port or add ssh port</title>
+    <url>/2019/09/04/2019-09-04-14-19-40/</url>
+    <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
+<li>make sure you have ssh service installed properly.</li>
+<li>sudo nano /etc/ssh/sshd_config to edit the config file</li>
+<li>add new port by adding new line of “Port 2222” (in this case, 2222 is your new ssh port)<br><img src="https://i.loli.net/2019/09/04/Gt216fFeRrCvj9I.png" alt="29917F88-7D25-417A-B5C0-17D497D0C221.png"></li>
+<li>restart ssh service by using “sudo systemctl restart sshd.service”</li>
+</ol>
+<span id="more"></span>
+
+<hr>
+<h3 id="Set-new-firewall-rule"><a href="#Set-new-firewall-rule" class="headerlink" title="Set new firewall rule"></a>Set new firewall rule</h3><ol>
+<li>Go to aliyun console.</li>
+<li>Go to firewall setting and press new rule. 进入安全-防火墙，点击添加规则<br><img src="https://i.loli.net/2019/09/04/cEjxnfQTJ4uUBAd.png" alt="1"></li>
+<li>Add a new rule for 2222. 添加自定义规则，Tcp，端口号 (本例中是2222) 你可以自行替换<br><img src="https://i.loli.net/2019/09/04/1uMqxkYKvm3FPiN.png" alt="2"></li>
+</ol>
+<hr>
+<h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><ol>
+<li>ssh username@youip -p 2222</li>
+<li>success~<br><img src="https://i.loli.net/2019/09/04/ZwxHVLobiaTBz27.png" alt="4FEAF6A4-1755-4587-8E33-87F88C3DA09B.png"></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Developing</category>
+      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>ssh</tag>
+        <tag>server</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Using Nginx as a static file server</title>
     <url>/2019/09/06/2019-09-06-09-13-22/</url>
     <content><![CDATA[<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><ol>
@@ -941,40 +973,8 @@ server {
         <category>Developing</category>
       </categories>
       <tags>
+        <tag>server</tag>
         <tag>nginx</tag>
-        <tag>server</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>How to change ssh port or add ssh port</title>
-    <url>/2019/09/04/2019-09-04-14-19-40/</url>
-    <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
-<li>make sure you have ssh service installed properly.</li>
-<li>sudo nano /etc/ssh/sshd_config to edit the config file</li>
-<li>add new port by adding new line of “Port 2222” (in this case, 2222 is your new ssh port)<br><img src="https://i.loli.net/2019/09/04/Gt216fFeRrCvj9I.png" alt="29917F88-7D25-417A-B5C0-17D497D0C221.png"></li>
-<li>restart ssh service by using “sudo systemctl restart sshd.service”</li>
-</ol>
-<span id="more"></span>
-
-<hr>
-<h3 id="Set-new-firewall-rule"><a href="#Set-new-firewall-rule" class="headerlink" title="Set new firewall rule"></a>Set new firewall rule</h3><ol>
-<li>Go to aliyun console.</li>
-<li>Go to firewall setting and press new rule. 进入安全-防火墙，点击添加规则<br><img src="https://i.loli.net/2019/09/04/cEjxnfQTJ4uUBAd.png" alt="1"></li>
-<li>Add a new rule for 2222. 添加自定义规则，Tcp，端口号 (本例中是2222) 你可以自行替换<br><img src="https://i.loli.net/2019/09/04/1uMqxkYKvm3FPiN.png" alt="2"></li>
-</ol>
-<hr>
-<h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><ol>
-<li>ssh username@youip -p 2222</li>
-<li>success~<br><img src="https://i.loli.net/2019/09/04/ZwxHVLobiaTBz27.png" alt="4FEAF6A4-1755-4587-8E33-87F88C3DA09B.png"></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Developing</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>server</tag>
-        <tag>ssh</tag>
       </tags>
   </entry>
   <entry>
@@ -1918,6 +1918,29 @@ https://www.bsfdvbsbilibili.com
         <tag>writeup</tag>
         <tag>ctf</tag>
         <tag>trendmirco</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Writable memory section before init and after init</title>
+    <url>/2021/11/19/writable-memory-section-before-init-and-after-init/</url>
+    <content><![CDATA[<h1 id="0x0-Different"><a href="#0x0-Different" class="headerlink" title="0x0 Different"></a>0x0 Different</h1><p>The memory mapping is little differnt</p>
+<p>when <code>init</code> function is not called, notice that <code>rw-</code> page in the memory map have size of <strong>0x2000</strong> from  <strong>0x0804b000</strong> - <strong>0x0804d000</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x0804b000 - 0x0804d000 - usr     8K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map.</span><br></pre></td></tr></table></figure>
+
+<p>however, after enter the main or called <code>init</code> function, the <code>rw-</code> page in the memory map now have size of <strong>0x1000</strong> from <strong>0x0804c000</strong> - <strong>0x0804d000</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._GLOBAL_OFFSET_TABLE_</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="0x1-Reason"><a href="#0x1-Reason" class="headerlink" title="0x1 Reason"></a>0x1 Reason</h1><p>init function will write data to  <strong>0x0804b000</strong> - <strong>0x0804c000</strong>, therefore, before init or before enter main, this page of memory is writable. </p>
+<p>However, after finish the init and enter main. this page should no longer be modified. Therefore, the binary will memory protect this page and make it only readable. which means the writable area now is only in range of <strong>0x0804c000</strong> - <strong>0x0804d000</strong></p>
+<h1 id="0x2-Some-Reminder"><a href="#0x2-Some-Reminder" class="headerlink" title="0x2 Some Reminder"></a>0x2 Some Reminder</h1><p>if you want to find some writable area, be sure to use dm (orvmmap in gdb) after the binary have execute to main.</p>
+<h1 id="0x3"><a href="#0x3" class="headerlink" title="0x3"></a>0x3</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0xf7fc1120]&gt; dm</span><br><span class="line">0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span><br><span class="line">0x08049000 - 0x0804a000 - usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span><br><span class="line">0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span><br><span class="line">0x0804b000 - 0x0804d000 - usr     8K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span><br><span class="line">0xf7fba000 - 0xf7fbe000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0xf7fbe000 - 0xf7fc0000 - usr     8K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br><span class="line">0xf7fc0000 - 0xf7fc1000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xf7fc1000 - 0xf7fdf000 * usr   120K s r-x /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r_x</span><br><span class="line">0xf7fdf000 - 0xf7fea000 - usr    44K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r__</span><br><span class="line">0xf7feb000 - 0xf7fed000 - usr     8K s rw- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.rw_</span><br><span class="line">0xffe81000 - 0xffea2000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br><span class="line">[0x08049235]&gt; dcu main</span><br><span class="line">[0x08049235]&gt; dm</span><br><span class="line">0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span><br><span class="line">0x08049000 - 0x0804a000 * usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span><br><span class="line">0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span><br><span class="line">0x0804b000 - 0x0804c000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span><br><span class="line">0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._GLOBAL_OFFSET_TABLE_</span><br><span class="line">0xf7dba000 - 0xf7dd7000 - usr   116K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7dd7000 - 0xf7f32000 - usr   1.4M s r-x /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7f32000 - 0xf7fa2000 - usr   448K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa2000 - 0xf7fa3000 - usr     4K s --- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa3000 - 0xf7fa5000 - usr     8K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa5000 - 0xf7fa7000 - usr     8K s rw- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so ; edi</span><br><span class="line">0xf7fa7000 - 0xf7fa9000 - usr     8K s rw- unk0 unk0</span><br><span class="line">0xf7fb8000 - 0xf7fba000 - usr     8K s rw- unk1 unk1</span><br><span class="line">0xf7fba000 - 0xf7fbe000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0xf7fbe000 - 0xf7fc0000 - usr     8K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br><span class="line">0xf7fc0000 - 0xf7fc1000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xf7fc1000 - 0xf7fdf000 - usr   120K s r-x /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r_x</span><br><span class="line">0xf7fdf000 - 0xf7fea000 - usr    44K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r__</span><br><span class="line">0xf7feb000 - 0xf7fec000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.rw_</span><br><span class="line">0xf7fec000 - 0xf7fed000 - usr     4K s rw- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xffe81000 - 0xffea2000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
