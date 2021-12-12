@@ -1,15 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>ceshi</title>
-    <url>/2018/09/19/2018-09-19-11-06-38/</url>
-    <content><![CDATA[<p>ceshi</p>
-]]></content>
-      <categories>
-        <category>保护</category>
-      </categories>
-  </entry>
-  <entry>
     <title>hello</title>
     <url>/2018/09/29/2018-09-29-01-59-09/</url>
     <content><![CDATA[<p>#HelloWorld<br><em>HelloWorld</em></p>
@@ -21,6 +12,15 @@
 ]]></content>
       <categories>
         <category>系统默认</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>ceshi</title>
+    <url>/2018/09/19/2018-09-19-11-06-38/</url>
+    <content><![CDATA[<p>ceshi</p>
+]]></content>
+      <categories>
+        <category>保护</category>
       </categories>
   </entry>
   <entry>
@@ -62,21 +62,21 @@
       </categories>
   </entry>
   <entry>
-    <title>新功能上线，文件分享</title>
-    <url>/2018/11/27/2018-11-27-20-57-44/</url>
-    <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
     <title>1122</title>
     <url>/2018/11/22/2018-11-22-14-11-04/</url>
     <content><![CDATA[<p>无聊=自闭<br><br>自闭=抑郁<br><br>抑郁=自杀<br></p>
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
       <categories>
         <category>Life</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>新功能上线，文件分享</title>
+    <url>/2018/11/27/2018-11-27-20-57-44/</url>
+    <content><![CDATA[<p>最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。<br><br><img src="https://i.loli.net/2018/11/27/5bfd3ee93e8c4.png" alt="演示"><br>测试地址：<a href="https://lxgshadow.us/files/detail?id=1">https://lxgshadow.us/files/detail?id=1</a></p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
       </categories>
   </entry>
   <entry>
@@ -117,50 +117,6 @@ import subprocess
 ]]></content>
       <categories>
         <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>检测浏览器切换页面</title>
-    <url>/2019/01/04/2019-01-04-21-35-30/</url>
-    <content><![CDATA[<p>本页面以加载以下代码，切换标签页看看吧.</p>
-<pre>
-var orig_title = document.title;
-document.addEventListener('visibilitychange',function(){
-    //浏览器切换事件
-    if(document.visibilityState=='hidden') { //状态判断
-        orig_title = document.title;
-        document.title = '嘤嘤嘤~~~'; 
-    }else {
-        document.title = orig_title;
-        myWaifu.showMessage("欢迎回来，Rua！",null)
-    }
-});
-</pre>
-
-<script>
-var orig_title = document.title;
-document.addEventListener('visibilitychange',function(){
-    //浏览器切换事件
-    if(document.visibilityState=='hidden') { //状态判断
-        orig_title = document.title;
-        document.title = '嘤嘤嘤~~~'; 
-    }else {
-        document.title = orig_title;
-        myWaifu.showMessage("欢迎回来，Rua！",null);
-    }
-});
-</script>]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>我日你妈的seminar</title>
-    <url>/2019/01/16/2019-01-16-19-53-24/</url>
-    <content><![CDATA[<p>#傻逼seminar我日你妈、</p>
-]]></content>
-      <categories>
-        <category>隐藏</category>
       </categories>
   </entry>
   <entry>
@@ -393,6 +349,41 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       <tags>
         <tag>raspberryPi</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>检测浏览器切换页面</title>
+    <url>/2019/01/04/2019-01-04-21-35-30/</url>
+    <content><![CDATA[<p>本页面以加载以下代码，切换标签页看看吧.</p>
+<pre>
+var orig_title = document.title;
+document.addEventListener('visibilitychange',function(){
+    //浏览器切换事件
+    if(document.visibilityState=='hidden') { //状态判断
+        orig_title = document.title;
+        document.title = '嘤嘤嘤~~~'; 
+    }else {
+        document.title = orig_title;
+        myWaifu.showMessage("欢迎回来，Rua！",null)
+    }
+});
+</pre>
+
+<script>
+var orig_title = document.title;
+document.addEventListener('visibilitychange',function(){
+    //浏览器切换事件
+    if(document.visibilityState=='hidden') { //状态判断
+        orig_title = document.title;
+        document.title = '嘤嘤嘤~~~'; 
+    }else {
+        document.title = orig_title;
+        myWaifu.showMessage("欢迎回来，Rua！",null);
+    }
+});
+</script>]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
   </entry>
   <entry>
     <title>Electron packaging</title>
@@ -877,38 +868,6 @@ tag = urllib.parse.unquote(url)
       </tags>
   </entry>
   <entry>
-    <title>How to change ssh port or add ssh port</title>
-    <url>/2019/09/04/2019-09-04-14-19-40/</url>
-    <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
-<li>make sure you have ssh service installed properly.</li>
-<li>sudo nano /etc/ssh/sshd_config to edit the config file</li>
-<li>add new port by adding new line of “Port 2222” (in this case, 2222 is your new ssh port)<br><img src="https://i.loli.net/2019/09/04/Gt216fFeRrCvj9I.png" alt="29917F88-7D25-417A-B5C0-17D497D0C221.png"></li>
-<li>restart ssh service by using “sudo systemctl restart sshd.service”</li>
-</ol>
-<span id="more"></span>
-
-<hr>
-<h3 id="Set-new-firewall-rule"><a href="#Set-new-firewall-rule" class="headerlink" title="Set new firewall rule"></a>Set new firewall rule</h3><ol>
-<li>Go to aliyun console.</li>
-<li>Go to firewall setting and press new rule. 进入安全-防火墙，点击添加规则<br><img src="https://i.loli.net/2019/09/04/cEjxnfQTJ4uUBAd.png" alt="1"></li>
-<li>Add a new rule for 2222. 添加自定义规则，Tcp，端口号 (本例中是2222) 你可以自行替换<br><img src="https://i.loli.net/2019/09/04/1uMqxkYKvm3FPiN.png" alt="2"></li>
-</ol>
-<hr>
-<h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><ol>
-<li>ssh username@youip -p 2222</li>
-<li>success~<br><img src="https://i.loli.net/2019/09/04/ZwxHVLobiaTBz27.png" alt="4FEAF6A4-1755-4587-8E33-87F88C3DA09B.png"></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Developing</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>ssh</tag>
-        <tag>server</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Using Nginx as a static file server</title>
     <url>/2019/09/06/2019-09-06-09-13-22/</url>
     <content><![CDATA[<h3 id="Installation"><a href="#Installation" class="headerlink" title="Installation"></a>Installation</h3><ol>
@@ -973,8 +932,8 @@ server {
         <category>Developing</category>
       </categories>
       <tags>
-        <tag>server</tag>
         <tag>nginx</tag>
+        <tag>server</tag>
       </tags>
   </entry>
   <entry>
@@ -985,6 +944,38 @@ server {
       <categories>
         <category>Programming</category>
       </categories>
+  </entry>
+  <entry>
+    <title>How to change ssh port or add ssh port</title>
+    <url>/2019/09/04/2019-09-04-14-19-40/</url>
+    <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
+<li>make sure you have ssh service installed properly.</li>
+<li>sudo nano /etc/ssh/sshd_config to edit the config file</li>
+<li>add new port by adding new line of “Port 2222” (in this case, 2222 is your new ssh port)<br><img src="https://i.loli.net/2019/09/04/Gt216fFeRrCvj9I.png" alt="29917F88-7D25-417A-B5C0-17D497D0C221.png"></li>
+<li>restart ssh service by using “sudo systemctl restart sshd.service”</li>
+</ol>
+<span id="more"></span>
+
+<hr>
+<h3 id="Set-new-firewall-rule"><a href="#Set-new-firewall-rule" class="headerlink" title="Set new firewall rule"></a>Set new firewall rule</h3><ol>
+<li>Go to aliyun console.</li>
+<li>Go to firewall setting and press new rule. 进入安全-防火墙，点击添加规则<br><img src="https://i.loli.net/2019/09/04/cEjxnfQTJ4uUBAd.png" alt="1"></li>
+<li>Add a new rule for 2222. 添加自定义规则，Tcp，端口号 (本例中是2222) 你可以自行替换<br><img src="https://i.loli.net/2019/09/04/1uMqxkYKvm3FPiN.png" alt="2"></li>
+</ol>
+<hr>
+<h3 id="Testing"><a href="#Testing" class="headerlink" title="Testing"></a>Testing</h3><ol>
+<li>ssh username@youip -p 2222</li>
+<li>success~<br><img src="https://i.loli.net/2019/09/04/ZwxHVLobiaTBz27.png" alt="4FEAF6A4-1755-4587-8E33-87F88C3DA09B.png"></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Developing</category>
+      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>server</tag>
+        <tag>ssh</tag>
+      </tags>
   </entry>
   <entry>
     <title>add cdn for live2d models</title>
@@ -1047,35 +1038,6 @@ server {
       <tags>
         <tag>solution</tag>
         <tag>game</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>The First post from hexo</title>
-    <url>/2020/11/23/b/</url>
-    <content><![CDATA[<h1 id="Hexo-blog"><a href="#Hexo-blog" class="headerlink" title="Hexo blog"></a>Hexo blog</h1><p>Start to converting my original blog into current one.</p>
-<p>And finished.</p>
-<p>enjoy</p>
-]]></content>
-      <categories>
-        <category>ABC</category>
-      </categories>
-      <tags>
-        <tag>tagA</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Bilibili的神秘番剧</title>
-    <url>/2021/04/09/bilibili-de-shen-mi-fan-ju/</url>
-    <content><![CDATA[<p>神秘动漫~</p>
-<p><img src="/images/202104091324.png" alt="神秘动漫~"></p>
-<p><a href="https://www.bilibili.com/bangumi/play/ss4243">https://www.bilibili.com/bangumi/play/ss4243</a></p>
-<p><a href="https://www.bilibili.com/bangumi/media/md55232">https://www.bilibili.com/bangumi/media/md55232</a></p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>bilibili</tag>
       </tags>
   </entry>
   <entry>
@@ -1279,6 +1241,35 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>bilibili</tag>
         <tag>re</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>The First post from hexo</title>
+    <url>/2020/11/23/b/</url>
+    <content><![CDATA[<h1 id="Hexo-blog"><a href="#Hexo-blog" class="headerlink" title="Hexo blog"></a>Hexo blog</h1><p>Start to converting my original blog into current one.</p>
+<p>And finished.</p>
+<p>enjoy</p>
+]]></content>
+      <categories>
+        <category>ABC</category>
+      </categories>
+      <tags>
+        <tag>tagA</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Bilibili的神秘番剧</title>
+    <url>/2021/04/09/bilibili-de-shen-mi-fan-ju/</url>
+    <content><![CDATA[<p>神秘动漫~</p>
+<p><img src="/images/202104091324.png" alt="神秘动漫~"></p>
+<p><a href="https://www.bilibili.com/bangumi/play/ss4243">https://www.bilibili.com/bangumi/play/ss4243</a></p>
+<p><a href="https://www.bilibili.com/bangumi/media/md55232">https://www.bilibili.com/bangumi/media/md55232</a></p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>bilibili</tag>
       </tags>
   </entry>
   <entry>
@@ -1882,6 +1873,15 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>我日你妈的seminar</title>
+    <url>/2019/01/16/2019-01-16-19-53-24/</url>
+    <content><![CDATA[<p>#傻逼seminar我日你妈、</p>
+]]></content>
+      <categories>
+        <category>隐藏</category>
+      </categories>
+  </entry>
+  <entry>
     <title>trendmirco 2021 rev 1 100 PyPuzzle</title>
     <url>/2021/09/20/trendmirco-2021-rev-1-100-pypuzzle/</url>
     <content><![CDATA[<p><strong>Main concept: how to decompile pyinstaller program</strong></p>
@@ -1921,29 +1921,6 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
-    <title>Writable memory section before init and after init</title>
-    <url>/2021/11/19/writable-memory-section-before-init-and-after-init/</url>
-    <content><![CDATA[<h1 id="0x0-Different"><a href="#0x0-Different" class="headerlink" title="0x0 Different"></a>0x0 Different</h1><p>The memory mapping is little differnt</p>
-<p>when <code>init</code> function is not called, notice that <code>rw-</code> page in the memory map have size of <strong>0x2000</strong> from  <strong>0x0804b000</strong> - <strong>0x0804d000</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x0804b000 - 0x0804d000 - usr     8K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map.</span><br></pre></td></tr></table></figure>
-
-<p>however, after enter the main or called <code>init</code> function, the <code>rw-</code> page in the memory map now have size of <strong>0x1000</strong> from <strong>0x0804c000</strong> - <strong>0x0804d000</strong></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._GLOBAL_OFFSET_TABLE_</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h1 id="0x1-Reason"><a href="#0x1-Reason" class="headerlink" title="0x1 Reason"></a>0x1 Reason</h1><p>init function will write data to  <strong>0x0804b000</strong> - <strong>0x0804c000</strong>, therefore, before init or before enter main, this page of memory is writable. </p>
-<p>However, after finish the init and enter main. this page should no longer be modified. Therefore, the binary will memory protect this page and make it only readable. which means the writable area now is only in range of <strong>0x0804c000</strong> - <strong>0x0804d000</strong></p>
-<h1 id="0x2-Some-Reminder"><a href="#0x2-Some-Reminder" class="headerlink" title="0x2 Some Reminder"></a>0x2 Some Reminder</h1><p>if you want to find some writable area, be sure to use dm (orvmmap in gdb) after the binary have execute to main.</p>
-<h1 id="0x3"><a href="#0x3" class="headerlink" title="0x3"></a>0x3</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0xf7fc1120]&gt; dm</span><br><span class="line">0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span><br><span class="line">0x08049000 - 0x0804a000 - usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span><br><span class="line">0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span><br><span class="line">0x0804b000 - 0x0804d000 - usr     8K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span><br><span class="line">0xf7fba000 - 0xf7fbe000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0xf7fbe000 - 0xf7fc0000 - usr     8K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br><span class="line">0xf7fc0000 - 0xf7fc1000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xf7fc1000 - 0xf7fdf000 * usr   120K s r-x /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r_x</span><br><span class="line">0xf7fdf000 - 0xf7fea000 - usr    44K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r__</span><br><span class="line">0xf7feb000 - 0xf7fed000 - usr     8K s rw- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.rw_</span><br><span class="line">0xffe81000 - 0xffea2000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br><span class="line">[0x08049235]&gt; dcu main</span><br><span class="line">[0x08049235]&gt; dm</span><br><span class="line">0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span><br><span class="line">0x08049000 - 0x0804a000 * usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span><br><span class="line">0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span><br><span class="line">0x0804b000 - 0x0804c000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span><br><span class="line">0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._GLOBAL_OFFSET_TABLE_</span><br><span class="line">0xf7dba000 - 0xf7dd7000 - usr   116K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7dd7000 - 0xf7f32000 - usr   1.4M s r-x /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7f32000 - 0xf7fa2000 - usr   448K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa2000 - 0xf7fa3000 - usr     4K s --- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa3000 - 0xf7fa5000 - usr     8K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa5000 - 0xf7fa7000 - usr     8K s rw- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so ; edi</span><br><span class="line">0xf7fa7000 - 0xf7fa9000 - usr     8K s rw- unk0 unk0</span><br><span class="line">0xf7fb8000 - 0xf7fba000 - usr     8K s rw- unk1 unk1</span><br><span class="line">0xf7fba000 - 0xf7fbe000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0xf7fbe000 - 0xf7fc0000 - usr     8K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br><span class="line">0xf7fc0000 - 0xf7fc1000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xf7fc1000 - 0xf7fdf000 - usr   120K s r-x /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r_x</span><br><span class="line">0xf7fdf000 - 0xf7fea000 - usr    44K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r__</span><br><span class="line">0xf7feb000 - 0xf7fec000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.rw_</span><br><span class="line">0xf7fec000 - 0xf7fed000 - usr     4K s rw- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xffe81000 - 0xffea2000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br></pre></td></tr></table></figure>
-
-]]></content>
-      <tags>
-        <tag>linux</tag>
-        <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>别在图书馆秀恩爱</title>
     <url>/2021/10/04/bie-zai-tu-shu-guan-xiu-en-ai/</url>
     <content><![CDATA[<p>我真是服了，图书馆里能不能好好学习，别秀恩爱了，要秀去房间里秀，给我整吐了。</p>
@@ -1970,6 +1947,29 @@ https://www.bsfdvbsbilibili.com
     <url>/2021/03/23/huo-zhao-hao-lei/</url>
     <content><![CDATA[<p>活着好累，要是能死就好了</p>
 ]]></content>
+  </entry>
+  <entry>
+    <title>Writable memory section before init and after init</title>
+    <url>/2021/11/19/writable-memory-section-before-init-and-after-init/</url>
+    <content><![CDATA[<h1 id="0x0-Different"><a href="#0x0-Different" class="headerlink" title="0x0 Different"></a>0x0 Different</h1><p>The memory mapping is little differnt</p>
+<p>when <code>init</code> function is not called, notice that <code>rw-</code> page in the memory map have size of <strong>0x2000</strong> from  <strong>0x0804b000</strong> - <strong>0x0804d000</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x0804b000 - 0x0804d000 - usr     8K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map.</span><br></pre></td></tr></table></figure>
+
+<p>however, after enter the main or called <code>init</code> function, the <code>rw-</code> page in the memory map now have size of <strong>0x1000</strong> from <strong>0x0804c000</strong> - <strong>0x0804d000</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._GLOBAL_OFFSET_TABLE_</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="0x1-Reason"><a href="#0x1-Reason" class="headerlink" title="0x1 Reason"></a>0x1 Reason</h1><p>init function will write data to  <strong>0x0804b000</strong> - <strong>0x0804c000</strong>, therefore, before init or before enter main, this page of memory is writable. </p>
+<p>However, after finish the init and enter main. this page should no longer be modified. Therefore, the binary will memory protect this page and make it only readable. which means the writable area now is only in range of <strong>0x0804c000</strong> - <strong>0x0804d000</strong></p>
+<h1 id="0x2-Some-Reminder"><a href="#0x2-Some-Reminder" class="headerlink" title="0x2 Some Reminder"></a>0x2 Some Reminder</h1><p>if you want to find some writable area, be sure to use dm (orvmmap in gdb) after the binary have execute to main.</p>
+<h1 id="0x3"><a href="#0x3" class="headerlink" title="0x3"></a>0x3</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0xf7fc1120]&gt; dm</span><br><span class="line">0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span><br><span class="line">0x08049000 - 0x0804a000 - usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span><br><span class="line">0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span><br><span class="line">0x0804b000 - 0x0804d000 - usr     8K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span><br><span class="line">0xf7fba000 - 0xf7fbe000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0xf7fbe000 - 0xf7fc0000 - usr     8K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br><span class="line">0xf7fc0000 - 0xf7fc1000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xf7fc1000 - 0xf7fdf000 * usr   120K s r-x /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r_x</span><br><span class="line">0xf7fdf000 - 0xf7fea000 - usr    44K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r__</span><br><span class="line">0xf7feb000 - 0xf7fed000 - usr     8K s rw- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.rw_</span><br><span class="line">0xffe81000 - 0xffea2000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br><span class="line">[0x08049235]&gt; dcu main</span><br><span class="line">[0x08049235]&gt; dm</span><br><span class="line">0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span><br><span class="line">0x08049000 - 0x0804a000 * usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span><br><span class="line">0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span><br><span class="line">0x0804b000 - 0x0804c000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span><br><span class="line">0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._GLOBAL_OFFSET_TABLE_</span><br><span class="line">0xf7dba000 - 0xf7dd7000 - usr   116K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7dd7000 - 0xf7f32000 - usr   1.4M s r-x /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7f32000 - 0xf7fa2000 - usr   448K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa2000 - 0xf7fa3000 - usr     4K s --- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa3000 - 0xf7fa5000 - usr     8K s r-- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so</span><br><span class="line">0xf7fa5000 - 0xf7fa7000 - usr     8K s rw- /usr/lib/i386-linux-gnu/libc-2.31.so /usr/lib/i386-linux-gnu/libc-2.31.so ; edi</span><br><span class="line">0xf7fa7000 - 0xf7fa9000 - usr     8K s rw- unk0 unk0</span><br><span class="line">0xf7fb8000 - 0xf7fba000 - usr     8K s rw- unk1 unk1</span><br><span class="line">0xf7fba000 - 0xf7fbe000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0xf7fbe000 - 0xf7fc0000 - usr     8K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br><span class="line">0xf7fc0000 - 0xf7fc1000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xf7fc1000 - 0xf7fdf000 - usr   120K s r-x /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r_x</span><br><span class="line">0xf7fdf000 - 0xf7fea000 - usr    44K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.r__</span><br><span class="line">0xf7feb000 - 0xf7fec000 - usr     4K s r-- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so ; map._usr_lib_i386_linux_gnu_ld_2.31.so.rw_</span><br><span class="line">0xf7fec000 - 0xf7fed000 - usr     4K s rw- /usr/lib/i386-linux-gnu/ld-2.31.so /usr/lib/i386-linux-gnu/ld-2.31.so</span><br><span class="line">0xffe81000 - 0xffea2000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <tags>
+        <tag>linux</tag>
+        <tag>ctf</tag>
+      </tags>
   </entry>
   <entry>
     <title>自制新插件添加~</title>
@@ -2196,7 +2196,9 @@ https://www.bsfdvbsbilibili.com
 <p>as shown in the SYMTAB part, this indicate the function <code>read</code>. which is exactly what we want.</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[0x08049235]&gt; px @ 0x08048248 + 0x01*0x10</span><br><span class="line">- offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span><br><span class="line">0x08048258  2000 0000 0000 0000 0000 0000 1200 0000   ...............</span><br></pre></td></tr></table></figure>
 
-<h2 id="Process-of-dl-resolve"><a href="#Process-of-dl-resolve" class="headerlink" title="Process of dl resolve"></a>Process of dl resolve</h2><h3 id="before-call-dl-resolve"><a href="#before-call-dl-resolve" class="headerlink" title="before call dl resolve"></a>before call dl resolve</h3><ol>
+<h2 id="Process-of-dl-resolve"><a href="#Process-of-dl-resolve" class="headerlink" title="Process of dl resolve"></a>Process of dl resolve</h2><h3 id="Before-all"><a href="#Before-all" class="headerlink" title="Before all"></a>Before all</h3><p>Since dl resolve is called only when lazy binding is enabled. So dl resolve can only be called when the binary is <strong>Partial RELRO</strong> or <strong>No RELRO</strong></p>
+<p>If a binary is <strong>Full RELRO</strong>, this means dl resolve will not be called. Therefore, it is return to dl resolve will not work in Full RELRO binary</p>
+<h3 id="before-call-dl-resolve"><a href="#before-call-dl-resolve" class="headerlink" title="before call dl resolve"></a>before call dl resolve</h3><ol>
 <li>normally, if we want to call a funtion. we first call function address at PLT.</li>
 <li>if it is the first time call this function, the PLT will jump to GOT, push the real function address and jump back to plt, save the real function address to PLT for next call and then call the fucntion</li>
 <li>if there is already a address in PLT, it just call the function</li>
