@@ -537,19 +537,6 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
-    <title>Add tag system</title>
-    <url>/2019/05/20/2019-05-20-10-08-26/</url>
-    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
-<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
-<p>type tags into the input and split them with space</p>
-<p>e.g “mysql python” means two tag: mysql and python.</p>
-<p>click submit to finish.</p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Problem about install windows 10 in mac os with bootcamp.</title>
     <url>/2019/04/17/2019-04-17-16-43-23/</url>
     <content><![CDATA[<p><strong>problem 1</strong>: stuck at “partition disk”.</p>
@@ -580,6 +567,19 @@ alter table fingerprints drop partition p20
       <tags>
         <tag>macos</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Add tag system</title>
+    <url>/2019/05/20/2019-05-20-10-08-26/</url>
+    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
+<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
+<p>type tags into the input and split them with space</p>
+<p>e.g “mysql python” means two tag: mysql and python.</p>
+<p>click submit to finish.</p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
   </entry>
   <entry>
     <title>Use single-user-mode to access files from a mac without login</title>
@@ -1014,20 +1014,6 @@ server {
       </tags>
   </entry>
   <entry>
-    <title>change git password in idea</title>
-    <url>/2019/10/26/2019-10-26-21-00-50/</url>
-    <content><![CDATA[<p>in terminal</p>
-<p>type</p>
-<p>git fetch</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>jetbrain</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
     <url>/2019/10/29/2019-10-29-17-03-47/</url>
     <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
@@ -1047,6 +1033,20 @@ server {
       <tags>
         <tag>solution</tag>
         <tag>game</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>change git password in idea</title>
+    <url>/2019/10/26/2019-10-26-21-00-50/</url>
+    <content><![CDATA[<p>in terminal</p>
+<p>type</p>
+<p>git fetch</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>jetbrain</tag>
       </tags>
   </entry>
   <entry>
@@ -1473,6 +1473,31 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>Axio使用withCredentials后跨域请求出现错误</title>
+    <url>/2022/01/09/axio-shi-yong-withcredentials-hou-kua-yu-qing-qiu-chu-xian-cuo-wu/</url>
+    <content><![CDATA[<p>在前后端分离的项目里，因为前端和后端不在一个域上，所以为了在使用跨域请求带上cookie，要把withCredentials设置为true</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">axios.defaults.withCredentials = true</span><br></pre></td></tr></table></figure>
+
+<p>但是设置完之后，访问又出现了如下的问题</p>
+<p>Response to preflight request doesn’t pass access control check: The value of the ‘Access-Control-Allow-Origin’ header in the response must not be the wildcard ‘*’ when the request’s credentials mode is ‘include’. Origin ‘<a href="http://localhost:8080&#39;">http://localhost:8080&#39;</a> is therefore not allowed access. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.</p>
+<span id="more"></span>
+
+<p>解决方案</p>
+<ul>
+<li>设置<code>Access-Control-Allow-Origin</code>字段为指定域名，不能为<code>*</code></li>
+<li>设置<code>Access-Control-Allow-Credentials</code>设置为true</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">corsconfig := cors.DefaultConfig()</span><br><span class="line">corsconfig.AllowOrigins = []string&#123;&quot;http://localhost:3000&quot;&#125;</span><br><span class="line">corsconfig.AllowCredentials = true</span><br><span class="line">engine.Use(cors.New(corsconfig))</span><br></pre></td></tr></table></figure>
+
+<p>reference: <a href="https://www.cnblogs.com/cnxkey/articles/14259716.html">https://www.cnblogs.com/cnxkey/articles/14259716.html</a></p>
+]]></content>
+      <tags>
+        <tag>vue</tag>
+        <tag>full stack</tag>
+        <tag>cors</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>bilibili ctf 2021 writeup</title>
     <url>/2021/10/28/bilibili-ctf-2021/</url>
     <content><![CDATA[<h1 id="0x0-简介"><a href="#0x0-简介" class="headerlink" title="0x0 简介"></a>0x0 简介</h1><p>Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。</p>
@@ -1632,9 +1657,9 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
       <tags>
         <tag>docker</tag>
-        <tag>go</tag>
         <tag>vue</tag>
         <tag>full stack</tag>
+        <tag>go</tag>
         <tag>web</tag>
       </tags>
   </entry>
