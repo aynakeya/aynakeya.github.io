@@ -207,6 +207,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/01/08/coding/built-go-gin-backend-and-vue-spa-frontend-with-docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/08/coding/built-go-gin-backend-and-vue-spa-frontend-with-docker/" class="post-title-link" itemprop="url">【Docker】用Docker构建一个前后端分离的项目 (go+vue)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-08 23:43:15" itemprop="dateCreated datePublished" datetime="2022-01-08T23:43:15-08:00">2022-01-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-07 11:16:52" itemprop="dateModified" datetime="2022-03-07T11:16:52-08:00">2022-03-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="0x0-前言"><a href="#0x0-前言" class="headerlink" title="0x0 前言"></a>0x0 前言</h1><p>最近给自己的一个后端项目<a target="_blank" rel="noopener" href="https://github.com/aynakeya/AynaAPI">AynaAPI</a>做了一个前端。因为是用vue写的，而且使用了vue-router, 所以直接用go-gin渲染前端不太好用，而且也不太符合前后端分离的理念。</p>
+<p>反正忽略上面的理由，不管怎么样，总之来说我就是想用用看docker，顺便学习一下docker要如何使用。</p>
+<p>但是问题还是有的，但是感觉前言写这么多是不是不太好，啊呀也无所谓了，总之网络上没多少关于如何用docker构建前后端分离项目的教程，或许是我没找到，或者就是屁用没有的教程，总之反正都不是很好用。</p>
+<p>总之在这篇文章里我要简略的介绍一下我都后端项目以及前端项目以及如何使用docker+docker-compose来构建项目</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/08/coding/built-go-gin-backend-and-vue-spa-frontend-with-docker/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -976,88 +1060,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-oversight/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-oversight/" class="post-title-link" itemprop="url">[writeup][DownUnderCTF 2021] pwn oversight</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-10-09 13:00:57" itemprop="dateCreated datePublished" datetime="2021-10-09T13:00:57-07:00">2021-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-07 10:58:23" itemprop="dateModified" datetime="2022-03-07T10:58:23-08:00">2022-03-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h2><p>this a typical ret2libc problem using rop chain.</p>
-<p>require reveal the base point for libc, find offset and setup ropchain</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-oversight/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1129,7 +1131,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">78</span>
+          <span class="site-state-item-count">79</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
