@@ -613,21 +613,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>Fininshing Update Shazam analysis(chinese version)</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
-    <content><![CDATA[<p>See </p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
     <url>/2019/02/09/blogarchive/2019-02-09-20-39-15/</url>
     <content><![CDATA[<p>第三部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 </p>
@@ -671,6 +656,21 @@ def generateFilehash(filepath, blocksize=2 ** 16):
 <p><img src="https://i.loli.net/2019/02/09/5c5ec838f1c1a.jpg" alt="处理"></p>
 <p>结束。</p>
 <p>转载请先获得许可</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Fininshing Update Shazam analysis(chinese version)</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
+    <content><![CDATA[<p>See </p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
 ]]></content>
       <categories>
         <category>Programming</category>
@@ -3029,6 +3029,46 @@ https://www.bsfdvbsbilibili.com
         <tag>ctf</tag>
         <tag>writeup</tag>
         <tag>trendmirco</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Malformed Query - How to analyze a transmission protocol [utctf 2022]</title>
+    <url>/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/</url>
+    <content><![CDATA[<h1 id="0x0-Description"><a href="#0x0-Description" class="headerlink" title="0x0 Description"></a>0x0 Description</h1><p>The problem give us a wireshark data packets files. Our goal is to analyze the packet, find the protocol used in the interaction and get the flag.</p>
+<h1 id="0x1-Analyze-the-protocol"><a href="#0x1-Analyze-the-protocol" class="headerlink" title="0x1 Analyze the protocol"></a>0x1 Analyze the protocol</h1><p>in the wireshark, there is a very suspicious udp stream (3.93.213.98:9855) that gives us a command result of <code>ls -al</code>.</p>
+<p>the connection start with a packet that contains <code>publickey</code>. </p>
+<span id="more"></span>
+
+<p>Then server reply with a packet with a RSA publickey.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">00000000  00 0c 01 00 00 01 00 00  00 00 00 00 09 70 75 62   ........ .....pub</span><br><span class="line">00000010  6c 69 63 6b 65 79 00 00  10 00 01                  lickey.. ...</span><br></pre></td></tr></table></figure>
+
+<p>If we copy the first packet and send to the sever, we got a new response with a different publickey! </p>
+<p>This clearly shows that the server is using a special protocol to interact with client. </p>
+<p>Now, our goal is to figure out how is the protocol looks like.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">io = connect(&quot;3.93.213.98&quot;,9855,typ=&quot;udp&quot;)</span><br><span class="line">io.send(bytes.fromhex(&quot;000c01000001000000000000097075626c69636b65790000100001&quot;))</span><br><span class="line">print(io.recv())</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ python xxx.py </span><br><span class="line">[+] Opening connection to 3.93.213.98 on port 9855: Done</span><br><span class="line">b&#x27;\x00\x0c\x81\x80\x00\x01\x00\x02\x00\x00\x00\x00\tpublickey\x00\x00\x10\x00\x01\xc0\x0c\x00\x10\x00\x01\x00\x00\x137\x00\xff\xfe-----BEGIN RSA PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAyljjH5MViK9eDX3TYlO8\nCei+rVufA+lrsw36gv/Ntv34PBXebZBC8BSwy/t0jMHnn7+9fY0zum9sMwV7A7R9\n3RWt5WppeqPyhuFNlM8DoGN5RLjTVLLKvSG2df5c8IktfDpjdrgUYDOiMMN7ANVE\nyIK+Nt+RBoGK2fkKk3NljlmmXKKP\xc0\x0c\x00\x10\x00\x01\x00\x00\x137\x00\xce\xcdU2yQZX6uHgMPXk1QSvXRsPcdWG255dBhVXK/\nrB2vAMOsD2QDMiUEa5KFgDxoBT3CH1H2nPCcXGux2j+gCpxyzzSdWrdxw64xmcGm\nrYWyC/lEygNDYc82JQJatHJSeDmz1TeA6LoY29QnKzSfrOZNvRxaB9NbbY7s9zRS\nJwIDAQAB\n-----END RSA PUBLIC KEY-----\n&#x27;</span><br></pre></td></tr></table></figure>
+
+<p>Further analyze the packet, we found all the packet follows a similar structure.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">header  + sequence num + next sequence num + magic data + [length +  data  + ending] * n</span><br><span class="line">4 bytes +    2 bytes   +     2 bytes       +   4 bytes  + [1 byte + n byte + 5 byte] * n</span><br></pre></td></tr></table></figure>
+
+<p>Note that the max length for a single message is <code>0xfe(254)</code>, if our data is more than 254 bytes, we need seperate data into 254 bytes chunks.</p>
+<p>Here is the packet (9 bytes) client send to the server</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">00000000  00 0c 01 00 00 01 00 00  00 00 00 00 09     70 75 62   ........ .....pub</span><br><span class="line">          header      seq n seq    magic data  length data</span><br><span class="line">00000010  6c 69 63 6b 65 79 00 00  10 00 01                  lickey.. ...</span><br><span class="line">                            ending bytes</span><br></pre></td></tr></table></figure>
+
+<p>here is another example packet (more than 254 bytes) received from the server</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">    00000000  00 0c 81 80 00 01 00 02    00 00 00 00 09  70 75 62   ........ .....pub</span><br><span class="line">              header      seq   next seq magic data  len data</span><br><span class="line">    00000010  6c 69 63 6b 65 79 00 00  10 00 01 c0 0c 00 10 00   lickey.. ........</span><br><span class="line">                                ending bytes    header      seq</span><br><span class="line">    00000020  01 00 00    13 37 00 ff   fe  2d 2d 2d 2d 2d 42 45 47   ....7... -----BEG</span><br><span class="line">                 next seq magic data    len data</span><br><span class="line">    00000030  49 4e 20 52 53 41 20 50  55 42 4c 49 43 20 4b 45   IN RSA P UBLIC KE</span><br><span class="line">    00000040  59 2d 2d 2d 2d 2d 0a 4d  49 49 42 49 6a 41 4e 42   Y-----.M IIBIjANB</span><br><span class="line">......</span><br><span class="line">    00000120  58 39 43 30 6c 33 c0 0c  00 10 00 01 00 00 13 37   X9C0l3.. .......7</span><br><span class="line">                                ending bytes</span><br><span class="line">    00000130  00 ce cd 31 58 72 62 36  75 33 70 74 5a 78 4f 49   ...1Xrb6 u3ptZxOI</span><br><span class="line">......</span><br><span class="line">    000001E0  41 42 0a 2d 2d 2d 2d 2d  45 4e 44 20 52 53 41 20   AB.----- END RSA </span><br><span class="line">    000001F0  50 55 42 4c 49 43 20 4b  45 59 2d 2d 2d 2d 2d 0a   PUBLIC K EY-----.</span><br></pre></td></tr></table></figure>
+
+<p>After we receive the public key, we can encrypt command with public key, send packet to the server and get the flag.</p>
+<p>(The encryption using OAEP scheme with sha512)</p>
+<h1 id="0x2-Final-script"><a href="#0x2-Final-script" class="headerlink" title="0x2 Final script"></a>0x2 Final script</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">from Crypto.PublicKey import RSA</span><br><span class="line">from Crypto.Cipher import PKCS1_v1_5</span><br><span class="line">from Crypto.Cipher import PKCS1_OAEP</span><br><span class="line">from Crypto.Hash import SHA512</span><br><span class="line">import base64</span><br><span class="line">io = connect(&quot;3.93.213.98&quot;,9855,typ=&quot;udp&quot;)</span><br><span class="line">io.send(bytes.fromhex(&quot;000c01000001000000000000097075626c69636b65790000100001&quot;))</span><br><span class="line">print(io.recvuntil(b&quot;-----BEGIN RSA PUBLIC KEY-----\n&quot;).hex())</span><br><span class="line">public_key = io.recvuntil(b&quot;\n-----END RSA PUBLIC KEY-----\n&quot;,drop=True).replace(b&quot;\xc0\x0c\x00\x10\x00\x01\x00\x00\x137\x00\xce\xcd&quot;,b&quot;&quot;)</span><br><span class="line">public_key = b&quot;-----BEGIN RSA PUBLIC KEY-----\n&quot;+public_key+b&quot;\n-----END RSA PUBLIC KEY-----&quot;</span><br><span class="line">print(public_key.decode())</span><br><span class="line">keyPub = RSA.importKey(public_key)</span><br><span class="line">cipher = PKCS1_OAEP.new(keyPub,SHA512)</span><br><span class="line">cipher_text = cipher.encrypt(b&quot;ls&quot;)</span><br><span class="line">print(len(cipher_text),cipher_text.hex())</span><br><span class="line">payload = bytes.fromhex(&quot;000c01000002000000000000&quot;)+bytes.fromhex(&quot;fe&quot;)+cipher_text[:254:]+bytes.fromhex(&quot;0000100001&quot;)+bytes.fromhex(&quot;02&quot;)+cipher_text[254:256:]+bytes.fromhex(&quot;0000100001&quot;)</span><br><span class="line">print(payload.hex())</span><br><span class="line">io.send(payload)</span><br><span class="line">print(io.recv())</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>protocal analysis</tag>
       </tags>
   </entry>
 </search>
