@@ -104,26 +104,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Wired Python lambda scope (lambda closure)</title>
-    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
-    <content><![CDATA[<p>think of this two code</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-
-<p>What do you expect the result.</p>
-<span id="more"></span>
-<p>The result is 512 and 512.  Not 8 and 8</p>
-<p>The reason is lambda didn’t evaluate i immediately.</p>
-<blockquote>
-<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
-</blockquote>
-<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
-<p>the correct implementation should be</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Debugging binary with pwntools and radare2</title>
     <url>/2021/10/18/debugging-binary-with-pwntools-and-radare2/</url>
     <content><![CDATA[<h1 id="Brief"><a href="#Brief" class="headerlink" title="Brief"></a>Brief</h1><p>When using radare2 debugger, How to deal with the user input when debugging? There are two simple method.</p>
@@ -270,6 +250,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Wired Python lambda scope (lambda closure)</title>
+    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
+    <content><![CDATA[<p>think of this two code</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<p>What do you expect the result.</p>
+<span id="more"></span>
+<p>The result is 512 and 512.  Not 8 and 8</p>
+<p>The reason is lambda didn’t evaluate i immediately.</p>
+<blockquote>
+<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
+</blockquote>
+<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
+<p>the correct implementation should be</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>要emo了要 要抑郁了要</title>
     <url>/2022/01/30/yao-emo-le-55555/</url>
     <content><![CDATA[<p>emo了要emo了</p>
@@ -304,6 +304,12 @@
 ]]></content>
   </entry>
   <entry>
+    <title>活着好累</title>
+    <url>/2021/03/23/huo-zhao-hao-lei/</url>
+    <content><![CDATA[<p>活着好累，要是能死就好了</p>
+]]></content>
+  </entry>
+  <entry>
     <title>自制新插件添加~</title>
     <url>/2020/11/25/zi-zhi-cha-jian-tian-jia/</url>
     <content><![CDATA[<p>大概自己做了一个小插件</p>
@@ -318,12 +324,6 @@
 <li><code>git clone https://github.com/LXG-Shadow/hexo-background-plus</code></li>
 <li>打开package.json,<br> 在dependencies中添加<code>&quot;hexo-background-plus&quot;:&quot;^0.0.1&quot;</code></li>
 </ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>活着好累</title>
-    <url>/2021/03/23/huo-zhao-hao-lei/</url>
-    <content><![CDATA[<p>活着好累，要是能死就好了</p>
 ]]></content>
   </entry>
   <entry>
@@ -2152,7 +2152,8 @@ https://www.bsfdvbsbilibili.com
 <p>发现之前实现限制并发数的方法是暂停go routine, 如下所示，就纯纯的等待有空余的位置了，然后继续执行<code>Fetch</code></p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func (e *Engine) FetchTentacle(tentacle Tentacle) *TentacleResult &#123;</span><br><span class="line">	err := e.limiter.WaitN(e.context, 1)</span><br><span class="line">	&lt;-e.waitChan</span><br><span class="line">	result, _ := Fetch(tentacle, e.requestFunc, e.ReqHandlers, e.RespHandlers)</span><br><span class="line">	e.waitChan &lt;- 1</span><br><span class="line">	return result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
+<p>离谱在于，如果我有10000个页面要分析，这个东西的实现方式是先创建10000个goroutine，然后等一个goroutine结束了，再挑选新的goroutine执行。</p>
+<p>也就是说，如果有N个页面要爬，程序会同时创建N个goroutine…………</p>
 <p>虽然goroutine确实不怎么耗资源。但是现在一看怎么这么sb啊，为啥不直接用queue。完全不理解当时是怎么想的.</p>
 <p>把我自己给整尬了</p>
 ]]></content>
