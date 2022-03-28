@@ -1501,28 +1501,6 @@ server {
       </tags>
   </entry>
   <entry>
-    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
-    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
-    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
-<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
-<p>However, since windows 10 doesn’t support directX anymore. And windows 10 pre-install with directX 11. The games can’t run properly.</p>
-<hr>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
-<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
-</li>
-<li><p>run the application and restart your computer.</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-      <tags>
-        <tag>solution</tag>
-        <tag>game</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>简析b站关于站内链接的正则匹配</title>
     <url>/2020/08/04/blogarchive/2020-08-04-16-05-57/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文由 <a href="https://blog.boxpaper.club/">@Rorical</a> 的文章<a href="https://blog.boxpaper.club/archives/72/">《优雅的在哔哩哔哩评论区发送链接》</a>启发，目的在于学习正则匹配的基本技巧。</p>
@@ -1723,6 +1701,28 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>bilibili</tag>
         <tag>re</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
+    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
+    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
+<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
+<p>However, since windows 10 doesn’t support directX anymore. And windows 10 pre-install with directX 11. The games can’t run properly.</p>
+<hr>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
+<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
+</li>
+<li><p>run the application and restart your computer.</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+      <tags>
+        <tag>solution</tag>
+        <tag>game</tag>
       </tags>
   </entry>
   <entry>
@@ -1960,6 +1960,47 @@ https://www.bsfdvbsbilibili.com
         <tag>full stack</tag>
         <tag>go</tag>
         <tag>web</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>first glance of alloca in ctf</title>
+    <url>/2022/03/28/ctf/first-glance-of-alloca-in-ctf/</url>
+    <content><![CDATA[<h1 id="0x1-background"><a href="#0x1-background" class="headerlink" title="0x1 background"></a>0x1 background</h1><p>when I was doing zeropts CTF 2022, I found a pwn question called accountant.</p>
+<p>There is a line of code that use <code>alloca</code> to allocate memory. However, at that time, I didn’t know that <code>alloca</code> allocate the memory on the stack. so I simply thought there is no bug… :(</p>
+<p>later, Super Guesser publish their <a href="https://kileak.github.io/ctf/2022/zer0pts-accountant/">writeup</a> on accountant that point out that <code>alloca</code> allocate space on the stack. </p>
+<p>So I could have a chance of looking at alloca.</p>
+<span id="more"></span>
+
+<h1 id="0x2-basic-idea"><a href="#0x2-basic-idea" class="headerlink" title="0x2 basic idea"></a>0x2 basic idea</h1><blockquote>
+<p>The alloca() function allocates size bytes of space in the stack frame of the caller.  This temporary space is automatically freed when the function that called alloca() returns to its caller.<br><a href="https://www.mkssoftware.com/docs/man3/alloca.3.asp">https://www.mkssoftware.com/docs/man3/alloca.3.asp</a></p>
+</blockquote>
+<p>Basically, <code>alloca</code> allocate a space on the stack instead of heap.</p>
+<p>Lets do some code to find out what <code>alloca</code> do. above is a example program. </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">void test() &#123;</span><br><span class="line">    long * ptr1 = (long *)0x1000;</span><br><span class="line">    long * ptr2 = (long *)0x1001;</span><br><span class="line">    // just some offset to make it clear</span><br><span class="line">    long x = 0x1002;</span><br><span class="line">    // lets alloca some space!</span><br><span class="line">    // normal alloca</span><br><span class="line">    ptr1 = (long *) alloca(sizeof(long));</span><br><span class="line">    *ptr1 = 0x2001;</span><br><span class="line">    ptr1 = (long *) alloca(sizeof(long));</span><br><span class="line">    *ptr1 = 0x2002;</span><br><span class="line">    // what if alloca 0</span><br><span class="line">    ptr2 = (long *) alloca(0);</span><br><span class="line">    *ptr2 = 0x2003;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    test();</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>firstly, in assemble code <code>alloca</code> didn’t appear to be a function. Instead, it appear with a set of instruction. So, the asm will <strong>not</strong> have any instruction like <code>call alloca</code>.</p>
+<p>Before alloca is called, the stack looks very normal</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">:&gt; pxr @ rsp</span><br><span class="line">0x7fffe7ddb1d0 0x0000000000001000   ........ @ rsp 4096</span><br><span class="line">0x7fffe7ddb1d8 0x0000000000001001   ........ 4097</span><br><span class="line">0x7fffe7ddb1e0 0x0000000000001002   ........ 4098</span><br><span class="line">0x7fffe7ddb1e8 0x65ba763434aa8f00   ...44v.e</span><br><span class="line">0x7fffe7ddb1f0 0x00007fffe7ddb200   ........ @ rbp [stack] stack R W 0x0</span><br></pre></td></tr></table></figure>
+
+<p>After program execute <code>*ptr = 0x2001</code>. Comparing with previous stack frame, We notice that that stack alloca extra <strong>16</strong> bytes above the initial stack.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">:&gt; pxr @ rsp</span><br><span class="line">0x7fffe7ddb1c0 0x0000000000002001   . ...... @ rax 8193</span><br><span class="line">0x7fffe7ddb1c8 0x000055756136632d   -c6auU.. /home/aynakeya/ctf/play/allocaa/a .text sym.__libc_csu_init program ascii (&#x27;-&#x27;) R X &#x27;add rbx, 1&#x27; &#x27;a&#x27;</span><br><span class="line">0x7fffe7ddb1d0 0x00007fffe7ddb1c0   ........ @ rcx [stack] rsp,rax stack R W 0x2001</span><br><span class="line">0x7fffe7ddb1d8 0x0000000000001001   ........ 4097</span><br><span class="line">0x7fffe7ddb1e0 0x0000000000001002   ........ 4098</span><br><span class="line">0x7fffe7ddb1e8 0x65ba763434aa8f00   ...44v.e</span><br><span class="line">0x7fffe7ddb1f0 0x00007fffe7ddb200   ........ @ rbp [stack] stack R W 0x0</span><br></pre></td></tr></table></figure>
+
+<p>If we continue and execute <code>*ptr = 0x2002</code>. The it will also allocate <strong>16</strong> bytes of memory above the stack. This is because the stack need to be aligned with <code>0x10</code>. Since we only allocate 8 bytes, there need to be an extra 8 bytes padding in order to make the stack aligned.</p>
+<p>Now, lets look what happens if we <code>alloc(0)</code>. </p>
+<p>After execute <code>*ptr2 = 0x2003</code>. We found the value <code>0x2002</code> is replaced by <code>0x2003</code>. <code>ptr1</code> and <code>ptr2</code> are now pointing to a same address. Since </p>
+<p><code>alloc(0)</code> actually return the current <code>rsp</code> address!</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">:&gt; pxr @ rsp</span><br><span class="line">0x7fffe7ddb1b0 0x0000000000002003   . ...... @ rax 8195</span><br><span class="line">0x7fffe7ddb1b8 0x00007fffe7ddb1e7   ........ [stack] stack R W 0xba763434aa8f0000</span><br><span class="line">0x7fffe7ddb1c0 0x0000000000002001   . ...... @ rsi 8193</span><br><span class="line">0x7fffe7ddb1c8 0x000055756136632d   -c6auU.. /home/aynakeya/ctf/play/allocaa/a .text sym.__libc_csu_init program ascii (&#x27;-&#x27;) R X &#x27;add rbx, 1&#x27; &#x27;a&#x27;</span><br><span class="line">0x7fffe7ddb1d0 0x00007fffe7ddb1b0   ........ @ rcx [stack] rsp,rax stack R W 0x2003</span><br><span class="line">0x7fffe7ddb1d8 0x00007fffe7ddb1b0   ........ [stack] rsp,rax stack R W 0x2003</span><br><span class="line">0x7fffe7ddb1e0 0x0000000000001002   ........ 4098</span><br><span class="line">0x7fffe7ddb1e8 0x65ba763434aa8f00   ...44v.e</span><br><span class="line">0x7fffe7ddb1f0 0x00007fffe7ddb200   ........ @ rbp [stack] stack R W 0x0</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Some-thoughts"><a href="#0x3-Some-thoughts" class="headerlink" title="0x3 Some thoughts"></a>0x3 Some thoughts</h1><p>it is pretty interesting that there is a function that allocate memory on the stack. It seems very convenient compare to <code>malloc</code> if we just want use a memory space temporaryly. Since it will automatically freed after function exists, we don’t need to worry about dangling pointer or memory leak.</p>
+<p>But it is also kind of dangerous to use. For example, If we allocate 0 bytes, it would return current rsp address.</p>
+<p>Also, when allocate larger space, we may run out of stack address if we use <code>alloca</code>.</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
