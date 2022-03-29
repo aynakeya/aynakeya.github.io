@@ -207,6 +207,83 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/" class="post-title-link" itemprop="url">[web] gotm (golang ssti) [line ctf 2022]</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-28 18:47:59 / 修改时间：20:11:49" itemprop="dateCreated datePublished" datetime="2022-03-28T18:47:59-07:00">2022-03-28</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="0x1-tl-dr"><a href="#0x1-tl-dr" class="headerlink" title="0x1 tl;dr"></a>0x1 tl;dr</h1><p>gotm, a web question in linectf 2022. This is a very good example of golang <strong>server side template injection (ssti)</strong></p>
+<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>take a brief a look at the code. In order to get the flag. we need to visit <code>/flag</code> whici is handled by <code>flag_handler</code>. </p>
+<p><code>flag_handler</code> require a jwt token with <code>IsAdmin=True</code>. Therefore, in order to forge that, we need to have the secret of jwt token.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/28/ctf/first-glance-of-alloca-in-ctf/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -900,91 +977,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-crypto-timing-attack/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-crypto-timing-attack/" class="post-title-link" itemprop="url">[Crypto] 'bit by bit' - an example of timing attack [MapleCTF2022]</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-30 01:54:18" itemprop="dateCreated datePublished" datetime="2022-01-30T01:54:18-08:00">2022-01-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-07 10:58:27" itemprop="dateModified" datetime="2022-03-07T10:58:27-08:00">2022-03-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>), there is a crypto question using <strong>timing attack</strong>, which is a type of <strong>side channel attack</strong>.</p>
-<p>timing attack basically is a side channel attack which attacker could attack a crypto system by analyzing the execution time of certain code. </p>
-<p>Since every logical operation require time, more complex code takes more time. We can use this property to analyze codes.</p>
-<p>For example. the second part takes longer than first part</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add rip, 1</span><br><span class="line"></span><br><span class="line">add rip, 1</span><br><span class="line">add rip, 1</span><br></pre></td></tr></table></figure>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-crypto-timing-attack/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1056,7 +1048,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">81</span>
+          <span class="site-state-item-count">82</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
