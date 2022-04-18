@@ -207,6 +207,93 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/" class="post-title-link" itemprop="url">Pwn - Sigreturn Oriented Programming (SROP) Technique</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-04-17 21:11:37" itemprop="dateCreated datePublished" datetime="2022-04-17T21:11:37-07:00">2022-04-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-04-18 00:13:59" itemprop="dateModified" datetime="2022-04-18T00:13:59-07:00">2022-04-18</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>In recently ctf (tamuctf 2022), I solve a challenge called <strong>void</strong> (<a href="/ctf-writeup/2022/tamuctf/pwn/void/">writeup</a>). </p>
+<p>This challenge only contains a few line of assembly code, with no libc and NX enabled.</p>
+<p>The only thing we can utilize is a buffer overflow and some syscall gadget. </p>
+<p>It seems impossible to do. However, there is a technique call <strong>SROP - Sigreturn Oriented Programming</strong> that can help us to pwn this binary.</p>
+<h1 id="Theory"><a href="#Theory" class="headerlink" title="Theory"></a>Theory</h1><p>The original paper is here <a target="_blank" rel="noopener" href="https://www.cs.vu.nl/~herbertb/papers/srop_sp14.pdf">paper</a>, <a target="_blank" rel="noopener" href="https://tc.gtisc.gatech.edu/bss/2014/r/srop-slides.pdf">slides</a></p>
+<p>Check it out if you want to.</p>
+<p>I’ll brief explain how SROP works.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -893,90 +980,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-pwn-bruteforcing-canary/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-pwn-bruteforcing-canary/" class="post-title-link" itemprop="url">[pwn] what is canary and how to bruteforce it [MapleCTF2022]</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2022-01-30 02:46:21" itemprop="dateCreated datePublished" datetime="2022-01-30T02:46:21-08:00">2022-01-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-07 10:58:36" itemprop="dateModified" datetime="2022-03-07T10:58:36-08:00">2022-03-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>). There is a quesiton require bruteforcing canary</p>
-<p>To be honest, this is the first time I got practice on brute-forcing canary.</p>
-<h1 id="0x1-What-is-Canary"><a href="#0x1-What-is-Canary" class="headerlink" title="0x1 What is Canary"></a>0x1 What is Canary</h1><p>so, before talking about brute force canary. What is <strong>canary</strong></p>
-<p>Basically, canary is a mitigation that prevent buffer overflow. Since buffer over utilize the overflow the variable on the stack to overwrite rbp and rip. This could help attacker to execute arbitrary code by constructing a rop chain or something. The canary can help prevent simple buffer overflow by put a cookie just above the RBP.</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-pwn-bruteforcing-canary/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1048,7 +1051,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-count">83</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

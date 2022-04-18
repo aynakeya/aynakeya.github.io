@@ -207,6 +207,90 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-pwn-bruteforcing-canary/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-pwn-bruteforcing-canary/" class="post-title-link" itemprop="url">[pwn] what is canary and how to bruteforce it [MapleCTF2022]</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2022-01-30 02:46:21" itemprop="dateCreated datePublished" datetime="2022-01-30T02:46:21-08:00">2022-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-03-07 10:58:36" itemprop="dateModified" datetime="2022-03-07T10:58:36-08:00">2022-03-07</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>). There is a quesiton require bruteforcing canary</p>
+<p>To be honest, this is the first time I got practice on brute-forcing canary.</p>
+<h1 id="0x1-What-is-Canary"><a href="#0x1-What-is-Canary" class="headerlink" title="0x1 What is Canary"></a>0x1 What is Canary</h1><p>so, before talking about brute force canary. What is <strong>canary</strong></p>
+<p>Basically, canary is a mitigation that prevent buffer overflow. Since buffer over utilize the overflow the variable on the stack to overwrite rbp and rip. This could help attacker to execute arbitrary code by constructing a rop chain or something. The canary can help prevent simple buffer overflow by put a cookie just above the RBP.</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-pwn-bruteforcing-canary/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/01/30/ctfwriteup/maplectf2022/maplectf2022-crypto-timing-attack/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -969,95 +1053,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/10/18/debugging-binary-with-pwntools-and-radare2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/10/18/debugging-binary-with-pwntools-and-radare2/" class="post-title-link" itemprop="url">Debugging binary with pwntools and radare2</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-10-18 00:47:39" itemprop="dateCreated datePublished" datetime="2021-10-18T00:47:39-07:00">2021-10-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-28 12:54:31" itemprop="dateModified" datetime="2022-03-28T12:54:31-07:00">2022-03-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="Brief"><a href="#Brief" class="headerlink" title="Brief"></a>Brief</h1><p>When using radare2 debugger, How to deal with the user input when debugging? There are two simple method.</p>
-<ul>
-<li>use rarun2 with stdio</li>
-<li>use pwntools with debugger.</li>
-</ul>
-<h1 id="use-rarun2"><a href="#use-rarun2" class="headerlink" title="use rarun2"></a>use rarun2</h1><ol>
-<li>open second terminal, enter <code>tty</code>, record the output<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ tty</span><br><span class="line">/dev/pts/2</span><br></pre></td></tr></table></figure></li>
-<li>create a file p.rr2, write <code>stdio</code> equal the tty value you get from second termial<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># p.rr2 content</span><br><span class="line">stdio=/dev/pts/1</span><br></pre></td></tr></table></figure></li>
-<li>in second terminal, run <code>sleep 9999999999</code> to wait for output and input</li>
-<li>run <code>r2 -r p.rr2 -d vuln</code> in the first terminal and start debugging!</li>
-</ol>
-<p>see more: <a target="_blank" rel="noopener" href="https://r2wiki.readthedocs.io/en/latest/tools/rarun2/">doc</a></p>
-<h1 id="use-pwntools"><a href="#use-pwntools" class="headerlink" title="use pwntools"></a>use pwntools</h1><p>in the pwntool template, add following code</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line">pid = util.proc.pidof(io)[0]</span><br><span class="line">print(&quot;The pid is: &quot;+str(pid))</span><br><span class="line">util.proc.wait_for_debugger(pid)</span><br><span class="line">input(&quot;press enter to continue&quot;)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>then, run radare2 with <code>r2 -d pid</code>, using the pid from scripts.</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1129,7 +1124,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">82</span>
+          <span class="site-state-item-count">83</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
