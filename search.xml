@@ -104,26 +104,6 @@
       </tags>
   </entry>
   <entry>
-    <title>Wired Python lambda scope (lambda closure)</title>
-    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
-    <content><![CDATA[<p>think of this two code</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
-
-<p>What do you expect the result.</p>
-<span id="more"></span>
-<p>The result is 512 and 512.  Not 8 and 8</p>
-<p>The reason is lambda didn’t evaluate i immediately.</p>
-<blockquote>
-<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
-</blockquote>
-<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
-<p>the correct implementation should be</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Debugging binary with pwntools and radare2</title>
     <url>/2021/10/18/debugging-binary-with-pwntools-and-radare2/</url>
     <content><![CDATA[<h1 id="Brief"><a href="#Brief" class="headerlink" title="Brief"></a>Brief</h1><p>When using radare2 debugger, How to deal with the user input when debugging? There are two simple method.</p>
@@ -279,6 +259,26 @@
 ]]></content>
       <tags>
         <tag>life</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Wired Python lambda scope (lambda closure)</title>
+    <url>/2021/09/21/wired-python-lambda-scope-lambda-closure/</url>
+    <content><![CDATA[<p>think of this two code</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x: x**i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(<span class="keyword">lambda</span> x:x**i)</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>
+
+<p>What do you expect the result.</p>
+<span id="more"></span>
+<p>The result is 512 and 512.  Not 8 and 8</p>
+<p>The reason is lambda didn’t evaluate i immediately.</p>
+<blockquote>
+<p>Python’s closures are late binding. This means that the values of variables used in closures are looked up at the time the inner function is called.</p>
+</blockquote>
+<p>ref: <a href="https://docs.python-guide.org/writing/gotchas/#late-binding-closures">https://docs.python-guide.org/writing/gotchas/#late-binding-closures</a></p>
+<p>the correct implementation should be</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">powers = [<span class="keyword">lambda</span> x,j=i: x**j <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>)]</span><br><span class="line"><span class="built_in">print</span>(powers[<span class="number">3</span>](<span class="number">2</span>))</span><br><span class="line">powers1 = []</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">a</span>(<span class="params">i</span>):</span></span><br><span class="line">	<span class="function"><span class="keyword">def</span> <span class="title">b</span>(<span class="params">x</span>):</span></span><br><span class="line">		<span class="keyword">return</span> x**i</span><br><span class="line">	<span class="keyword">return</span> b </span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">	powers1.append(a(i))</span><br><span class="line"><span class="built_in">print</span>(powers1[<span class="number">3</span>](<span class="number">2</span>))</span><br></pre></td></tr></table></figure>]]></content>
+      <tags>
+        <tag>python</tag>
       </tags>
   </entry>
   <entry>
@@ -863,6 +863,19 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
+    <title>Add tag system</title>
+    <url>/2019/05/20/blogarchive/2019-05-20-10-08-26/</url>
+    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
+<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
+<p>type tags into the input and split them with space</p>
+<p>e.g “mysql python” means two tag: mysql and python.</p>
+<p>click submit to finish.</p>
+]]></content>
+      <categories>
+        <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Problem about install windows 10 in mac os with bootcamp.</title>
     <url>/2019/04/17/blogarchive/2019-04-17-16-43-23/</url>
     <content><![CDATA[<p><strong>problem 1</strong>: stuck at “partition disk”.</p>
@@ -893,19 +906,6 @@ alter table fingerprints drop partition p20
       <tags>
         <tag>macos</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>Add tag system</title>
-    <url>/2019/05/20/blogarchive/2019-05-20-10-08-26/</url>
-    <content><![CDATA[<p>In May 20, 2019. I add a tag system into the blog.</p>
-<p>To use the tag, click add article or edit article, in the edit page, you will see  a new tag input.</p>
-<p>type tags into the input and split them with space</p>
-<p>e.g “mysql python” means two tag: mysql and python.</p>
-<p>click submit to finish.</p>
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
   </entry>
   <entry>
     <title>Use single-user-mode to access files from a mac without login</title>
@@ -2224,6 +2224,7 @@ https://www.bsfdvbsbilibili.com
         <tag>pwn</tag>
         <tag>ctf</tag>
         <tag>writeup</tag>
+        <tag>srop</tag>
       </tags>
   </entry>
   <entry>
@@ -2291,6 +2292,19 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>碎碎念</tag>
         <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MapleBacon First 1st Place in CTF</title>
+    <url>/2022/04/20/life/maple-bacon-first-first-place-in-ctf/</url>
+    <content><![CDATA[<p>It’s the first first !!!!!!!!!</p>
+<p><img src="/2022/04/20/life/maple-bacon-first-first-place-in-ctf/2022-04-20_120515.png" alt="2022-04-20_120515.png"></p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
