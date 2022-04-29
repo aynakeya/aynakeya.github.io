@@ -665,21 +665,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>raspberry pi using vnc, can&#39;t log in.</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-20-53-39/</url>
-    <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
-<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
-<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
-<p><code>rm -rf /home/pi/.Xauthority</code></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>raspberryPi</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Fininshing Update Shazam analysis(chinese version)</title>
     <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
     <content><![CDATA[<p>See </p>
@@ -692,6 +677,21 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </categories>
       <tags>
         <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>raspberry pi using vnc, can&#39;t log in.</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-20-53-39/</url>
+    <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
+<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
+<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
+<p><code>rm -rf /home/pi/.Xauthority</code></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>raspberryPi</tag>
       </tags>
   </entry>
   <entry>

