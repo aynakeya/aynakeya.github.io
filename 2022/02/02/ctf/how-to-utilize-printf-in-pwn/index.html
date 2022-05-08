@@ -280,7 +280,7 @@
 <h1 id="0x1-What-is-printf-string-formating"><a href="#0x1-What-is-printf-string-formating" class="headerlink" title="0x1 What is printf (string formating)"></a>0x1 What is printf (string formating)</h1><p>so, string format is a way to print out data by stating its format in a string.</p>
 <span id="more"></span>
 
-<p>for example, the code below will print out <strong>“Hello, printf , I’m 16 year old”</strong>. We can see that string “%s” is replace by “printf” and “%d” is replaced by 0x10 (which is 16 in decimal)</p>
+<p>for example, the code below will print out <strong>&quot;Hello, printf , I&#39;m 16 year old&quot;</strong>. We can see that string &quot;%s&quot; is replace by &quot;printf&quot; and &quot;%d&quot; is replaced by 0x10 (which is 16 in decimal)</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printf(&quot;Hello, %s , I&#x27;m %d year old&quot;,&quot;printf&quot;,0x10)</span><br></pre></td></tr></table></figure>
 
 <p>all the character start with <strong>%</strong> is called <strong>format string</strong>, there are serveral different format string you can use in C.</p>
@@ -302,8 +302,8 @@
 <h1 id="0x2-Read-the-stack"><a href="#0x2-Read-the-stack" class="headerlink" title="0x2 Read the stack"></a>0x2 Read the stack</h1><h2 id="basic-idea"><a href="#basic-idea" class="headerlink" title="basic idea"></a>basic idea</h2><p>Here is a simple vulnerable code, can you figure out a way to let program print out <code>*buf</code>.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int x = 0x1337;</span><br><span class="line">  char *buf = &quot;my super secret&quot;;</span><br><span class="line">  char s[0x20];</span><br><span class="line">  printf(&quot;hello here is my number %d\n&quot;, x);</span><br><span class="line">  while (1)</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;please enter: &quot;);</span><br><span class="line">    fgets(s, 0x20, stdin);</span><br><span class="line">    puts(&quot;You Enter: &quot;);</span><br><span class="line">    printf(s); //!! here</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p><code>printf(s)</code> give us the opportunity. As I mentioned in the Part1, the computer didn’t care about what parameter you actually pass in. It read whatever is in the register and on the stack.</p>
-<p>Assume you put <code>%p-%p-%p-%p</code> in the string <code>s</code>. The computer don’t know you didn’t pass other 4 parameter. It will just read whatever is store in the register and stack. </p>
+<p><code>printf(s)</code> give us the opportunity. As I mentioned in the Part1, the computer didn&#39;t care about what parameter you actually pass in. It read whatever is in the register and on the stack.</p>
+<p>Assume you put <code>%p-%p-%p-%p</code> in the string <code>s</code>. The computer don&#39;t know you didn&#39;t pass other 4 parameter. It will just read whatever is store in the register and stack. </p>
 <p>For example ,in x64, it will print out address in <code>&quot;rsi-rdx-rcx-r8&quot;</code>.</p>
 <p>So, if we continue to print out, and used out all the 6 register. printf will assume there is some data in the stack, so printf will then get data from stack and print it out.</p>
 <p>This give us a way off leaking data on the stack.</p>
@@ -318,7 +318,7 @@
 <p>we can also use <code>%p%p%p%p%p %p-%p</code> to print out the address of <code>buf</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">You Enter:</span><br><span class="line">0x56206ad2e2a0(nil)0x7fdee909b1e70xc(nil) 0x1337-0x562069b06004</span><br></pre></td></tr></table></figure>
 
-<h2 id="simpler-method"><a href="#simpler-method" class="headerlink" title="simpler method"></a>simpler method</h2><p>using <code>%p%p%p%p%p %p-%p</code> is ok when we have large input size. But what happen if we don’t have enough input size.</p>
+<h2 id="simpler-method"><a href="#simpler-method" class="headerlink" title="simpler method"></a>simpler method</h2><p>using <code>%p%p%p%p%p %p-%p</code> is ok when we have large input size. But what happen if we don&#39;t have enough input size.</p>
 <p>We can use <code>%num$format</code> to get the same result.</p>
 <p>for example, we want to get the <code>x</code> and <code>buf</code>. We know from previous, we can get x from 6th parameter and buf from 7th parameter.</p>
 <p>so, we can use <code>%6$p-%7$s</code> as a substitution. And we got the same result as <code>%p%p%p%p%p %p-%s</code></p>
@@ -367,8 +367,8 @@
 <h2 id="Quick-look"><a href="#Quick-look" class="headerlink" title="Quick look"></a>Quick look</h2><p>lets take a quick look at the source code. There is a trivial vulnerability here - <code>printf(input)</code>.</p>
 <p>Before exploit the binary, there still some problem we need to find solution</p>
 <ol>
-<li>Since the input is locate at heap. We can’t write arbitrary data into the stack. </li>
-<li>the program didn’t provide a way to exist the while loop. And there is no ret instruction in the vuln function</li>
+<li>Since the input is locate at heap. We can&#39;t write arbitrary data into the stack. </li>
+<li>the program didn&#39;t provide a way to exist the while loop. And there is no ret instruction in the vuln function</li>
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">void vuln() &#123;</span><br><span class="line">    puts(&quot;Wewcome b-back?!! Peopwe wewe t-twying t-to hack my pwogwam, so I stopped putting the x3 fwag in memowy ÚwÚ&quot;);</span><br><span class="line">    while(1) &#123;</span><br><span class="line">        char* input = malloc(0x100);</span><br><span class="line"></span><br><span class="line">        fgets(input, 0x100, stdin);</span><br><span class="line"></span><br><span class="line">        printf(input);</span><br><span class="line"></span><br><span class="line">        free(input);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    alarm(60);</span><br><span class="line">    setbuf(stdout, NULL);</span><br><span class="line">    setbuf(stdin, NULL);</span><br><span class="line"></span><br><span class="line">    vuln();</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
@@ -387,7 +387,7 @@
 <li>when printf finish. It will fall into the rop chain and spawn a shell.</li>
 </ol>
 <p>With these step in mind, After looking at the stack, I came up with a solution.</p>
-<p><em>because i’m lazy, so i choose the address on the stack so that I only need to write at most 4 bytes</em></p>
+<p><em>because i&#39;m lazy, so i choose the address on the stack so that I only need to write at most 4 bytes</em></p>
 <ol>
 <li>change the value of (rsp+35*0x8) to (rsp + 5*0x8) using (rsp + 7*0x8)</li>
 <li>change the value of (rsp+5*0x8) to one gadget address using (rsp+35*0x8)</li>

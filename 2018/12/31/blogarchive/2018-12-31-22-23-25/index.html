@@ -278,7 +278,7 @@ export PATH+=:/usr/local/bin:/usr/bin:/bin
 import sys,os
 import subprocess
 
-<p>files = []<br>for f in sys.argv[1:]:<br>    files.append(f)<br>for file in files:<br>    videoPath = file<br>    audioPath = os.path.splitext(file)[0]+”.m4a”<br>    status = subprocess.call([“ffmpeg”, “-y”, “-i”, videoPath, “-acodec”, “copy”, “-vn”, audioPath], shell=False)<br>    if status == 0:<br>        pass<br>    else:<br>        pass<br>EOF<br></pre></p>
+<p>files = []<br>for f in sys.argv[1:]:<br>    files.append(f)<br>for file in files:<br>    videoPath = file<br>    audioPath = os.path.splitext(file)[0]+&quot;.m4a&quot;<br>    status = subprocess.call([&quot;ffmpeg&quot;, &quot;-y&quot;, &quot;-i&quot;, videoPath, &quot;-acodec&quot;, &quot;copy&quot;, &quot;-vn&quot;, audioPath], shell=False)<br>    if status == 0:<br>        pass<br>    else:<br>        pass<br>EOF<br></pre></p>
 
     </div>
 

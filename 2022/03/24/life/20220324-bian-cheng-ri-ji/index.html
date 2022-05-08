@@ -271,7 +271,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func (e *Engine) FetchTentacle(tentacle Tentacle) *TentacleResult &#123;</span><br><span class="line">	err := e.limiter.WaitN(e.context, 1)</span><br><span class="line">	&lt;-e.waitChan</span><br><span class="line">	result, _ := Fetch(tentacle, e.requestFunc, e.ReqHandlers, e.RespHandlers)</span><br><span class="line">	e.waitChan &lt;- 1</span><br><span class="line">	return result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>离谱在于，如果我有10000个页面要分析，这个东西的实现方式是先创建10000个goroutine，然后等一个goroutine结束了，再挑选新的goroutine执行。</p>
-<p>也就是说，如果有N个页面要爬，程序会同时创建N个goroutine…………</p>
+<p>也就是说，如果有N个页面要爬，程序会同时创建N个goroutine............</p>
 <p>虽然goroutine确实不怎么耗资源。但是现在一看怎么这么sb啊，为啥不直接用queue。完全不理解当时是怎么想的.</p>
 <p>把我自己给整尬了</p>
 <p>ps:</p>

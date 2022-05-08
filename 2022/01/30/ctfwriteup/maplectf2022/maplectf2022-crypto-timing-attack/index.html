@@ -283,7 +283,7 @@
 <li>get the bit given an index, encrypt flag using either sha256 or scrypt depending on the bit</li>
 <li>return the first 32 value of encrypted flag</li>
 </ul>
-<p>looks like we don’t have any possible way of getting the flag. </p>
+<p>looks like we don&#39;t have any possible way of getting the flag. </p>
 <p>However, since <code>scrypt</code> runs much slower than <code>sha256</code>, we can measure the time of encrypting flag. And then use time to figure out if the bit is 1 or 0.</p>
 <p>if we measure the time, we can see scrypt is using 0.16705632209777832 seconds, while sha256 only using 0.0001506805419921875, which is 1000 times slower.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; 0</span><br><span class="line">0 0.16705632209777832 128</span><br><span class="line">69adfaef506c83899a98cc3f670a0e5d</span><br><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; 1</span><br><span class="line">1 0.0001506805419921875 64</span><br><span class="line">3dc8c8cfae15c453bc162cafecc27575</span><br><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>

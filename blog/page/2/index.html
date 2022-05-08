@@ -577,7 +577,7 @@
 
       
           <h1 id="0x0-Introudction"><a href="#0x0-Introudction" class="headerlink" title="0x0 Introudction"></a>0x0 Introudction</h1><p>Maple CTF, which is first CTF event hold by Maple Bacon Team. Because it is the first CTF MapleBacon organzie a CTF event. This event is only open for current university students.</p>
-<p>Since most of senior team member and main team member didn’t participate CTF (because they are in charge of design problems), I was able to get a very good position when ctf ends.</p>
+<p>Since most of senior team member and main team member didn&#39;t participate CTF (because they are in charge of design problems), I was able to get a very good position when ctf ends.</p>
 <p>Since I only knows about pwn, for other category question, I basically OSINT, just search google for similar question and look its writeup.</p>
 <p>But I actually learned a lot during the event. <strong>AND</strong></p>
 <p>I get 2nd in individual and 3rd in team. Yeah!!!!!!!!!!!!!!!!!!</p>
@@ -665,7 +665,7 @@
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">axios.defaults.withCredentials = true</span><br></pre></td></tr></table></figure>
 
 <p>但是设置完之后，访问又出现了如下的问题</p>
-<p>Response to preflight request doesn’t pass access control check: The value of the ‘Access-Control-Allow-Origin’ header in the response must not be the wildcard ‘*’ when the request’s credentials mode is ‘include’. Origin ‘<a href="http://localhost:8080&#39;">http://localhost:8080&#39;</a> is therefore not allowed access. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.</p>
+<p>Response to preflight request doesn&#39;t pass access control check: The value of the &#39;Access-Control-Allow-Origin&#39; header in the response must not be the wildcard &#39;*&#39; when the request&#39;s credentials mode is &#39;include&#39;. Origin &#39;<a href="http://localhost:8080&#39;">http://localhost:8080&#39;</a> is therefore not allowed access. The credentials mode of requests initiated by the XMLHttpRequest is controlled by the withCredentials attribute.</p>
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/2022/01/09/coding/axio-shi-yong-withcredentials-hou-kua-yu-qing-qiu-chu-xian-cuo-wu/#more" rel="contents">
@@ -1004,7 +1004,7 @@
 
       
           <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
-<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address/version. Therefore, normal way of ret2libc didn’t work in this case, because we can’t get the address of <code>system</code> function.</p>
+<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address/version. Therefore, normal way of ret2libc didn&#39;t work in this case, because we can&#39;t get the address of <code>system</code> function.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">:&gt; ii</span><br><span class="line">[Imports]</span><br><span class="line">nth vaddr      bind   type   lib name</span><br><span class="line">―――――――――――――――――――――――――――――――――――――</span><br><span class="line">1   0x08049070 GLOBAL FUNC       read</span><br><span class="line">2   0x00000000 WEAK   NOTYPE     __gmon_start__</span><br><span class="line">3   0x08049080 GLOBAL FUNC       __libc_start_main</span><br><span class="line">4   0x00000000 GLOBAL OBJ        stdin</span><br><span class="line">5   0x08049090 GLOBAL FUNC       setvbuf</span><br><span class="line">6   0x00000000 GLOBAL OBJ        stdout</span><br></pre></td></tr></table></figure>
 
 <p>To solve this question, it required technique called <strong>ret2dlresolve</strong>, after serveral hour of reading article, i finally understand the process of return to dl resolve</p>

@@ -261,9 +261,9 @@
 
       
         <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>I participate magpie ctf a few weeks ago. Our team go 2nd place, which is pretty good. And we also got $512 (102 for each team members) for reward of getting 2nd</p>
-<p>Anyway, there is a question in the magpie ctf called “our file belong to us” <a target="_blank" rel="noopener" href="https://github.com/infosec-ucalgary/magpieCTF2022-public/tree/main/challenges/web/our_files_are_belong_only_to_us">[linkhere]</a></p>
+<p>Anyway, there is a question in the magpie ctf called &quot;our file belong to us&quot; <a target="_blank" rel="noopener" href="https://github.com/infosec-ucalgary/magpieCTF2022-public/tree/main/challenges/web/our_files_are_belong_only_to_us">[linkhere]</a></p>
 <p>This is a pretty fun challenge I got a solution for.</p>
-<p>Sadly, this challenge copy just paste code from another challenge called “go-fs” back in justifyCTF2020 with additional jwt authentication. but the basic idea is the same :(</p>
+<p>Sadly, this challenge copy just paste code from another challenge called &quot;go-fs&quot; back in justifyCTF2020 with additional jwt authentication. but the basic idea is the same :(</p>
 <span id="more"></span>
 
 <h1 id="0x1-exploit-explaination"><a href="#0x1-exploit-explaination" class="headerlink" title="0x1 exploit explaination"></a>0x1 exploit explaination</h1><p>the basic idea is, this web challenge implement a custom file system. And the read/seek function use offset to locate a file. combine with a bug for range header founded in go 1.15. We can acess a file which is not intended to.</p>

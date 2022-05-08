@@ -268,7 +268,7 @@
 
       
         <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
-<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address/version. Therefore, normal way of ret2libc didn’t work in this case, because we can’t get the address of <code>system</code> function.</p>
+<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address/version. Therefore, normal way of ret2libc didn&#39;t work in this case, because we can&#39;t get the address of <code>system</code> function.</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">:&gt; ii</span><br><span class="line">[Imports]</span><br><span class="line">nth vaddr      bind   type   lib name</span><br><span class="line">―――――――――――――――――――――――――――――――――――――</span><br><span class="line">1   0x08049070 GLOBAL FUNC       read</span><br><span class="line">2   0x00000000 WEAK   NOTYPE     __gmon_start__</span><br><span class="line">3   0x08049080 GLOBAL FUNC       __libc_start_main</span><br><span class="line">4   0x00000000 GLOBAL OBJ        stdin</span><br><span class="line">5   0x08049090 GLOBAL FUNC       setvbuf</span><br><span class="line">6   0x00000000 GLOBAL OBJ        stdout</span><br></pre></td></tr></table></figure>
 
 <p>To solve this question, it required technique called <strong>ret2dlresolve</strong>, after serveral hour of reading article, i finally understand the process of return to dl resolve</p>
@@ -303,7 +303,7 @@
 
 <p>for example, lets take look at second Elf32_Sym struct in the .dynsym</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x08048258  2000 0000 0000 0000 0000 0000 1200 0000   ...............</span><br></pre></td></tr></table></figure>
-<p>0x20 indicate the string offset in .dynstr. if we take look at .dynstr + 0x20, we can found the corresponding function name string “read\x00”</p>
+<p>0x20 indicate the string offset in .dynstr. if we take look at .dynstr + 0x20, we can found the corresponding function name string &quot;read\x00&quot;</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[0x08049235]&gt; px @ 0x080482c8+0x20</span><br><span class="line">- offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span><br><span class="line">0x080482e8  7265 6164 0073 7464 6f75 7400 7365 7476  read.stdout.setv</span><br></pre></td></tr></table></figure>
 
 <h3 id="JMPREL"><a href="#JMPREL" class="headerlink" title="JMPREL"></a>JMPREL</h3><ul>
@@ -349,7 +349,7 @@
 <li>use <code>r_info</code> to find <code>Elf32_Sym</code></li>
 <li>use <code>Elf32_Sym</code> struct to find function name</li>
 <li>search by function name and then return real function address</li>
-<li>call the function by it’s paramter</li>
+<li>call the function by it&#39;s paramter</li>
 </ol>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_dl_runtime_resolve(link_map, rel_offset) &#123;</span><br><span class="line">    Elf32_Rel * rel_entry = JMPREL + rel_offset ;</span><br><span class="line">    Elf32_Sym * sym_entry = &amp;SYMTAB [ ELF32_R_SYM ( rel_entry -&gt; r_info )];</span><br><span class="line">    char * sym_name = STRTAB + sym_entry -&gt; st_name ;</span><br><span class="line">    _search_for_symbol_(link_map, sym_name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
