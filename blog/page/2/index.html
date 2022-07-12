@@ -207,6 +207,83 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/" class="post-title-link" itemprop="url">Malformed Query - How to analyze a transmission protocol [utctf 2022]</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-03-13 15:47:21 / 修改时间：17:43:07" itemprop="dateCreated datePublished" datetime="2022-03-13T15:47:21-07:00">2022-03-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="0x0-Description"><a href="#0x0-Description" class="headerlink" title="0x0 Description"></a>0x0 Description</h1><p>The problem give us a wireshark data packets files. Our goal is to analyze the packet, find the protocol used in the interaction and get the flag.</p>
+<h1 id="0x1-Analyze-the-protocol"><a href="#0x1-Analyze-the-protocol" class="headerlink" title="0x1 Analyze the protocol"></a>0x1 Analyze the protocol</h1><p>in the wireshark, there is a very suspicious udp stream (3.93.213.98:9855) that gives us a command result of <code>ls -al</code>.</p>
+<p>the connection start with a packet that contains <code>publickey</code>. </p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/07/ctf/why-pixilation-is-bad/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -919,93 +996,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/" class="post-title-link" itemprop="url">【Seccon CTF 2021】write up 【pwn】【web】【misc】</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-12-12 14:33:29" itemprop="dateCreated datePublished" datetime="2021-12-12T14:33:29-08:00">2021-12-12</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-07 11:38:13" itemprop="dateModified" datetime="2022-03-07T11:38:13-08:00">2022-03-07</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>I participate seccon 2021 yesterday.</p>
-<ul>
-<li><a href="#0x1-Web-vulnerabilities">web-vulnerabilities</a></li>
-<li><a href="#0x2-Misc-hitchhike">misc-hitchhike</a></li>
-<li><a href="#0x3-Pwn-kasu-bof">pwn-kasu_bof</a></li>
-<li><a href="#0x4-pwn-average">pwn-average</a></li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/12/12/ctfwriteup/secconctf2021/seccon-2021-write-up/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1077,7 +1067,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>

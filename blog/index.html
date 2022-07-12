@@ -207,6 +207,87 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/07/11/life/20220711-ri-ji/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2022/07/11/life/20220711-ri-ji/" class="post-title-link" itemprop="url">关于apt update到一半关机导致ubuntu系统崩溃这回事</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2022-07-11 23:44:29 / 修改时间：23:59:51" itemprop="dateCreated datePublished" datetime="2022-07-11T23:44:29-07:00">2022-07-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>总之，今天在我的beelink小主机上捣鼓一些东西。</p>
+<p>想安装一个软件包，看到有好多可以可以更新的，然后心想着要不全部更新一哈，然后我就<code>apt upgrade</code>了。</p>
+<p>这本来也没什么，但是我<strong>不小心</strong>按倒了电源键，导致这整个系统关机了。这一关机，就出了大问题。</p>
+<p>先是打不开桌面，一只卡在Ubuntu然后带4个点的界面上。</p>
+<p>然后我又重启了一下，摁<code>alt+f1</code>看看日志，不看不知道，一看吓一跳，所有的service基本都报错了。而且这个报错还不是一般的报错。</p>
+<p>先用<code>alt+f2</code>进入命令行界面，然后用<code>systemctl</code>查看报错内容，好家伙，全是<code>core-dump</code>或者<code>segment fault</code>。直接给我整麻了。</p>
+<h2 id="尝试解决"><a href="#尝试解决" class="headerlink" title="尝试解决"></a>尝试解决</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2022/07/11/life/20220711-ri-ji/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/06/26/coding/linux-hard-link-vs-soft-link/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -923,83 +1004,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/" class="post-title-link" itemprop="url">Malformed Query - How to analyze a transmission protocol [utctf 2022]</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2022-03-13 15:47:21 / 修改时间：17:43:07" itemprop="dateCreated datePublished" datetime="2022-03-13T15:47:21-07:00">2022-03-13</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CTF/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="0x0-Description"><a href="#0x0-Description" class="headerlink" title="0x0 Description"></a>0x0 Description</h1><p>The problem give us a wireshark data packets files. Our goal is to analyze the packet, find the protocol used in the interaction and get the flag.</p>
-<h1 id="0x1-Analyze-the-protocol"><a href="#0x1-Analyze-the-protocol" class="headerlink" title="0x1 Analyze the protocol"></a>0x1 Analyze the protocol</h1><p>in the wireshark, there is a very suspicious udp stream (3.93.213.98:9855) that gives us a command result of <code>ls -al</code>.</p>
-<p>the connection start with a packet that contains <code>publickey</code>. </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2022/03/13/ctfwriteup/utctf2022/utctf2022-malformed-query-network/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1071,7 +1075,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives">
         
-          <span class="site-state-item-count">87</span>
+          <span class="site-state-item-count">88</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
