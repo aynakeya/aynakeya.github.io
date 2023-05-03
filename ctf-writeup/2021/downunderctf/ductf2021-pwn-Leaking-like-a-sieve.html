@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Mitigations12345Arch:     amd64-64-littleRELRO:    Partial RELROStack:    No canary foundNX:       NX enabledPIE:      PIE enabled  Solutionit is a typical printf problem. it ask as a string, and then">
+<meta property="og:type" content="website">
+<meta property="og:title" content="[writeup][DownUnderCTF 2021] pwn Leaking like a sieve">
+<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2021/downunderctf/ductf2021-pwn-Leaking-like-a-sieve.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="Mitigations12345Arch:     amd64-64-littleRELRO:    Partial RELROStack:    No canary foundNX:       NX enabledPIE:      PIE enabled  Solutionit is a typical printf problem. it ask as a string, and then">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-10-09T21:06:08.000Z">
+<meta property="article:modified_time" content="2022-03-07T18:58:12.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="writeup">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="ductf">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="buffer overflow">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2021/downunderctf/ductf2021-pwn-Leaking-like-a-sieve">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2021/downunderctf/ductf2021-pwn-Leaking-like-a-sieve.html","path":"ctf-writeup/2021/downunderctf/ductf2021-pwn-Leaking-like-a-sieve.html","title":"[writeup][DownUnderCTF 2021] pwn Leaking like a sieve"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[writeup][DownUnderCTF 2021] pwn Leaking like a sieve | Aynakeya's Blog
+</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mitigations"><span class="nav-number">1.</span> <span class="nav-text">Mitigations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solution"><span class="nav-number">2.</span> <span class="nav-text">Solution</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Code"><span class="nav-number">3.</span> <span class="nav-text">Code</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Flag"><span class="nav-number">4.</span> <span class="nav-text">Flag</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">[writeup][DownUnderCTF 2021] pwn Leaking like a sieve
+</h1>
+
+<div class="post-meta-container">
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2021/">2021</a></li>
+            <li><a href="/ctf-writeup/2021/downunderctf/">DOWNUNDERCTF</a></li>
+            <li>DUCTF2021-PWN-LEAKING-LIKE-A-SIEVE</li>
+  </ul>
+</div>
+
+</header>
+
+      
+      
+      <div class="post-body">
+          <h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><p>it is a typical printf problem. it ask as a string, and then out. </p>
+<p>we can use string format to get the data.</p>
+<p>In x64 system. the first argument is in rdi, and 2-6 argument are stored in register.</p>
+<span id="more"></span>
+
+<table>
+<thead>
+<tr>
+<th align="center">Register</th>
+<th align="center">Purpose</th>
+<th align="center">Saved across calls</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">%rax</td>
+<td align="center">temp register; return value</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%rbx</td>
+<td align="center">callee-saved</td>
+<td align="center">Yes</td>
+</tr>
+<tr>
+<td align="center">%rcx</td>
+<td align="center">used to pass 4th argument to functions</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%rdx</td>
+<td align="center">used to pass 3rd argument to functions</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%rsp</td>
+<td align="center">stack pointer</td>
+<td align="center">Yes</td>
+</tr>
+<tr>
+<td align="center">%rbp</td>
+<td align="center">callee-saved; base pointer</td>
+<td align="center">Yes</td>
+</tr>
+<tr>
+<td align="center">%rsi</td>
+<td align="center">used to pass 2nd argument to functions</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%rdi</td>
+<td align="center">used to pass 1st argument to functions</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%r8</td>
+<td align="center">used to pass 5th argument to functions</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%r9</td>
+<td align="center">used to pass 6th argument to functions</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%r10-r11</td>
+<td align="center">temporary</td>
+<td align="center">No</td>
+</tr>
+<tr>
+<td align="center">%r12-r15</td>
+<td align="center">callee-saved registers</td>
+<td align="center">Yes</td>
+</tr>
+</tbody></table>
+<p>However, after all the register are used, program get value from <strong>stack</strong> which is <strong>rsp</strong>.</p>
+<p>and rsp indicate a local variable <code>var_60h</code></p>
+<p>according to the disassembly, <code>var_60h</code> is a pointer to s, which store the flag.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">0x000011ef      lea     rax, [s]</span><br><span class="line">0x000011f3      mov     qword [var_60h], rax</span><br></pre></td></tr></table></figure>
+
+<p>so we can let printf print 7th argument (which is rsp) as string.</p>
+<p>by using <code>%p%p%p%p%p %s</code> or <code>%6$s</code></p>
+<h2 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">int main (int argc, char **argv, char **envp);</span><br><span class="line">; var int64_t var_60h @ rbp-0x60</span><br><span class="line">; var FILE *stream @ rbp-0x58</span><br><span class="line">; var char *format @ rbp-0x50</span><br><span class="line">; var char *s @ rbp-0x30</span><br><span class="line">; var int64_t var_8h @ rbp-0x8</span><br><span class="line">0x000011d8      push    rbp</span><br><span class="line">0x000011d9      mov     rbp, rsp</span><br><span class="line">0x000011dc      sub     rsp, 0x60</span><br><span class="line">0x000011e0      mov     rax, qword fs:[0x28]</span><br><span class="line">0x000011e9      mov     qword [var_8h], rax</span><br><span class="line">0x000011ed      xor     eax, eax</span><br><span class="line">0x000011ef      lea     rax, [s]</span><br><span class="line">0x000011f3      mov     qword [var_60h], rax</span><br><span class="line"></span><br><span class="line">int main (int argc, char **argv, char **envp);</span><br><span class="line">; var int64_t var_60h @ rbp-0x60</span><br><span class="line">; var FILE *stream @ rbp-0x58</span><br><span class="line">; var char *format @ rbp-0x50</span><br><span class="line">; var char *s @ rbp-0x30</span><br><span class="line">; var int64_t var_8h @ rbp-0x8</span><br><span class="line"></span><br><span class="line">void main(void)</span><br><span class="line">&#123;</span><br><span class="line">    int64_t iVar1;</span><br><span class="line">    int64_t in_FS_OFFSET;</span><br><span class="line">    int64_t var_60h;</span><br><span class="line">    FILE *stream;</span><br><span class="line">    char *format;</span><br><span class="line">    char *s;</span><br><span class="line">    int64_t var_8h;</span><br><span class="line">    </span><br><span class="line">    var_8h = *(int64_t *)(in_FS_OFFSET + 0x28);</span><br><span class="line">    buffer_init();</span><br><span class="line">    iVar1 = fopen(&quot;./flag.txt&quot;, 0x2008);</span><br><span class="line">    if (iVar1 == 0) &#123;</span><br><span class="line">        puts(&quot;The flag file isn\&#x27;t loading. Please contact an organiser if you are running this on the shell server.&quot;);</span><br><span class="line">        exit(0);</span><br><span class="line">    &#125;</span><br><span class="line">    fgets(&amp;s, 0x20, iVar1);</span><br><span class="line">    do &#123;</span><br><span class="line">        puts(&quot;What is your name?&quot;);</span><br><span class="line">        fgets(&amp;format, 0x20, _stdin);</span><br><span class="line">        printf(&quot;\nHello there, &quot;);</span><br><span class="line">        printf(&amp;format);</span><br><span class="line">        putchar(10);</span><br><span class="line">    &#125; while( true );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Flag"><a href="#Flag" class="headerlink" title="Flag"></a>Flag</h2><p>DUCTF{f0rm4t_5p3c1f13r_m3dsg!}</p>
+
+      </div>
+      
+      
+      
+    </div>
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2021/">2021</a></li>
+            <li><a href="/ctf-writeup/2021/downunderctf/">DOWNUNDERCTF</a></li>
+            <li>DUCTF2021-PWN-LEAKING-LIKE-A-SIEVE</li>
+  </ul>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

