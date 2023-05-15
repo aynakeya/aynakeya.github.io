@@ -3433,6 +3433,37 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>在Fyne.io中集成mpv进行媒体播放</title>
+    <url>/2023/05/15/coding/use-libmpv-in-fyne-gui-framework/</url>
+    <content><![CDATA[<h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在我的一个<a href="https://github.com/AynaLivePlayer/AynaLivePlayer">项目</a>中，，我需要在Fyne编写的GUI中播放视频。然而Fyne这个框架原生并不支持视频播放，所以我引入了MPV作为视频解码与播放的库。</p>
+<p>为了将MPV的输出集成到Fyne的GUI中，我可以通过设置MPV的wid选项来控制。在Windows上，这个WID就是Windows<br>handle id (HWND)。 在Linux中，这个ID通常为X11的window id。</p>
+<p>然而，Fyne同样不支持直接获取window id。为了实现这个功能，我们需要对Fyne进行一些修改，具体修改如下。</p>
+<span id="more"></span>
+
+<h2 id="修改Fyne源码"><a href="#修改Fyne源码" class="headerlink" title="修改Fyne源码"></a>修改Fyne源码</h2><p>首先，在window_windows.go文件中，添加以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func (w *window) Wid() uintptr &#123;</span><br><span class="line">    w.viewLock.RLock()</span><br><span class="line">    defer w.viewLock.RUnlock()</span><br><span class="line"></span><br><span class="line">    if w.closing &#123;</span><br><span class="line">        return 0</span><br><span class="line">    &#125;</span><br><span class="line">    if (w.viewport == nil) &#123;</span><br><span class="line">        return uintptr(0)</span><br><span class="line">    &#125;</span><br><span class="line">    return uintptr(w.viewport.GetWin32Window())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，在window_linux.go文件中，添加以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func (w *window) Wid() uintptr &#123;</span><br><span class="line">    w.viewLock.RLock()</span><br><span class="line">    defer w.viewLock.RUnlock()</span><br><span class="line"></span><br><span class="line">    if w.closing &#123;</span><br><span class="line">        return 0</span><br><span class="line">    &#125;</span><br><span class="line">    if (w.viewport == nil) &#123;</span><br><span class="line">        return uintptr(0)</span><br><span class="line">    &#125;</span><br><span class="line">    return uintptr(w.viewport.GetX11Window())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h2><p>以下是使用修改后的Fyne源码并结合MPV库的测试代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">    &quot;fyne.io/fyne/v2&quot;</span><br><span class="line">    &quot;fyne.io/fyne/v2/app&quot;</span><br><span class="line">    &quot;fyne.io/fyne/v2/theme&quot;</span><br><span class="line">    &quot;github.com/aynakeya/go-mpv&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type WindowHandleMagic interface &#123;</span><br><span class="line">    Wid() uintptr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// need to apply patch first</span><br><span class="line">func GetWindowHandle(window fyne.Window) uintptr &#123;</span><br><span class="line">    x, ok := window.(WindowHandleMagic)</span><br><span class="line">    if ok &#123;</span><br><span class="line">        return x.Wid()</span><br><span class="line">    &#125;</span><br><span class="line">    return 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    a := app.NewWithID(&quot;io.fyne.mpvdemo&quot;)</span><br><span class="line">    a.SetIcon(theme.FyneLogo())</span><br><span class="line">    window := a.NewWindow(&quot;Fyne MPV Player Demo&quot;)</span><br><span class="line">    var libmpv *mpv.Mpv = nil</span><br><span class="line">    window.Resize(fyne.NewSize(1080, 720))</span><br><span class="line">    go func() &#123;</span><br><span class="line">        wid := GetWindowHandle(window)</span><br><span class="line">        for wid == 0 &#123;</span><br><span class="line">            wid = GetWindowHandle(window)</span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(&quot;got windows handle %d\n&quot;, wid)</span><br><span class="line">        libmpv = mpv.Create()</span><br><span class="line">        err := libmpv.Initialize()</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            panic(err)</span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Println(libmpv.SetOptionString(&quot;wid&quot;, fmt.Sprintf(&quot;%d&quot;, wid)))</span><br><span class="line">        fmt.Println(libmpv.Command([]string&#123;&quot;loadfile&quot;, &quot;/home/aynakeya/Videos/ymca.mp4&quot;&#125;))</span><br><span class="line">    &#125;()</span><br><span class="line">    window.ShowAndRun()</span><br><span class="line">    if libmpv != nil &#123;</span><br><span class="line">        libmpv.Destroy()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h2><p><img data-src="https://user-images.githubusercontent.com/32156054/238171015-a99af8ea-d311-41c4-b129-1c515eea4341.png" alt="img"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><blockquote>
+<p><a href="https://github.com/fyne-io/fyne/issues/449#issuecomment-1546820151">https://github.com/fyne-io/fyne/issues/449#issuecomment-1546820151</a><br><a href="https://github.com/AynaLivePlayer/AynaLivePlayer">AynaLivePlayer</a></p>
+</blockquote>
+]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+        <tag>libmpv</tag>
+        <tag>fyne</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>about</title>
     <url>/about/index.html</url>
     <content><![CDATA[]]></content>

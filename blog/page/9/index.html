@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">91</span>
+          <span class="site-state-item-count">92</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">73</span>
+        <span class="site-state-item-count">75</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -191,6 +191,106 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/01/blogarchive/2018-12-31-22-23-25/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/01/01/blogarchive/2018-12-31-22-23-25/" class="post-title-link" itemprop="url">在automator里使用python3</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-01-01 14:23:25" itemprop="dateCreated datePublished" datetime="2019-01-01T14:23:25+08:00">2019-01-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>在automator里使用python3<br><br>使用&#x2F;bin&#x2F;bash,然后看下面代码。</p>
+<pre>
+export PATH+=:/usr/local/bin:/usr/bin:/bin
+/usr/local/bin/python3 << "EOF" - "$@"
+      //python codes
+EOF
+</pre>
+<br>
+e.g. 实现FFmpeg提取音频。
+<pre>
+export PATH+=:/usr/local/bin:/usr/bin:/bin
+/usr/local/bin/python3 << "EOF" - "$@"
+import sys,os
+import subprocess
+
+<p>files &#x3D; []<br>for f in sys.argv[1:]:<br>    files.append(f)<br>for file in files:<br>    videoPath &#x3D; file<br>    audioPath &#x3D; os.path.splitext(file)[0]+&quot;.m4a&quot;<br>    status &#x3D; subprocess.call([&quot;ffmpeg&quot;, &quot;-y&quot;, &quot;-i&quot;, videoPath, &quot;-acodec&quot;, &quot;copy&quot;, &quot;-vn&quot;, audioPath], shell&#x3D;False)<br>    if status &#x3D;&#x3D; 0:<br>        pass<br>    else:<br>        pass<br>EOF<br></pre></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
