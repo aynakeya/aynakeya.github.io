@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的 准备介绍一下今天的对象 agefans。 那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。  但是没有关系，把breakpoint关掉就行了。  简单的分析先搜索一下视频文件在哪里出现了， 可以发现视频地址是在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="agefans视频解析逆向">
+<meta property="og:url" content="http://www.aynakeya.com/2021/10/14/ctf/agefans-shi-pin-jie-xi-ni-xiang/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的 准备介绍一下今天的对象 agefans。 那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。  但是没有关系，把breakpoint关掉就行了。  简单的分析先搜索一下视频文件在哪里出现了， 可以发现视频地址是在">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084109.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084120.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084200.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-12_143227.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_091306.jpg">
+<meta property="article:published_time" content="2021-10-14T01:22:15.000Z">
+<meta property="article:modified_time" content="2023-03-16T05:46:06.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="anime">
+<meta property="article:tag" content="reverse">
+<meta property="article:tag" content="encryption">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084109.jpg">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/2021/10/14/ctf/agefans-shi-pin-jie-xi-ni-xiang/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/2021/10/14/ctf/agefans-shi-pin-jie-xi-ni-xiang/","path":"2021/10/14/ctf/agefans-shi-pin-jie-xi-ni-xiang/","title":"agefans视频解析逆向"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>agefans视频解析逆向 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87"><span class="nav-number">2.</span> <span class="nav-text">准备</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">简单的分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%94%E7%BB%86%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-number">4.</span> <span class="nav-text">仔细的分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-number">5.</span> <span class="nav-text">特殊的分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8A%A0%E5%AF%86%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-number">6.</span> <span class="nav-text">加密的分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#getplay-pck"><span class="nav-number">6.1.</span> <span class="nav-text">getplay_pck()</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#getplay-pck2"><span class="nav-number">6.2.</span> <span class="nav-text">getplay_pck2()</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#quot-keygen-quot"><span class="nav-number">7.</span> <span class="nav-text">&quot;keygen&quot;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A2%8E%E7%A2%8E%E5%BF%B5"><span class="nav-number">8.</span> <span class="nav-text">碎碎念</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">93</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">77</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2021/10/14/ctf/agefans-shi-pin-jie-xi-ni-xiang/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="agefans视频解析逆向 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          agefans视频解析逆向
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-10-14 09:22:15" itemprop="dateCreated datePublished" datetime="2021-10-14T09:22:15+08:00">2021-10-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-03-16 13:46:06" itemprop="dateModified" datetime="2023-03-16T13:46:06+08:00">2023-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的</p>
+<h1 id="准备"><a href="#准备" class="headerlink" title="准备"></a>准备</h1><p>介绍一下今天的对象 <a target="_blank" rel="noopener" href="https://www.agefans.cc/">agefans</a>。</p>
+<p>那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。</p>
+<p><img data-src="/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084109.jpg" alt="2021-10-14_084109.jpg"><br><img data-src="/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084120.jpg" alt="2021-10-14_084120.jpg"></p>
+<p>但是没有关系，把breakpoint关掉就行了。</p>
+<p><img data-src="/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_084200.png" alt="2021-10-14_084200.png"></p>
+<h1 id="简单的分析"><a href="#简单的分析" class="headerlink" title="简单的分析"></a>简单的分析</h1><p>先搜索一下视频文件在哪里出现了，</p>
+<p>可以发现视频地址是在 _getplay2 这个api中得到的，</p>
+<p>进一步分析可以得到_getplayer2是通过_getplay 302 跳转的。</p>
+<span id="more"></span>
+<p><img data-src="/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-12_143227.jpg" alt="2021-10-12_143227.jpg"></p>
+<p>比如, <a target="_blank" rel="noopener" href="https://www.agefans.cc/_getplay?aid=20210249&playindex=2&epindex=1">https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1</a>, 会302跳转到 <a target="_blank" rel="noopener" href="https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx">https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx</a> 最后获得视频地址。</p>
+<p>但是，直接访问 <a target="_blank" rel="noopener" href="https://www.agefans.cc/_getplay?aid=20210249&playindex=2&epindex=1">https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1</a> 无法得到302跳转，反而会返回 err:timeout. 所以猜测有一个鉴权。</p>
+<h1 id="仔细的分析"><a href="#仔细的分析" class="headerlink" title="仔细的分析"></a>仔细的分析</h1><p>搜索 _getplay?, 在 <code>s_playpre.js</code> 中发现了他的踪迹</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function __cb_getplay_url()&#123;</span><br><span class="line">    //</span><br><span class="line">    const _url = window.location.href;</span><br><span class="line">    const _rand = Math.random();</span><br><span class="line">    var _getplay_url = (_url.replace(/.*\/play\/(\d&#123;8&#125;)-(\d+?)-(\d+?)\.html.*/, &#x27;/_getplay?aid=$1&amp;playindex=$2&amp;epindex=$3&#x27;) + &#x27;&amp;r=&#x27; + _rand);</span><br><span class="line">    //</span><br><span class="line">    var re_resl = _getplay_url.match(/[&amp;?]+epindex=(\d+)/);</span><br><span class="line">    const hf_epi = (&#x27;&#x27; + FEI2(re_resl[1]));</span><br><span class="line">    const t_epindex_ = &#x27;epindex=&#x27;;</span><br><span class="line">    _getplay_url = _getplay_url.replace(t_epindex_ + re_resl[1], t_epindex_ + hf_epi);</span><br><span class="line">    return _getplay_url;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>继续看哪些地方调用了<code>__cb_getplay_url</code>, </p>
+<p>找到发送请求的地方, </p>
+<p>简单分析一下这个用来处理权限问题的函数应该为<code>getplay_pck()</code> 以及 <code>getplay_pck2()</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">function __getset_play(_in_id, cb_getplay_url, cb_cnt)&#123;</span><br><span class="line">    //</span><br><span class="line">    const _url = window.location.href;</span><br><span class="line">    const _rand = Math.random();</span><br><span class="line">    const _getplay_url = cb_getplay_url();</span><br><span class="line">    if(dettchk())&#123;</span><br><span class="line">      $.get(_getplay_url, function(_in_data, _in_status)&#123;</span><br><span class="line">          if(&#x27;err:timeout&#x27; == _in_data)&#123;</span><br><span class="line">            if(cb_cnt &gt; 0)&#123;</span><br><span class="line">              __getplay_pck();</span><br><span class="line">              __getplay_pck2();</span><br><span class="line">              return __getset_play(_in_id, cb_getplay_url, cb_cnt-1);</span><br><span class="line">            &#125;else &#123;</span><br><span class="line">              return false;</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">          // ignored</span><br></pre></td></tr></table></figure>
+
+<p>同理，搜索<code>getplay_pck()</code> 以及 <code>getplay_pck2()</code>, 发现他们分别出现在 <code>s_runtimelib.js</code> 和 <code>s_dett.js</code>中</p>
+<p>但是这两个是加密的, 我们得对他们进行一波解密。</p>
+<h1 id="特殊的分析"><a href="#特殊的分析" class="headerlink" title="特殊的分析"></a>特殊的分析</h1><p>在进行解密之前，我们先大概看一下服务器是如何鉴定正常的请求</p>
+<p>如下是一个请求</p>
+<p>在经过几次试验后，可以发现:</p>
+<ul>
+<li>这个请求可以正常获取到数据一定时间，过了一定时间后就会失效并且返回err:timeout.</li>
+<li>除了referer之外, 要获取到正常数据，还需要cookie，可能是是<strong>t1,k2,k2,t2</strong></li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">GET /_getplay?aid=20210249&amp;playindex=2&amp;epindex=1&amp;r=0.7315117942661356 HTTP/1.1</span><br><span class="line">Host: www.agefans.cc</span><br><span class="line">Connection: close</span><br><span class="line">Pragma: no-cache</span><br><span class="line">Cache-Control: no-cache</span><br><span class="line">sec-ch-ua: &quot;Chromium&quot;;v=&quot;94&quot;, &quot;Google Chrome&quot;;v=&quot;94&quot;, &quot;;Not A Brand&quot;;v=&quot;99&quot;</span><br><span class="line">Accept: */*</span><br><span class="line">X-Requested-With: XMLHttpRequest</span><br><span class="line">sec-ch-ua-mobile: ?0</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36</span><br><span class="line">sec-ch-ua-platform: &quot;Windows&quot;</span><br><span class="line">Sec-Fetch-Site: same-origin</span><br><span class="line">Sec-Fetch-Mode: cors</span><br><span class="line">Sec-Fetch-Dest: empty</span><br><span class="line">Referer: https://www.agefans.cc/play/20210249?playid=2_1</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.9</span><br><span class="line">Cookie: ck_volume=0.18; fa_c=1; Hm_lvt_7fdef555dc32f7d31fadd14999021b7b=1634075310,1634227432; Hm_lpvt_7fdef555dc32f7d31fadd14999021b7b=1634227432; t1=1634227492738; k1=372490656; k2=71052386557371; t2=1634227447871; fa_t=1634227447913</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>同时，失败的请求会返回 set-cookie, 如下</p>
+<p>set-cookie设置了t1以及k1, </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">HTTP/1.1 200 OK</span><br><span class="line">Date: Thu, 14 Oct 2021 16:07:43 GMT</span><br><span class="line">Content-Type: text/plain; charset=utf-8</span><br><span class="line">Content-Length: 11</span><br><span class="line">Connection: close</span><br><span class="line">Set-Cookie: t1=1634227713016; Path=/</span><br><span class="line">Set-Cookie: k1=382912592; Path=/</span><br><span class="line">X-XSS-Protection: 1; mode=block</span><br><span class="line">X-Content-Type-Options: nosniff</span><br><span class="line">Access-Control-Allow-Origin: https://web.age-spa.com:8443</span><br><span class="line">Access-Control-Allow-Methods: GET, POST, OPTIONS</span><br><span class="line">Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization</span><br><span class="line">Access-Control-Allow-Credentials: true</span><br><span class="line">Cache-Control: no-store</span><br><span class="line">Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span><br><span class="line">CF-Cache-Status: DYNAMIC</span><br><span class="line">Expect-CT: max-age=604800, report-uri=&quot;https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct&quot;</span><br><span class="line">Server: cloudflare</span><br><span class="line">CF-RAY: 69e20ff0ae286040-SEA</span><br><span class="line"></span><br><span class="line">err:timeout</span><br></pre></td></tr></table></figure>
+
+<p><strong>所以，综合分析可以得知，首先我们需要获取<em>t1, k2</em>. 然后通过一定的算法，生成<em>t2,k2</em>并保存在cookie中，再次发送请求就可以获得数据了</strong></p>
+<h1 id="加密的分析"><a href="#加密的分析" class="headerlink" title="加密的分析"></a>加密的分析</h1><p>先来看一下这两文件长什么样</p>
+<p><img data-src="/images/coding/agefans%E8%A7%86%E9%A2%91%E8%A7%A3%E6%9E%90%E9%80%86%E5%90%91/2021-10-14_091306.jpg" alt="2021-10-14_091306.jpg"></p>
+<p>简单分析后得知, 加密后的代码大概分为三个部分</p>
+<ul>
+<li>数据段，包括对数据进行进一步处理</li>
+<li>解密函数</li>
+<li>加密代码段</li>
+</ul>
+<p>那么要解密也很简单了，只要把加密的地方，例如_0x1705(&quot;xx&quot;,&quot;bbb&quot;)通过解密函数解密即可。</p>
+<p>当然函数名是是还原不了了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">function __getplay_pck2() &#123;</span><br><span class="line">;var encode_version = &#x27;加密类型版本&#x27;</span><br><span class="line">      , fwiba = &#x27;__0x9ecf8&#x27;</span><br><span class="line">      , __0x9ecf8 = [&#x27;数据&#x27;];</span><br><span class="line">     // 处理数据 </span><br><span class="line">    (function(_0x25c7a5, _0x422073) &#123;</span><br><span class="line">        var _0x25cb8a = function(_0x355576) &#123;</span><br><span class="line">            while (--_0x355576) &#123;</span><br><span class="line">                _0x25c7a5[&#x27;push&#x27;](_0x25c7a5[&#x27;shift&#x27;]());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">        _0x25cb8a(++_0x422073);</span><br><span class="line">    &#125;(__0x9ecf8, 0x1db));</span><br><span class="line">    // 解密函数</span><br><span class="line">    var _0x1705 = function(_0x501411, _0x17d72d) &#123;&#125;</span><br><span class="line"></span><br><span class="line">    // 加密后的原始代码</span><br><span class="line">    xxx[_0x1705(xxx,xxx)] = xxx</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>知道了解密方法之后我们来看一下用来做验证的两个函数到底干了什么</p>
+<h2 id="getplay-pck"><a href="#getplay-pck" class="headerlink" title="getplay_pck()"></a>getplay_pck()</h2><p>首先是犯下首先之罪的 <code>__getplay_pck()</code>,</p>
+<p>猜测一下<code>f</code>大概就是获得cookie的值，然后<code>f2</code>大概就是设置cookie的值。</p>
+<p>如下图分析，这段算法首先获取了t1的值，然后把t1除 0x3e8 (1000) 四舍五入取整，最后右移5位</p>
+<p>k2可通过一段不明意义的计算获取</p>
+<p>t2为当前时间</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">// get cookie t1 </span><br><span class="line">// t1 = Math.round(Number(f(&#x27;t1&#x27;)) / 0x3e8) &gt;&gt; 0x5;</span><br><span class="line">t1 = Math[&#x27;round&#x27;](Number(f(&#x27;t1&#x27;)) / 0x3e8) &gt;&gt; 0x5;</span><br><span class="line"></span><br><span class="line">// set cookie k2</span><br><span class="line">// k2 = (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1</span><br><span class="line">f2(&#x27;k2&#x27;, (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1);</span><br><span class="line"></span><br><span class="line">// set cookie t2</span><br><span class="line">// k2 =  new Date().getTime()+&quot;&quot;</span><br><span class="line">f2(&#x27;t2&#x27;, new Date()[_0x1705(&#x27;0x12&#x27;, &#x27;bPNz&#x27;)]());</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="getplay-pck2"><a href="#getplay-pck2" class="headerlink" title="getplay_pck2()"></a>getplay_pck2()</h2><p>然后是是犯下然后之罪的 <code>__getplay_pck2()</code></p>
+<p>通过分析得知，首先获取k2的最后一个数字，然后获取一个t2，使这个t2的最后三个数字包含k2的最后一个数字</p>
+<p>结束</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">// ksub = k2[-1]</span><br><span class="line">ksub = f(&#x27;k2&#x27;)[&#x27;slice&#x27;](-0x1);</span><br><span class="line">// while true</span><br><span class="line">while (!![]) &#123;</span><br><span class="line">	// t2 =  new Date().getTime()</span><br><span class="line">    t2 = new Date()[&#x27;getTime&#x27;]();</span><br><span class="line">    // if t2.toString().slice(-0x3).indexOf(ksub) &gt;= 0</span><br><span class="line">    if (t2[&#x27;toString&#x27;]()[&#x27;slice&#x27;](-0x3)[_0x1691(&#x27;0x12&#x27;, &#x27;9f@X&#x27;)](ksub) &gt;= 0x0) &#123;</span><br><span class="line">    	// set cookie t2 = t2</span><br><span class="line">        f2(&#x27;t2&#x27;, t2);</span><br><span class="line">        break;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="quot-keygen-quot"><a href="#quot-keygen-quot" class="headerlink" title="&quot;keygen&quot;"></a>&quot;keygen&quot;</h1><p>那么知道了是如何完成验证的，那么就可以开始写解析了，先来整理一下步骤</p>
+<p><em>其实k1没什么用</em></p>
+<ol>
+<li>访问_getplay，获得t1</li>
+<li>通过以上方式获得cookie</li>
+<li>加上cookie再次访问获得链接</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> math</span><br><span class="line"><span class="keyword">import</span> re</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">getcookie</span>(<span class="params">t1:<span class="built_in">int</span></span>):</span><br><span class="line">    time_now = <span class="built_in">int</span>(time.time()*<span class="number">1000</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;t1 is %d, now is %s, t1-time_now = %d&quot;</span>%(t1,time_now,t1-time_now))</span><br><span class="line">    t1_tmp = math.floor(t1 / <span class="number">1000</span> + <span class="number">0.5</span>) &gt;&gt; <span class="number">0x5</span></span><br><span class="line">    k2 = (t1_tmp * (t1_tmp % <span class="number">0x1000</span>) * <span class="number">0x3</span> + <span class="number">0x1450f</span>) * (t1_tmp % <span class="number">0x1000</span>) + t1_tmp</span><br><span class="line">    t2 = time_now</span><br><span class="line">    k2_s = <span class="built_in">str</span>(k2)</span><br><span class="line">    t2_s = <span class="built_in">str</span>(t2)</span><br><span class="line">    t2_s = t2_s[:-<span class="number">1</span>:]+k2_s[-<span class="number">1</span>]</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;k2=%s&quot;</span> % k2_s)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;t2=%s&quot;</span> % t2_s)</span><br><span class="line">    <span class="keyword">return</span> &#123;<span class="string">&quot;t2&quot;</span>:t2_s,<span class="string">&quot;k2&quot;</span>:k2_s&#125;</span><br><span class="line"></span><br><span class="line">url = <span class="string">&quot;https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1&quot;</span></span><br><span class="line">data = requests.head(url,headers=&#123;<span class="string">&quot;referer&quot;</span>:<span class="string">&quot;https://www.agefans.cc/&quot;</span>,&#125;)</span><br><span class="line"><span class="built_in">print</span>(data)</span><br><span class="line">setcookies = data.headers.get(<span class="string">&quot;set-cookie&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(setcookies)</span><br><span class="line">t1 = <span class="built_in">int</span>(re.<span class="built_in">compile</span>(<span class="string">r&quot;t1=[^;]*;&quot;</span>).search(setcookies).group()[<span class="number">3</span>:-<span class="number">1</span>:])</span><br><span class="line"><span class="built_in">print</span>(t1)</span><br><span class="line">cookies = getcookie(t1)</span><br><span class="line">cookies[<span class="string">&quot;t1&quot;</span>] = <span class="built_in">str</span>(t1)</span><br><span class="line">data = requests.get(url,headers=&#123;<span class="string">&quot;referer&quot;</span>:<span class="string">&quot;https://www.agefans.cc/&quot;</span>,&#125;,cookies=cookies)</span><br><span class="line"><span class="built_in">print</span>(data.text)</span><br></pre></td></tr></table></figure>
+
+<p>成功获得直链~</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">&lt;Response [200]&gt;</span><br><span class="line">t1=1634231445902; Path=/, k1=586623324; Path=/</span><br><span class="line">1634231445902</span><br><span class="line">t1 is 1634231445902, now is 1634231395254, t1-time_now = 50648</span><br><span class="line">k2=99036993616128</span><br><span class="line">t2=1634231395258</span><br><span class="line"></span><br><span class="line">	&#123;</span><br><span class="line">		&quot;purl&quot;:&quot;/age/player/ckx1/?url=&quot;,</span><br><span class="line">		&quot;purlf&quot;:&quot;https://play.agefans.cc:8443/age/player/dpx/?url=&quot;,</span><br><span class="line">		&quot;vurl&quot;:&quot;https%3a%2f%2fkol%2dfans%2efp%2eps%2enetease%2ecom%2ffile%2f6159a40954eace75cb975131raYEy7we03?from%3Dysjdm.com%7Cysjdm.net&quot;,</span><br><span class="line">		&quot;playid&quot;:&quot;&lt;play&gt;web_mp4&lt;/play&gt;&quot;,</span><br><span class="line">		&quot;vurl_bak&quot;:&quot;&quot;,</span><br><span class="line">		&quot;purl_mp4&quot;:&quot;/age/player/ckx1/?url=&quot;,</span><br><span class="line">		&quot;ex&quot;:&quot;&quot;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="碎碎念"><a href="#碎碎念" class="headerlink" title="碎碎念"></a>碎碎念</h1><p>整这么麻烦干什么。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+              <a href="/tags/anime/" rel="tag"># anime</a>
+              <a href="/tags/reverse/" rel="tag"># reverse</a>
+              <a href="/tags/encryption/" rel="tag"># encryption</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/10/04/life/bie-zai-tu-shu-guan-xiu-en-ai/" rel="prev" title="别在图书馆秀恩爱">
+                  <i class="fa fa-chevron-left"></i> 别在图书馆秀恩爱
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/10/18/debugging-binary-with-pwntools-and-radare2/" rel="next" title="Debugging binary with pwntools and radare2">
+                  Debugging binary with pwntools and radare2 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+</div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

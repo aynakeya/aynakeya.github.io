@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-count">77</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -200,7 +200,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/07/blogarchive/2019-04-06-17-28-58/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/06/blogarchive/2019-04-06-17-38-45/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -218,7 +218,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/07/blogarchive/2019-04-06-17-28-58/" class="post-title-link" itemprop="url">Improving sqlalchemy inserting performance for large set of data</a>
+          <a href="/2019/04/06/blogarchive/2019-04-06-17-38-45/" class="post-title-link" itemprop="url">Fix memory error caused by memory overflowing</a>
         </h2>
 
         <div class="post-meta-container">
@@ -229,14 +229,105 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-04-07 08:28:58" itemprop="dateCreated datePublished" datetime="2019-04-07T08:28:58+08:00">2019-04-07</time>
+      <time title="Created: 2019-04-06 17:38:45" itemprop="dateCreated datePublished" datetime="2019-04-06T17:38:45+08:00">2019-04-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
+<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
+<p>After doing some research, i come up with a solution.</p>
+<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
+<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/06/blogarchive/2019-04-06-17-28-58/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/04/06/blogarchive/2019-04-06-17-28-58/" class="post-title-link" itemprop="url">Improving sqlalchemy inserting performance for large set of data</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-04-06 17:28:58" itemprop="dateCreated datePublished" datetime="2019-04-06T17:28:58+08:00">2019-04-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -311,7 +402,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/03/17/blogarchive/2019-03-16-20-39-27/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/03/16/blogarchive/2019-03-16-20-39-27/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -329,7 +420,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/03/17/blogarchive/2019-03-16-20-39-27/" class="post-title-link" itemprop="url">Electron packaging</a>
+          <a href="/2019/03/16/blogarchive/2019-03-16-20-39-27/" class="post-title-link" itemprop="url">Electron packaging</a>
         </h2>
 
         <div class="post-meta-container">
@@ -340,14 +431,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-03-17 11:39:27" itemprop="dateCreated datePublished" datetime="2019-03-17T11:39:27+08:00">2019-03-17</time>
+      <time title="Created: 2019-03-16 20:39:27" itemprop="dateCreated datePublished" datetime="2019-03-16T20:39:27+08:00">2019-03-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -412,7 +503,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/12/blogarchive/2019-02-11-22-53-22/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/11/blogarchive/2019-02-11-22-53-22/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -430,7 +521,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/12/blogarchive/2019-02-11-22-53-22/" class="post-title-link" itemprop="url">Solution to mplayer playing voice and picture out of sync</a>
+          <a href="/2019/02/11/blogarchive/2019-02-11-22-53-22/" class="post-title-link" itemprop="url">Solution to mplayer playing voice and picture out of sync</a>
         </h2>
 
         <div class="post-meta-container">
@@ -441,14 +532,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-02-12 14:53:22" itemprop="dateCreated datePublished" datetime="2019-02-12T14:53:22+08:00">2019-02-12</time>
+      <time title="Created: 2019-02-11 22:53:22" itemprop="dateCreated datePublished" datetime="2019-02-11T22:53:22+08:00">2019-02-11</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -511,7 +602,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/10/blogarchive/2019-02-09-20-53-39/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-20-53-39/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -529,7 +620,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/10/blogarchive/2019-02-09-20-53-39/" class="post-title-link" itemprop="url">raspberry pi using vnc, can't log in.</a>
+          <a href="/2019/02/09/blogarchive/2019-02-09-20-53-39/" class="post-title-link" itemprop="url">raspberry pi using vnc, can't log in.</a>
         </h2>
 
         <div class="post-meta-container">
@@ -540,14 +631,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-02-10 12:53:39" itemprop="dateCreated datePublished" datetime="2019-02-10T12:53:39+08:00">2019-02-10</time>
+      <time title="Created: 2019-02-09 20:53:39" itemprop="dateCreated datePublished" datetime="2019-02-09T20:53:39+08:00">2019-02-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -599,7 +690,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/10/blogarchive/2019-02-09-20-46-15/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-20-46-15/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -617,7 +708,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/10/blogarchive/2019-02-09-20-46-15/" class="post-title-link" itemprop="url">Fininshing Update Shazam analysis(chinese version)</a>
+          <a href="/2019/02/09/blogarchive/2019-02-09-20-46-15/" class="post-title-link" itemprop="url">Fininshing Update Shazam analysis(chinese version)</a>
         </h2>
 
         <div class="post-meta-container">
@@ -628,14 +719,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-02-10 12:46:15" itemprop="dateCreated datePublished" datetime="2019-02-10T12:46:15+08:00">2019-02-10</time>
+      <time title="Created: 2019-02-09 20:46:15" itemprop="dateCreated datePublished" datetime="2019-02-09T20:46:15+08:00">2019-02-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -687,7 +778,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/10/blogarchive/2019-02-09-20-39-15/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-20-39-15/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -705,7 +796,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/10/blogarchive/2019-02-09-20-39-15/" class="post-title-link" itemprop="url">Shazam听歌识曲算法解析+python实现-3 检索歌曲</a>
+          <a href="/2019/02/09/blogarchive/2019-02-09-20-39-15/" class="post-title-link" itemprop="url">Shazam听歌识曲算法解析+python实现-3 检索歌曲</a>
         </h2>
 
         <div class="post-meta-container">
@@ -716,14 +807,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-02-10 12:39:15" itemprop="dateCreated datePublished" datetime="2019-02-10T12:39:15+08:00">2019-02-10</time>
+      <time title="Created: 2019-02-09 20:39:15" itemprop="dateCreated datePublished" datetime="2019-02-09T20:39:15+08:00">2019-02-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -812,7 +903,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/10/blogarchive/2019-02-09-17-01-47/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-17-01-47/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -830,7 +921,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/10/blogarchive/2019-02-09-17-01-47/" class="post-title-link" itemprop="url">shazam听歌识曲算法解析+python实现-2 生成指纹</a>
+          <a href="/2019/02/09/blogarchive/2019-02-09-17-01-47/" class="post-title-link" itemprop="url">shazam听歌识曲算法解析+python实现-2 生成指纹</a>
         </h2>
 
         <div class="post-meta-container">
@@ -841,14 +932,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-02-10 09:01:47" itemprop="dateCreated datePublished" datetime="2019-02-10T09:01:47+08:00">2019-02-10</time>
+      <time title="Created: 2019-02-09 17:01:47" itemprop="dateCreated datePublished" datetime="2019-02-09T17:01:47+08:00">2019-02-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -967,7 +1058,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/22/blogarchive/2019-01-21-15-36-37/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/21/blogarchive/2019-01-21-15-36-37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -985,7 +1076,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/01/22/blogarchive/2019-01-21-15-36-37/" class="post-title-link" itemprop="url">shazam听歌识曲算法的解析与听歌识曲python实现的分析-1 读取歌曲</a>
+          <a href="/2019/01/21/blogarchive/2019-01-21-15-36-37/" class="post-title-link" itemprop="url">shazam听歌识曲算法的解析与听歌识曲python实现的分析-1 读取歌曲</a>
         </h2>
 
         <div class="post-meta-container">
@@ -996,14 +1087,14 @@ session.commit()
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-01-22 07:36:37" itemprop="dateCreated datePublished" datetime="2019-01-22T07:36:37+08:00">2019-01-22</time>
+      <time title="Created: 2019-01-21 15:36:37" itemprop="dateCreated datePublished" datetime="2019-01-21T15:36:37+08:00">2019-01-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1081,7 +1172,7 @@ def generateFilehash(filepath, blocksize=2 ** 16):
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/17/blogarchive/2019-01-16-19-53-24/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/16/blogarchive/2019-01-16-19-53-24/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -1099,7 +1190,7 @@ def generateFilehash(filepath, blocksize=2 ** 16):
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/01/17/blogarchive/2019-01-16-19-53-24/" class="post-title-link" itemprop="url">我日你妈的seminar</a>
+          <a href="/2019/01/16/blogarchive/2019-01-16-19-53-24/" class="post-title-link" itemprop="url">我日你妈的seminar</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1110,14 +1201,14 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-01-17 11:53:24" itemprop="dateCreated datePublished" datetime="2019-01-17T11:53:24+08:00">2019-01-17</time>
+      <time title="Created: 2019-01-16 19:53:24" itemprop="dateCreated datePublished" datetime="2019-01-16T19:53:24+08:00">2019-01-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1158,119 +1249,8 @@ def generateFilehash(filepath, blocksize=2 ** 16):
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/05/blogarchive/2019-01-04-21-35-30/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/01/05/blogarchive/2019-01-04-21-35-30/" class="post-title-link" itemprop="url">检测浏览器切换页面</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-01-05 13:35:30" itemprop="dateCreated datePublished" datetime="2019-01-05T13:35:30+08:00">2019-01-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>本页面以加载以下代码，切换标签页看看吧.</p>
-<pre>
-var orig_title = document.title;
-document.addEventListener('visibilitychange',function(){
-    //浏览器切换事件
-    if(document.visibilityState=='hidden') { //状态判断
-        orig_title = document.title;
-        document.title = '嘤嘤嘤~~~'; 
-    }else {
-        document.title = orig_title;
-        myWaifu.showMessage("欢迎回来，Rua！",null)
-    }
-});
-</pre>
-
-<script>
-var orig_title = document.title;
-document.addEventListener('visibilitychange',function(){
-    //浏览器切换事件
-    if(document.visibilityState=='hidden') { //状态判断
-        orig_title = document.title;
-        document.title = '嘤嘤嘤~~~'; 
-    }else {
-        document.title = orig_title;
-        myWaifu.showMessage("欢迎回来，Rua！",null);
-    }
-});
-</script>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/blog/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/blog/page/9/">9</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/blog/page/9/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/blog/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/blog/page/9/">9</a><a class="page-number" href="/blog/page/10/">10</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/blog/page/9/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>

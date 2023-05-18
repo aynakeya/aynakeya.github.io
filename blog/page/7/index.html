@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">92</span>
+          <span class="site-state-item-count">93</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">75</span>
+        <span class="site-state-item-count">77</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -200,7 +200,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/04/blogarchive/2019-09-03-20-59-14/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/03/blogarchive/2019-09-03-22-22-55/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -218,7 +218,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/09/04/blogarchive/2019-09-03-20-59-14/" class="post-title-link" itemprop="url">Aria2 在 Macos上的安装</a>
+          <a href="/2019/09/03/blogarchive/2019-09-03-22-22-55/" class="post-title-link" itemprop="url">Fix bug with Chinese input in tags system (中文标签问题)</a>
         </h2>
 
         <div class="post-meta-container">
@@ -229,14 +229,106 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-09-04 11:59:14" itemprop="dateCreated datePublished" datetime="2019-09-04T11:59:14+08:00">2019-09-04</time>
+      <time title="Created: 2019-09-03 22:22:55" itemprop="dateCreated datePublished" datetime="2019-09-03T22:22:55+08:00">2019-09-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/SiteDev/" itemprop="url" rel="index"><span itemprop="name">SiteDev</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Tags system not work properly with Chinese character.</p>
+<p>The bug is fixed now.</p>
+<p>The problem is caused by the url encoding.</p>
+<p>To fix the bug, we could decode the url into Chinese again.</p>
+<p>Solution below</p>
+<pre>
+import urllib
+tag = urllib.parse.unquote(url)
+</pre>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/03/blogarchive/2019-09-03-20-59-14/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2019/09/03/blogarchive/2019-09-03-20-59-14/" class="post-title-link" itemprop="url">Aria2 在 Macos上的安装</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-09-03 20:59:14" itemprop="dateCreated datePublished" datetime="2019-09-03T20:59:14+08:00">2019-09-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -265,7 +357,7 @@
 </ol>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/09/04/blogarchive/2019-09-03-20-59-14/#more" rel="contents">
+              <a class="btn" href="/2019/09/03/blogarchive/2019-09-03-20-59-14/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -296,7 +388,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/04/blogarchive/2019-09-03-20-51-24/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/03/blogarchive/2019-09-03-20-51-24/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -314,7 +406,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/09/04/blogarchive/2019-09-03-20-51-24/" class="post-title-link" itemprop="url">记一次阿里云学生服务器白嫖</a>
+          <a href="/2019/09/03/blogarchive/2019-09-03-20-51-24/" class="post-title-link" itemprop="url">记一次阿里云学生服务器白嫖</a>
         </h2>
 
         <div class="post-meta-container">
@@ -325,14 +417,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-09-04 11:51:24" itemprop="dateCreated datePublished" datetime="2019-09-04T11:51:24+08:00">2019-09-04</time>
+      <time title="Created: 2019-09-03 20:51:24" itemprop="dateCreated datePublished" datetime="2019-09-03T20:51:24+08:00">2019-09-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -359,7 +451,7 @@
 <p>购买一个服务器，云服务器EMC和轻量应用服务器都行，购买完成后进入管理界面</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2019/09/04/blogarchive/2019-09-03-20-51-24/#more" rel="contents">
+              <a class="btn" href="/2019/09/03/blogarchive/2019-09-03-20-51-24/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -390,7 +482,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/04/blogarchive/2019-09-03-20-18-17/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/03/blogarchive/2019-09-03-20-18-17/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -408,7 +500,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/09/04/blogarchive/2019-09-03-20-18-17/" class="post-title-link" itemprop="url">阿里云白嫖</a>
+          <a href="/2019/09/03/blogarchive/2019-09-03-20-18-17/" class="post-title-link" itemprop="url">阿里云白嫖</a>
         </h2>
 
         <div class="post-meta-container">
@@ -419,14 +511,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-09-04 11:18:17" itemprop="dateCreated datePublished" datetime="2019-09-04T11:18:17+08:00">2019-09-04</time>
+      <time title="Created: 2019-09-03 20:18:17" itemprop="dateCreated datePublished" datetime="2019-09-03T20:18:17+08:00">2019-09-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -488,7 +580,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/04/blogarchive/2019-09-03-13-45-23/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/09/03/blogarchive/2019-09-03-13-45-23/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -506,7 +598,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/09/04/blogarchive/2019-09-03-13-45-23/" class="post-title-link" itemprop="url">Shadowsocks problem with config file</a>
+          <a href="/2019/09/03/blogarchive/2019-09-03-13-45-23/" class="post-title-link" itemprop="url">Shadowsocks problem with config file</a>
         </h2>
 
         <div class="post-meta-container">
@@ -517,14 +609,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-09-04 04:45:23" itemprop="dateCreated datePublished" datetime="2019-09-04T04:45:23+08:00">2019-09-04</time>
+      <time title="Created: 2019-09-03 13:45:23" itemprop="dateCreated datePublished" datetime="2019-09-03T13:45:23+08:00">2019-09-03</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -602,7 +694,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/07/23/blogarchive/2019-07-22-14-37-59/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/07/22/blogarchive/2019-07-22-14-37-59/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -620,7 +712,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/07/23/blogarchive/2019-07-22-14-37-59/" class="post-title-link" itemprop="url">Landwave Word Test Cracking</a>
+          <a href="/2019/07/22/blogarchive/2019-07-22-14-37-59/" class="post-title-link" itemprop="url">Landwave Word Test Cracking</a>
         </h2>
 
         <div class="post-meta-container">
@@ -631,14 +723,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-07-23 05:37:59" itemprop="dateCreated datePublished" datetime="2019-07-23T05:37:59+08:00">2019-07-23</time>
+      <time title="Created: 2019-07-22 14:37:59" itemprop="dateCreated datePublished" datetime="2019-07-22T14:37:59+08:00">2019-07-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -696,7 +788,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/05/27/blogarchive/2019-05-26-18-23-29/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/05/26/blogarchive/2019-05-26-18-23-29/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -714,7 +806,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/05/27/blogarchive/2019-05-26-18-23-29/" class="post-title-link" itemprop="url">Use single-user-mode to access files from a mac without login</a>
+          <a href="/2019/05/26/blogarchive/2019-05-26-18-23-29/" class="post-title-link" itemprop="url">Use single-user-mode to access files from a mac without login</a>
         </h2>
 
         <div class="post-meta-container">
@@ -725,14 +817,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-05-27 09:23:29" itemprop="dateCreated datePublished" datetime="2019-05-27T09:23:29+08:00">2019-05-27</time>
+      <time title="Created: 2019-05-26 18:23:29" itemprop="dateCreated datePublished" datetime="2019-05-26T18:23:29+08:00">2019-05-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -827,7 +919,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/05/21/blogarchive/2019-05-20-10-08-26/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/05/20/blogarchive/2019-05-20-10-08-26/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -845,7 +937,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/05/21/blogarchive/2019-05-20-10-08-26/" class="post-title-link" itemprop="url">Add tag system</a>
+          <a href="/2019/05/20/blogarchive/2019-05-20-10-08-26/" class="post-title-link" itemprop="url">Add tag system</a>
         </h2>
 
         <div class="post-meta-container">
@@ -856,14 +948,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-05-21 01:08:26" itemprop="dateCreated datePublished" datetime="2019-05-21T01:08:26+08:00">2019-05-21</time>
+      <time title="Created: 2019-05-20 10:08:26" itemprop="dateCreated datePublished" datetime="2019-05-20T10:08:26+08:00">2019-05-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -916,7 +1008,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/18/blogarchive/2019-04-17-16-43-23/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/17/blogarchive/2019-04-17-16-43-23/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -934,7 +1026,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/18/blogarchive/2019-04-17-16-43-23/" class="post-title-link" itemprop="url">Problem about install windows 10 in mac os with bootcamp.</a>
+          <a href="/2019/04/17/blogarchive/2019-04-17-16-43-23/" class="post-title-link" itemprop="url">Problem about install windows 10 in mac os with bootcamp.</a>
         </h2>
 
         <div class="post-meta-container">
@@ -945,14 +1037,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-04-18 07:43:23" itemprop="dateCreated datePublished" datetime="2019-04-18T07:43:23+08:00">2019-04-18</time>
+      <time title="Created: 2019-04-17 16:43:23" itemprop="dateCreated datePublished" datetime="2019-04-17T16:43:23+08:00">2019-04-17</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1021,7 +1113,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/07/blogarchive/2019-04-06-18-00-02/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/06/blogarchive/2019-04-06-18-00-02/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -1039,7 +1131,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/07/blogarchive/2019-04-06-18-00-02/" class="post-title-link" itemprop="url">use table partition to increase inserting performance</a>
+          <a href="/2019/04/06/blogarchive/2019-04-06-18-00-02/" class="post-title-link" itemprop="url">use table partition to increase inserting performance</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1050,14 +1142,14 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2019-04-07 09:00:02" itemprop="dateCreated datePublished" datetime="2019-04-07T09:00:02+08:00">2019-04-07</time>
+      <time title="Created: 2019-04-06 18:00:02" itemprop="dateCreated datePublished" datetime="2019-04-06T18:00:02+08:00">2019-04-06</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
+      <time title="Modified: 2021-05-22 00:39:38" itemprop="dateModified" datetime="2021-05-22T00:39:38+08:00">2021-05-22</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -1144,99 +1236,8 @@ alter table fingerprints drop partition p20
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/07/blogarchive/2019-04-06-17-38-45/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/07/blogarchive/2019-04-06-17-38-45/" class="post-title-link" itemprop="url">Fix memory error caused by memory overflowing</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-04-07 08:38:45" itemprop="dateCreated datePublished" datetime="2019-04-07T08:38:45+08:00">2019-04-07</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-22 00:39:37" itemprop="dateModified" datetime="2021-05-22T00:39:37+08:00">2021-05-22</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
-<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
-<p>After doing some research, i come up with a solution.</p>
-<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/blog/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/blog/page/8/">8</a><a class="page-number" href="/blog/page/9/">9</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/blog/page/8/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/blog/page/6/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/6/">6</a><span class="page-number current">7</span><a class="page-number" href="/blog/page/8/">8</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/10/">10</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/blog/page/8/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
