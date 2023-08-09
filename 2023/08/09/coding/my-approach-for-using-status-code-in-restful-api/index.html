@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="引言在最近的RESTful API设计过程中，我遇到了一个问题。当业务逻辑需要返回一个错误代码时，究竟应该遵循HTTP的原则返回对应的状态码，如200, 403, 500等，还是统一返回200，而将详细的错误信息写入响应体内？ 这个问题涉及到了RESTful API是否应该遵循HTTP状态码的原则，让我们一起来深入探讨一下。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在RESTful API中如何选择合适的HTTP状态码">
+<meta property="og:url" content="http://www.aynakeya.com/2023/08/09/coding/my-approach-for-using-status-code-in-restful-api/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="引言在最近的RESTful API设计过程中，我遇到了一个问题。当业务逻辑需要返回一个错误代码时，究竟应该遵循HTTP的原则返回对应的状态码，如200, 403, 500等，还是统一返回200，而将详细的错误信息写入响应体内？ 这个问题涉及到了RESTful API是否应该遵循HTTP状态码的原则，让我们一起来深入探讨一下。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/my-approach-for-using-status-code-in-restful-api/Prag_REST_errors_1.png">
+<meta property="article:published_time" content="2023-08-09T19:03:24.000Z">
+<meta property="article:modified_time" content="2023-08-09T22:04:33.854Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="RESTful">
+<meta property="article:tag" content="http">
+<meta property="article:tag" content="scene-series">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/coding/my-approach-for-using-status-code-in-restful-api/Prag_REST_errors_1.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/2023/08/09/coding/my-approach-for-using-status-code-in-restful-api/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/2023/08/09/coding/my-approach-for-using-status-code-in-restful-api/","path":"2023/08/09/coding/my-approach-for-using-status-code-in-restful-api/","title":"在RESTful API中如何选择合适的HTTP状态码"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>在RESTful API中如何选择合适的HTTP状态码 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E5%AF%BB"><span class="nav-number">2.</span> <span class="nav-text">搜寻</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E7%9A%84%E6%96%B9%E6%A1%88"><span class="nav-number">3.</span> <span class="nav-text">我的方案</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2023/08/09/coding/my-approach-for-using-status-code-in-restful-api/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="在RESTful API中如何选择合适的HTTP状态码 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在RESTful API中如何选择合适的HTTP状态码
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-08-09 12:03:24 / Modified: 15:04:33" itemprop="dateCreated datePublished" datetime="2023-08-09T12:03:24-07:00">2023-08-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在最近的RESTful API设计过程中，我遇到了一个问题。当业务逻辑需要返回一个错误代码时，究竟应该遵循HTTP的原则返回对应的状态码，如200, 403, 500等，还是统一返回200，而将详细的错误信息写入响应体内？</p>
+<p>这个问题涉及到了RESTful API是否应该遵循HTTP状态码的原则，让我们一起来深入探讨一下。</p>
+<span id="more"></span>
+
+<h2 id="搜寻"><a href="#搜寻" class="headerlink" title="搜寻"></a>搜寻</h2><p>先来看看其他公司的解决方案</p>
+<p><img data-src="/images/coding/my-approach-for-using-status-code-in-restful-api/Prag_REST_errors_1.png" alt="compare"><br><em>Reference to Google Cloud</em></p>
+<p>目前市面上的解决方案主要可以归类为两种：</p>
+<ol>
+<li>解决方案1：只使用200状态码，把所有的错误信息写在响应体里。</li>
+<li>解决方案2：根据错误的类型，归类到不同的状态码并返回。</li>
+</ol>
+<p>这两种方案都有一定的道理。</p>
+<p>比如在客户端调用时，大多数HTTP客户端都是按照HTTP的协议来设计的，例如axios。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    let result = await axios.get(&quot;/api&quot;);</span><br><span class="line">&#125; catch (e)&#123;</span><br><span class="line">    // do error hanlding</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用状态码的方式返回可以让客户端快速判断出请求的状态 <em>[6]</em>， 从而做出相应的反应。</p>
+<p>当然，反对者可能会认为这种方式过于繁琐，如果直接使用200作为所有请求的返回值，那么就不需要考虑其他请求状态了，直接依据body里的code作为判断依据岂不是更为简单？</p>
+<p>然而，单纯使用200状态码作为返回值也并不理想，因为客户端通常依赖返回码来判断请求的状态。只返回200可能会让客户端错误地认为请求是正常的，而实际状态却可能是错误的。</p>
+<p>此外，虽然HTTP通常被视为一个Application Layer(应用层协议)，但它在很多情况下更像是一个Transport Layer(传输层协议)。</p>
+<p>比如API服务通过HTTP来实现，Web服务也通过API来实现。所以，当你尝试将HTTP的状态码和业务逻辑的错误代码组合在一起时，你必须先预定一个规则来确保错误代码与HTTP状态码的规则相符。例如，某个业务的错误代码对应某个HTTP状态码。</p>
+<p>尽管这样在短期内可能显得整洁，但随着项目的发展，你要维护的规则可能会越来越多，有时候你甚至可能会违反自己的规则。因此，通过将错误类型归集到不同的状态码来返回的方法同样存在无法回避的问题。</p>
+<h2 id="我的方案"><a href="#我的方案" class="headerlink" title="我的方案"></a>我的方案</h2><p>因此，在我看来，较好的方案应该是要分离HTTP逻辑与业务逻辑。应让各自负责自己的部分，即由HTTP处理HTTP的错误，而将业务逻辑的错误在HTTP中视为无错误。业务错误由客户端自己在body中获取。</p>
+<p>总体而言，我的解决方案与第二个解决方案相似，但有所不同。</p>
+<p>因为我的微服务框架包括三个层次：delivery（传递层）、service（服务层）和repository（仓储层）。传递层负责处理传入的HTTP请求，所有业务逻辑都在服务层内部处理。</p>
+<p>由此，我直觉地将所有错误分为两个场景：第一个场景是在传递层发生的错误，这些错误直接与HTTP有关，例如参数验证、路径参数、URL、速率限制等。第二个场景是服务层发生的错误，包括仓储层错误和其他错误。</p>
+<p>在将错误分为这两层之后，解决方案自然而然地浮现出来。如果错误发生在传递层，我将使用HTTP状态码进行响应。否则，我将使用200状态码，并在响应体内附带错误信息。</p>
+<p>例子:</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *ginApp)</span></span> handleCreatePaste(c *gin.Context) &#123;</span><br><span class="line">    <span class="keyword">var</span> param pasteReq = pasteReq&#123;Expires: <span class="number">3600</span>&#125;</span><br><span class="line">    <span class="keyword">if</span> err := c.ShouldBindJSON(&amp;param); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        c.JSON(http.StatusBadRequest, model.NewErrorCodeResponse(</span><br><span class="line">            errcode.ParameterError.WithDetail(err)))</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> param.Title == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">        param.Title = fmt.Sprintf(<span class="string">&quot;%s %s&quot;</span>, time.Now().Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>), c.ClientIP())</span><br><span class="line">    &#125;</span><br><span class="line">    paste, err := g.pasteSrv.CreatePaste(param.ContentType, param.Title, param.Content, param.Password, c.ClientIP(), param.Expires)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        c.JSON(http.StatusOK, model.TryErrorCodeResponse(err))</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    c.JSON(http.StatusOK, model.NewDataResponse(paste))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我的这种方案的优势在于，如果客户端的请求方式正确，那么它只会收到200的响应，至于具体结果如何，则需要自己判断。如果请求方式错误，那么它会得到相应的HTTP状态码。</p>
+<p>这样做实际上是对错误进行了分类和分别处理。只要客户端能保证请求方式正确，就不需要考虑状态码的问题。</p>
+<p>当然，我的这种解决方案也不能完全避免上述的一些问题，更好的方案仍在开发中等待实现。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>Web API Design: The Missing Link</li>
+<li><a target="_blank" rel="noopener" href="https://cloud.google.com/blog/products/api-management/restful-api-design-what-about-errors">https://cloud.google.com/blog/products/api-management/restful-api-design-what-about-errors</a></li>
+<li><a target="_blank" rel="noopener" href="https://softwareengineering.stackexchange.com/questions/305250/should-i-use-http-status-codes-to-describe-application-level-events">https://softwareengineering.stackexchange.com/questions/305250/should-i-use-http-status-codes-to-describe-application-level-events</a></li>
+<li><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/56736771/http-response-always-return-response-code-200-even-request-fail-and-return-stat">https://stackoverflow.com/questions/56736771/http-response-always-return-response-code-200-even-request-fail-and-return-stat</a></li>
+<li><a target="_blank" rel="noopener" href="http://cn.voidcc.com/question/p-xwqrmqht-bm.html">http://cn.voidcc.com/question/p-xwqrmqht-bm.html</a></li>
+<li><a target="_blank" rel="noopener" href="https://baijiahao.baidu.com/s?id=1693811021976970402&wfr=spider&for=pc">https://baijiahao.baidu.com/s?id=1693811021976970402&amp;wfr=spider&amp;for=pc</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RESTful/" rel="tag"># RESTful</a>
+              <a href="/tags/http/" rel="tag"># http</a>
+              <a href="/tags/scene-series/" rel="tag"># scene-series</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/05/18/devops/resolving-system-crash-on-kubuntu-with-thinkbook-16/" rel="prev" title="Resolving System Crash Issue After Installing Kubuntu on ThinkBook 16+">
+                  <i class="fa fa-angle-left"></i> Resolving System Crash Issue After Installing Kubuntu on ThinkBook 16+
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
