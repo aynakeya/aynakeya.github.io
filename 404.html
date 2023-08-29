@@ -28,7 +28,7 @@
 <meta property="og:description" content="404Oopsiee, there is no page here. Try searching for your post.  Redirection Notice  You are accessing a datetime-like URL. We&#39;ll redirect you in 5 seconds.  Or click here to redirect immediately.">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2023-08-29T04:54:47.000Z">
-<meta property="article:modified_time" content="2023-08-29T05:28:58.378Z">
+<meta property="article:modified_time" content="2023-08-29T08:33:20.520Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
@@ -230,47 +230,24 @@
         let newPath = currentURL.replace(regexPattern, "/articles/");
         
         document.getElementById("redirectDetails").style.display = "block"; // Show the redirect notice
-
+    
         // For manual redirection
         document.querySelector("#redirectDetails summary").nextElementSibling.lastElementChild.href = newPath;
-
+    
         let countdown = 5;
-
+    
         function countdown_to_redirect() {
           document.getElementById('countdown').textContent = countdown;
-          countdown -= 1;
-          if(countdown === 0){
+          if(countdown <= 0){
             window.location.href = newPath;
             return;
           }
+          countdown -= 1;
           setTimeout(countdown_to_redirect, 1000);
         }
         countdown_to_redirect();
     }
 </script>
-
-<!-- <script>
-    if (true) {
-        let newPath = '/blog';
-        
-        document.getElementById("redirectDetails").style.display = "block"; // Show the redirect notice
-
-        // For manual redirection
-        document.querySelector("#redirectDetails summary").nextElementSibling.lastElementChild.href = newPath;
-
-        let countdown = 5;
-
-        function countdown_to_redirect() {
-          document.getElementById('countdown').textContent = countdown;
-          countdown -= 1;
-          if(countdown === 0){
-            window.location.href = newPath;
-          }
-          setTimeout(countdown_to_redirect, 1000);
-        }
-        countdown_to_redirect();
-    }
-</script> -->
       </div>
       
       

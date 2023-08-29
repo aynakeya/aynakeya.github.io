@@ -29,12 +29,12 @@
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225450.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547.png">
-<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547-1693291441850-4.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_230258.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_235157.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230829_010834.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230829_005032.png">
 <meta property="article:published_time" content="2023-08-29T04:43:50.000Z">
-<meta property="article:modified_time" content="2023-08-29T08:28:59.370Z">
+<meta property="article:modified_time" content="2023-08-29T09:12:35.788Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="electron">
 <meta property="article:tag" content="reverse">
@@ -251,7 +251,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-08-29 01:28:59" itemprop="dateModified" datetime="2023-08-29T01:28:59-07:00">2023-08-29</time>
+      <time title="Modified: 2023-08-29 02:12:35" itemprop="dateModified" datetime="2023-08-29T02:12:35-07:00">2023-08-29</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -292,16 +292,16 @@
 
 <p>0x18 is an intriguing value, precisely 192 bits. This instantly reminded me of aes-192 encryption. In fact, if you search &quot;192 bit encryption&quot; on Google, the first result typically points towards AES.</p>
 <p>But how can we ascertain that this is indeed AES encryption? While we could manually verify it, we also need to identify the encryption mode and its IV (Initialization Vector).</p>
-<p>I began by trying out CBC mode, primarily because it&#39;s commonly employed. Also, due to the nature of CBC mode (as detailed on <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Electronic_codebook_(ECB)">Wikipedia</a>), it&#39;s straightforward to verify it by using the initial 16 bytes as the IV.</p>
+<p>I began by trying out CBC mode, primarily because it&#39;s commonly employed. Also, due to the nature of CBC mode (as detailed on <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_block_chaining_(CBC)">Wikipedia</a>), it&#39;s straightforward to verify it by using the initial 16 bytes as the IV.</p>
 <p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225450.png" alt="Screenshot_20230828_225450"></p>
 <p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547.png" alt="Screenshot_20230828_225547"></p>
 <p>uhhhhhh, wtf, it indeed was the CBC mode  (Coooooooool). Now, the task was to identify the IV.</p>
 <h2 id="Finding-Parameters"><a href="#Finding-Parameters" class="headerlink" title="Finding Parameters"></a>Finding Parameters</h2><p>Since the encryption function doesn&#39;t explicitly demand an IV, there are two possibilities. The IV could either be generated based on <code>trackId</code> (since the data would eventually be encrypted) or it could be randomly generated and then appended to the returned value.</p>
 <p>The latter can be quickly ruled out, given the length of the return value doesn&#39;t seem to have room for an appended IV. This points to the former - the IV might be derived from the <code>trackId</code>. But how?</p>
 <p>To solve this, I started with the simplest assumption: that the first 16 bytes of the <code>trackId</code> were being used as the IV.</p>
-<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547-1693291441850-4.png" alt="Screenshot_20230828_225547"></p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_230258.png" alt="Screenshot_20230828_230258"></p>
 <p>LOOOOOOOL, it is same as the key. wtf is your encryption bro. </p>
-<p>But then another challenge arose. The <code>xm_encryptor</code> can also process a <code>trackId</code> with a length less than 24 bytes. Knowing that AES-192 cannot work with a key length other than 24 bytes, I assert that the software must somehow pad the <code>trackId</code> with some additional characters.</p>
+<p>But then another challenge arose. The <code>xm_encryptor</code> can also process a <code>trackId</code> with a length less than 24 bytes. Knowing that AES-192 cannot work with a key length other than 24 bytes, I assert that the algorithm must somehow pad the <code>trackId</code> with some additional characters.</p>
 <p>Our task now was to identify the padding characters and its padding method. Since the encryption needed to support variable <code>trackId</code> lengths and since the padding was done based on our provided <code>trackId</code>, the most straightforward solution would be to pad with some constant characters. </p>
 <p>There are also two types of simplest padding methods, one is to pad behind the <code>trackId</code>, and the other is to pad in front.</p>
 <p>So at this time, there is one simple but effective method - <strong>Bruteforce</strong>. One byte by one byte. We only need to run 256*24&#x3D;6144 iterations. Not even hitting 10k.</p>

