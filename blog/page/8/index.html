@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -200,7 +200,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/06/blogarchive/2019-04-06-18-00-02/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-04-17-16-43-23/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -218,7 +218,112 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/06/blogarchive/2019-04-06-18-00-02/" class="post-title-link" itemprop="url">use table partition to increase inserting performance</a>
+          <a href="/articles/blogarchive/2019-04-17-16-43-23/" class="post-title-link" itemprop="url">Problem about install windows 10 in mac os with bootcamp.</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-04-17 16:43:23" itemprop="dateCreated datePublished" datetime="2019-04-17T16:43:23-07:00">2019-04-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-05-21 09:39:38" itemprop="dateModified" datetime="2021-05-21T09:39:38-07:00">2021-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><strong>problem 1</strong>: stuck at &quot;partition disk&quot;.</p>
+<p><strong>solution</strong>: </p>
+<ol>
+<li><p>force quit boot camp</p>
+</li>
+<li><p>then open disk utility.</p>
+</li>
+<li><p>click partition, delete all other partition (using the - symbol)that bootcamp made. including: <em>OSXRECOVER</em> and <em>BOOTCAMP</em>.</p>
+</li>
+<li><p>open bootcamp again and try re-install again.</p>
+</li>
+</ol>
+<hr>
+<p><strong>problem 2</strong>: An error occurred while copying the Windows installation files</p>
+<p><strong>reason</strong>:  because bootcamp using a 8g FAT32 disk partition to copy windows file, since FAT32 can not support file larger than 4g. any windows file larger than 4g will cause this problem happen.</p>
+<p><strong>solution</strong>: </p>
+<ol>
+<li>use a ISO that have file size smaller than 4g.</li>
+<li>known iso that can not use: 1703 1803 1809 (may work on your computer)</li>
+<li>known iso that can use: none</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-04-06-18-00-02/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/blogarchive/2019-04-06-18-00-02/" class="post-title-link" itemprop="url">use table partition to increase inserting performance</a>
         </h2>
 
         <div class="post-meta-container">
@@ -331,7 +436,7 @@ alter table fingerprints drop partition p20
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/06/blogarchive/2019-04-06-17-38-45/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-04-06-17-38-45/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -349,7 +454,7 @@ alter table fingerprints drop partition p20
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/06/blogarchive/2019-04-06-17-38-45/" class="post-title-link" itemprop="url">Fix memory error caused by memory overflowing</a>
+          <a href="/articles/blogarchive/2019-04-06-17-38-45/" class="post-title-link" itemprop="url">Fix memory error caused by memory overflowing</a>
         </h2>
 
         <div class="post-meta-container">
@@ -422,7 +527,7 @@ alter table fingerprints drop partition p20
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/04/06/blogarchive/2019-04-06-17-28-58/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-04-06-17-28-58/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -440,7 +545,7 @@ alter table fingerprints drop partition p20
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/04/06/blogarchive/2019-04-06-17-28-58/" class="post-title-link" itemprop="url">Improving sqlalchemy inserting performance for large set of data</a>
+          <a href="/articles/blogarchive/2019-04-06-17-28-58/" class="post-title-link" itemprop="url">Improving sqlalchemy inserting performance for large set of data</a>
         </h2>
 
         <div class="post-meta-container">
@@ -533,7 +638,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/03/16/blogarchive/2019-03-16-20-39-27/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-03-16-20-39-27/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -551,7 +656,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/03/16/blogarchive/2019-03-16-20-39-27/" class="post-title-link" itemprop="url">Electron packaging</a>
+          <a href="/articles/blogarchive/2019-03-16-20-39-27/" class="post-title-link" itemprop="url">Electron packaging</a>
         </h2>
 
         <div class="post-meta-container">
@@ -634,7 +739,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/11/blogarchive/2019-02-11-22-53-22/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-02-11-22-53-22/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -652,7 +757,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/11/blogarchive/2019-02-11-22-53-22/" class="post-title-link" itemprop="url">Solution to mplayer playing voice and picture out of sync</a>
+          <a href="/articles/blogarchive/2019-02-11-22-53-22/" class="post-title-link" itemprop="url">Solution to mplayer playing voice and picture out of sync</a>
         </h2>
 
         <div class="post-meta-container">
@@ -733,7 +838,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-20-53-39/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-02-09-20-53-39/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -751,7 +856,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/09/blogarchive/2019-02-09-20-53-39/" class="post-title-link" itemprop="url">raspberry pi using vnc, can't log in.</a>
+          <a href="/articles/blogarchive/2019-02-09-20-53-39/" class="post-title-link" itemprop="url">raspberry pi using vnc, can't log in.</a>
         </h2>
 
         <div class="post-meta-container">
@@ -821,7 +926,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-20-46-15/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-02-09-20-46-15/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -839,7 +944,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/09/blogarchive/2019-02-09-20-46-15/" class="post-title-link" itemprop="url">Fininshing Update Shazam analysis(chinese version)</a>
+          <a href="/articles/blogarchive/2019-02-09-20-46-15/" class="post-title-link" itemprop="url">Fininshing Update Shazam analysis(chinese version)</a>
         </h2>
 
         <div class="post-meta-container">
@@ -909,7 +1014,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-20-39-15/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-02-09-20-39-15/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -927,7 +1032,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/09/blogarchive/2019-02-09-20-39-15/" class="post-title-link" itemprop="url">Shazam听歌识曲算法解析+python实现-3 检索歌曲</a>
+          <a href="/articles/blogarchive/2019-02-09-20-39-15/" class="post-title-link" itemprop="url">Shazam听歌识曲算法解析+python实现-3 检索歌曲</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1034,7 +1139,7 @@ session.commit()
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/02/09/blogarchive/2019-02-09-17-01-47/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-02-09-17-01-47/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -1052,7 +1157,7 @@ session.commit()
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/02/09/blogarchive/2019-02-09-17-01-47/" class="post-title-link" itemprop="url">shazam听歌识曲算法解析+python实现-2 生成指纹</a>
+          <a href="/articles/blogarchive/2019-02-09-17-01-47/" class="post-title-link" itemprop="url">shazam听歌识曲算法解析+python实现-2 生成指纹</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1163,120 +1268,6 @@ session.commit()
 <p>[2]: <a target="_blank" rel="noopener" href="https://github.com/worldveil/dejavu">https://github.com/worldveil/dejavu</a></p>
 <p>[3]: <a target="_blank" rel="noopener" href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a></p>
 <p>[4]: Wang, Avery. &quot;An Industrial Strength Audio Search Algorithm.&quot; Ismir. Vol. 2003. 2003.</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/21/blogarchive/2019-01-21-15-36-37/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/01/21/blogarchive/2019-01-21-15-36-37/" class="post-title-link" itemprop="url">shazam听歌识曲算法的解析与听歌识曲python实现的分析-1 读取歌曲</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-01-21 15:36:37" itemprop="dateCreated datePublished" datetime="2019-01-21T15:36:37-08:00">2019-01-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-21 09:39:38" itemprop="dateModified" datetime="2021-05-21T09:39:38-07:00">2021-05-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>###shazam听歌识曲算法的解析与听歌识曲python实现的分析-1 读取歌曲<br><br><br>开新坑，歌曲识别计划。<br><br>使用的算法是《An Industrial-Strength Audio Search Algorithm》，其中部分代码借鉴了Github的<a target="_blank" rel="noopener" href="https://github.com/worldveil/dejavu">dejavu</a>项目。<br><br><br>关于读取歌曲，首先需要安装一个python库. <code>pydub</code>。你可以使用<code>pip3 install pydub</code>来安装。<br></p>
-<pre>
-audiofile = AudioSegment.from_file(filepath)
- # data = audiofile.get_array_of_samples()
- # Stereo audio array is in form of [sample_1_L, sample_1_R, sample_2_L, sample_2_R, …]
- data = np.fromstring(audiofile.raw_data, np.int16)
-channels = []
- # Get data for different channel
-for channel in range(audiofile.channels):
-    channels.append(data[channel::audiofile.channels])
-</pre>
-<br>
-`AudioSegment.from_file(filepath)`可以读取大部分音频，wav除外。在项目中，我们需要直接对音频信息进行操作，我们可以使用raw_data 来获取最原始的数据。另外我们需要知道音频的采样速率，用frame_rate 来获取。<br><br>
-由于现在大部分音频都是立体声的（有多个通道），所以，对于每一个通道我们都需要分开处理。raw_data 返回的格式是这样子的[sample_1_L, sample_1_R, sample_2_L, sample_2_R, …] （在这里有左声道和右声道），分开不同的通道通道可以用切片来做`data[channel::audiofile.channels]`。<br><br>
-这样子，读取音频的工作就完成了。<br><br>
-另外，读取音频的时候可以计算一下文件的sha256值来作为这一首歌的唯一识别码。<br>
-
-<pre>
-def generateFilehash(filepath, blocksize=2 ** 16):
-    sha = sha256()
-    with open(filepath, "rb") as f:
-        while True:
-            buf = f.read(blocksize)
-            if not buf:
-                break
-            sha.update(buf)
-    return sha.hexdigest().upper()
-</pre>
-
-<p>其中，sha256可以替换为其他，如md5，sha1，sha128之类的，效果都一样。<br><br></p>
 
       
     </div>

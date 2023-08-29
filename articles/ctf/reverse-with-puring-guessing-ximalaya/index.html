@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="PrologueIn my previous article, I left a lingering question regarding the decryption methodology inside wasm. Today, let&#39;s dive deep into the world of reverse engineering again and uncover the mys">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Reversing WebAssembly with pure guesswork - Ximalaya xm encryption">
+<meta property="og:url" content="http://www.aynakeya.com/articles/ctf/reverse-with-puring-guessing-ximalaya/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="PrologueIn my previous article, I left a lingering question regarding the decryption methodology inside wasm. Today, let&#39;s dive deep into the world of reverse engineering again and uncover the mys">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225450.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547-1693291441850-4.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_235157.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230829_010834.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230829_005032.png">
+<meta property="article:published_time" content="2023-08-29T04:43:50.000Z">
+<meta property="article:modified_time" content="2023-08-29T08:28:59.370Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="electron">
+<meta property="article:tag" content="reverse">
+<meta property="article:tag" content="encryption">
+<meta property="article:tag" content="ximalya">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225450.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/ctf/reverse-with-puring-guessing-ximalaya/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/ctf/reverse-with-puring-guessing-ximalaya/","path":"articles/ctf/reverse-with-puring-guessing-ximalaya/","title":"Reversing WebAssembly with pure guesswork - Ximalaya xm encryption"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Reversing WebAssembly with pure guesswork - Ximalaya xm encryption | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Prologue"><span class="nav-number">1.</span> <span class="nav-text">Prologue</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Thinking-Forward"><span class="nav-number">2.</span> <span class="nav-text">Thinking Forward</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Guessing-the-encryption"><span class="nav-number">2.1.</span> <span class="nav-text">Guessing the encryption</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Finding-Parameters"><span class="nav-number">2.2.</span> <span class="nav-text">Finding Parameters</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Verify-Parameter-with-Memdump"><span class="nav-number">2.3.</span> <span class="nav-text">Verify Parameter with Memdump</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Put-it-together"><span class="nav-number">2.4.</span> <span class="nav-text">Put it together</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Walking-Backwards"><span class="nav-number">3.</span> <span class="nav-text">Walking Backwards</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Golang-DLL"><span class="nav-number">3.1.</span> <span class="nav-text">The Golang DLL</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Some-Thoughts"><span class="nav-number">4.</span> <span class="nav-text">Some Thoughts</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Code"><span class="nav-number">5.</span> <span class="nav-text">Code</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/reverse-with-puring-guessing-ximalaya/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Reversing WebAssembly with pure guesswork - Ximalaya xm encryption | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Reversing WebAssembly with pure guesswork - Ximalaya xm encryption
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-08-28 21:43:50" itemprop="dateCreated datePublished" datetime="2023-08-28T21:43:50-07:00">2023-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-08-29 01:28:59" itemprop="dateModified" datetime="2023-08-29T01:28:59-07:00">2023-08-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Prologue"><a href="#Prologue" class="headerlink" title="Prologue"></a>Prologue</h1><p>In my previous <a href="/articles/ctf/xi-ma-la-ya-xm-wen-jian-jie-mi-ni-xiang-fen-xi/">article</a>, I left a lingering question regarding the decryption methodology inside wasm. Today, let&#39;s dive deep into the world of reverse engineering again and uncover the mysteries that lie beneath the code.</p>
+<p>Now, some of you might wonder why this post is titled <strong>pure guesswork</strong>. Well, that&#39;s because I tackled this <em>&#39;reversing&#39;</em> challenge without actually doing any acutally reversing.</p>
+<span id="more"></span>
+
+<h1 id="Thinking-Forward"><a href="#Thinking-Forward" class="headerlink" title="Thinking Forward"></a>Thinking Forward</h1><p>If there exists a decryption algorithm, there must be a corresponding encryption mechanism. In this case, the exported function <code>h</code> in the webassembly is the encryption method I want. </p>
+<p>Similar to its decryption counterpart, it requires two parameters: encrypted data and a trackId.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function f_h(a:&#123; a:byte, b:byte &#125;, b:int, c:long_ptr, d:int, e:int) &#123;</span><br><span class="line">  var m:int;</span><br><span class="line">  ...</span><br></pre></td></tr></table></figure>
+
+<p>Let&#39;s explore how this encryption works.</p>
+<h2 id="Guessing-the-encryption"><a href="#Guessing-the-encryption" class="headerlink" title="Guessing the encryption"></a>Guessing the encryption</h2><p>First, we need a script to test how different parameters influence the encryption outcome:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> pad</span><br><span class="line"><span class="keyword">from</span> wasmer <span class="keyword">import</span> engine,Store, Module, Instance,Memory,Uint8Array,Int32Array</span><br><span class="line"><span class="keyword">import</span> io,sys,pathlib</span><br><span class="line"><span class="keyword">import</span> re,base64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">xm_encryptor = Instance(Module(</span><br><span class="line">    Store(),</span><br><span class="line">    pathlib.Path(<span class="string">&quot;./xm_encryptor.wasm&quot;</span>).read_bytes()</span><br><span class="line">))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt</span>(<span class="params">data, key</span>):</span><br><span class="line">    stack_pointer = xm_encryptor.exports.a(-<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(stack_pointer, <span class="built_in">int</span>)</span><br><span class="line">    de_data_offset = xm_encryptor.exports.c(<span class="built_in">len</span>(data))</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(de_data_offset,<span class="built_in">int</span>)</span><br><span class="line">    track_id_offset = xm_encryptor.exports.c(<span class="built_in">len</span>(key))</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(track_id_offset, <span class="built_in">int</span>)</span><br><span class="line">    memory_i = xm_encryptor.exports.i</span><br><span class="line">    memview_unit8:Uint8Array = memory_i.uint8_view(offset=de_data_offset)</span><br><span class="line">    <span class="keyword">for</span> i,b <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">        memview_unit8[i] = b</span><br><span class="line">    memview_unit8: Uint8Array = memory_i.uint8_view(offset=track_id_offset)</span><br><span class="line">    <span class="keyword">for</span> i,b <span class="keyword">in</span> <span class="built_in">enumerate</span>(key):</span><br><span class="line">        memview_unit8[i] = b</span><br><span class="line">    xm_encryptor.exports.h(stack_pointer,de_data_offset,<span class="built_in">len</span>(data),track_id_offset,<span class="built_in">len</span>(key))</span><br><span class="line">    memview_int32: Int32Array = memory_i.int32_view(offset=stack_pointer // <span class="number">4</span>)</span><br><span class="line">    result_pointer = memview_int32[<span class="number">0</span>]</span><br><span class="line">    result_length = memview_int32[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">assert</span> memview_int32[<span class="number">2</span>] == <span class="number">0</span>, memview_int32[<span class="number">3</span>] == <span class="number">0</span></span><br><span class="line">    result_data = <span class="built_in">bytearray</span>(memory_i.buffer)[result_pointer:result_pointer+result_length].decode()</span><br><span class="line">    <span class="keyword">return</span> result_data</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x20</span>):</span><br><span class="line">    data = <span class="string">b&#x27;A&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&quot;CCCCCCCC&quot;</span>+<span class="string">b&quot;DDDDDDDD&quot;</span></span><br><span class="line">    <span class="comment"># track_id = b&#x27;E&#x27;*0x8+b&#x27;F&#x27;*0x8+b&#x27;G&#x27;*0x7 # max 24</span></span><br><span class="line">    track_id = <span class="string">b&#x27;\x41&#x27;</span> * i</span><br><span class="line">    <span class="comment"># track_id = b&#x27;E&#x27;*0x8</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">hex</span>(i),encrypt(data,track_id))</span><br></pre></td></tr></table></figure>
+
+<p>From the results, we can observe that after <code>track_id</code> reaches a length of 0x18 bytes, the outcome remains the same. This implies that the length of <code>track_id</code> beyond 0x18 doesn&#39;t impact the results.</p>
+<details open>
+<summary>result</summary>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">0x16 NrVlG9gtu3MmpUlXK8gIxHD0Kh07iORGc6Dz5tLaLSUBSffF0/FU1vB8OmX921rP</span><br><span class="line">0x17 2HiMLe5mRt4yHMs3WUtr7L0Zt6MG/lLaeK/0rSiTeUwlTEYF2e/Y7w+S3v75Kw65</span><br><span class="line">0x18 DzljUl9dgiE6eex/8OeN/DXnw0roUS9t00zDBXylzFphQ4/yMCxxOJuOPxifYEVS</span><br><span class="line">0x19 DzljUl9dgiE6eex/8OeN/DXnw0roUS9t00zDBXylzFphQ4/yMCxxOJuOPxifYEVS</span><br><span class="line">0x1a DzljUl9dgiE6eex/8OeN/DXnw0roUS9t00zDBXylzFphQ4/yMCxxOJuOPxifYEVS</span><br></pre></td></tr></table></figure>
+</details>
+
+<p>0x18 is an intriguing value, precisely 192 bits. This instantly reminded me of aes-192 encryption. In fact, if you search &quot;192 bit encryption&quot; on Google, the first result typically points towards AES.</p>
+<p>But how can we ascertain that this is indeed AES encryption? While we could manually verify it, we also need to identify the encryption mode and its IV (Initialization Vector).</p>
+<p>I began by trying out CBC mode, primarily because it&#39;s commonly employed. Also, due to the nature of CBC mode (as detailed on <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Block_cipher_mode_of_operation#Electronic_codebook_(ECB)">Wikipedia</a>), it&#39;s straightforward to verify it by using the initial 16 bytes as the IV.</p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225450.png" alt="Screenshot_20230828_225450"></p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547.png" alt="Screenshot_20230828_225547"></p>
+<p>uhhhhhh, wtf, it indeed was the CBC mode  (Coooooooool). Now, the task was to identify the IV.</p>
+<h2 id="Finding-Parameters"><a href="#Finding-Parameters" class="headerlink" title="Finding Parameters"></a>Finding Parameters</h2><p>Since the encryption function doesn&#39;t explicitly demand an IV, there are two possibilities. The IV could either be generated based on <code>trackId</code> (since the data would eventually be encrypted) or it could be randomly generated and then appended to the returned value.</p>
+<p>The latter can be quickly ruled out, given the length of the return value doesn&#39;t seem to have room for an appended IV. This points to the former - the IV might be derived from the <code>trackId</code>. But how?</p>
+<p>To solve this, I started with the simplest assumption: that the first 16 bytes of the <code>trackId</code> were being used as the IV.</p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_225547-1693291441850-4.png" alt="Screenshot_20230828_225547"></p>
+<p>LOOOOOOOL, it is same as the key. wtf is your encryption bro. </p>
+<p>But then another challenge arose. The <code>xm_encryptor</code> can also process a <code>trackId</code> with a length less than 24 bytes. Knowing that AES-192 cannot work with a key length other than 24 bytes, I assert that the software must somehow pad the <code>trackId</code> with some additional characters.</p>
+<p>Our task now was to identify the padding characters and its padding method. Since the encryption needed to support variable <code>trackId</code> lengths and since the padding was done based on our provided <code>trackId</code>, the most straightforward solution would be to pad with some constant characters. </p>
+<p>There are also two types of simplest padding methods, one is to pad behind the <code>trackId</code>, and the other is to pad in front.</p>
+<p>So at this time, there is one simple but effective method - <strong>Bruteforce</strong>. One byte by one byte. We only need to run 256*24&#x3D;6144 iterations. Not even hitting 10k.</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">xm_encryptor = Instance(Module(</span><br><span class="line">    Store(),</span><br><span class="line">    pathlib.Path(<span class="string">&quot;./xm_encryptor.wasm&quot;</span>).read_bytes()</span><br><span class="line">))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">encrypt</span>(<span class="params">data, key</span>):</span><br><span class="line">    stack_pointer = xm_encryptor.exports.a(-<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(stack_pointer, <span class="built_in">int</span>)</span><br><span class="line">    de_data_offset = xm_encryptor.exports.c(<span class="built_in">len</span>(data))</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(de_data_offset,<span class="built_in">int</span>)</span><br><span class="line">    track_id_offset = xm_encryptor.exports.c(<span class="built_in">len</span>(key))</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">isinstance</span>(track_id_offset, <span class="built_in">int</span>)</span><br><span class="line">    memory_i = xm_encryptor.exports.i</span><br><span class="line">    memview_unit8:Uint8Array = memory_i.uint8_view(offset=de_data_offset)</span><br><span class="line">    <span class="keyword">for</span> i,b <span class="keyword">in</span> <span class="built_in">enumerate</span>(data):</span><br><span class="line">        memview_unit8[i] = b</span><br><span class="line">    memview_unit8: Uint8Array = memory_i.uint8_view(offset=track_id_offset)</span><br><span class="line">    <span class="keyword">for</span> i,b <span class="keyword">in</span> <span class="built_in">enumerate</span>(key):</span><br><span class="line">        memview_unit8[i] = b</span><br><span class="line">    xm_encryptor.exports.h(stack_pointer,de_data_offset,<span class="built_in">len</span>(data),track_id_offset,<span class="built_in">len</span>(key))</span><br><span class="line">    memview_int32: Int32Array = memory_i.int32_view(offset=stack_pointer // <span class="number">4</span>)</span><br><span class="line">    result_pointer = memview_int32[<span class="number">0</span>]</span><br><span class="line">    result_length = memview_int32[<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">assert</span> memview_int32[<span class="number">2</span>] == <span class="number">0</span>, memview_int32[<span class="number">3</span>] == <span class="number">0</span></span><br><span class="line">    result_data = <span class="built_in">bytearray</span>(memory_i.buffer)[result_pointer:result_pointer+result_length].decode()</span><br><span class="line">    <span class="keyword">return</span> result_data</span><br><span class="line"></span><br><span class="line">fillup = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> missing <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">1</span>,<span class="number">0x18</span>+<span class="number">1</span>):</span><br><span class="line">    data = <span class="string">b&#x27;A&#x27;</span>*<span class="number">0x10</span>+<span class="string">b&quot;CCCCCCCC&quot;</span>+<span class="string">b&quot;DDDDDDDD&quot;</span></span><br><span class="line">    key = <span class="string">b&#x27;\x41&#x27;</span>*(<span class="number">0x18</span> - missing)</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">256</span>):</span><br><span class="line">        test_byte = i.to_bytes(<span class="number">1</span>,<span class="string">&quot;little&quot;</span>)</span><br><span class="line">        <span class="comment"># filledup_key = key + b&#x27;&#x27;.join(fillup) + test_byte</span></span><br><span class="line">        filledup_key = <span class="string">b&#x27;&#x27;</span>.join(fillup) + test_byte + key</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            result_data = encrypt(data,key)</span><br><span class="line">            cipher = AES.new(filledup_key, AES.MODE_CBC, filledup_key[:<span class="number">16</span>])</span><br><span class="line">            decoded_data = unpad(cipher.decrypt(base64.b64decode(result_data)),<span class="number">16</span>)</span><br><span class="line">            <span class="keyword">assert</span> data == decoded_data</span><br><span class="line">            fillup.append(test_byte)</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;found&quot;</span>, fillup)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">except</span> Exception <span class="keyword">as</span> e:</span><br><span class="line">            <span class="keyword">pass</span></span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(fillup) == missing</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;found filled up: &quot;</span>, <span class="string">b&#x27;&#x27;</span>.join(fillup))</span><br></pre></td></tr></table></figure>
+
+<p>lets start with the first one. padding after the <code>trackId</code>, ummmmmmmmmmmmmmmmmm. not this time. </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">[aynakeya @ ThinkStation]:~/workspace/ximalaya</span><br><span class="line">22:51:38 $ python test_wasm_3.py </span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File &quot;/home/aynakeya/workspace/ximalaya/test_wasm_3.py&quot;, line 59, in &lt;module&gt;</span><br><span class="line">    assert len(fillup) == missing</span><br><span class="line">AssertionError</span><br></pre></td></tr></table></figure>
+
+<p>But the second approach, padding before the <code>trackId</code>, worked.</p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230828_235157.png" alt="thatsprettycool"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[aynakeya @ ThinkStation]:~/workspace/ximalaya</span><br><span class="line">23:16:55 $ python test_wasm_3.py </span><br><span class="line">found [b&#x27;1&#x27;]</span><br><span class="line">...</span><br><span class="line">found filled up:  b&#x27;123456781234567812345678&#x27;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Verify-Parameter-with-Memdump"><a href="#Verify-Parameter-with-Memdump" class="headerlink" title="Verify Parameter with Memdump"></a>Verify Parameter with Memdump</h2><p>To validate the padding method is accuracy, another technique I can employ is the memory dump. While debugging would work too, I&#39;m just too lazy to debugging WebAssembly.</p>
+<p>To achieve this, I added a few lines to the <code>encrypt</code> function:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">result_data = <span class="built_in">bytearray</span>(memory_i.buffer)[result_pointer:result_pointer+result_length].decode()</span><br><span class="line">a = <span class="built_in">bytearray</span>(memory_i.buffer)[<span class="number">0</span>:track_id_offset*<span class="number">3</span>]</span><br><span class="line">off = a.find(key)</span><br><span class="line"><span class="built_in">print</span>(a[off-<span class="number">0x20</span>:off+<span class="number">0x20</span>])</span><br></pre></td></tr></table></figure>
+
+<p>By examining the output, we can clearly identify the padding:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bytearray(b&#x27;&#125;\x11\x00@\x00\x00\x00@\x00\x00\x00\xe8\x01\x11\x00X&#125;\x11\x00@\x00\x00\x00@\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00X&#125;\x11\x00@\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00AAAA@\x00\x00\x00\x10\x00\x00\x000\xa4\x0e\x000\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\xa8\x00\x11\x00p\x08\x10\x00123456781AAAAAAAAAAAAAAA123456781AAAAAAA123456781AAAAAAAAAAAAAAA123456781AAAAAAA\xe8\x01\x11\x000\x00\x00\x000\x00\x00\x00AAAA\x08\x00\x11\x00 \x00\x00\x00 &#x27;)</span><br></pre></td></tr></table></figure>
+
+<p>The presence of sequences like <code>123456781AAAAAAAAAAAAAAA</code> in the dumped data suggests that our assumption regarding the padding is indeed accurate. </p>
+<h2 id="Put-it-together"><a href="#Put-it-together" class="headerlink" title="Put it together"></a>Put it together</h2><p>With all the pieces of the puzzle now in place, it&#39;s clear that the wasm encryption follows these steps:</p>
+<ol>
+<li>Decode the input with Base64.</li>
+<li>Use AES-192-CBC encryption. The key is derived from <code>trackId</code>. If <code>trackId</code> has fewer than 24 bytes, it&#39;s prepended with <code>123456781234567812345678</code> to reach the required length. And the IV is the first 16 byte of the key.</li>
+<li>Encode the result using Base64.</li>
+</ol>
+<h1 id="Walking-Backwards"><a href="#Walking-Backwards" class="headerlink" title="Walking Backwards"></a>Walking Backwards</h1><p>Having understood the correct encryption method, I took a moment to ponder whether there might be a more straightforward reverse engineering approach.</p>
+<p>I wasn&#39;t keen on trawling through WebAssembly. Just then, one user from some git issue mentions that the older version of the Ximalaya client used a DLL to implement the encryption, and more importantly, the encryption mechanism was identical.</p>
+<p>Hey, I don&#39;t need to deal with the stupid WebAssembly anymore.  I could now dive straight into dissecting the algorithm using the my good old assembly code. Well, at least that&#39;s what I initially thought.</p>
+<h2 id="The-Golang-DLL"><a href="#The-Golang-DLL" class="headerlink" title="The Golang DLL"></a>The Golang DLL</h2><p>I did take some time dived into reverse engineering - mainly because the dll was crafted using Golang . While the world of assembly offers its intricate dance of registers and memory locations, it became exponentially challenging with Go&#39;s binaries, <em>thanks</em> to its distinctive calling convention.</p>
+<p>For those unfamiliar, a calling convention defines the runtime call stack&#39;s operation, dictating how functions receive parameters from their callers and return their results. Typically, languages like C or C++ adhere to conventions that is fairly easy to use and understand. Enter Golang - a language that not only dances but also brings its own dance floor. Unlike its peers, Go uses a unique, stack-based calling convention, throwing a wrench into the familiar rhythm of traditional reverse engineering tools.</p>
+<p>What does this mean for reverse engineers? <strong>Pure Pain</strong>.</p>
+<p>Standard tools like IDA Pro, Ghidra, or Radare2 can get pretty confused by Go&#39;s conventions. Recognizing function boundaries, arguments, and return values becomes an uphill battle. Local variables and function arguments are frequently intermixed, and because Go binaries are statically compiled, there&#39;s a whole lot of code to sift through.</p>
+<p>But every dark cloud has a silver lining.</p>
+<p>Instead of wrangling with Go&#39;s intricacies head-on, an alternative approach dawned upon me: why not write a similar AES decryption function in Go, compile it with debugging symbols, and then use that as a basis for comparison with the target binary? By doing this, I&#39;d have a &quot;known&quot; reference, a roadmap of sorts, to guide my analysis of the original DLL.</p>
+<p>The process was fairly straightforward. I wrote an AES decryption method in Go, ensuring it closely mirrored the suspected functionality of the target DLL. Upon compiling this with debugging symbols, I was armed with a binary rich in annotations that helped demystify the corresponding sections of the DLL.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">	&quot;crypto/aes&quot;</span><br><span class="line">	&quot;crypto/cipher&quot;</span><br><span class="line">	&quot;encoding/base64&quot;</span><br><span class="line">	&quot;errors&quot;</span><br><span class="line">	&quot;fmt&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">func pkcs7UnPadding(data []byte) ([]byte, error) &#123;</span><br><span class="line">	length := len(data)</span><br><span class="line">	if length == 0 &#123;</span><br><span class="line">		return nil, errors.New(&quot;error data&quot;)</span><br><span class="line">	&#125;</span><br><span class="line">	unPadding := int(data[length-1])</span><br><span class="line">	return data[:(length - unPadding)], nil</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">var iv = []byte(&quot;1234567890123456&quot;)</span><br><span class="line">var key = []byte(&quot;1234567890123456&quot;)</span><br><span class="line"></span><br><span class="line">func AesDecrypt(data []byte) ([]byte, error) &#123;</span><br><span class="line">	block, err := aes.NewCipher(key)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line">	blockMode := cipher.NewCBCDecrypter(block, iv)</span><br><span class="line">	crypted := make([]byte, len(data))</span><br><span class="line">	blockMode.CryptBlocks(crypted, data)</span><br><span class="line">	crypted, err = pkcs7UnPadding(crypted)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line">	return crypted, nil</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">func DecryptByAes(data string) ([]byte, error) &#123;</span><br><span class="line">	dataByte, err := base64.StdEncoding.DecodeString(data)</span><br><span class="line">	if err != nil &#123;</span><br><span class="line">		return nil, err</span><br><span class="line">	&#125;</span><br><span class="line">	return AesDecrypt(dataByte)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">	a, b := DecryptByAes(&quot;asdfsadfsadf&quot;)</span><br><span class="line">	fmt.Println(a, b)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230829_010834.png" alt="Screenshot_20230829_010834"></p>
+<p>Using my custom-compiled Go binary as a reference, I could now align and correlate patterns, function calls, and data structures more effectively with the DLL. This comparative approach illuminated the obscured parts of the DLL, allowing me to make headway much faster than if I had been grappling with the unfamiliar Go assembly on its own.</p>
+<p>Here&#39;s the key padding:</p>
+<p><img data-src="/images/reverse-with-puring-guessing-ximalaya/Screenshot_20230829_005032.png" alt="Screenshot_20230829_005032"></p>
+<p>After all, the results of the reverse engineering were very consistent with my guesswork solution.</p>
+<h1 id="Some-Thoughts"><a href="#Some-Thoughts" class="headerlink" title="Some Thoughts"></a>Some Thoughts</h1><p>Sometimes, when confronted with a perplexing problem, it&#39;s beneficial to shift gears. Using an informed approach to make educated guesses can be far more productive than blindly grappling in the dark. Instead of hitting the wall repeatedly, stepping back and reassessing can often open doors to solutions previously unseen.</p>
+<p>The age-old wisdom of &quot;Don&#39;t put all your eggs in one basket&quot; rings true here. Diversifying your strategies can save you from potential pitfalls and lead you to your eureka moment faster than you might think.</p>
+<p>All in all, the joy of conquering a formidable challenge is incomparable. Those fleeting moments of doubt now serve as milestones marking how far I&#39;ve journeyed, filling me with a profound sense of achievement.</p>
+<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mutagen.easyid3 <span class="keyword">import</span> ID3</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> Crypto.Util.Padding <span class="keyword">import</span> pad,unpad</span><br><span class="line"><span class="keyword">import</span> io,sys,pathlib</span><br><span class="line"><span class="keyword">import</span> re,base64,magic</span><br><span class="line"><span class="keyword">import</span> mutagen</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">XMInfo</span>:</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    const &#123;</span></span><br><span class="line"><span class="string">        title: s,</span></span><br><span class="line"><span class="string">        artist: l,</span></span><br><span class="line"><span class="string">        subtitle: c,</span></span><br><span class="line"><span class="string">        length: d,</span></span><br><span class="line"><span class="string">        comment: &#123;</span></span><br><span class="line"><span class="string">            language: u,</span></span><br><span class="line"><span class="string">            text: p</span></span><br><span class="line"><span class="string">        &#125;,</span></span><br><span class="line"><span class="string">        album: h,</span></span><br><span class="line"><span class="string">        trackNumber: b,</span></span><br><span class="line"><span class="string">        size: g,</span></span><br><span class="line"><span class="string">        encodingTechnology: v,</span></span><br><span class="line"><span class="string">        ISRC: _,</span></span><br><span class="line"><span class="string">        fileType: y,</span></span><br><span class="line"><span class="string">        encodedBy: w,</span></span><br><span class="line"><span class="string">        publisher: k,</span></span><br><span class="line"><span class="string">        composer: x,</span></span><br><span class="line"><span class="string">        mediaType: S</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.title = <span class="string">&quot;&quot;</span></span><br><span class="line">        self.artist = <span class="string">&quot;&quot;</span></span><br><span class="line">        self.album = <span class="string">&quot;&quot;</span></span><br><span class="line">        self.tracknumber = <span class="number">0</span></span><br><span class="line">        self.size = <span class="number">0</span></span><br><span class="line">        self.header_size = <span class="number">0</span></span><br><span class="line">        self.ISRC = <span class="string">&quot;&quot;</span></span><br><span class="line">        self.encodedby = <span class="string">&quot;&quot;</span></span><br><span class="line">        self.encoding_technology = <span class="string">&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">iv</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">if</span> (self.ISRC != <span class="string">&quot;&quot;</span>):</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">bytes</span>.fromhex(self.ISRC)</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">bytes</span>.fromhex(self.encodedby)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_str</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">if</span> x <span class="keyword">is</span> <span class="literal">None</span>:</span><br><span class="line">        <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    <span class="keyword">return</span> x</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">read_file</span>(<span class="params">x</span>):</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(x,<span class="string">&quot;rb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        <span class="keyword">return</span> f.read()</span><br><span class="line"></span><br><span class="line"><span class="comment"># return number of id3 bytes</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_xm_info</span>(<span class="params">data:<span class="built_in">bytes</span></span>):</span><br><span class="line">    <span class="comment"># print(EasyID3(io.BytesIO(data)))</span></span><br><span class="line">    id3 = ID3(io.BytesIO(data),v2_version=<span class="number">3</span>)</span><br><span class="line">    id3value = XMInfo()</span><br><span class="line">    id3value.title = <span class="built_in">str</span>(id3[<span class="string">&quot;TIT2&quot;</span>])</span><br><span class="line">    id3value.album = <span class="built_in">str</span>(id3[<span class="string">&quot;TALB&quot;</span>])</span><br><span class="line">    id3value.artist = <span class="built_in">str</span>(id3[<span class="string">&quot;TPE1&quot;</span>])</span><br><span class="line">    id3value.tracknumber = <span class="built_in">int</span>(<span class="built_in">str</span>(id3[<span class="string">&quot;TRCK&quot;</span>]))</span><br><span class="line">    id3value.ISRC = <span class="string">&quot;&quot;</span> <span class="keyword">if</span> id3.get(<span class="string">&quot;TSRC&quot;</span>) <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> <span class="built_in">str</span>(id3[<span class="string">&quot;TSRC&quot;</span>])</span><br><span class="line">    id3value.encodedby = <span class="string">&quot;&quot;</span> <span class="keyword">if</span> id3.get(<span class="string">&quot;TENC&quot;</span>) <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">else</span> <span class="built_in">str</span>(id3[<span class="string">&quot;TENC&quot;</span>])</span><br><span class="line">    id3value.size = <span class="built_in">int</span>(<span class="built_in">str</span>(id3[<span class="string">&quot;TSIZ&quot;</span>]))</span><br><span class="line">    id3value.header_size = id3.size</span><br><span class="line">    id3value.encoding_technology = <span class="built_in">str</span>(id3[<span class="string">&quot;TSSE&quot;</span>])</span><br><span class="line">    <span class="keyword">return</span> id3value</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_printable_count</span>(<span class="params">x:<span class="built_in">bytes</span></span>):</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line">    <span class="keyword">for</span> i,c <span class="keyword">in</span> <span class="built_in">enumerate</span>(x):</span><br><span class="line">        <span class="comment"># all pritable</span></span><br><span class="line">        <span class="keyword">if</span> c &lt; <span class="number">0x20</span> <span class="keyword">or</span> c &gt; <span class="number">0x7e</span>:</span><br><span class="line">            <span class="keyword">return</span> i</span><br><span class="line">    <span class="keyword">return</span> i</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_printable_bytes</span>(<span class="params">x:<span class="built_in">bytes</span></span>):</span><br><span class="line">    <span class="keyword">return</span> x[:get_printable_count(x)]</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">xm_decrypt</span>(<span class="params">raw_data</span>):</span><br><span class="line">    <span class="comment"># decode id3</span></span><br><span class="line">    xm_info = get_xm_info(raw_data)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;id3 header size: &quot;</span>,<span class="built_in">hex</span>(xm_info.header_size))</span><br><span class="line">    encrypted_data = raw_data[xm_info.header_size:xm_info.header_size+xm_info.size:]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Stage 1 aes-256-cbc</span></span><br><span class="line">    xm_key = <span class="string">b&quot;ximalayaximalayaximalayaximalaya&quot;</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;decrypt stage 1 (aes-256-cbc):\n&quot;</span></span><br><span class="line">          <span class="string">f&quot;    data length = <span class="subst">&#123;<span class="built_in">len</span>(encrypted_data)&#125;</span>,\n&quot;</span></span><br><span class="line">          <span class="string">f&quot;    key = <span class="subst">&#123;xm_key&#125;</span>,\n&quot;</span></span><br><span class="line">          <span class="string">f&quot;    iv = <span class="subst">&#123;xm_info.iv().<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line">    cipher = AES.new(xm_key, AES.MODE_CBC, xm_info.iv())</span><br><span class="line">    de_data = cipher.decrypt(pad(encrypted_data, <span class="number">16</span>))</span><br><span class="line">    <span class="comment"># Stage 2 xmDecrypt = (base64 decode =&gt; aes-192-cbc =&gt; base64 encode)</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;decrypt stage 2 (xmDecrypt):\n&quot;</span></span><br><span class="line">          <span class="string">f&quot;    data length = <span class="subst">&#123;<span class="built_in">len</span>(de_data)&#125;</span>,\n&quot;</span></span><br><span class="line">          <span class="string">f&quot;    key = <span class="subst">&#123;<span class="built_in">str</span>(xm_info.tracknumber)&#125;</span>&quot;</span>)</span><br><span class="line">    stage_2_data = base64.b64decode(get_printable_bytes(de_data))</span><br><span class="line">    <span class="keyword">assert</span> <span class="built_in">len</span>(stage_2_data) % <span class="number">16</span> == <span class="number">0</span></span><br><span class="line">    key = <span class="built_in">str</span>(xm_info.tracknumber).encode()</span><br><span class="line">    key = (<span class="string">b&#x27;12345678&#x27;</span>*<span class="number">3</span>)[:<span class="number">0x18</span>-<span class="built_in">len</span>(key)] + key</span><br><span class="line">    cipher = AES.new(key, AES.MODE_CBC, key[:<span class="number">16</span>])</span><br><span class="line">    stage_2_data = unpad(cipher.decrypt(stage_2_data),<span class="number">16</span>).decode() <span class="comment"># idk but workround</span></span><br><span class="line">    <span class="comment"># Stage 3 combine</span></span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;Stage 3 (base64 combination):\n&quot;</span></span><br><span class="line">          <span class="string">f&quot;    technology = <span class="subst">&#123;xm_info.encoding_technology&#125;</span>&quot;</span>)</span><br><span class="line">    decrypted_data = base64.b64decode(xm_info.encoding_technology+stage_2_data)</span><br><span class="line">    final_data = decrypted_data + raw_data[xm_info.header_size+xm_info.size::]</span><br><span class="line">    <span class="keyword">return</span> xm_info,final_data</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">xm_decrypt_v12</span>():</span><br><span class="line">    <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">find_ext</span>(<span class="params">data</span>):</span><br><span class="line">    exts = [<span class="string">&quot;m4a&quot;</span>,<span class="string">&quot;mp3&quot;</span>,<span class="string">&quot;flac&quot;</span>,<span class="string">&quot;wav&quot;</span>]</span><br><span class="line">    value = magic.from_buffer(data).lower()</span><br><span class="line">    <span class="keyword">for</span> ext <span class="keyword">in</span> exts:</span><br><span class="line">        <span class="keyword">if</span> ext <span class="keyword">in</span> value:</span><br><span class="line">            <span class="keyword">return</span> ext</span><br><span class="line">    <span class="keyword">raise</span> Exception(<span class="string">f&quot;unexpected format <span class="subst">&#123;value&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">decrypt_xm_file</span>(<span class="params">from_file,output=<span class="string">&#x27;&#x27;</span></span>):</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;decrypting <span class="subst">&#123;from_file&#125;</span>&quot;</span>)</span><br><span class="line">    data = read_file(from_file)</span><br><span class="line">    info, audio_data = xm_decrypt(data)</span><br><span class="line">    <span class="keyword">if</span> output == <span class="string">&quot;&quot;</span>:</span><br><span class="line">        output = re.sub(<span class="string">r&#x27;[^\w\-_\. ]&#x27;</span>, <span class="string">&#x27;_&#x27;</span>, info.title)+<span class="string">&quot;.&quot;</span>+find_ext(audio_data[:<span class="number">0xff</span>])</span><br><span class="line">    buffer = io.BytesIO(audio_data)</span><br><span class="line">    tags = mutagen.File(buffer,easy=<span class="literal">True</span>)</span><br><span class="line">    tags[<span class="string">&quot;title&quot;</span>] = info.title</span><br><span class="line">    tags[<span class="string">&quot;album&quot;</span>] = info.album</span><br><span class="line">    tags[<span class="string">&quot;artist&quot;</span>] = info.artist</span><br><span class="line">    <span class="built_in">print</span>(tags.pprint())</span><br><span class="line">    tags.save(buffer)</span><br><span class="line">    <span class="keyword">with</span> <span class="built_in">open</span>(output,<span class="string">&quot;wb&quot;</span>) <span class="keyword">as</span> f:</span><br><span class="line">        buffer.seek(<span class="number">0</span>)</span><br><span class="line">        f.write(buffer.read())</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">f&quot;decrypt succeed, file write to <span class="subst">&#123;output&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(sys.argv) &lt; <span class="number">2</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;Usage: python decrypt_xm.py [&lt;filename&gt; ...]&quot;</span>)</span><br><span class="line">    <span class="keyword">for</span> filename <span class="keyword">in</span> sys.argv[<span class="number">1</span>::]:</span><br><span class="line">        decrypt_xm_file(filename)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/electron/" rel="tag"># electron</a>
+              <a href="/tags/reverse/" rel="tag"># reverse</a>
+              <a href="/tags/encryption/" rel="tag"># encryption</a>
+              <a href="/tags/ximalya/" rel="tag"># ximalya</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/coding/my-approach-for-using-status-code-in-restful-api/" rel="prev" title="在RESTful API中如何选择合适的HTTP状态码">
+                  <i class="fa fa-angle-left"></i> 在RESTful API中如何选择合适的HTTP状态码
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

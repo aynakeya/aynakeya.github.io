@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -200,7 +200,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/16/blogarchive/2019-01-16-19-53-24/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-01-21-15-36-37/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -218,7 +218,121 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/01/16/blogarchive/2019-01-16-19-53-24/" class="post-title-link" itemprop="url">我日你妈的seminar</a>
+          <a href="/articles/blogarchive/2019-01-21-15-36-37/" class="post-title-link" itemprop="url">shazam听歌识曲算法的解析与听歌识曲python实现的分析-1 读取歌曲</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-01-21 15:36:37" itemprop="dateCreated datePublished" datetime="2019-01-21T15:36:37-08:00">2019-01-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2021-05-21 09:39:38" itemprop="dateModified" datetime="2021-05-21T09:39:38-07:00">2021-05-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>###shazam听歌识曲算法的解析与听歌识曲python实现的分析-1 读取歌曲<br><br><br>开新坑，歌曲识别计划。<br><br>使用的算法是《An Industrial-Strength Audio Search Algorithm》，其中部分代码借鉴了Github的<a target="_blank" rel="noopener" href="https://github.com/worldveil/dejavu">dejavu</a>项目。<br><br><br>关于读取歌曲，首先需要安装一个python库. <code>pydub</code>。你可以使用<code>pip3 install pydub</code>来安装。<br></p>
+<pre>
+audiofile = AudioSegment.from_file(filepath)
+ # data = audiofile.get_array_of_samples()
+ # Stereo audio array is in form of [sample_1_L, sample_1_R, sample_2_L, sample_2_R, …]
+ data = np.fromstring(audiofile.raw_data, np.int16)
+channels = []
+ # Get data for different channel
+for channel in range(audiofile.channels):
+    channels.append(data[channel::audiofile.channels])
+</pre>
+<br>
+`AudioSegment.from_file(filepath)`可以读取大部分音频，wav除外。在项目中，我们需要直接对音频信息进行操作，我们可以使用raw_data 来获取最原始的数据。另外我们需要知道音频的采样速率，用frame_rate 来获取。<br><br>
+由于现在大部分音频都是立体声的（有多个通道），所以，对于每一个通道我们都需要分开处理。raw_data 返回的格式是这样子的[sample_1_L, sample_1_R, sample_2_L, sample_2_R, …] （在这里有左声道和右声道），分开不同的通道通道可以用切片来做`data[channel::audiofile.channels]`。<br><br>
+这样子，读取音频的工作就完成了。<br><br>
+另外，读取音频的时候可以计算一下文件的sha256值来作为这一首歌的唯一识别码。<br>
+
+<pre>
+def generateFilehash(filepath, blocksize=2 ** 16):
+    sha = sha256()
+    with open(filepath, "rb") as f:
+        while True:
+            buf = f.read(blocksize)
+            if not buf:
+                break
+            sha.update(buf)
+    return sha.hexdigest().upper()
+</pre>
+
+<p>其中，sha256可以替换为其他，如md5，sha1，sha128之类的，效果都一样。<br><br></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-01-16-19-53-24/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/blogarchive/2019-01-16-19-53-24/" class="post-title-link" itemprop="url">我日你妈的seminar</a>
         </h2>
 
         <div class="post-meta-container">
@@ -285,7 +399,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2019/01/04/blogarchive/2019-01-04-21-35-30/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-01-04-21-35-30/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -303,7 +417,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2019/01/04/blogarchive/2019-01-04-21-35-30/" class="post-title-link" itemprop="url">检测浏览器切换页面</a>
+          <a href="/articles/blogarchive/2019-01-04-21-35-30/" class="post-title-link" itemprop="url">检测浏览器切换页面</a>
         </h2>
 
         <div class="post-meta-container">
@@ -396,7 +510,7 @@ document.addEventListener('visibilitychange',function(){
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/12/31/blogarchive/2018-12-31-22-23-25/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-12-31-22-23-25/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -414,7 +528,7 @@ document.addEventListener('visibilitychange',function(){
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/12/31/blogarchive/2018-12-31-22-23-25/" class="post-title-link" itemprop="url">在automator里使用python3</a>
+          <a href="/articles/blogarchive/2018-12-31-22-23-25/" class="post-title-link" itemprop="url">在automator里使用python3</a>
         </h2>
 
         <div class="post-meta-container">
@@ -496,7 +610,7 @@ import subprocess
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/11/28/blogarchive/2018-11-28-15-38-10/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-11-28-15-38-10/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -514,7 +628,7 @@ import subprocess
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/28/blogarchive/2018-11-28-15-38-10/" class="post-title-link" itemprop="url">.htaccess强制重定向www以及https</a>
+          <a href="/articles/blogarchive/2018-11-28-15-38-10/" class="post-title-link" itemprop="url">.htaccess强制重定向www以及https</a>
         </h2>
 
         <div class="post-meta-container">
@@ -588,7 +702,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/11/27/blogarchive/2018-11-27-20-57-44/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-11-27-20-57-44/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -606,7 +720,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/27/blogarchive/2018-11-27-20-57-44/" class="post-title-link" itemprop="url">新功能上线，文件分享</a>
+          <a href="/articles/blogarchive/2018-11-27-20-57-44/" class="post-title-link" itemprop="url">新功能上线，文件分享</a>
         </h2>
 
         <div class="post-meta-container">
@@ -673,7 +787,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/11/22/blogarchive/2018-11-22-14-11-04/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-11-22-14-11-04/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -691,7 +805,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/11/22/blogarchive/2018-11-22-14-11-04/" class="post-title-link" itemprop="url">1122</a>
+          <a href="/articles/blogarchive/2018-11-22-14-11-04/" class="post-title-link" itemprop="url">1122</a>
         </h2>
 
         <div class="post-meta-container">
@@ -758,7 +872,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/10/21/blogarchive/2018-10-21-00-21-20/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-10-21-00-21-20/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -776,7 +890,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/10/21/blogarchive/2018-10-21-00-21-20/" class="post-title-link" itemprop="url">新的小工具--quizlet单词获取器</a>
+          <a href="/articles/blogarchive/2018-10-21-00-21-20/" class="post-title-link" itemprop="url">新的小工具--quizlet单词获取器</a>
         </h2>
 
         <div class="post-meta-container">
@@ -844,7 +958,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/10/03/blogarchive/2018-10-03-22-50-44/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-10-03-22-50-44/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -862,7 +976,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/10/03/blogarchive/2018-10-03-22-50-44/" class="post-title-link" itemprop="url">我是茄子</a>
+          <a href="/articles/blogarchive/2018-10-03-22-50-44/" class="post-title-link" itemprop="url">我是茄子</a>
         </h2>
 
         <div class="post-meta-container">
@@ -929,7 +1043,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/09/29/blogarchive/2018-09-29-11-25-22/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-09-29-11-25-22/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -947,7 +1061,7 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/29/blogarchive/2018-09-29-11-25-22/" class="post-title-link" itemprop="url">图片呀</a>
+          <a href="/articles/blogarchive/2018-09-29-11-25-22/" class="post-title-link" itemprop="url">图片呀</a>
         </h2>
 
         <div class="post-meta-container">
@@ -989,91 +1103,6 @@ RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
     <div class="post-body" itemprop="articleBody">
           <p>##图片图片！</p>
 <p><img data-src="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg" alt="心华"><a target="_blank" rel="noopener" href="https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg">https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2018/09/29/blogarchive/2018-09-29-02-05-47/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2018/09/29/blogarchive/2018-09-29-02-05-47/" class="post-title-link" itemprop="url">Is it useful?</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2018-09-29 02:05:00" itemprop="dateCreated datePublished" datetime="2018-09-29T02:05:00-07:00">2018-09-29</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2021-05-21 09:39:38" itemprop="dateModified" datetime="2021-05-21T09:39:38-07:00">2021-05-21</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>#Why?<br>Why even learn to code? People have been communication big ideas for centuries <em>without</em> needing to learn a new language. <br><br>What do you think?</p>
 
       
     </div>

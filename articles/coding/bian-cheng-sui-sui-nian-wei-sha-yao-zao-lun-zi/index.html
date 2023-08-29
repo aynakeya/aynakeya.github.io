@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言作为一个完全没有参加各类编程补习班，当然也不是完全没有，至少我入门编程的时候上了一段时间的Pascal的课，不过现在已经忘光了。笑。 我的大部分编程技能都是自学来的，这也导致了，我的编程习惯总体来说就是非常的野路子。即使现在上了一部分大学的课，但正规科班的教学依旧无法改变我的习惯。 那么我有一个习惯，我也不知道是好是坏，那就是造轮子，或者说的更明白一点重复造轮子。怎么说呢，我特别热衷于造轮子，">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[编程碎碎念] 为啥要重复造轮子">
+<meta property="og:url" content="http://www.aynakeya.com/articles/coding/bian-cheng-sui-sui-nian-wei-sha-yao-zao-lun-zi/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="前言作为一个完全没有参加各类编程补习班，当然也不是完全没有，至少我入门编程的时候上了一段时间的Pascal的课，不过现在已经忘光了。笑。 我的大部分编程技能都是自学来的，这也导致了，我的编程习惯总体来说就是非常的野路子。即使现在上了一部分大学的课，但正规科班的教学依旧无法改变我的习惯。 那么我有一个习惯，我也不知道是好是坏，那就是造轮子，或者说的更明白一点重复造轮子。怎么说呢，我特别热衷于造轮子，">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-09-16T20:31:08.000Z">
+<meta property="article:modified_time" content="2022-09-25T05:57:46.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="碎碎念">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/coding/bian-cheng-sui-sui-nian-wei-sha-yao-zao-lun-zi/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/bian-cheng-sui-sui-nian-wei-sha-yao-zao-lun-zi/","path":"articles/coding/bian-cheng-sui-sui-nian-wei-sha-yao-zao-lun-zi/","title":"[编程碎碎念] 为啥要重复造轮子"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[编程碎碎念] 为啥要重复造轮子 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E6%96%87"><span class="nav-number">2.</span> <span class="nav-text">正文</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E4%B9%8B%E4%BB%80%E4%B9%88%E6%98%AF%E8%BD%AE%E5%AD%90"><span class="nav-number">2.1.</span> <span class="nav-text">总之什么是轮子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E8%83%BD%E6%88%96%E8%AE%B8%E6%98%AF%E7%8E%B0%E7%8A%B6"><span class="nav-number">2.2.</span> <span class="nav-text">可能或许是现状</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E9%87%8D%E6%96%B0%E9%80%A0%E8%BD%AE%E5%AD%90"><span class="nav-number">2.3.</span> <span class="nav-text">为什么要重新造轮子</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%82%A3%E4%B9%88%E5%A6%82%E4%BD%95%E5%BC%80%E5%A7%8B%E5%91%A2"><span class="nav-number">2.4.</span> <span class="nav-text">那么如何开始呢</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">3.</span> <span class="nav-text">后记</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/bian-cheng-sui-sui-nian-wei-sha-yao-zao-lun-zi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[编程碎碎念] 为啥要重复造轮子 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [编程碎碎念] 为啥要重复造轮子
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-09-16 13:31:08" itemprop="dateCreated datePublished" datetime="2022-09-16T13:31:08-07:00">2022-09-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-09-24 22:57:46" itemprop="dateModified" datetime="2022-09-24T22:57:46-07:00">2022-09-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>作为一个完全没有参加各类编程补习班，当然也不是完全没有，至少我入门编程的时候上了一段时间的Pascal的课，不过现在已经忘光了。笑。</p>
+<p>我的大部分编程技能都是自学来的，这也导致了，我的编程习惯总体来说就是非常的野路子。即使现在上了一部分大学的课，但正规科班的教学依旧无法改变我的习惯。</p>
+<p>那么我有一个习惯，我也不知道是好是坏，那就是<strong>造轮子</strong>，或者说的更明白一点<strong>重复造轮子</strong>。怎么说呢，我特别热衷于造轮子，即使已经有非常好的现成的项目了，我依然会尝试自己造一个。</p>
+<p>为啥我这么热衷于造轮子，说实话我自己一开始也说不太明白，总觉得这样子比较好。但是随着最近和网友，同学的交流，我大概有了一些想法。</p>
+<p>所以，我想记录下我的着一些想法，一方面是为了为了我自己，另一方也是为了那些或许对这方面有问题的网友和同好。</p>
+<span id="more"></span>
+
+<h1 id="正文"><a href="#正文" class="headerlink" title="正文"></a>正文</h1><h2 id="总之什么是轮子"><a href="#总之什么是轮子" class="headerlink" title="总之什么是轮子"></a>总之什么是轮子</h2><p>我不太知道网上具体的定义是啥。狭义来说呢，就是一个库，比如一个math库，里面有各种数学函数可以让你进行调用。</p>
+<p>但是在这里我想使用一下我自己对于<strong>轮子</strong>这个词一个广义的定义，即任何一个可以实现某一个功能的项目</p>
+<p>比如一个可以让你下载动漫的下载器，一个util库，这种都算一个轮子。一个轮子对我来说不单单就指一个库，他也可以是一个实现某种功能的软件或者程序程序。</p>
+<h2 id="可能或许是现状"><a href="#可能或许是现状" class="headerlink" title="可能或许是现状"></a>可能或许是现状</h2><p>看到这里，你可能已经看不懂 <em>造轮子</em> 这三个字了，因为我已经看不懂了。</p>
+<p>那么换一个语言，why should we <strong>Recreating the Wheel</strong>?</p>
+<p>现在网上总有那么一些言论，“你在开发什么东西啊，啊，这个啊，这边有个框架，直接用这个框架就行了”。 这种论调在网上频繁出现，只要你稍微混迹在一些编程社区里，你每天至少都能看到一条。</p>
+<p>这个现象在稍微小型一点的公司（或许在中大型公司）里就更容易发现了。有个网友在和我聊天时提起公司在进行开发的时候，基本就依赖于现成的框架了 （在他的公司里，就是RuoYi），通过这个框架来实现业务逻辑。</p>
+<p>那么用轮子好么？我个人来说，在实际开发的时候，用框架无疑是一个非常好的选择，用现成的框架，不光你可以更快的完成开发，只关注与业务逻辑上，不用关心其他的问题，同时，框架越完善，出现重大事故的概率就越低，因为框架给你做好了大部分的工作。中小型公司喜欢使用使用框架也不是不无道理，这可以更好的压榨员工，节省开发的开支啊。</p>
+<p>但是这也带来了一些的问题，what if （当然就是what if, 大框架一般不会出现这种问题）, 你想实现一个功能，但是这个框架不支持。又或者，出现了一个问题且业务逻辑部分的代码没有任何问题呢？好了，这下你除非自己深入框架内部然后定位问题，就只能给框架开发者提issue然后干等了。</p>
+<p>有人会问，啊，那你为什么就不能debug框架么？这不也是代码么？你既然能写业务代码，解决这些问题不也很简单么？问题就出在这里，由于框架的出现，以及框架被大量的使用，很多人的开发完全就是基于现成框架 - 即在现有的基础上进行二次开发。再加上部分无良培训机构培训出来的流水线程序员，只学了如何调用框架。一些基础的计算机知识，框架内部具体时如何实现的完全就是一抹黑，啥都不知道。甚至于，有些做前后端开发的程序员，连http报文长什么样都不知道。</p>
+<p>题外话，我当然不是说我自己有多么多么厉害，了解多么多么的深入，我自己也只是知道皮毛。而我也并不是说你必须知道http报文，但是你得至少知道http报文大概长什么样子。如何不用任何一个请求框架，单纯通过tcp链接来执行http请求吧。</p>
+<p>举一些更为极端的例子，现在有些人似乎把一门框架当成了一门技术，就比如 （你会vue么？）。 我的理解是，框架是基于一个编程模型在一门编程语言里的具体实现，总的来说，他就是一堆别人写的代码。把一堆别人写好的代码当作一门技术是否有点本末倒置了。</p>
+<p>再者，如果一个人自己长期使用于这个框架，他就把自己限制在这个框架能做的东西里面了，逐渐的他除了知道怎么在这个框架中编程，其余就基本属于一问三不知的状态了。这个时候，要是这个框架做了一个升级，或者这个框架不让人用了。那么一切的东西都要从头开始学起。</p>
+<p>说到底，框架&#x2F;轮子 对于我们来说只能是工具！而看现状来说，很多人都做了框架的工具。在我看来，这一点是非常愚蠢的。</p>
+<h2 id="为什么要重新造轮子"><a href="#为什么要重新造轮子" class="headerlink" title="为什么要重新造轮子"></a>为什么要重新造轮子</h2><p>首先一点要声明的是，我在这里说的是<strong>造</strong>轮子，而不是<strong>发明</strong>轮子。你要是有这个能力发明轮子，我估计你也看不起我写的这勾八文章了。</p>
+<p>所以，在造轮子的时候，借鉴前人造好的轮子是一个非常重要且不可避免的过程。</p>
+<p>再来说说为什么要重新造轮子。</p>
+<p>首先，也是最主要的一点就是造轮子可以让你从头到尾了解一个项目是怎么运行起来的，而不是只知道众多步骤步骤中的其中一步。简单来说就是这个项目具体是怎么实现的。</p>
+<p>很多人可能认为这些东西是没有必要的，就像部分网友说的，“我只需要知道冰箱会制冷就行了，而不需要知道冰箱是怎么制冷的”。雀氏，作为一个普通人，我们只要知道会使用冰箱就可以了，这足以实现我们日常生活所需，比如，把肉放冷冻，把菜放冷藏。万一冰箱坏了，你可以找人修，你雀氏可以不用了解冰箱的工作方式。虽然需要付出一点时间，一点金钱，结果来说依旧可以解决。 但是，假如你稍微懂那么一点冰箱是怎么制冷的，比如，主要的部件是哪几个。那么，如果冰箱坏了，你甚至可以自己尝试换掉可能坏了的零件并尝试修复它。就成本来说，这不比请人来修低好多。</p>
+<p>那么，和冰箱类似，写程序也是一个道理。如果你稍微了解了一下这个框架&#x2F;程序它内部的逻辑是怎么样的，遇到问题的时候至少大概会有一个想法知道是哪块地方出了问题，而不是一头雾水不知道哪里出了问题。假如你了解的在深入一点，或许就能找到诱发bug的原因，然后尝试进行修复了。再说了，冰箱坏掉的几率，可比你在一个程序&#x2F;框架时会遇到bug的几率小太多了。同样，制作造一个简单的轮子也比造一个冰箱简单多了。</p>
+<p>然后就是在造轮子的时候你会学到很多普适性的知识，其中的很多东西你甚至可以用到其他地方。</p>
+<p>前面也说了，我们的目的应该是<strong>造轮子</strong>，在这个过程中，我们必然会去借鉴前人造好的轮子。这对于我们来说无疑是一个完美的学习机会，不仅可以培养快速阅读代码的能力，在代码里你可以进一步的看到某些功能中所使用的数据结构，小功能的实现方法之类的。同时，你还可以进一步对这些东西进行学习。</p>
+<p>就拿一个最简单的例子来说吧，如何判断一个字符串是不是网页链接。这个是我在研究<code>django</code>的时候看见的，一个判断是否是url的正则匹配。（我把它复制粘贴了下来，然后用golang重新实现了）</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func IsUrl(url string) bool &#123;</span><br><span class="line">	urlRegExp := regexp.MustCompile(</span><br><span class="line">		&quot;(?i)^(?:http|ftp)s?://&quot; +</span><br><span class="line">			&quot;(?:(?:[A-Z0-9](?:[A-Z0-9-]&#123;0,61&#125;[A-Z0-9])?\\.)+(?:[A-Z]&#123;2,6&#125;\\.?|[A-Z0-9-]&#123;2,&#125;\\.?)|&quot; +</span><br><span class="line">			&quot;localhost|&quot; +</span><br><span class="line">			&quot;\\d&#123;1,3&#125;\\.\\d&#123;1,3&#125;\\.\\d&#123;1,3&#125;\\.\\d&#123;1,3&#125;)&quot; +</span><br><span class="line">			&quot;(?::\\d+)?&quot; +</span><br><span class="line">			&quot;(?:/?|[/?]\\S+)$&quot;)</span><br><span class="line">	return urlRegExp.FindString(url) != &quot;&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>更进一步说，写轮子可以培养<em>critical thinking</em>，你在写轮子，借鉴别人的代码的时候必然会想到，“欸，这个功能为什么是用方法A这样实现的，为什么没有用方法B，没有更好的办法了？” 这之类的的问题。</p>
+<p>对于我来说，我经常会这么做。看到不明白的东西，会自己尝试用自己的方法试一试，看看自己的方法行不行。虽然大部分情况下，也不说大部分了，几乎是99%的情况下，最后发现还是别人写的好用。有些人可能会觉得，啊，这有意义么，这不是浪费时间么。我觉得不是的，这其实是一个试错的过程，会让你知道为什么某个方法可以，为什么每个方法不行，哪个方法适合那种情况。那么在你下次遇到类似的问题的时候，大概就知道要做什么了。</p>
+<p>怎么说的，总的来说就是经验的累积吧。</p>
+<h2 id="那么如何开始呢"><a href="#那么如何开始呢" class="headerlink" title="那么如何开始呢"></a>那么如何开始呢</h2><p>每个人都有自己的理解，有自己的学习方式。我无法提供一个适合所有人的方法。在这里我仅仅讨论我自己是怎么做的。</p>
+<p>首先，我想说的就是自己造一个轮子不需要从非常底层开始做起，你可以从使用别人的框架开始慢慢深入。因为你最开始是根本没有这个能力的。而且，如果一开始就从最底层做起的话，这个花费的时间和获得的反馈不成正比，得不到正反馈，往往会丧失继续造轮子的动力。</p>
+<p>就拿我自己的一个爬虫框架作为例子吧 <a target="_blank" rel="noopener" href="https://github.com/aynakeya/deepcolor">deepcolor</a>，爬虫麻，肯定要对付多种信息格式。比如html,json,text。那么对于html,json这种需要从解析文本的结果，我们可以先不用自己整一个什么json解析器。这要做起来花费的时间就太大了。而我做的就是写了一个统一的接口，那么在处理不同的信息格式的时候可以使用同一套api，然后我的轮子按照对应的格式调用别人写好的解析器，并返回结果。</p>
+<p>等之后有能力了，就可以慢慢的把用到的别人的轮子改成自己写的轮子。还是这个项目，最开始，我实现等待队列的方式是使用别人的代码，后来，因为自己的一些需要，我慢慢就重新写了一个自己的等待队列来替换掉别人的轮子。</p>
+<p>还有就是，写框架&#x2F;轮子这个东西是一个循序渐进的过程，千万不好不需要一下子把所有功能从一开始就定下来。可以从最开始的一个demo，慢慢往上面添加东西，或者说到了某一个时间段发现前面写的东西太垃圾了，就进行一次重构。或者当你学到了一点新的东西，你感觉可以用在这个项目上时，在想办法</p>
+<p>还是拿我的爬虫框架作为例子，最开始只有一个json解析器，后来慢慢添加了html和正则的解析器。大致完成了解析器的部分之后又慢慢的把多线程请求，请求池之类的给加上了。</p>
+<p>所以说，不要害怕造轮子，一步步慢慢来就行了。</p>
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>最近在和网友已经一些身边的人交流的时候，脑子里会突然冒出一些关于编程的想法。但真想要明确表达的时候，有不是很好表达。想了想，大概是我太久没有写过长文章的缘故。</p>
+<p>说实话，因为现在大部分作业，工作都在电脑上完成了，甚至做笔记都在使用电脑。加上长期不使用中文，我的中文水平感觉已经只有小学生水平了(笑。</p>
+<p>总之，为了更好的把我自己的想法记录下来，顺便也重新锻炼一下写长文章的能力，决定开设一个新的项目，那就是<strong>编程碎碎念</strong>。 为什么要叫碎碎念呢，因为我的语文水平不支持我写出一长段连贯的文字。而且我的想法大多数时刻都比较跳跃，不是以连续的形态出现的，所以，出现在我文章中的句子大概都是一小段一小段的想法。</p>
+<p>总之说了这么多，基本上就是我为啥要写博客的原因。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E7%A2%8E%E7%A2%8E%E5%BF%B5/" rel="tag"># 碎碎念</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/devops/windows-server-2016-setup-docker/" rel="prev" title="在windows server 2016上安装Docker + Docker Compose">
+                  <i class="fa fa-angle-left"></i> 在windows server 2016上安装Docker + Docker Compose
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/articles/devops/ubuntu-ssh-rsa-key-is-not-working-since-upgrade-to-22-04/" rel="next" title="Ubuntu22.04 SSH的RSA私钥不能用了">
+                  Ubuntu22.04 SSH的RSA私钥不能用了 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

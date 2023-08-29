@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="引言在我的一个项目中，，我需要在Fyne编写的GUI中播放视频。然而Fyne这个框架原生并不支持视频播放，所以我引入了MPV作为视频解码与播放的库。 为了将MPV的输出集成到Fyne的GUI中，我可以通过设置MPV的wid选项来控制。在Windows上，这个WID就是Windowshandle id (HWND)。 在Linux中，这个ID通常为X11的window id。 然而，Fyne同样不支">
+<meta property="og:type" content="article">
+<meta property="og:title" content="在Fyne.io中集成mpv进行媒体播放">
+<meta property="og:url" content="http://www.aynakeya.com/articles/coding/use-libmpv-in-fyne-gui-framework/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="引言在我的一个项目中，，我需要在Fyne编写的GUI中播放视频。然而Fyne这个框架原生并不支持视频播放，所以我引入了MPV作为视频解码与播放的库。 为了将MPV的输出集成到Fyne的GUI中，我可以通过设置MPV的wid选项来控制。在Windows上，这个WID就是Windowshandle id (HWND)。 在Linux中，这个ID通常为X11的window id。 然而，Fyne同样不支">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://user-images.githubusercontent.com/32156054/238171015-a99af8ea-d311-41c4-b129-1c515eea4341.png">
+<meta property="article:published_time" content="2023-05-15T16:08:20.000Z">
+<meta property="article:modified_time" content="2023-05-15T01:25:12.596Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="golang">
+<meta property="article:tag" content="libmpv">
+<meta property="article:tag" content="fyne">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://user-images.githubusercontent.com/32156054/238171015-a99af8ea-d311-41c4-b129-1c515eea4341.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/coding/use-libmpv-in-fyne-gui-framework/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/use-libmpv-in-fyne-gui-framework/","path":"articles/coding/use-libmpv-in-fyne-gui-framework/","title":"在Fyne.io中集成mpv进行媒体播放"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>在Fyne.io中集成mpv进行媒体播放 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9Fyne%E6%BA%90%E7%A0%81"><span class="nav-number">2.</span> <span class="nav-text">修改Fyne源码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">测试代码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E5%9B%BE"><span class="nav-number">4.</span> <span class="nav-text">效果图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">95</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">80</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/use-libmpv-in-fyne-gui-framework/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="在Fyne.io中集成mpv进行媒体播放 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          在Fyne.io中集成mpv进行媒体播放
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2023-05-15 09:08:20" itemprop="dateCreated datePublished" datetime="2023-05-15T09:08:20-07:00">2023-05-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2023-05-14 18:25:12" itemprop="dateModified" datetime="2023-05-14T18:25:12-07:00">2023-05-14</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>在我的一个<a target="_blank" rel="noopener" href="https://github.com/AynaLivePlayer/AynaLivePlayer">项目</a>中，，我需要在Fyne编写的GUI中播放视频。然而Fyne这个框架原生并不支持视频播放，所以我引入了MPV作为视频解码与播放的库。</p>
+<p>为了将MPV的输出集成到Fyne的GUI中，我可以通过设置MPV的wid选项来控制。在Windows上，这个WID就是Windows<br>handle id (HWND)。 在Linux中，这个ID通常为X11的window id。</p>
+<p>然而，Fyne同样不支持直接获取window id。为了实现这个功能，我们需要对Fyne进行一些修改，具体修改如下。</p>
+<span id="more"></span>
+
+<h2 id="修改Fyne源码"><a href="#修改Fyne源码" class="headerlink" title="修改Fyne源码"></a>修改Fyne源码</h2><p>首先，在window_windows.go文件中，添加以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func (w *window) Wid() uintptr &#123;</span><br><span class="line">    w.viewLock.RLock()</span><br><span class="line">    defer w.viewLock.RUnlock()</span><br><span class="line"></span><br><span class="line">    if w.closing &#123;</span><br><span class="line">        return 0</span><br><span class="line">    &#125;</span><br><span class="line">    if (w.viewport == nil) &#123;</span><br><span class="line">        return uintptr(0)</span><br><span class="line">    &#125;</span><br><span class="line">    return uintptr(w.viewport.GetWin32Window())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>接下来，在window_linux.go文件中，添加以下代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">func (w *window) Wid() uintptr &#123;</span><br><span class="line">    w.viewLock.RLock()</span><br><span class="line">    defer w.viewLock.RUnlock()</span><br><span class="line"></span><br><span class="line">    if w.closing &#123;</span><br><span class="line">        return 0</span><br><span class="line">    &#125;</span><br><span class="line">    if (w.viewport == nil) &#123;</span><br><span class="line">        return uintptr(0)</span><br><span class="line">    &#125;</span><br><span class="line">    return uintptr(w.viewport.GetX11Window())</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试代码"><a href="#测试代码" class="headerlink" title="测试代码"></a>测试代码</h2><p>以下是使用修改后的Fyne源码并结合MPV库的测试代码：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;fmt&quot;</span><br><span class="line">    &quot;fyne.io/fyne/v2&quot;</span><br><span class="line">    &quot;fyne.io/fyne/v2/app&quot;</span><br><span class="line">    &quot;fyne.io/fyne/v2/theme&quot;</span><br><span class="line">    &quot;github.com/aynakeya/go-mpv&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type WindowHandleMagic interface &#123;</span><br><span class="line">    Wid() uintptr</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// need to apply patch first</span><br><span class="line">func GetWindowHandle(window fyne.Window) uintptr &#123;</span><br><span class="line">    x, ok := window.(WindowHandleMagic)</span><br><span class="line">    if ok &#123;</span><br><span class="line">        return x.Wid()</span><br><span class="line">    &#125;</span><br><span class="line">    return 0</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    a := app.NewWithID(&quot;io.fyne.mpvdemo&quot;)</span><br><span class="line">    a.SetIcon(theme.FyneLogo())</span><br><span class="line">    window := a.NewWindow(&quot;Fyne MPV Player Demo&quot;)</span><br><span class="line">    var libmpv *mpv.Mpv = nil</span><br><span class="line">    window.Resize(fyne.NewSize(1080, 720))</span><br><span class="line">    go func() &#123;</span><br><span class="line">        wid := GetWindowHandle(window)</span><br><span class="line">        for wid == 0 &#123;</span><br><span class="line">            wid = GetWindowHandle(window)</span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Printf(&quot;got windows handle %d\n&quot;, wid)</span><br><span class="line">        libmpv = mpv.Create()</span><br><span class="line">        err := libmpv.Initialize()</span><br><span class="line">        if err != nil &#123;</span><br><span class="line">            panic(err)</span><br><span class="line">        &#125;</span><br><span class="line">        fmt.Println(libmpv.SetOptionString(&quot;wid&quot;, fmt.Sprintf(&quot;%d&quot;, wid)))</span><br><span class="line">        fmt.Println(libmpv.Command([]string&#123;&quot;loadfile&quot;, &quot;/home/aynakeya/Videos/ymca.mp4&quot;&#125;))</span><br><span class="line">    &#125;()</span><br><span class="line">    window.ShowAndRun()</span><br><span class="line">    if libmpv != nil &#123;</span><br><span class="line">        libmpv.Destroy()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h2><p><img data-src="https://user-images.githubusercontent.com/32156054/238171015-a99af8ea-d311-41c4-b129-1c515eea4341.png" alt="img"></p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/fyne-io/fyne/issues/449#issuecomment-1546820151">https://github.com/fyne-io/fyne/issues/449#issuecomment-1546820151</a><br><a target="_blank" rel="noopener" href="https://github.com/AynaLivePlayer/AynaLivePlayer">AynaLivePlayer</a></p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+              <a href="/tags/libmpv/" rel="tag"># libmpv</a>
+              <a href="/tags/fyne/" rel="tag"># fyne</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/novel/yu-zhou-fei-xing-shou-ce-qian-115-zhang-jian-ping/" rel="prev" title="[小说简评] 宇宙飞行手册 (前115章)">
+                  <i class="fa fa-angle-left"></i> [小说简评] 宇宙飞行手册 (前115章)
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/articles/devops/resolving-system-crash-on-kubuntu-with-thinkbook-16/" rel="next" title="Resolving System Crash Issue After Installing Kubuntu on ThinkBook 16+">
+                  Resolving System Crash Issue After Installing Kubuntu on ThinkBook 16+ <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

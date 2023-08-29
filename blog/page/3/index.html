@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">94</span>
+          <span class="site-state-item-count">95</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -200,7 +200,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/06/26/coding/linux-hard-link-vs-soft-link/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/life/ri-ji-20220711/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -218,7 +218,99 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/06/26/coding/linux-hard-link-vs-soft-link/" class="post-title-link" itemprop="url">Linux中软链接(soft link)和硬链接(hard link)的区别</a>
+          <a href="/articles/life/ri-ji-20220711/" class="post-title-link" itemprop="url">关于apt update到一半关机导致ubuntu系统崩溃这回事</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2022-07-11 23:44:29 / Modified: 23:59:52" itemprop="dateCreated datePublished" datetime="2022-07-11T23:44:29-07:00">2022-07-11</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h2 id="起因"><a href="#起因" class="headerlink" title="起因"></a>起因</h2><p>总之，今天在我的beelink小主机上捣鼓一些东西。</p>
+<p>想安装一个软件包，看到有好多可以可以更新的，然后心想着要不全部更新一哈，然后我就<code>apt upgrade</code>了。</p>
+<p>这本来也没什么，但是我<strong>不小心</strong>按倒了电源键，导致这整个系统关机了。这一关机，就出了大问题。</p>
+<p>先是打不开桌面，一只卡在Ubuntu然后带4个点的界面上。</p>
+<p>然后我又重启了一下，摁<code>alt+f1</code>看看日志，不看不知道，一看吓一跳，所有的service基本都报错了。而且这个报错还不是一般的报错。</p>
+<p>先用<code>alt+f2</code>进入命令行界面，然后用<code>systemctl</code>查看报错内容，好家伙，全是<code>core-dump</code>或者<code>segment fault</code>。直接给我整麻了。</p>
+<h2 id="尝试解决"><a href="#尝试解决" class="headerlink" title="尝试解决"></a>尝试解决</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/articles/life/ri-ji-20220711/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/linux-hard-link-vs-soft-link/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/coding/linux-hard-link-vs-soft-link/" class="post-title-link" itemprop="url">Linux中软链接(soft link)和硬链接(hard link)的区别</a>
         </h2>
 
         <div class="post-meta-container">
@@ -291,7 +383,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/05/09/coding/zai-golang-li-diao-yong-c/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/zai-golang-li-diao-yong-c/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -309,7 +401,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/05/09/coding/zai-golang-li-diao-yong-c/" class="post-title-link" itemprop="url">在golang里调用c</a>
+          <a href="/articles/coding/zai-golang-li-diao-yong-c/" class="post-title-link" itemprop="url">在golang里调用c</a>
         </h2>
 
         <div class="post-meta-container">
@@ -359,7 +451,7 @@
 <p>cgo 官方文档: <a target="_blank" rel="noopener" href="https://pkg.go.dev/cmd/cgo">https://pkg.go.dev/cmd/cgo</a></p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/05/09/coding/zai-golang-li-diao-yong-c/#more" rel="contents">
+              <a class="btn" href="/articles/coding/zai-golang-li-diao-yong-c/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -390,7 +482,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/04/24/devops/enable-linux-user-lingering-for-service/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/devops/enable-linux-user-lingering-for-service/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -408,7 +500,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/04/24/devops/enable-linux-user-lingering-for-service/" class="post-title-link" itemprop="url">打开user lingering来运行服务 + 在linux上建立aria2c服务</a>
+          <a href="/articles/devops/enable-linux-user-lingering-for-service/" class="post-title-link" itemprop="url">打开user lingering来运行服务 + 在linux上建立aria2c服务</a>
         </h2>
 
         <div class="post-meta-container">
@@ -446,7 +538,7 @@
 <p>本文介绍了如何修复这个问题，以及我的aria2服务配置</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/04/24/devops/enable-linux-user-lingering-for-service/#more" rel="contents">
+              <a class="btn" href="/articles/devops/enable-linux-user-lingering-for-service/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -477,7 +569,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/04/20/life/maple-bacon-first-first-place-in-ctf/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/life/maple-bacon-first-first-place-in-ctf/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -495,7 +587,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/04/20/life/maple-bacon-first-first-place-in-ctf/" class="post-title-link" itemprop="url">MapleBacon First 1st Place in CTF</a>
+          <a href="/articles/life/maple-bacon-first-first-place-in-ctf/" class="post-title-link" itemprop="url">MapleBacon First 1st Place in CTF</a>
         </h2>
 
         <div class="post-meta-container">
@@ -563,7 +655,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/04/17/ctf/pwn-srop-power-of-sigreturn/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/pwn-srop-power-of-sigreturn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -581,7 +673,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/" class="post-title-link" itemprop="url">Pwn - Sigreturn Oriented Programming (SROP) Technique</a>
+          <a href="/articles/ctf/pwn-srop-power-of-sigreturn/" class="post-title-link" itemprop="url">Pwn - Sigreturn Oriented Programming (SROP) Technique</a>
         </h2>
 
         <div class="post-meta-container">
@@ -630,7 +722,7 @@
 <p>I&#39;ll brief explain how SROP works.</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/04/17/ctf/pwn-srop-power-of-sigreturn/#more" rel="contents">
+              <a class="btn" href="/articles/ctf/pwn-srop-power-of-sigreturn/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -661,7 +753,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/28/ctf/first-glance-of-alloca-in-ctf/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/first-glance-of-alloca-in-ctf/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -679,7 +771,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/03/28/ctf/first-glance-of-alloca-in-ctf/" class="post-title-link" itemprop="url">first glance of alloca in ctf</a>
+          <a href="/articles/ctf/first-glance-of-alloca-in-ctf/" class="post-title-link" itemprop="url">first glance of alloca in ctf</a>
         </h2>
 
         <div class="post-meta-container">
@@ -719,7 +811,7 @@
 <p>So I could have a chance of looking at alloca.</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/03/28/ctf/first-glance-of-alloca-in-ctf/#more" rel="contents">
+              <a class="btn" href="/articles/ctf/first-glance-of-alloca-in-ctf/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
@@ -750,7 +842,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/24/life/20220324-bian-cheng-ri-ji/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/life/20220324-bian-cheng-ri-ji/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -768,7 +860,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/03/24/life/20220324-bian-cheng-ri-ji/" class="post-title-link" itemprop="url">关于爬虫限制并发数我竟然用阻塞来实现 20220324编程日记</a>
+          <a href="/articles/life/20220324-bian-cheng-ri-ji/" class="post-title-link" itemprop="url">关于爬虫限制并发数我竟然用阻塞来实现 20220324编程日记</a>
         </h2>
 
         <div class="post-meta-container">
@@ -850,7 +942,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/03/07/ctf/why-pixilation-is-bad/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/why-pixilation-is-bad/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -868,7 +960,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/03/07/ctf/why-pixilation-is-bad/" class="post-title-link" itemprop="url">why pixilation a text is bad</a>
+          <a href="/articles/ctf/why-pixilation-is-bad/" class="post-title-link" itemprop="url">why pixilation a text is bad</a>
         </h2>
 
         <div class="post-meta-container">
@@ -930,7 +1022,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/02/02/ctf/how-to-utilize-printf-in-pwn/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/how-to-utilize-printf-in-pwn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -948,7 +1040,7 @@
     </span>
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/02/02/ctf/how-to-utilize-printf-in-pwn/" class="post-title-link" itemprop="url">[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]</a>
+          <a href="/articles/ctf/how-to-utilize-printf-in-pwn/" class="post-title-link" itemprop="url">[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]</a>
         </h2>
 
         <div class="post-meta-container">
@@ -994,93 +1086,12 @@
 <h1 id="0x1-What-is-printf-string-formating"><a href="#0x1-What-is-printf-string-formating" class="headerlink" title="0x1 What is printf (string formating)"></a>0x1 What is printf (string formating)</h1><p>so, string format is a way to print out data by stating its format in a string.</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2022/02/02/ctf/how-to-utilize-printf-in-pwn/#more" rel="contents">
+              <a class="btn" href="/articles/ctf/how-to-utilize-printf-in-pwn/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/2022/01/30/life/yao-emo-le-55555/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2022/01/30/life/yao-emo-le-55555/" class="post-title-link" itemprop="url">要emo了要 要抑郁了要</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2022-01-30 04:01:58" itemprop="dateCreated datePublished" datetime="2022-01-30T04:01:58-08:00">2022-01-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>emo了要emo了</p>
-<p>好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊</p>
-<p>现在写作业和写代码啥的都变成防止我变emo的工具了。一停下来就感觉要抑郁了。想死想死想死想死想死想死想死想死想死想死想死</p>
-<p>我感觉我人真的要不行了，连续好几天了，都是快要睡着的时候，突然开始出现某明奇妙的幻听，然后心悸，全身发麻动不了。就感觉快死了的感觉。搞得最近都不敢睡觉。</p>
-
       
     </div>
 
