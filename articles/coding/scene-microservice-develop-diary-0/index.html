@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="我的微服务框架开发的也有一段时间了，今天就来简单介绍一下框架的基础架构吧">
+<meta property="og:type" content="article">
+<meta property="og:title" content="稀音微服务框架开发日记 - 基础架构">
+<meta property="og:url" content="http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="我的微服务框架开发的也有一段时间了，今天就来简单介绍一下框架的基础架构吧">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/scene-microservice-develop-diary-0/structure.jpg">
+<meta property="article:published_time" content="2023-08-31T05:53:10.000Z">
+<meta property="article:modified_time" content="2023-08-31T06:56:24.162Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="scene-series">
+<meta property="article:tag" content="microservices">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/scene-microservice-develop-diary-0/structure.jpg">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/","path":"articles/coding/scene-microservice-develop-diary-0/","title":"稀音微服务框架开发日记 - 基础架构"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>稀音微服务框架开发日记 - 基础架构 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">架构概览</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BD%93%E6%80%9D%E6%83%B3"><span class="nav-number">2.1.</span> <span class="nav-text">主体思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scenes"><span class="nav-number">2.2.</span> <span class="nav-text">Scenes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Module"><span class="nav-number">2.3.</span> <span class="nav-text">Module</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Repository%E5%B1%82"><span class="nav-number">2.3.1.</span> <span class="nav-text">Repository层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service%E5%B1%82"><span class="nav-number">2.3.2.</span> <span class="nav-text">Service层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delivery%E5%B1%82"><span class="nav-number">2.3.3.</span> <span class="nav-text">Delivery层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Infrastructure%E5%B1%82"><span class="nav-number">2.4.</span> <span class="nav-text">Infrastructure层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">96</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">81</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="稀音微服务框架开发日记 - 基础架构 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          稀音微服务框架开发日记 - 基础架构
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-08-30 22:53:10 / Modified: 23:56:24" itemprop="dateCreated datePublished" datetime="2023-08-30T22:53:10-07:00">2023-08-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>我的微服务框架开发的也有一段时间了，今天就来简单介绍一下框架的基础架构吧</p>
+<span id="more"></span>
+
+
+<h1 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h1><p><img data-src="/images/scene-microservice-develop-diary-0/structure.jpg" alt="structure"></p>
+<h1 id="架构概览"><a href="#架构概览" class="headerlink" title="架构概览"></a>架构概览</h1><p>架构的设计主要受到了Uncle Bob的Clean Architecture的启发。</p>
+<p><strong>Uncle Bob的Clean Architecture</strong> 是一个流行的软件架构设计方法。它的核心思想是将系统分解为不同的层，每一层都有其明确的职责。这种分层的目的是使得系统更加模块化、可维护和可扩展。</p>
+<h2 id="主体思想"><a href="#主体思想" class="headerlink" title="主体思想"></a>主体思想</h2><p>稀音微服务框架的核心思想即是模块化。</p>
+<p>每个业务分割成最小的模块。在每个模块中，进一步分解为不同的层，每个层中都实现业务所定义的接口（以下统称为Interface）。</p>
+<p>业务之间的项目调用是通过Interface来实现的，这样可以确保不涉及任何具体的业务实现。</p>
+<p>首先，所有的路由层由<strong>Scenes</strong>统一定义并管理。在Scenes里，它包含了delivery的具体实现，即<strong>application</strong>。</p>
+<p>每个业务都是架构中的一个单元，这个单元被称为Module。Module内部包含三个层：delivery, service 和 repository。</p>
+<ul>
+<li><strong>repository</strong> 是持久层，负责数据的存储和检索。</li>
+<li><strong>service</strong> 是业务逻辑层，处理核心的业务流程。</li>
+<li><strong>delivery</strong> 是与外部通信的层，负责处理如HTTP请求等的输入和输出。</li>
+</ul>
+<p>除此之外，还有一个 <strong>infrastructure</strong> 层，作为基础层，提供框架所必要的基础服务，如日志、配置管理等。</p>
+<h2 id="Scenes"><a href="#Scenes" class="headerlink" title="Scenes"></a>Scenes</h2><p>Scenes负责定义不同的<strong>Application</strong>以及相对应的<strong>Application Container</strong>。</p>
+<p><strong>Application Container</strong>是一个容器，它可以加载同类型的application并控制其启动和停止。</p>
+<p>简而言之，Application Container负责管理和运行对于的application。</p>
+<h2 id="Module"><a href="#Module" class="headerlink" title="Module"></a>Module</h2><p>Module定义了所有暴露给外部的Interface，这包括repository interface和service interface，以及相应的数据结构（struct）。这里不涉及任何具体的实现，具体的实现是由repository和service层来完成的。</p>
+<p>在这个架构中，delivery层依赖于service，而service层依赖于repository。这三个层的依赖关系是通过依赖注入和控制反转技术来实现的，这样可以方便地替换不同的实现。</p>
+<h3 id="Repository层"><a href="#Repository层" class="headerlink" title="Repository层"></a>Repository层</h3><p>Repository层相对简单，它负责与外部环境（如数据库）进行交互。它需要实现Module中定义的repository interface。这个层可以有多种实现，例如可以有针对MongoDB的实现、针对MySQL的实现等，这为依赖注入和控制反转提供了便利。</p>
+<h3 id="Service层"><a href="#Service层" class="headerlink" title="Service层"></a>Service层</h3><p>Service层是业务逻辑的核心，它依赖于本Module的repository interface或其他Module的service interface。Service层不关心repository的具体实现，它只通过repository interface来调用，从而完成所有的业务逻辑。</p>
+<h3 id="Delivery层"><a href="#Delivery层" class="headerlink" title="Delivery层"></a>Delivery层</h3><p>Delivery层包含了多种application的实现。例如，可以有基于HTTP的实现、基于WebSocket的实现、基于gRPC的实现等。</p>
+<h2 id="Infrastructure层"><a href="#Infrastructure层" class="headerlink" title="Infrastructure层"></a>Infrastructure层</h2><p>Infrastructure层是框架的基础服务层，它提供了一些必要的服务，如配置管理、日志记录等。</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li>Uncle Bob. (2012). <a target="_blank" rel="noopener" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Architecture</a>.</li>
+<li>Better Programming. <a target="_blank" rel="noopener" href="https://betterprogramming.pub/the-clean-architecture-beginners-guide-e4b7058c1165">The Clean Architecture — Beginner’s Guide</a>.</li>
+<li>Microsoft. <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice">Design a DDD-oriented microservice</a>.</li>
+<li>ZQ99299. <a target="_blank" rel="noopener" href="https://zq99299.github.io/note-book2/ddd/#%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB">DDD实践</a>.</li>
+<li>Meituan Tech. (2017). <a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/12/22/ddd-in-practice.html?utm_source=wechat_session&utm_medium=social&utm_oi=698166473230680064">领域驱动设计在互联网业务开发中的实践</a>.</li>
+<li>Go Dev. (2012). <a target="_blank" rel="noopener" href="https://go.dev/talks/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a>.</li>
+<li>Ben Johnson. <a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">Structuring Applications in Go</a>.</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/scene-series/" rel="tag"># scene-series</a>
+              <a href="/tags/microservices/" rel="tag"># microservices</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/ctf/reverse-with-puring-guessing-ximalaya/" rel="prev" title="Reversing WebAssembly with pure guesswork - Ximalaya xm encryption">
+                  <i class="fa fa-angle-left"></i> Reversing WebAssembly with pure guesswork - Ximalaya xm encryption
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
