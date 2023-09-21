@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">98</span>
+          <span class="site-state-item-count">99</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -191,6 +191,102 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ret2-dl-resolve-example-silent-rop/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/ret2-dl-resolve-example-silent-rop/" class="post-title-link" itemprop="url">Pwn - Return to dl-resolve Technique</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-11-18 12:31:58" itemprop="dateCreated datePublished" datetime="2021-11-18T12:31:58-08:00">2021-11-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">Edited on</span>
+      <time title="Modified: 2022-03-07 11:14:22" itemprop="dateModified" datetime="2022-03-07T11:14:22-08:00">2022-03-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>in th recent k3rn31ctf, there is a pwn question <strong>silent-ROP</strong>.</p>
+<p>In this challenge, there is no output, neither put or printf is imported. So there is no way we can get the libc address&#x2F;version. Therefore, normal way of ret2libc didn&#39;t work in this case, because we can&#39;t get the address of <code>system</code> function.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">:&gt; ii</span><br><span class="line">[Imports]</span><br><span class="line">nth vaddr      bind   type   lib name</span><br><span class="line">―――――――――――――――――――――――――――――――――――――</span><br><span class="line">1   0x08049070 GLOBAL FUNC       read</span><br><span class="line">2   0x00000000 WEAK   NOTYPE     __gmon_start__</span><br><span class="line">3   0x08049080 GLOBAL FUNC       __libc_start_main</span><br><span class="line">4   0x00000000 GLOBAL OBJ        stdin</span><br><span class="line">5   0x08049090 GLOBAL FUNC       setvbuf</span><br><span class="line">6   0x00000000 GLOBAL OBJ        stdout</span><br></pre></td></tr></table></figure>
+
+<p>To solve this question, it required technique called <strong>ret2dlresolve</strong>, after serveral hour of reading article, i finally understand the process of return to dl resolve</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/articles/ret2-dl-resolve-example-silent-rop/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -935,84 +1031,6 @@
 <p><img data-src="/images/202104091324.png" alt="神秘动漫~"></p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/bangumi/play/ss4243">https://www.bilibili.com/bangumi/play/ss4243</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/bangumi/media/md55232">https://www.bilibili.com/bangumi/media/md55232</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/life/huo-zhao-hao-lei/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/life/huo-zhao-hao-lei/" class="post-title-link" itemprop="url">活着好累</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-03-23 06:06:23" itemprop="dateCreated datePublished" datetime="2021-03-23T06:06:23-07:00">2021-03-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>活着好累，要是能死就好了</p>
 
       
     </div>

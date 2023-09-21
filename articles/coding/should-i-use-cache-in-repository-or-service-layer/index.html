@@ -20,31 +20,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="我的微服务框架开发的也有一段时间了，今天就来简单介绍一下框架的基础架构吧">
+    <meta name="description" content="引言设计一个高效且完善的业务系统，通常会需要分层。目前主流的分层都大多包含三层delivery, service, repository。当然，我们有时会在这些基础层次之间进行扩展，如在service和repository之间加入一个manager层，正如阿里的架构那样。 层架构下每个层的职责变得清晰，利于实现业务逻辑已经开展迭代。 但是，在设计业务逻辑的时侯，我遇到了一个问题，也就是缓存。究竟是">
 <meta property="og:type" content="article">
-<meta property="og:title" content="稀音微服务框架开发日记 - 基础架构">
-<meta property="og:url" content="http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/index.html">
+<meta property="og:title" content="项目分层中，缓存应该放在哪儿">
+<meta property="og:url" content="http://www.aynakeya.com/articles/coding/should-i-use-cache-in-repository-or-service-layer/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="我的微服务框架开发的也有一段时间了，今天就来简单介绍一下框架的基础架构吧">
+<meta property="og:description" content="引言设计一个高效且完善的业务系统，通常会需要分层。目前主流的分层都大多包含三层delivery, service, repository。当然，我们有时会在这些基础层次之间进行扩展，如在service和repository之间加入一个manager层，正如阿里的架构那样。 层架构下每个层的职责变得清晰，利于实现业务逻辑已经开展迭代。 但是，在设计业务逻辑的时侯，我遇到了一个问题，也就是缓存。究竟是">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://www.aynakeya.com/images/scene-microservice-develop-diary-0/structure.jpg">
-<meta property="article:published_time" content="2023-08-31T05:53:10.000Z">
-<meta property="article:modified_time" content="2023-09-21T00:00:39.101Z">
+<meta property="article:published_time" content="2023-09-21T00:03:47.000Z">
+<meta property="article:modified_time" content="2023-09-21T00:29:05.740Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="scene-series">
 <meta property="article:tag" content="microservices">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://www.aynakeya.com/images/scene-microservice-develop-diary-0/structure.jpg">
 
 
-<link rel="canonical" href="http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/">
+<link rel="canonical" href="http://www.aynakeya.com/articles/coding/should-i-use-cache-in-repository-or-service-layer/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/","path":"articles/coding/scene-microservice-develop-diary-0/","title":"稀音微服务框架开发日记 - 基础架构"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/should-i-use-cache-in-repository-or-service-layer/","path":"articles/coding/should-i-use-cache-in-repository-or-service-layer/","title":"项目分层中，缓存应该放在哪儿"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>稀音微服务框架开发日记 - 基础架构 | Aynakeya's Blog</title>
+<title>项目分层中，缓存应该放在哪儿 | Aynakeya's Blog</title>
   
 
 
@@ -144,7 +142,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E5%9B%BE"><span class="nav-number">1.</span> <span class="nav-text">架构图</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%A6%82%E8%A7%88"><span class="nav-number">2.</span> <span class="nav-text">架构概览</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E4%BD%93%E6%80%9D%E6%83%B3"><span class="nav-number">2.1.</span> <span class="nav-text">主体思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Scenes"><span class="nav-number">2.2.</span> <span class="nav-text">Scenes</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Module"><span class="nav-number">2.3.</span> <span class="nav-text">Module</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Repository%E5%B1%82"><span class="nav-number">2.3.1.</span> <span class="nav-text">Repository层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Service%E5%B1%82"><span class="nav-number">2.3.2.</span> <span class="nav-text">Service层</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Delivery%E5%B1%82"><span class="nav-number">2.3.3.</span> <span class="nav-text">Delivery层</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Infrastructure%E5%B1%82"><span class="nav-number">2.4.</span> <span class="nav-text">Infrastructure层</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%95%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">引言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AF%94%E8%BE%83"><span class="nav-number">2.</span> <span class="nav-text">比较</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8Repository%E5%B1%82%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98"><span class="nav-number">2.1.</span> <span class="nav-text">在Repository层中使用缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8Service%E5%B1%82%E4%B8%AD%E4%BD%BF%E7%94%A8%E7%BC%93%E5%AD%98"><span class="nav-number">2.2.</span> <span class="nav-text">在Service层中使用缓存</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%88%91%E7%9A%84%E7%9C%8B%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">我的看法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Reference"><span class="nav-number">4.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -208,7 +206,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/scene-microservice-develop-diary-0/">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/should-i-use-cache-in-repository-or-service-layer/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/static/intro/images/avatar.jpg">
@@ -221,12 +219,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="稀音微服务框架开发日记 - 基础架构 | Aynakeya's Blog">
+      <meta itemprop="name" content="项目分层中，缓存应该放在哪儿 | Aynakeya's Blog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          稀音微服务框架开发日记 - 基础架构
+          项目分层中，缓存应该放在哪儿
         </h1>
 
         <div class="post-meta-container">
@@ -236,15 +234,9 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">Posted on</span>
+      
 
-      <time title="Created: 2023-08-30 22:53:10" itemprop="dateCreated datePublished" datetime="2023-08-30T22:53:10-07:00">2023-08-30</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">Edited on</span>
-      <time title="Modified: 2023-09-20 17:00:39" itemprop="dateModified" datetime="2023-09-20T17:00:39-07:00">2023-09-20</time>
+      <time title="Created: 2023-09-20 17:03:47 / Modified: 17:29:05" itemprop="dateCreated datePublished" datetime="2023-09-20T17:03:47-07:00">2023-09-20</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -265,42 +257,39 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><p>我的微服务框架开发的也有一段时间了，今天就来简单介绍一下框架的基础架构吧</p>
+    <div class="post-body" itemprop="articleBody"><h2 id="引言"><a href="#引言" class="headerlink" title="引言"></a>引言</h2><p>设计一个高效且完善的业务系统，通常会需要分层。目前主流的分层都大多包含三层delivery, service, repository。当然，我们有时会在这些基础层次之间进行扩展，如在service和repository之间加入一个manager层，正如阿里的架构那样。</p>
+<p>层架构下每个层的职责变得清晰，利于实现业务逻辑已经开展迭代。</p>
+<p>但是，在设计业务逻辑的时侯，我遇到了一个问题，也就是缓存。究竟是放在service 层更好还是 repository 层更好捏？</p>
 <span id="more"></span>
 
-
-<h1 id="架构图"><a href="#架构图" class="headerlink" title="架构图"></a>架构图</h1><p><img data-src="/images/scene-microservice-develop-diary-0/structure.jpg" alt="structure"></p>
-<h1 id="架构概览"><a href="#架构概览" class="headerlink" title="架构概览"></a>架构概览</h1><p>架构的设计主要受到了Uncle Bob的Clean Architecture的启发。</p>
-<p><strong>Uncle Bob的Clean Architecture</strong> 是一个流行的软件架构设计方法。它的核心思想是将系统分解为不同的层，每一层都有其明确的职责。这种分层的目的是使得系统更加模块化、可维护和可扩展。</p>
-<h2 id="主体思想"><a href="#主体思想" class="headerlink" title="主体思想"></a>主体思想</h2><p>稀音微服务框架的核心思想即是模块化。</p>
-<p>每个业务分割成最小的模块。在每个模块中，进一步分解为不同的层，每个层中都实现业务所定义的接口（以下统称为Interface）。</p>
-<p>业务之间的项目调用是通过Interface来实现的，这样可以确保不涉及任何具体的业务实现。</p>
-<p>首先，所有的路由层由<strong>Scenes</strong>统一定义并管理。在Scenes里，它包含了delivery的具体实现，即<strong>application</strong>。</p>
-<p>每个业务都是架构中的一个单元，这个单元被称为Module。Module内部包含三个层：delivery, service 和 repository。</p>
+<h2 id="比较"><a href="#比较" class="headerlink" title="比较"></a>比较</h2><p>从大方向上来看，一群人认为，service不应干涉数据的来源。而另一群人认为，是否使用缓存的选择是一个业务逻辑决策。当然每个观点都有他的合理性。下面，我将对这两个观点进行对比分析：</p>
+<h3 id="在Repository层中使用缓存"><a href="#在Repository层中使用缓存" class="headerlink" title="在Repository层中使用缓存"></a>在Repository层中使用缓存</h3><p><em>优点</em>:</p>
 <ul>
-<li><strong>repository</strong> 是持久层，负责数据的存储和检索。</li>
-<li><strong>service</strong> 是业务逻辑层，处理核心的业务流程。</li>
-<li><strong>delivery</strong> 是与外部通信的层，负责处理如HTTP请求等的输入和输出。</li>
+<li><strong>数据源无关性</strong>：将缓存逻辑放在repository层，数据的来源对上层是透明的，这意味着Service层或Use Case层不需要知道数据是从缓存中取得还是从数据库或远程API取得。</li>
+<li><strong>一致性</strong>：所有数据的访问，无论是从缓存还是直接从主数据源，都会通过repository层，确保数据的检索和管理方式始终一致。</li>
+<li><strong>可重用性</strong>：不同的service可能需要相同的数据。如果缓存在repository层实现，可以跨多个service重用缓存，而无需复制逻辑。如果有多个Service或Use Case需要访问相同的数据，它们都可以自动从缓存中受益，而不需要每次都实现缓存逻辑。</li>
 </ul>
-<p>除此之外，还有一个 <strong>infrastructure</strong> 层，作为基础层，提供框架所必要的基础服务，如日志、配置管理等。</p>
-<h2 id="Scenes"><a href="#Scenes" class="headerlink" title="Scenes"></a>Scenes</h2><p>Scenes负责定义不同的<strong>Application</strong>以及相对应的<strong>Application Container</strong>。</p>
-<p><strong>Application Container</strong>是一个容器，它可以加载同类型的application并控制其启动和停止。</p>
-<p>简而言之，Application Container负责管理和运行对于的application。</p>
-<h2 id="Module"><a href="#Module" class="headerlink" title="Module"></a>Module</h2><p>Module定义了所有暴露给外部的Interface，这包括repository interface和service interface，以及相应的数据结构（struct）。这里不涉及任何具体的实现，具体的实现是由repository和service层来完成的。</p>
-<p>在这个架构中，delivery层依赖于service，而service层依赖于repository。这三个层的依赖关系是通过依赖注入和控制反转技术来实现的，这样可以方便地替换不同的实现。</p>
-<h3 id="Repository层"><a href="#Repository层" class="headerlink" title="Repository层"></a>Repository层</h3><p>Repository层相对简单，它负责与外部环境（如数据库）进行交互。它需要实现Module中定义的repository interface。这个层可以有多种实现，例如可以有针对MongoDB的实现、针对MySQL的实现等，这为依赖注入和控制反转提供了便利。</p>
-<h3 id="Service层"><a href="#Service层" class="headerlink" title="Service层"></a>Service层</h3><p>Service层是业务逻辑的核心，它依赖于本Module的repository interface或其他Module的service interface。Service层不关心repository的具体实现，它只通过repository interface来调用，从而完成所有的业务逻辑。</p>
-<h3 id="Delivery层"><a href="#Delivery层" class="headerlink" title="Delivery层"></a>Delivery层</h3><p>Delivery层包含了多种application的实现。例如，可以有基于HTTP的实现、基于WebSocket的实现、基于gRPC的实现等。</p>
-<h2 id="Infrastructure层"><a href="#Infrastructure层" class="headerlink" title="Infrastructure层"></a>Infrastructure层</h2><p>Infrastructure层是框架的基础服务层，它提供了一些必要的服务，如配置管理、日志记录等。</p>
-<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
-<li>Uncle Bob. (2012). <a target="_blank" rel="noopener" href="https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html">The Clean Architecture</a>.</li>
-<li>Better Programming. <a target="_blank" rel="noopener" href="https://betterprogramming.pub/the-clean-architecture-beginners-guide-e4b7058c1165">The Clean Architecture — Beginner’s Guide</a>.</li>
-<li>Microsoft. <a target="_blank" rel="noopener" href="https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/ddd-oriented-microservice">Design a DDD-oriented microservice</a>.</li>
-<li>ZQ99299. <a target="_blank" rel="noopener" href="https://zq99299.github.io/note-book2/ddd/#%E6%8E%A8%E8%8D%90%E9%98%85%E8%AF%BB">DDD实践</a>.</li>
-<li>Meituan Tech. (2017). <a target="_blank" rel="noopener" href="https://tech.meituan.com/2017/12/22/ddd-in-practice.html?utm_source=wechat_session&utm_medium=social&utm_oi=698166473230680064">领域驱动设计在互联网业务开发中的实践</a>.</li>
-<li>Go Dev. (2012). <a target="_blank" rel="noopener" href="https://go.dev/talks/2012/splash.article">Go at Google: Language Design in the Service of Software Engineering</a>.</li>
-<li>Ben Johnson. <a target="_blank" rel="noopener" href="https://medium.com/@benbjohnson/structuring-applications-in-go-3b04be4ff091">Structuring Applications in Go</a>.</li>
-<li>咖啡拿铁.<a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903636334542856">你的项目应该如何正确分层</a>你的项目应该如何正确分层</li>
+<p><em>缺点</em>:</p>
+<ul>
+<li><strong>缺乏灵活性</strong>：并不是所有service都需要缓存数据，可能对某些业务逻辑来说，总是从缓存中获取数据并不合适。例如，某些业务逻辑可能需要最新的、未缓存的数据。</li>
+</ul>
+<h3 id="在Service层中使用缓存"><a href="#在Service层中使用缓存" class="headerlink" title="在Service层中使用缓存"></a>在Service层中使用缓存</h3><p><em>优点</em>:</p>
+<ul>
+<li><strong>细粒度控制</strong>：可以根据特定的使用场景来调整缓存，从而在数据缓存的时间和方式上具有更大的灵活性。提供了更大的灵活性。业务逻辑可以决定何时使用缓存，何时直接从数据源获取。对于需要特定缓存策略的复杂业务逻辑，这种方法更为合适。</li>
+<li><strong>优化性能</strong>：只有最关键的操作可能需要缓存，将这个逻辑放在service层可以针对性地提高性能。</li>
+</ul>
+<p><em>缺点</em>:</p>
+<ul>
+<li><strong>潜在的重复</strong>：如果多个Service或Use Case都需要缓存逻辑，可能会导致代码重复。</li>
+<li><strong>复杂性</strong>：在service层引入缓存可以使业务逻辑变得复杂，使得service层不仅要负责业务规则，还要负责数据缓存。</li>
+</ul>
+<h2 id="我的看法"><a href="#我的看法" class="headerlink" title="我的看法"></a>我的看法</h2><p>我倾向于将缓存逻辑放在Repository层。这样可以确保数据的来源对上层是透明的，并减少代码重复。但是，这并不是一种<strong>一刀切</strong>的策略。在某些情况下，特别是当业务逻辑有特定的缓存需求时，将缓存逻辑放在Service层或Use Case层可能更为合适。</p>
+<p>关键是要确保你的选择能够满足项目的需求，同时还要考虑到代码的维护性和可读性。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ol>
+<li>咖啡拿铁(2018). <a target="_blank" rel="noopener" href="https://juejin.cn/post/6844903636334542856">你的项目应该如何正确分层?</a></li>
+<li>Bigbyto(2019). <a target="_blank" rel="noopener" href="https://wiyi.org/dao-vs-repository.html">DAO还是Repository,傻傻的分不清?</a>.</li>
+<li>inktiger(2021). <a target="_blank" rel="noopener" href="https://www.v2ex.com/t/749812">Redis 一般放在 controller 还是 service 呢?</a>.</li>
+<li>洋芋土豆(2016). <a target="_blank" rel="noopener" href="https://segmentfault.com/q/1010000004825046">Redis放在控制器还是模型层?</a>.</li>
 </ol>
 
     </div>
@@ -319,14 +308,11 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/articles/ctf/reverse-with-puring-guessing-ximalaya/" rel="prev" title="Reversing WebAssembly with pure guesswork - Ximalaya xm encryption">
-                  <i class="fa fa-angle-left"></i> Reversing WebAssembly with pure guesswork - Ximalaya xm encryption
+                <a href="/articles/devops/setup-my-internal-network/" rel="prev" title="My Internal Network Setup and Configuration">
+                  <i class="fa fa-angle-left"></i> My Internal Network Setup and Configuration
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/articles/life/jiu-yue-san-hao-ri-ji/" rel="next" title="九月三号 日记">
-                  九月三号 日记 <i class="fa fa-angle-right"></i>
-                </a>
             </div>
           </div>
     </footer>
