@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言大家好啊，我又回来写博客了。由于大四的选了几门超级难的课，导致没多少时间写博客了。（以上50%为真） 现在是2023年11月30日凌晨1点半，我来写点博客。 总之由于某些原因，我研究了一下微信视频号下载视频的方式。我在github上发现一个挺好的解决方法(WeChatVideoDownloader)，原理是利用代理获取视频地址。但是最近出了点问题，微信对视频号做了一点更新，对视频进行了一点小小">
+<meta property="og:type" content="article">
+<meta property="og:title" content="微信视频号视频加密逆向">
+<meta property="og:url" content="http://www.aynakeya.com/articles/ctf/wechat-video-encryption-reverse-engineer/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="前言大家好啊，我又回来写博客了。由于大四的选了几门超级难的课，导致没多少时间写博客了。（以上50%为真） 现在是2023年11月30日凌晨1点半，我来写点博客。 总之由于某些原因，我研究了一下微信视频号下载视频的方式。我在github上发现一个挺好的解决方法(WeChatVideoDownloader)，原理是利用代理获取视频地址。但是最近出了点问题，微信对视频号做了一点更新，对视频进行了一点小小">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_014835.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_015711.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_020505.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_020822.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_021050.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_021720.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_022300.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_022452.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_022810.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_024028.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_024332.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_024924.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_030303.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_030340.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_030849.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_031821.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_010450.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_010436.png">
+<meta property="article:published_time" content="2023-11-30T09:26:43.000Z">
+<meta property="article:modified_time" content="2023-11-30T11:59:37.974Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="javascript">
+<meta property="article:tag" content="reverse">
+<meta property="article:tag" content="encryption">
+<meta property="article:tag" content="chrome">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_014835.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/ctf/wechat-video-encryption-reverse-engineer/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/ctf/wechat-video-encryption-reverse-engineer/","path":"articles/ctf/wechat-video-encryption-reverse-engineer/","title":"微信视频号视频加密逆向"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>微信视频号视频加密逆向 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">2.</span> <span class="nav-text">准备工作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%80%86%E5%90%91"><span class="nav-number">3.</span> <span class="nav-text">逆向</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Javascript%E5%88%9D%E6%AD%A5%E5%88%86%E6%9E%90"><span class="nav-number">3.1.</span> <span class="nav-text">Javascript初步分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#WebAssembly-%E8%BF%9B%E4%B8%80%E6%AD%A5%E5%88%86%E6%9E%90"><span class="nav-number">3.2.</span> <span class="nav-text">WebAssembly 进一步分析</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Tracebackbackbackbackback"><span class="nav-number">3.3.</span> <span class="nav-text">Tracebackbackbackbackback</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5WeixinJSBridge"><span class="nav-number">3.4.</span> <span class="nav-text">注入WeixinJSBridge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">3.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%AE%9E%E7%8E%B0%E4%B8%80%E4%B8%AA%E8%A7%86%E9%A2%91%E4%B8%8B%E8%BD%BD%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">如何实现一个视频下载器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%99%E5%9C%A8%E5%90%8E%E9%9D%A2"><span class="nav-number">5.</span> <span class="nav-text">写在后面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Relevant-Links"><span class="nav-number">6.</span> <span class="nav-text">Relevant Links</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%8D%E8%B4%A3%E5%A3%B0%E6%98%8E"><span class="nav-number">7.</span> <span class="nav-text">免责声明</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">100</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya@aynakeya.com" title="E-Mail → mailto:aynakeya@aynakeya.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/wechat-video-encryption-reverse-engineer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="微信视频号视频加密逆向 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          微信视频号视频加密逆向
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+      
+
+      <time title="Created: 2023-11-30 01:26:43 / Modified: 03:59:37" itemprop="dateCreated datePublished" datetime="2023-11-30T01:26:43-08:00">2023-11-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>大家好啊，我又回来写博客了。由于大四的选了几门超级难的课，导致没多少时间写博客了。（以上50%为真）</p>
+<p>现在是2023年11月30日凌晨1点半，我来写点博客。</p>
+<p>总之由于某些原因，我研究了一下微信视频号下载视频的方式。我在github上发现一个挺好的解决方法(<a target="_blank" rel="noopener" href="https://github.com/lecepin/WeChatVideoDownloader">WeChatVideoDownloader</a>)，原理是利用代理获取视频地址。但是最近出了点问题，微信对视频号做了一点更新，对视频进行了一点小小的加密，导致下载下来的视频无法直接打开。</p>
+<p>什么，加密，这能忍?</p>
+<span id="more"></span>
+
+<h1 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h1><p>在正式开始逆向之前，我们首先需要能够在微信视频号中打开开发者工具，由于微信默认肯定是不会启用的，所以我们要对微信的某个动态链接库进行小小的修改。</p>
+<p>总之就是找到<code>xweb-enable-inspect</code>这个启动选项，修改branch指令，这个启动选项所在的分支变成永远执行就行了。</p>
+<p>最后实现效果如图下</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_014835.png" alt="Screenshot_20231130_014835"></p>
+<h1 id="逆向"><a href="#逆向" class="headerlink" title="逆向"></a>逆向</h1><h2 id="Javascript初步分析"><a href="#Javascript初步分析" class="headerlink" title="Javascript初步分析"></a>Javascript初步分析</h2><p>首先随便打开一个视频，我们可以看到很多请求。其中带有<code>stodownload</code>的就是下载的视频文件，但这些视频链接下载下来的内容是加密的。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_015711.png" alt="Screenshot_20231130_015711"></p>
+<p>先看一下加密前的视频文件头，我们可以明显发现，它的文件头格式并不正确。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">aynakeya @ ThinkStation]:~/workspace/weixinshipin</span><br><span class="line">01:59:21 $ xxd -l 32 v2.bin</span><br><span class="line">00000000: 75a2 b80f 5db2 528b af76 c5f0 9407 a7e9  u...].R..v......</span><br><span class="line">00000010: 4c31 99a8 60ef a5de c64e ce1e 3ab1 6e74  L1..`....N..:.nt</span><br></pre></td></tr></table></figure>
+
+<p>对比之下，一个正常的mp4文件的文件头应该如下所示：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">00000000: 0000 0020 6674 7970 6973 6f6d 0000 0200  ... ftypisom....</span><br><span class="line">00000010: 6973 6f6d 6973 6f32 6176 6331 6d70 3431  isomiso2avc1mp41</span><br></pre></td></tr></table></figure>
+
+<p>那么确认了文件被加密。那么我们要从哪里开始呢。因为解密必然是文件下载完成后才解密的。所以解密的函数或者过程很有可能就在文件下载完成后。</p>
+<p>查看请求是从哪行代码发起的，我们可以追踪到<code>worker_release.js</code>中的<code>g.send()</code></p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_020505.png" alt="Screenshot_20231130_020505"></p>
+<p>这个时候，写过Javascript XMLRequest的人可能就很熟悉这个了，在完成所有callback设置之后，发送请求用的就是<code>.send()</code>，所以往上翻，我们可以找到如下的返回值处理。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_020822.png" alt="Screenshot_20231130_020822"></p>
+<p>这里我们可以发现解密函数就是函数M，参数分别为数据和startIndex(也就是文件的第几个byte)</p>
+<p>函数M非常的简单易懂，把数据和decryptor_array进行异或即可。如果当前的startIdx大于decryptor_array的长度，则不进行异或，不改变原有数据。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_021050.png" alt="Screenshot_20231130_021050"></p>
+<p>如果我们在这个函数M的地方打个断点，我们可以发现这个<code>decryptor_array</code>的长度实际上是一个常量2^17 &#x3D; 131072 (一直都是这个长度)</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_021720.png" alt="Screenshot_20231130_021720"></p>
+<p>从这里我们可以推断出，<code>decryptor_array</code>的长度是有限的。</p>
+<p>我们从<code>decryptor_array</code>的恒定长度可以推断出，视频加密只作用于文件的前131072字节。这样的加密策略似乎合理——如果需要对整个视频数据进行加密和解密，那么播放视频时消耗的资源可能会显著增加。</p>
+<p>(虽然DRM好像就是全文加密的，我也不太了解就是了)</p>
+<p>另外，我们还发现，对于同一视频，<code>decryptor_array</code>是一致的。不同的视频文件则对应不同的<code>decryptor_array</code>。这表明<code>decryptor_array</code>是通过某种特定的方法生成或获取的。</p>
+<p>经过搜索，我们了解到<code>decryptor_array</code>的赋值仅在<code>wasm_isaac_generate</code>函数中进行。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_022300.png" alt="Screenshot_20231130_022300"></p>
+<p>而<code>wasm_isaac_generate</code>函数在代码中只被一个地方调用，即<code>wasm_video_decode.js</code>。</p>
+<p>在<code>wasm_video_decode.js</code>中，<code>wasm_isaac_generate</code>作为一个汇编函数，可以在WebAssembly中通过<code>_emscripten_asm_const_int</code>接口被调用。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_022452.png" alt="Screenshot_20231130_022452"></p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_022810.png" alt="Screenshot_20231130_022810"></p>
+<p>那么接下来，就要开始逆向可爱的的wasm了</p>
+<h2 id="WebAssembly-进一步分析"><a href="#WebAssembly-进一步分析" class="headerlink" title="WebAssembly 进一步分析"></a>WebAssembly 进一步分析</h2><p>下载<code>wasm_video_decode.wasm</code>后，我们使用<a target="_blank" rel="noopener" href="https://github.com/WebAssembly/wabt">wabt</a>工具将其转换为<code>.o</code>文件，以便在反编译软件中进行分析。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">./path/to/wasm2c wasm_video_decode.wasm -o wasm_video_decode.c</span><br><span class="line"><span class="built_in">cp</span> /path/to/wasm-rt-impl.c .</span><br><span class="line"><span class="built_in">cp</span> /path/to/wasm-rt-impl.h .</span><br><span class="line"><span class="built_in">cp</span> /path/to/wasm-rt.h .</span><br><span class="line">gcc -c wasm_video_decode.c -o wasm_video_decode.o</span><br></pre></td></tr></table></figure>
+
+<p>完成这些步骤后，我们得到一个二进制文件<code>wasm_video_decode.o</code>。将此文件拖入反编译软件，搜索<code>_emscripten_asm_const_int</code>的调用。我们发现<code>wasm_isaac_generate</code>在函数<code>f378</code>处被调用。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_024028.png" alt="Screenshot_20231130_024028"></p>
+<p>进一步通过断点和调用栈的检查，我们发现<code>worker_release.js</code>中的<code>decryptor.generate()</code>最终触发了<code>wasm_isaac_generate</code>的调用。</p>
+<p>仔细分析揭示出decryptor也是WebAssembly环境中的一个对象，即<code>WxIsaac64</code>。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_024332.png" alt="Screenshot_20231130_024332"></p>
+<p>经过研究，我们了解到Isaac64实际上是一个随机数生成算法。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_024924.png" alt="Screenshot_20231130_024924"></p>
+<p>因此，我们可以合理推测：</p>
+<ol>
+<li>decryptor使用视频对应的seed进行初始化。</li>
+<li>JavaScript调用<code>decryptor.generate()</code>，指示wasm在其内存中生成2^17即131072个随机数。</li>
+<li>wasm生成随机数后，通过<code>wasm_isaac_generate</code>将这些随机数写回JavaScript，赋值给<code>decryptor_array</code>。</li>
+</ol>
+<p>现在，我们知道了<code>decryptor_array</code>的来源，接下来的问题是确定初始化Isaac64算法的seed的来源。</p>
+<h2 id="Tracebackbackbackbackback"><a href="#Tracebackbackbackbackback" class="headerlink" title="Tracebackbackbackbackback"></a>Tracebackbackbackbackback</h2><p>接下来就是不停的打断点，看call stack， 直到找到<code>seed</code>最早出现的地方就行了。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_030303.png" alt="Screenshot_20231130_030303"></p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_030340.png" alt="Screenshot_20231130_030340"></p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_030849.png" alt="Screenshot_20231130_030849"></p>
+<p>简单来说呢就是顺序就是从<code>FinderGetCommentDetail(objectid)</code>-&gt;<code>objectDesc.media.decodeKey-</code>&gt;<code>seed</code>。</p>
+<h2 id="注入WeixinJSBridge"><a href="#注入WeixinJSBridge" class="headerlink" title="注入WeixinJSBridge"></a>注入WeixinJSBridge</h2><p>那么<code>FinderGetCommentDetail</code>又是通过什么获取到信息的呢。继续追踪调用。可以发现<code>FinderGetCommentDetail</code>最后使用了<code>window.WeixinJSBridge.invoke</code>来获取数据。</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_031821.png" alt="Screenshot_20231130_031821"></p>
+<p><code>window.WeixinJSBridge</code> ？？？那接下來就要逆向微信的通信协议了。我才懒得逆向这玩意。</p>
+<p>立刻启动后备隐藏能源，发动注入模式</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">(<span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">    <span class="keyword">function</span> <span class="title function_">wrapper</span>(<span class="params">name,origin</span>) &#123;</span><br><span class="line">        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`injecting <span class="subst">$&#123;name&#125;</span>`</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">function</span>(<span class="params"></span>) &#123;</span><br><span class="line">            <span class="keyword">let</span> cmdName = <span class="variable language_">arguments</span>[<span class="number">0</span>];</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;name&#125;</span>(&quot;<span class="subst">$&#123;cmdName&#125;</span>&quot;, ...) =&gt; args: `</span>);</span><br><span class="line">            <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">arguments</span>[<span class="number">1</span>])</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable language_">arguments</span>.<span class="property">length</span> == <span class="number">3</span>) &#123;</span><br><span class="line">                <span class="keyword">let</span> original_callback = <span class="variable language_">arguments</span>[<span class="number">3</span>];</span><br><span class="line">                <span class="variable language_">arguments</span>[<span class="number">2</span>] = <span class="keyword">async</span> <span class="keyword">function</span> (<span class="params"></span>) &#123;</span><br><span class="line">                    <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="string">`<span class="subst">$&#123;name&#125;</span>(&quot;<span class="subst">$&#123;cmdName&#125;</span>&quot;, ...) =&gt; callback result (length: <span class="subst">$&#123;<span class="variable language_">arguments</span>.length&#125;</span>):`</span>);</span><br><span class="line">                    <span class="keyword">if</span> (<span class="variable language_">arguments</span>.<span class="property">length</span> == <span class="number">1</span>) &#123;</span><br><span class="line">                        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">arguments</span>[<span class="number">0</span>]);</span><br><span class="line">                    &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                        <span class="variable language_">console</span>.<span class="title function_">log</span>(<span class="variable language_">arguments</span>);</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">return</span> <span class="keyword">await</span> originalA.<span class="title function_">apply</span>(<span class="variable language_">this</span>, <span class="variable language_">arguments</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">let</span> result = origin.<span class="title function_">apply</span>(<span class="variable language_">this</span>,<span class="variable language_">arguments</span>);</span><br><span class="line">            <span class="keyword">return</span> result;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="variable language_">window</span>.<span class="property">WeixinJSBridge</span>.<span class="property">invoke</span> = <span class="title function_">wrapper</span>(<span class="string">&quot;WeixinJSBridge.invoke&quot;</span>,<span class="variable language_">window</span>.<span class="property">WeixinJSBridge</span>.<span class="property">invoke</span>);</span><br><span class="line">&#125;)()</span><br></pre></td></tr></table></figure>
+<p>总之结果很好，获得了需要的所有数据</p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_010450.png" alt="Screenshot_20231130_010450"></p>
+<p><img data-src="/images/wechat-video-encryption-reverse-engineer/Screenshot_20231130_010436.png" alt="Screenshot_20231130_010436"></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>通过<code>FinderGetCommentDetail</code>获取到视频的<code>decode_key</code>(就是<code>seed</code>)，<code>url</code>，<code>title</code>等信息</li>
+<li>通过seed生成<code>decryptor_array</code></li>
+<li>通过url下载加密后的视频文件，把视频的加密段数据和<code>decryptor_array</code>做异或运算即可。</li>
+</ol>
+<h1 id="如何实现一个视频下载器"><a href="#如何实现一个视频下载器" class="headerlink" title="如何实现一个视频下载器"></a>如何实现一个视频下载器</h1><p>由于获取<code>seed</code>需要逆向微信协议，我不想在逆向这个协议上花费太多时间。</p>
+<p>既然WechatVideoDownloader已经使用代理获取视频地址，我们可以进一步使用中间人攻击来获取视频链接及对应的<code>decode_key</code>。</p>
+<p>只需将注入<code>WeixinJSBridge.invoke</code>的代码插入到某个JS文件中，当微信客户端请求视频链接时，就把获取到的视频链接发送到本地服务器。</p>
+<p>这样不仅解决了seed和链接的问题，连视频标题也能获取到。</p>
+<p>最后，下载完视频后，通过seed生成解密序列并对视频进行解密。</p>
+<h1 id="写在后面"><a href="#写在后面" class="headerlink" title="写在后面"></a>写在后面</h1><p>回顾这次的逆向工程过程，我们可以看到WebAssembly在现代网络安全和逆向工程领域扮演着越来越重要的角色。随着WebAssembly的普及，JavaScript逆向逐渐演变为WebAssembly逆向。这不仅提高了代码的执行效率，同时也给逆向工程带来了更多的挑战和机遇。</p>
+<h1 id="Relevant-Links"><a href="#Relevant-Links" class="headerlink" title="Relevant Links"></a>Relevant Links</h1><ol>
+<li>微信 v3.9.8.15</li>
+<li><a target="_blank" rel="noopener" href="https://aladin.wxqcloud.qq.com/aladin/ffmepeg/video-decode/1.2.46/wasm_video_decode.wasm">wasm_video_decode.wasm v1.2.46</a></li>
+<li><a target="_blank" rel="noopener" href="https://aladin.wxqcloud.qq.com/aladin/ffmepeg/video-decode/1.2.46/worker_release.js">worker_release.js v1.2.46</a></li>
+<li><a target="_blank" rel="noopener" href="https://aladin.wxqcloud.qq.com/aladin/ffmepeg/video-decode/1.2.46/wasm_video_decode.js">wasm_video_decode.js v1.2.46</a></li>
+<li><a target="_blank" rel="noopener" href="https://aladin.wxqcloud.qq.com/aladin/ffmepeg/video-decode/1.2.46/wasm_video_decode_fallback.js">wasm_video_decode_fallback.js v1.2.46</a></li>
+</ol>
+<h1 id="免责声明"><a href="#免责声明" class="headerlink" title="免责声明"></a>免责声明</h1><p>本博客中提供的信息和过程仅供学习和研究目的使用。博主不鼓励、不支持并强烈反对任何形式的非法行为，包括但不限于未经授权的数据访问、破解或逆向工程。博客内容的使用应遵守相关法律法规以及道德规范。</p>
+<p>读者在使用本博客中的信息时，应自行承担相应的风险和责任。博主不对由于使用、引用或依赖本博客中信息而产生的任何形式的损害或损失负责。此外，博主对于博客内容的准确性、完整性或适用性不作任何明示或暗示的保证。</p>
+<p>请读者在使用本博客中的技术和信息时，始终保持合法、负责任的态度，尊重知识产权和隐私权。如果您不确定您的行为是否合法，或者您的行为可能会侵犯他人的权利，请在行动前咨询专业法律意见。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/javascript/" rel="tag"># javascript</a>
+              <a href="/tags/reverse/" rel="tag"># reverse</a>
+              <a href="/tags/encryption/" rel="tag"># encryption</a>
+              <a href="/tags/chrome/" rel="tag"># chrome</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/coding/should-i-use-cache-in-repository-or-service-layer/" rel="prev" title="项目分层中，缓存应该放在哪儿">
+                  <i class="fa fa-angle-left"></i> 项目分层中，缓存应该放在哪儿
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2023</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
