@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#97;&#x79;&#110;&#x61;&#107;&#101;&#x79;&#97;&#46;&#111;&#102;&#102;&#105;&#99;&#105;&#97;&#108;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&amp;#x6f">
+    <meta name="description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#97;&#x79;&#110;&#97;&#x6b;&#x65;&#x79;&#97;&#x2e;&#x6f;&#x66;&#x66;&#x69;&#x63;&#105;&#x61;&#108;&#64;&#103;&#109;&#x61;&#x69;&#x6c;&#x2e;&#x63;&amp;#x">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Breaking PrairieLearn Java Grader">
 <meta property="og:url" content="http://www.aynakeya.com/articles/ctf/breaking-prairielearn-java-grader/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#97;&#x79;&#110;&#x61;&#107;&#101;&#x79;&#97;&#46;&#111;&#102;&#102;&#105;&#99;&#105;&#97;&#108;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&amp;#x6f">
+<meta property="og:description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#97;&#x79;&#110;&#97;&#x6b;&#x65;&#x79;&#97;&#x2e;&#x6f;&#x66;&#x66;&#x69;&#x63;&#105;&#x61;&#108;&#64;&#103;&#109;&#x61;&#x69;&#x6c;&#x2e;&#x63;&amp;#x">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/Breaking-PrairieLearn-Java-Grader/2023-01-23_184909.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/Breaking-PrairieLearn-Java-Grader/2023-01-23_191424.png">
@@ -261,7 +261,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#97;&#x79;&#110;&#x61;&#107;&#101;&#x79;&#97;&#46;&#111;&#102;&#102;&#105;&#99;&#105;&#97;&#108;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;">&#97;&#x79;&#110;&#x61;&#107;&#101;&#x79;&#97;&#46;&#111;&#102;&#102;&#105;&#99;&#105;&#97;&#108;&#x40;&#103;&#x6d;&#97;&#105;&#x6c;&#x2e;&#x63;&#x6f;&#109;</a></p>
+    <div class="post-body" itemprop="articleBody"><h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#97;&#x79;&#110;&#97;&#x6b;&#x65;&#x79;&#97;&#x2e;&#x6f;&#x66;&#x66;&#x69;&#x63;&#105;&#x61;&#108;&#64;&#103;&#109;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;">&#97;&#x79;&#110;&#97;&#x6b;&#x65;&#x79;&#97;&#x2e;&#x6f;&#x66;&#x66;&#x69;&#x63;&#105;&#x61;&#108;&#64;&#103;&#109;&#x61;&#x69;&#x6c;&#x2e;&#x63;&#x6f;&#x6d;</a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>This is a walkthrough of one vulnerability I found in PrairieLearn Java autograder. </p>
 <p>The default Java autograder exists vulnerabilities that allow user to leak information and write files to the container.</p>
 <p>These vulnerabilities allow the user to modify the result of autograder score and get 100% without writing any actual code.</p>
