@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">104</span>
+          <span class="site-state-item-count">107</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -191,6 +191,100 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-03-16-20-39-27/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/blogarchive/2019-03-16-20-39-27/" class="post-title-link" itemprop="url">Electron packaging</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-03-16 20:39:27" itemprop="dateCreated datePublished" datetime="2019-03-16T20:39:27-07:00">2019-03-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Two method, electron-builder or electron-packager</p>
+<h2 id="install"><a href="#install" class="headerlink" title="install"></a>install</h2><p> <code>npm isntall -g electron-packager</code> and  <code>npm isntall -g electron-builder</code></p>
+<h2 id="Use-electron-packager"><a href="#Use-electron-packager" class="headerlink" title="Use electron packager:"></a>Use electron packager:</h2><p><code>electron-packager &lt;sourcedir&gt; &lt;appname&gt; &lt;platform&gt; &lt;architecture&gt; &lt;electron version&gt; &lt;optional options&gt;</code></p>
+<p>e.g:</p>
+<p><code>electron-packager . ApplicationName --win --out ./out --arch=x64 --overwrite --ignore=node_module</code></p>
+<h2 id="Use-electron-builder"><a href="#Use-electron-builder" class="headerlink" title="Use electron builder"></a>Use electron builder</h2><p>add this script into your package.json</p>
+<pre>
+"build": {
+    "appId": "com.xxx.app",
+    "mac": {
+      "target": ["dmg","zip"]
+    },
+    "win": {
+      "target": ["nsis","zip"]
+ }
+</pre>
+<p>Then, use <code>electron-builder</code>. You can also add args like <code>electron-builder --win --x64</code></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1077,91 +1171,6 @@ import subprocess
 
 <p>files &#x3D; []<br>for f in sys.argv[1:]:<br>    files.append(f)<br>for file in files:<br>    videoPath &#x3D; file<br>    audioPath &#x3D; os.path.splitext(file)[0]+&quot;.m4a&quot;<br>    status &#x3D; subprocess.call([&quot;ffmpeg&quot;, &quot;-y&quot;, &quot;-i&quot;, videoPath, &quot;-acodec&quot;, &quot;copy&quot;, &quot;-vn&quot;, audioPath], shell&#x3D;False)<br>    if status &#x3D;&#x3D; 0:<br>        pass<br>    else:<br>        pass<br>EOF<br></pre></p>
 
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2018-11-28-15-38-10/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/blogarchive/2018-11-28-15-38-10/" class="post-title-link" itemprop="url">.htaccess强制重定向www以及https</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2018-11-28 15:38:10" itemprop="dateCreated datePublished" datetime="2018-11-28T15:38:10-08:00">2018-11-28</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>今天遇见了一个问题，垃圾百度上什么都系都没找到，最后在stackoverflow上找到了解决方法。<br><br><a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/12050590/redirect-non-www-to-www-in-htaccess">https://stackoverflow.com/questions/12050590/redirect-non-www-to-www-in-htaccess</a><br></p>
-<pre># Redirect to www
-RewriteCond %{HTTP_HOST} ^[^.]+\.[^.]+$
-RewriteCond %{HTTPS}s ^on(s)|
-RewriteRule ^ http%1://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-# Redirect to https
-RewriteCond %{HTTPS} off
-RewriteRule (.*) https://%{HTTP_HOST}/$1 [R=301,L]
-</pre>
       
     </div>
 
