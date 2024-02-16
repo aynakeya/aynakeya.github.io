@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">111</span>
+          <span class="site-state-item-count">113</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">83</span>
+        <span class="site-state-item-count">86</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -191,6 +191,169 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-09-04-08-30-23/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/blogarchive/2019-09-04-08-30-23/" class="post-title-link" itemprop="url">New Best Toefl Score 2019 Aug</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-09-04 08:30:23" itemprop="dateCreated datePublished" datetime="2019-09-04T08:30:23-07:00">2019-09-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p><img data-src="https://i.loli.net/2019/09/05/MZ9cxheQ3jJ5PEG.png" alt="4087FDA874E59871EAACAEC74B194535.png"></p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-09-03-22-22-55/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/blogarchive/2019-09-03-22-22-55/" class="post-title-link" itemprop="url">Fix bug with Chinese input in tags system (中文标签问题)</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-09-03 22:22:55" itemprop="dateCreated datePublished" datetime="2019-09-03T22:22:55-07:00">2019-09-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/SiteDev/" itemprop="url" rel="index"><span itemprop="name">SiteDev</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>Tags system not work properly with Chinese character.</p>
+<p>The bug is fixed now.</p>
+<p>The problem is caused by the url encoding.</p>
+<p>To fix the bug, we could decode the url into Chinese again.</p>
+<p>Solution below</p>
+<pre>
+import urllib
+tag = urllib.parse.unquote(url)
+</pre>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -957,216 +1120,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-04-06-18-00-02/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/blogarchive/2019-04-06-18-00-02/" class="post-title-link" itemprop="url">use table partition to increase inserting performance</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-04-06 18:00:02" itemprop="dateCreated datePublished" datetime="2019-04-06T18:00:02-07:00">2019-04-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>when the number of data excess 5 million. mysql database will face a significant drop down in inserting speed. </p>
-<p>(From 50,000 data per second to 50,000 data per minutes xD)</p>
-<p>So we can &quot;split&quot; these data into different part by using mysql partition.</p>
-<p>for example:</p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca876ea63fb1.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca876ea63fb1.jpg" alt="table"></a><br>total number of data<br><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8775dafb2f.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8775dafb2f.jpg" alt="total"></a></p>
-<p>change table to partition (<strong>the table can not have foreign key</strong>)</p>
-<pre>
-alter table songrecogn.fingerprints partition by range columns(id)
-( PARTITION p0 VALUES LESS THAN (5000000),
-  PARTITION p1 VALUES LESS THAN (10000000) ,
-  PARTITION p2 VALUES LESS THAN (15000000) ,
-  PARTITION p3 VALUES LESS THAN (20000000) ,
-  PARTITION p4 VALUES LESS THAN (25000000) ,
-  PARTITION p5 VALUES LESS THAN (30000000) ,
-  PARTITION p6 VALUES LESS THAN (35000000) ,
-  PARTITION p7 VALUES LESS THAN (40000000) ,
-  PARTITION p8 VALUES LESS THAN (45000000) ,
-  PARTITION p9 VALUES LESS THAN (50000000) ,
-  PARTITION p10 VALUES LESS THAN (55000000) ,
-  PARTITION p11 VALUES LESS THAN (60000000) ,
-  PARTITION p12 VALUES LESS THAN (65000000) ,
-  PARTITION p13 VALUES LESS THAN (70000000) ,
-  PARTITION p14 VALUES LESS THAN (75000000),
-  PARTITION p15 VALUES LESS THAN (80000000),
-  PARTITION p16 VALUES LESS THAN (85000000),
-  PARTITION p17 VALUES LESS THAN (90000000),
-  PARTITION p18 VALUES LESS THAN (95000000),
-  PARTITION p19 VALUES LESS THAN (100000000)
-);
-</pre>
-
-<p>result:<br><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8779ca8061.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8779ca8061.jpg" alt="files"></a></p>
-<p>The inserting speed remains in 50,000 per seconds.</p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca87888b3a7c.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca87888b3a7c.jpg" alt="reuslt1"></a> </p>
-<p>extra info:</p>
-<pre>
-# add partition
-ALTER TABLE fingerprints ADD PARTITION(
- PARTITION p2- VALUES LESS THAN (150000000)
-);
-
-# remove partition (data not lost)
-alter table fingerprints remove partitioning
-
-# remove partition (data lost)
-alter table fingerprints drop partition p20
-</pre>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-04-06-17-38-45/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/blogarchive/2019-04-06-17-38-45/" class="post-title-link" itemprop="url">Fix memory error caused by memory overflowing</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-04-06 17:38:45" itemprop="dateCreated datePublished" datetime="2019-04-06T17:38:45-07:00">2019-04-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/%E7%B3%BB%E7%BB%9F%E9%BB%98%E8%AE%A4/" itemprop="url" rel="index"><span itemprop="name">系统默认</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.</p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca87477be5a0.jpg" alt="memory error"></a></p>
-<p>after checking the task manager, i found i got memory overflow when processing the song.</p>
-<p>After doing some research, i come up with a solution.</p>
-<p>By using <code>del</code> and <code>gc.collect()</code> after finish using a varible that takes lots of memory, the problem is successfully solved.</p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8737adf701.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8737adf701.jpg" alt="code1"></a></p>
-<p><a target="_blank" rel="noopener" href="https://i.loli.net/2019/04/06/5ca8737b03578.jpg"><img data-src="https://i.loli.net/2019/04/06/5ca8737b03578.jpg" alt="code2"></a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/blog/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/blog/page/9/">9</a><a class="page-number" href="/blog/page/10/">10</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/blog/page/9/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="Previous page" aria-label="Previous page" href="/blog/page/7/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/blog/">1</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/7/">7</a><span class="page-number current">8</span><a class="page-number" href="/blog/page/9/">9</a><span class="space">&hellip;</span><a class="page-number" href="/blog/page/11/">11</a><a class="extend next" rel="next" title="Next page" aria-label="Next page" href="/blog/page/9/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
