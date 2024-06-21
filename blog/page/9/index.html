@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">115</span>
+          <span class="site-state-item-count">116</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">88</span>
+        <span class="site-state-item-count">89</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -191,6 +191,130 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-05-26-18-23-29/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/blogarchive/2019-05-26-18-23-29/" class="post-title-link" itemprop="url">Use single-user-mode to access files from a mac without login</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2019-05-26 18:23:29" itemprop="dateCreated datePublished" datetime="2019-05-26T18:23:29+08:00">2019-05-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>On May 23, 2019. I accidentally drop my MacBook, which looses the connection between the motherboard and hard drive. After I reconnect the SATA cable and restart my computer, I found that my laptop stuck after I enter the login password.</p>
+<p>##First try:<br>In recovery mode, reset the password.</p>
+<p>See instruction at:</p>
+<p> <a target="_blank" rel="noopener" href="https://www.macworld.co.uk/how-to/mac/forgotten-mac-password-3594395/">https://www.macworld.co.uk/how-to/mac/forgotten-mac-password-3594395/</a> </p>
+<p>or <a target="_blank" rel="noopener" href="https://support.apple.com/en-hk/HT202860">https://support.apple.com/en-hk/HT202860</a> </p>
+<p>or <a target="_blank" rel="noopener" href="https://jingyan.baidu.com/article/6f2f55a163030bb5b83e6c71.html">https://jingyan.baidu.com/article/6f2f55a163030bb5b83e6c71.html</a></p>
+<p>However, I failed.</p>
+<hr>
+<p>##Second try:<br>I first try to set up a new user by using single user mode.</p>
+<p>See instruction here: <a target="_blank" rel="noopener" href="https://zhidao.baidu.com/question/528962469.html">https://zhidao.baidu.com/question/528962469.html</a></p>
+<p>However, after I set up the new user, I still got stuck when I try to login into the system.</p>
+<hr>
+<p>##My solution<br>Since I have a Time Machine backup in January, I can recover my computer using Time Machine. However, I still need to backup some important information that is not in the Time machine. After doing some research, I successfully copy the important file from MacBook using single user mode.</p>
+<p>###Copy file without login:</p>
+<p>If your mac running a macos <strong>higher</strong> than <strong>El Capitan</strong>, you should first remove “System Integrity Protection” before entering the single user mode. </p>
+<ol>
+<li><p>Reboot your mac and press <strong>command + R</strong>, go to the recovery mode.<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd3daa9635980.jpg" alt="IMG_2017.jpg"></p>
+</li>
+<li><p>Click on the <strong>&quot;Utilities&quot;</strong> menu, and then click on <strong>&quot;Terminal&quot;</strong> to open terminal.<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd49a4e434697.jpg" alt="IMG_2018.jpg"></p>
+</li>
+<li><p>In the terminal type <code>csrutil disable</code> and enter.<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd49681d76042.jpg" alt="IMG_2021.jpg"></p>
+</li>
+</ol>
+<hr>
+<p>If your mac running a macos lower than El Capitain, ignore the step above.</p>
+<ol>
+<li><p>reboot again, but this time press <strong>command + S</strong> to enter single user mode.</p>
+</li>
+<li><p>Follow the instruction, type <code>/sbin/fsck -fy</code> and press enter (if this command <em>does not</em> show “The volume xxx appears to be OK”, you should run this command multiple time until it shows this message)<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd3a0dcf39109.jpg" alt="IMG_2040.jpg"></p>
+</li>
+<li><p>type <code>mount -uw /</code> and press enter<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd356d6b39933.jpg" alt="IMG_2041.jpg"></p>
+</li>
+<li><p>type <code>mkdir /Volumes/usb</code> to create a directory for external storage device (using later).<br> <img data-src="https://i.loli.net/2019/05/26/5cea6dd296cc070560.jpg" alt="IMG_2050.jpg"></p>
+</li>
+<li><p>type <code>ls /dev/disk*</code> to show current disks.</p>
+</li>
+<li><p>plug in an external storage device (USB or other things), type <code>ls /dev/disk*</code> to find which is the external storage device (often the last one in the list).<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd31862143880.jpg" alt="IMG_2042.jpg"><br><img data-src="https://i.loli.net/2019/05/26/5cea6dd35043d68794.jpg" alt="IMG_2045.jpg"></p>
+</li>
+<li><p>type <code>fstyp /dev/disk1s3</code> (depends on which disk you are using) to find the system of the disk, (Interest things is that although my drive is exfat, the fstyp shows msdos).<br><img data-src="https://i.loli.net/2019/05/26/5cea6dd2e563632749.jpg" alt="IMG_2048.jpg"></p>
+</li>
+<li><p>according to 7, type <code>/sbin/mount_exfat /dev/disk1s3 /Volumes/usb</code> to load storage device. Depending on your file system, you may choose a different command. For example, if your device is using msdos file system, you should type <code>/sbin/mount_msdos</code> instead of <code>/sbin/mount_exfat</code>. You can see all the supported file system by entering <code>ls /sbin/mount_*</code><br><img data-src="https://i.loli.net/2019/05/26/5cea6ff5b939a68066.jpg" alt="IMG_2052.jpg"></p>
+</li>
+<li><p>if the external storage is loaded success, you can now access your external drive. Type <code>ls /Volumes/usb</code> to find out.<br><img data-src="https://i.loli.net/2019/05/26/5cea6ff5b36f716934.jpg" alt="IMG_2053.jpg"></p>
+</li>
+<li><p>Copy file to your device by using command <strong>cp</strong>. Eg: <code>cp /User/xxx/Desktop/1.jpg /Volumes/usb</code><br><img data-src="https://i.loli.net/2019/05/26/5cea6ff56653544452.jpg" alt="IMG_2055.jpg"></p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -1014,124 +1138,6 @@ session.commit()
 <p><a target="_blank" rel="noopener" href="https://www.lxgshadow.us/blog/article-detail/13">First section</a><br>-<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv1904784">Bilibili</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.lxgshadow.us/blog/article-detail/14">Second section</a>-<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv1965924">Bilibili</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.lxgshadow.us/blog/article-detail/15">Third section</a>-<a target="_blank" rel="noopener" href="https://www.bilibili.com/read/cv2016569">Bilibili</a></p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/blogarchive/2019-02-09-20-39-15/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/blogarchive/2019-02-09-20-39-15/" class="post-title-link" itemprop="url">Shazam听歌识曲算法解析+python实现-3 检索歌曲</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2019-02-09 20:39:15" itemprop="dateCreated datePublished" datetime="2019-02-09T20:39:15+08:00">2019-02-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Programming/" itemprop="url" rel="index"><span itemprop="name">Programming</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>第三部份<br>在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 </p>
-<p>paper下载链接：<a target="_blank" rel="noopener" href="https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf">https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf</a><br>中文翻译：<a target="_blank" rel="noopener" href="https://blog.csdn.net/yutianzuijin/article/details/49787551">https://blog.csdn.net/yutianzuijin/article/details/49787551</a><br>建议读英文的鸭。</p>
-<p>为获得良好的阅读体验，你可能先需要了解 mysql数据库的基础知识，python基础语法，一定的代码阅读能力，一定的语文理解能力(up写的很乱)。</p>
-<p>好的，那么今天我们进入最后一部分，搜索与匹配。</p>
-<p>Up在这里使用了orm框架SQLalchemy</p>
-<p>首先，我们要建立起一个数据库来储存上一步中获取的指纹信息。</p>
-<p>其中一个表来储存歌曲信息，一个表来储存歌曲信息对应的指纹，两个表用歌曲的id作为外键相连。</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec8390fcbc.jpg" alt="sqlalchemy的格式"></p>
-<p>注意，fingerprint 这个column 必须要加上index，这将会大大减少查询速度，千真万确。</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec838e9dd2.jpg" alt="songs表"><br>songs 表为歌曲信息表：</p>
-<p>id 用来储存歌曲id，</p>
-<p>name用来存储歌曲名字</p>
-<p>filehash用来储存该歌曲文件的哈希</p>
-<p>fingerprinted用来判断该歌曲是否已经进行了fingerprint</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec838bfdee.jpg" alt="fingerprints表"></p>
-<p>Fingerprints 表为储存指纹的表：</p>
-<p>id为指纹id，没什么用</p>
-<p>song_id 是外键，记录对应的歌曲信息</p>
-<p>fingerprint就是获取到的指纹信息</p>
-<p>offset就是该指纹的offset位置</p>
-<p>建完这个表，然后你就可以把指纹信息全都放进去了。</p>
-<p>然后，我们来讲讲搜索与识别的基本原理：</p>
-<p>1.首先输入一段声音，然后和之间一样，获取这一段声音的指纹。</p>
-<p>2.对获取到的每一个指纹，在数据库中搜索相同的指纹，并将指纹对应的歌曲信息，以及offset偏移值保存。</p>
-<p>3.有相同offset差值越多的歌曲就是识别出的歌曲。</p>
-<p>tk’&#x3D;tk+offset,</p>
-<p>这样子说可能有点抽象，我们来举个栗子:</p>
-<p>假如在某个音频中，你提取到了1个指纹，这个指纹是 c19dde0ecb8fca81b6c98d5ee3775c26cbb32a610c82a5ecda515b0beb86d357， 且它在那段音频中的offset 是 30。</p>
-<p>通过这个指纹，你在数据库中取到了如下的数据</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec838ebb90.jpg" alt="取得的数据"></p>
-<p>然后我们可以计算得到 offset 差值分别为 70, 70 ,170, 20, 93, 160, 90, 70</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec83907757.jpg" alt="计算后"></p>
-<p>在这里，我们可以看到，offset差值是70 且 id 为 1 的有3 个，offset差值是170 且 id 为 1的有一个，offset差值是20 且 id 为 2 的有1 个，offset差值是933 且 id 为 3 的有一个……</p>
-<p>所以最多就是 有3个的那个值。也就是id为1的歌曲。</p>
-<p>有人会问，为什么不一首歌一首歌的检索呢，因为慢。</p>
-<p>接下来代码。<br>获取所有匹配的指纹，并将歌曲信息与offset差值保存下来。</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec838d9044.jpg" alt="匹配"></p>
-<p>对数据进行处理，得出相同offset差值最多的歌曲，也就是识别出来的歌曲。</p>
-<p><img data-src="https://i.loli.net/2019/02/09/5c5ec838f1c1a.jpg" alt="处理"></p>
-<p>结束。</p>
-<p>转载请先获得许可</p>
 
       
     </div>

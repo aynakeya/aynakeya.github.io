@@ -4514,6 +4514,162 @@ https://www.bsfdvbsbilibili.com
       </tags>
   </entry>
   <entry>
+    <title>Canny边缘检测算法的原理和实现</title>
+    <url>/articles/coding/canny-algorithm-implementation/</url>
+    <content><![CDATA[<h1 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h1><p>本文简单介绍了canny边缘识别算法的原理和c++实现</p>
+<span id="more"></span>
+
+<h1 id="原理解析"><a href="#原理解析" class="headerlink" title="原理解析"></a>原理解析</h1><p>Canny算法主要由四个步骤组成</p>
+<ol>
+<li><p>消除噪声</p>
+</li>
+<li><p>计算梯度和大小</p>
+</li>
+<li><p>利用梯度和大小去除非极大值</p>
+</li>
+<li><p>连接边缘</p>
+</li>
+</ol>
+<h2 id="前置操作-图像灰度化"><a href="#前置操作-图像灰度化" class="headerlink" title="前置操作 - 图像灰度化"></a>前置操作 - 图像灰度化</h2><p>由于边缘检测只需要关心图像边缘，图像色彩不会造成影响。并且，储存灰度值只需要一个字节，这样子可以大大加速计算过程和节约内存空间。</p>
+<p>所以在进行canny算法的实现之前，我们首先需要对图像进行灰度化操作。</p>
+<p>常见的图像灰度化如下。</p>
+<ol>
+<li>取rgb通道中任意一个通道的值作为灰度值</li>
+<li>取rgb通道中最大的一个通道的值作为灰度值</li>
+<li>对rgb通道取平均值</li>
+<li>用人眼对三原色的敏感度，对三个通道做加权平均得到灰度值</li>
+</ol>
+<p>在参考资料后，选择4作为灰度方法。</p>
+<p>即</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">float</span> grey = <span class="number">0.114</span> * blue + <span class="number">0.587</span> * green + <span class="number">0.299</span> * red</span><br></pre></td></tr></table></figure>
+
+<p>这个计算在整型的计算方法如下</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">uint32_t</span> B_coef = <span class="number">30</span>;   <span class="comment">// 0.114 * 256</span></span><br><span class="line"><span class="type">const</span> <span class="type">uint32_t</span> G_coef = <span class="number">150</span>;  <span class="comment">// 0.587 * 256</span></span><br><span class="line"><span class="type">const</span> <span class="type">uint32_t</span> R_coef = <span class="number">77</span>;   <span class="comment">// 0.299 * 256</span></span><br><span class="line"></span><br><span class="line"><span class="type">uint8_t</span> grey = (<span class="type">uint8_t</span>) ((blue * B_coef + green * G_coef + red * R_coef) &gt;&gt; <span class="number">8</span>);</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_102803.png" alt="asdf"></p>
+<h2 id="高斯消除噪声-Gaussian-Filter"><a href="#高斯消除噪声-Gaussian-Filter" class="headerlink" title="高斯消除噪声 (Gaussian Filter)"></a>高斯消除噪声 (Gaussian Filter)</h2><p>在进行边缘检测之前，我们需要对图像进行平滑处理，以便减少图像中的噪声。噪声会导致边缘检测算法误检边缘，因此消除噪声是非常重要的一步。在Canny算法中，通常使用高斯模糊来平滑图像。</p>
+<p>高斯模糊的原理是将每个像素的值与其周围像素的值进行加权平均，加权系数由高斯函数确定。具体公式如下：</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/2d_gaussian.png" alt="a"></p>
+<blockquote>
+<p>二维高斯函数</p>
+</blockquote>
+<p>通过二维高斯函数，我们就能够确定权重矩阵了。</p>
+<p>计算方法：首先用高斯函数计算出每个点的值，然后做归一化处理，得到最后的权重矩阵。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7.png" alt="asdf"></p>
+<blockquote>
+<p>权重矩阵近似值</p>
+</blockquote>
+<p>利用这个权重矩阵，对每个像素进行处理，就能得到高斯模糊后的图片了。</p>
+<p>比如，一个像素点和他周围的值为</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">32 32 32</span><br><span class="line">32 32 32</span><br><span class="line">32 32 32</span><br></pre></td></tr></table></figure>
+
+<p>在经过运算后，中间的像素值就是</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">32 * 4 / 16 + 4 * 32 * 2 /16 + 4 * 32 * 1 / 16 = 32</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_102632.png"></p>
+<h2 id="计算梯度大小和方向-Gradient-Calculation"><a href="#计算梯度大小和方向-Gradient-Calculation" class="headerlink" title="计算梯度大小和方向 (Gradient Calculation)"></a>计算梯度大小和方向 (Gradient Calculation)</h2><p>边缘通常位于图像中灰度值变化较大的区域，因此我们需要计算图像中每个像素点的梯度。</p>
+<p>由于2d图直接算比较复杂，且消耗运算量，我们可以分别计算图像在水平方向(x轴)和垂直方向(y轴)上的梯度。最后在通过公式计算出方向和大小。</p>
+<p>梯度大小可以通过绝对值相加的方式计算（减少运算量）</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">magnitude = <span class="built_in">abs</span>(dx) + <span class="built_in">abs</span>(dy)</span><br></pre></td></tr></table></figure>
+
+<p>梯度方向可以通过<code>arctan</code>计算</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">direction = <span class="built_in">arctan</span>(dy/dx)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="利用梯度大小和方向去除非极大值-Non-Maximum-Suppression"><a href="#利用梯度大小和方向去除非极大值-Non-Maximum-Suppression" class="headerlink" title="利用梯度大小和方向去除非极大值 (Non Maximum Suppression)"></a>利用梯度大小和方向去除非极大值 (Non Maximum Suppression)</h2><p>在计算出图像中每个像素点的梯度大小后，我们需要对其进行非极大值抑制。非极大值抑制的目的是去除那些不在边缘上的像素点，使得最终的边缘结果更加细致。</p>
+<p>非极大值抑制的原理是：对每个像素点，根据其梯度方向，检查其在梯度方向上的两个邻近像素点的梯度大小。如果当前像素点的梯度大小不是最大的，则将其梯度值置为0。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/nms.jpg" alt="a"></p>
+<blockquote>
+<p>source: <a href="https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html">https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html</a></p>
+</blockquote>
+<p>在canny算法中，梯度方向被分为了0°,  45°, 90°, 135° 四个方向，即水平，垂直，两个斜45°方向。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/nms_direction.png" alt="nms_direction"></p>
+<p>在具体实现中，我们可以使用<code>tan</code>函数先计算不同角度下<code>dy/dx</code>的值，然后通过<code>dy/dx</code>的比值来判断属于哪个方向。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="type">const</span> <span class="type">uint32_t</span> tan225 = <span class="number">27145</span>; <span class="comment">// 22.5° math.tan(math.pi/8) * (2**16)</span></span><br><span class="line"><span class="type">const</span> <span class="type">uint32_t</span> tan675 = <span class="number">158217</span>; <span class="comment">// 67.5° math.tan(math.pi/8*3) * (2**16) </span></span><br><span class="line"><span class="type">uint32_t</span> tanxy;</span><br><span class="line"><span class="keyword">if</span> (gx != <span class="number">0</span>) &#123;</span><br><span class="line">    tanxy = (<span class="built_in">static_cast</span>&lt;<span class="type">uint32_t</span>&gt;(<span class="built_in">abs</span>(gy)) &lt;&lt; <span class="number">16</span>) / <span class="built_in">abs</span>(gx);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    tanxy = UINT32_MAX;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (tanxy &lt; tan225) &#123;</span><br><span class="line"><span class="comment">// 小于22.5° =&gt; 0°方向</span></span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span> (tanxy &gt; tan675) &#123;</span><br><span class="line"><span class="comment">// 大于67.5° =&gt; 90°方向</span></span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span> (gy*gx &gt; <span class="number">0</span>) &#123;</span><br><span class="line"><span class="comment">// dx,dy方向相同，45°方向</span></span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line"><span class="comment">// dx,dy方向相反，135°方向</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_104823.png" alt="asdf"></p>
+<h2 id="双阈值检测-Double-Threshold"><a href="#双阈值检测-Double-Threshold" class="headerlink" title="双阈值检测 (Double Threshold)"></a>双阈值检测 (Double Threshold)</h2><p>双阈值检测的目的是将梯度值较大的边缘标记为强边缘，将梯度值较小但仍可能是边缘的像素标记为弱边缘。</p>
+<p>通过设定两个阈值（高阈值和低阈值），我们可以将图像中的像素分类为强边缘 (A)、弱边缘(B, C) 和 非边缘。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/hysteresis.jpg" alt="a"></p>
+<blockquote>
+<p>source: <a href="https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html">https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html</a></p>
+</blockquote>
+<p>在具体实现中，把高于<code>maxVal</code>的像素点直接设置为255，把低于<code>minVal</code>的点直接设置为0，弱边缘的值保持不变。</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">if</span> (src.<span class="built_in">at</span>&lt;uchar&gt;(row, col) &lt; low_threshold) &#123;</span><br><span class="line">    dst.<span class="built_in">at</span>&lt;uchar&gt;(row, col) = <span class="number">0</span>;</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span> (src.<span class="built_in">at</span>&lt;uchar&gt;(row, col) &gt; high_threshold) &#123;</span><br><span class="line">    dst.<span class="built_in">at</span>&lt;uchar&gt;(row, col) = <span class="number">255</span>;</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    dst.<span class="built_in">at</span>&lt;uchar&gt;(row, col) = src.<span class="built_in">at</span>&lt;uchar&gt;(row, col);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_104716.png" alt="asd"></p>
+<h2 id="连接边缘-hysteresis"><a href="#连接边缘-hysteresis" class="headerlink" title="连接边缘  (hysteresis)"></a>连接边缘  (hysteresis)</h2><p>在双阈值检测之后，我们需要将断开的弱边缘连接起来，使得边缘更加连贯。</p>
+<p>其核心概念是把和强边缘(A)连接的弱边缘(C)也标记为边缘。</p>
+<p>把没有和强边缘连接的弱边缘(B)标记为非边缘</p>
+<p>解决方法思路可以通过对弱边缘进行dfs搜索，如果搜索到一个强边缘，则把路径上的的所有点标记为强边缘。否则把该点标记为非边缘。</p>
+<p>再通过一个数组标记所有搜索过的点，那么每个像素最多就只会被遍历一遍。 </p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_104426.png" alt="asd"></p>
+<h1 id="与OpenCV的实现进行比较"><a href="#与OpenCV的实现进行比较" class="headerlink" title="与OpenCV的实现进行比较"></a>与OpenCV的实现进行比较</h1><p>对于复杂图片，我的实现和opencv的实现在像素上的区别低于<code>0.5%</code></p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_091644.png" alt="a"></p>
+<blockquote>
+<p>复杂图片例子，区别0.31% mse&#x3D;0.00</p>
+</blockquote>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_092645.png" alt="asdf"></p>
+<blockquote>
+<p>复杂图片例子 区别0.30% mse&#x3D;0.00</p>
+</blockquote>
+<p>对于简单图片，我的实现和opencv的实现在像素点上的区别低于<code>0.1%</code></p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_092107.png" alt="as"></p>
+<blockquote>
+<p>简单图片例子1   区别0.08% mse&#x3D;0.00</p>
+</blockquote>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_092453.png" alt="as"></p>
+<blockquote>
+<p>简单图片例子2  区别0.01% mse&#x3D;0.00</p>
+</blockquote>
+<h1 id="优化"><a href="#优化" class="headerlink" title="优化"></a>优化</h1><p>虽然在效果上相差已经不大了，但是和opencv在速度上差距很大，还需要对算法做进一步优化</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_155747.png" alt="a"></p>
+<p>分割步骤后对三个步骤逐个进行分析并进行优化</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240621_115041.png" alt="a"></p>
+<h2 id="缓存优化-cache-line-optimization"><a href="#缓存优化-cache-line-optimization" class="headerlink" title="缓存优化 (cache line optimization)"></a>缓存优化 (cache line optimization)</h2><p>缓存优化是通过减少缓存未命中次数、提高缓存命中率来提升程序性能的方法。</p>
+<p>缓存未命中会导致处理器等待从主存中读取数据，从而降低程序执行速度。通过优化数据结构的排列方式，使数据访问更加连续，从而提高缓存命中率，加快算法执行。</p>
+<p>例如，在边缘连接的dfs算法中，使用了在循环中使用了多个变量，并同时对这些变量进行了读取和储存。由于这些内存无法对其到同一条cache line上，会极大减少缓存命中率。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240621_142414.png" alt="asd"></p>
+<p>优化方法为用宏替代<code>direction</code>，用<code>dst</code>数组本身替代<code>visited</code>记录是否访问过，以及别的方法，提高缓存命中率</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240621_142647.png"></p>
+<h2 id="指针优化"><a href="#指针优化" class="headerlink" title="指针优化"></a>指针优化</h2><p>通过减少不必要的指针运算和索引操作，提高程序效率。</p>
+<p>由于opencv里的<code>Mat::at</code>函数开销巨大，将使用<code>at</code>的地方替换成，直接使用指针进行数据访问，降低索引操作的开销。</p>
+<p>同时，通过预先加载相邻像素值到局部变量，减少循环内的指针计算。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240621_143300.png"></p>
+<blockquote>
+<p>优化前</p>
+</blockquote>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240621_143151.png"></p>
+<blockquote>
+<p>优化后</p>
+</blockquote>
+<h2 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h2><p>优化后，速度提高了3倍</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240621_141608.png"></p>
+<p>要进行进一步优化加速，可能需要是使用多线程或者simd</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a href="https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html">OpenCV Canny Edge Detection</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Canny_edge_detector">Wikipedia: Canny Eddge Detector</a></li>
+<li><a href="https://www.ruanyifeng.com/blog/2012/11/gaussian_blur.html"> 阮一峰: 高斯模糊的算法</a></li>
+<li><a href="https://blog.csdn.net/qq_29462849/article/details/81050212">Canny边缘检测算法解析</a></li>
+<li><a href="https://xujinzh.github.io/2021/05/24/edge-detection-canny/index.html">Canny 图像边缘检测算法</a></li>
+<li><a href="https://blog.csdn.net/leonardohaig/article/details/122141568">Canny边缘检测算法及实现</a></li>
+</ol>
+]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>cv</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>404</title>
     <url>//404.html</url>
     <content><![CDATA[<h1 id="404"><a href="#404" class="headerlink" title="404"></a>404</h1><p>Oopsiee, there is no page here.</p>
