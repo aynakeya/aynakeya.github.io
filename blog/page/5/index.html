@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">116</span>
+          <span class="site-state-item-count">117</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -191,6 +191,99 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/life/20220324-bian-cheng-ri-ji/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/life/20220324-bian-cheng-ri-ji/" class="post-title-link" itemprop="url">关于爬虫限制并发数我竟然用阻塞来实现 20220324编程日记</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2022-03-24 23:14:49" itemprop="dateCreated datePublished" datetime="2022-03-24T23:14:49+08:00">2022-03-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>不是，就挺离谱的。</p>
+<p>看了一眼之前写的的爬虫框架。</p>
+<p>发现之前实现限制并发数的方法是暂停go routine, 如下所示，就纯纯的等待有空余的位置了，然后继续执行<code>Fetch</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">func (e *Engine) FetchTentacle(tentacle Tentacle) *TentacleResult &#123;</span><br><span class="line">	err := e.limiter.WaitN(e.context, 1)</span><br><span class="line">	&lt;-e.waitChan</span><br><span class="line">	result, _ := Fetch(tentacle, e.requestFunc, e.ReqHandlers, e.RespHandlers)</span><br><span class="line">	e.waitChan &lt;- 1</span><br><span class="line">	return result</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>离谱在于，如果我有10000个页面要分析，这个东西的实现方式是先创建10000个goroutine，然后等一个goroutine结束了，再挑选新的goroutine执行。</p>
+<p>也就是说，如果有N个页面要爬，程序会同时创建N个goroutine............</p>
+<p>虽然goroutine确实不怎么耗资源。但是现在一看怎么这么sb啊，为啥不直接用queue。完全不理解当时是怎么想的.</p>
+<p>把我自己给整尬了</p>
+<p>ps:</p>
+<p>和群友吹水的时候突然想起来之前用这个框架做的一个动漫爬虫确实遇到了由这个引起的问题。</p>
+<p>之前爬动漫网站，一开始是直接把所有的页面丢进去然后执行，但是不知道为啥，一直出panic，我也找不到问题。</p>
+<p>然后我选择每隔10000次请求就暂停，等待这10000次请求完成再继续执行 (如下代码所示)，然后这个panic就不再出现了。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">func (c *MixsiteCrawler) Start()  &#123;</span><br><span class="line">    for c.StartID &lt;= c.EndID &#123;</span><br><span class="line">        c.InfoEngine.FetchAsync(fmt.Sprintf(&quot;http://www.susudm.com/acg/%s/&quot;,c.parseId()))</span><br><span class="line">        c.StartID ++</span><br><span class="line">        if c.StartID % 10000 == 0 &#123;</span><br><span class="line">            fmt.Println(&quot;wait 10000 to complete&quot;)</span><br><span class="line">            c.Wait()</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>现在再看，估计就是goroutine创建太多的原因了。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -956,99 +1049,6 @@
             </div>
           <!--/noindex-->
         
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/debugging-binary-with-pwntools-and-radare2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/debugging-binary-with-pwntools-and-radare2/" class="post-title-link" itemprop="url">Debugging binary with pwntools and radare2</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-10-18 00:47:39" itemprop="dateCreated datePublished" datetime="2021-10-18T00:47:39+08:00">2021-10-18</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Brief"><a href="#Brief" class="headerlink" title="Brief"></a>Brief</h1><p>When using radare2 debugger, How to deal with the user input when debugging? There are two simple method.</p>
-<ul>
-<li>use rarun2 with stdio</li>
-<li>use pwntools with debugger.</li>
-</ul>
-<h1 id="use-rarun2"><a href="#use-rarun2" class="headerlink" title="use rarun2"></a>use rarun2</h1><ol>
-<li>open second terminal, enter <code>tty</code>, record the output<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ tty</span><br><span class="line">/dev/pts/2</span><br></pre></td></tr></table></figure></li>
-<li>create a file p.rr2, write <code>stdio</code> equal the tty value you get from second termial<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># p.rr2 content</span><br><span class="line">stdio=/dev/pts/1</span><br></pre></td></tr></table></figure></li>
-<li>in second terminal, run <code>sleep 9999999999</code> to wait for output and input</li>
-<li>run <code>r2 -r p.rr2 -d vuln</code> in the first terminal and start debugging!</li>
-</ol>
-<p>see more: <a target="_blank" rel="noopener" href="https://r2wiki.readthedocs.io/en/latest/tools/rarun2/">doc</a></p>
-<h1 id="use-pwntools"><a href="#use-pwntools" class="headerlink" title="use pwntools"></a>use pwntools</h1><p>in the pwntool template, add following code</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line">pid = util.proc.pidof(io)[0]</span><br><span class="line">print(&quot;The pid is: &quot;+str(pid))</span><br><span class="line">util.proc.wait_for_debugger(pid)</span><br><span class="line">input(&quot;press enter to continue&quot;)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>then, run radare2 with <code>r2 -d pid</code>, using the pid from scripts.</p>
-
       
     </div>
 

@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction在尝试逆向一个动态链接库的时候，有时你可能希望单独运行某个函数，以探究它的具体作用。 如果这个二进制文件的编译架构与你的机器架构相同，并且你拥有其所有依赖库，那么操作相对简单：直接使用dlopen加载动态库，然后通过 offset 获取函数地址，执行即可。 然而，如果遇到不同架构的二进制文件，比如 aarch64 架构，应如何方便地进行调试和模拟运行呢？ 一种常见的方法是在">
+<meta property="og:type" content="article">
+<meta property="og:title" content="如何模拟执行一个elf文件">
+<meta property="og:url" content="http://www.aynakeya.com/articles/ctf/how-to-emulate-elf-file-from-zero/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="Introduction在尝试逆向一个动态链接库的时候，有时你可能希望单独运行某个函数，以探究它的具体作用。 如果这个二进制文件的编译架构与你的机器架构相同，并且你拥有其所有依赖库，那么操作相对简单：直接使用dlopen加载动态库，然后通过 offset 获取函数地址，执行即可。 然而，如果遇到不同架构的二进制文件，比如 aarch64 架构，应如何方便地进行调试和模拟运行呢？ 一种常见的方法是在">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_100209.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_101455.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_102035.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_134523.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_144421.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240709_084101.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240709_085255.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/1433301-20210917095422002-1757216665.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/1433301-20210917100753673-547023515.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_105120.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_105454.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_124250.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_124526.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_124757.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_133247.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_133429.png">
+<meta property="article:published_time" content="2024-07-04T00:47:37.000Z">
+<meta property="article:modified_time" content="2024-07-04T00:47:37.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="unicorn">
+<meta property="article:tag" content="qiling">
+<meta property="article:tag" content="aarch64">
+<meta property="article:tag" content="emulation">
+<meta property="article:tag" content="android">
+<meta property="article:tag" content="deobfuscation">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_100209.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/ctf/how-to-emulate-elf-file-from-zero/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/ctf/how-to-emulate-elf-file-from-zero/","path":"articles/ctf/how-to-emulate-elf-file-from-zero/","title":"如何模拟执行一个elf文件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>如何模拟执行一个elf文件 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%8E%E5%8E%BB%E9%99%A4%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%8A%A0%E5%AF%86%E5%BC%80%E5%A7%8B"><span class="nav-number">2.</span> <span class="nav-text">从去除字符串加密开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Armariris%E6%B7%B7%E6%B7%86"><span class="nav-number">2.1.</span> <span class="nav-text">Armariris混淆</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.2.</span> <span class="nav-text">详细步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-1-%E5%8A%A0%E8%BD%BDelf%E5%88%B0%E5%86%85%E5%AD%98%E4%B8%AD"><span class="nav-number">2.2.1.</span> <span class="nav-text">Step 1: 加载elf到内存中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-2-%E6%89%BE%E5%88%B0%E6%89%80%E6%9C%89-datadiv-decode%E5%BC%80%E5%A4%B4%E7%9A%84%E5%87%BD%E6%95%B0%E5%B9%B6%E6%89%A7%E8%A1%8C"><span class="nav-number">2.2.2.</span> <span class="nav-text">Step 2: 找到所有.datadiv_decode开头的函数并执行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-3-%E7%94%A8%E8%A7%A3%E5%AF%86%E5%90%8E%E7%9A%84%E6%95%B0%E6%8D%AEpatch%E6%8E%89%E5%8E%9F%E6%9D%A5%E5%8A%A0%E5%AF%86%E7%9A%84%E6%95%B0%E6%8D%AE"><span class="nav-number">2.2.3.</span> <span class="nav-text">Step 3: 用解密后的数据patch掉原来加密的数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Step-4-Patch%E6%8E%89%E6%89%80%E6%9C%89%E7%9A%84%E8%A7%A3%E5%AF%86%E5%87%BD%E6%95%B0"><span class="nav-number">2.2.4.</span> <span class="nav-text">Step 4: Patch掉所有的解密函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%88%E6%9E%9C"><span class="nav-number">2.3.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ELF%E6%96%87%E4%BB%B6%E6%98%AF%E6%80%8E%E4%B9%88Load%E7%9A%84"><span class="nav-number">3.</span> <span class="nav-text">ELF文件是怎么Load的</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Segment%E7%AE%80%E5%8D%95%E4%BB%8B%E7%BB%8D"><span class="nav-number">3.1.</span> <span class="nav-text">Segment简单介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5%E4%B8%8E%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">3.2.</span> <span class="nav-text">静态链接与动态链接</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">3.2.1.</span> <span class="nav-text">静态链接</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%93%BE%E6%8E%A5"><span class="nav-number">3.2.2.</span> <span class="nav-text">动态链接</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ELF-LOOOADING"><span class="nav-number">3.3.</span> <span class="nav-text">ELF LOOOADING.....</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="nav-number">3.3.1.</span> <span class="nav-text">重定位</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AArch64%E4%B8%8B%E7%9A%84%E9%87%8D%E5%AE%9A%E4%BD%8D"><span class="nav-number">3.3.2.</span> <span class="nav-text">AArch64下的重定位</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8Qiling%E6%9D%A5%E6%A8%A1%E6%8B%9F%E8%BF%90%E8%A1%8C"><span class="nav-number">4.</span> <span class="nav-text">用Qiling来模拟运行</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E5%87%BD%E6%95%B0%E7%9A%84%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.0.1.</span> <span class="nav-text">导入函数的实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E8%B0%83%E7%94%A8%E8%BF%BD%E8%B8%AA"><span class="nav-number">4.0.2.</span> <span class="nav-text">函数调用追踪</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%88%E6%9E%9C-1"><span class="nav-number">4.0.3.</span> <span class="nav-text">效果</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">5.</span> <span class="nav-text">结语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">6.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">117</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya.official@gmail.com" title="E-Mail → mailto:aynakeya.official@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/how-to-emulate-elf-file-from-zero/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="如何模拟执行一个elf文件 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          如何模拟执行一个elf文件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-07-04 08:47:37" itemprop="dateCreated datePublished" datetime="2024-07-04T08:47:37+08:00">2024-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>在尝试逆向一个动态链接库的时候，有时你可能希望单独运行某个函数，以探究它的具体作用。</p>
+<p>如果这个二进制文件的编译架构与你的机器架构相同，并且你拥有其所有依赖库，那么操作相对简单：直接使用<code>dlopen</code>加载动态库，然后通过 offset 获取函数地址，执行即可。</p>
+<p>然而，如果遇到不同架构的二进制文件，比如 aarch64 架构，应如何方便地进行调试和模拟运行呢？</p>
+<p>一种常见的方法是在相应架构上启动<code>gdbserver</code>或使用<code>frida</code>等类似工具进行跟踪。但这种方法过于笨重。是否存在一种更轻量级的方法来模拟运行这个 ELF 文件呢？</p>
+<p><em>unicorn模拟运行</em>, <em>外加elf简单介绍</em></p>
+<span id="more"></span>
+
+<h1 id="从去除字符串加密开始"><a href="#从去除字符串加密开始" class="headerlink" title="从去除字符串加密开始"></a>从去除字符串加密开始</h1><p>让我们从我们的sample文件<code>libkpk.so</code>开始，这个库文件了包含了一个需要被逆向出来的加密算法。</p>
+<p><code>libkpk.so</code>是一个从安卓安装包里提取出来的库文件，根据反编译可以发现，这里面应该包含有三个函数，分别是<code>fetch</code>,<code>isKpk</code>和<code>kpk</code>，java通过jni来调用这几个函数。在这些函数中，我们重点关系的是<code>kpk</code>函数，这个函数是作为加密函数出现的，</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_100209.png"></p>
+<p>但是在这个二进制里，并没有找到任何和加密有关的字符串，即使有字符串，这些字符串也是已一种非常诡异的状态出现的。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_101455.png"></p>
+<p>在观察这些诡异的字符串后，发现这些字符串都会在最开始被<code>init_array</code>里面的<code>.datadiv_decodexxx</code>函数修改，所以我们可以合理推断这些<code>datadiv_decode</code>函数就是解密函数，用在lib被加载的时候来解密被加密的字符串。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_102035.png"></p>
+<p>在经过搜索之后，可以发现<code>datadiv_decode</code>正是被<a target="_blank" rel="noopener" href="https://github.com/GoSSIP-SJTU/Armariris">Armariris</a>进行字符串混淆后会出现的解密函数</p>
+<h2 id="Armariris混淆"><a href="#Armariris混淆" class="headerlink" title="Armariris混淆"></a>Armariris混淆</h2><p>Armariris是上海交通大学开发的基于llvm的混淆框架，开源在<a target="_blank" rel="noopener" href="https://github.com/GoSSIP-SJTU/Armariris">https://github.com/GoSSIP-SJTU/Armariris</a></p>
+<p>armariris的字符串加密逻辑比较简单，“对于所有的常量字符串，先创建一份可读写的、类型相同、大小相同的全局变量，将原先的字符串xor随机数，存放到这块新的全局变量里<a href="#Reference">[1]</a>”。</p>
+<p>解密也比较简单，把解密字符串的逻辑写到对应的解密的函数里，接下来只要在lib加载的时候，跑一下解密函数就行了。</p>
+<h2 id="详细步骤"><a href="#详细步骤" class="headerlink" title="详细步骤"></a>详细步骤</h2><p>所以，解密的方法可以被概括为</p>
+<ol>
+<li>加载elf到内存</li>
+<li>模拟运行解密函数</li>
+<li>保存解密后的字符串，覆盖掉原来加密的字符串</li>
+<li>删掉所有的解密函数</li>
+</ol>
+<p>然而，由于这个二进制是在是在<code>aarch64</code>下编译的，而我们的电脑是amd64的，没办法直接运行。这个时候，我们可以使用<code>unicorn</code>来模拟运行程序。</p>
+<p><code>unicorn</code>基于<code>qemu</code>，但是更加轻量级，提供了一个多个架构下模拟cpu运行的接口，非常适合在这个地方使用。</p>
+<p>那么我们就可以开始惹。</p>
+<h3 id="Step-1-加载elf到内存中"><a href="#Step-1-加载elf到内存中" class="headerlink" title="Step 1: 加载elf到内存中"></a>Step 1: 加载elf到内存中</h3><p>第一部，我们需要加载elf文件到内存中，要完成这个，我们需要把elf文件里所有<code>PT_LOAD</code> segment标示的内存区域从文件中读取并写入相对应的内存地址。</p>
+<p>在64位下，program header的定义如下。当<code>p_type</code>&#x3D;<code>PT_LOAD</code>即代表该段为可装载段，表示即这个段将被装载或映射到内存中，其中<code>p_offset</code>代表该段在文件中的位置，<code>p_filesz</code>代表该段的长度。<code>p_vaddr</code>为数据映射到虚拟内存中的地址，<code>p_flags</code>代表这段区域的读写执行权限。当然因为我们是在cpu模拟机下执行，我们根本不关心他的权限，所以全部设置为<code>rwx</code>。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">        Elf64_Word      p_type;</span><br><span class="line">        Elf64_Word      p_flags;</span><br><span class="line">        Elf64_Off       p_offset;</span><br><span class="line">        Elf64_Addr      p_vaddr;</span><br><span class="line">        Elf64_Addr      p_paddr;</span><br><span class="line">        Elf64_Xword     p_filesz;</span><br><span class="line">        Elf64_Xword     p_memsz;</span><br><span class="line">        Elf64_Xword     p_align;</span><br><span class="line">&#125; Elf64_Phdr;</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E19683-01/816-7777/chapter6-83432/index.html">https://docs.oracle.com/cd/E19683-01/816-7777/chapter6-83432/index.html</a></p>
+</blockquote>
+<p>在了解了基本概念后，我们就可以把elf对应的段加载到内存里了。如下代码所示，<code>get_mapping_address</code>会计算出这块内存需要mmap哪一块内存地址，并对齐page size，也就是0x1000。然后<code>mmap</code>并写入数据就行了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> seg <span class="keyword">in</span> lib.iter_segments_by_type(<span class="string">&#x27;PT_LOAD&#x27;</span>):</span><br><span class="line">    st_addr, size = get_mapping_address(seg)</span><br><span class="line">    <span class="comment"># don&#x27;t care, rwx everywhere</span></span><br><span class="line">    emulator.mem_map(lib.address + st_addr, size, UC_PROT_ALL)</span><br><span class="line">    emulator.mem_write(lib.address + seg.header.p_vaddr, seg.data())</span><br><span class="line">    log.info(<span class="string">&quot;loaded segment 0x%x-0x%x to memory 0x%x-0x%x&quot;</span>, seg.header.p_vaddr,seg.header.p_vaddr+seg.header.p_memsz, lib.address + st_addr, lib.address + st_addr+size)</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="Step-2-找到所有-datadiv-decode开头的函数并执行"><a href="#Step-2-找到所有-datadiv-decode开头的函数并执行" class="headerlink" title="Step 2: 找到所有.datadiv_decode开头的函数并执行"></a>Step 2: 找到所有.datadiv_decode开头的函数并执行</h3><p>这步比较简单，用pwntools的读取文件后，在symbol table里找到所有开头为<code>.datadiv_decode</code>的函数，然后执行即可。</p>
+<p>在aarch64中，return pointer的寄存器为<code>LR</code>，在进入函数前，先设置<code>LR</code>，那么函数结束的时候就会跳回<code>LR</code>，我们在这里把<code>LR</code>设置为0，那么就知道当程序运行到0的时候，函数就结束了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">datadivs = []</span><br><span class="line"><span class="keyword">for</span> name <span class="keyword">in</span> lib.symbols:</span><br><span class="line">    <span class="keyword">if</span> name.startswith(<span class="string">&quot;.datadiv_decode&quot;</span>):</span><br><span class="line">        datadivs.append(name)</span><br><span class="line"><span class="keyword">for</span> datadiv <span class="keyword">in</span> datadivs:</span><br><span class="line">    log.info(<span class="string">&quot;[%s] Function %s invoke&quot;</span>, <span class="built_in">hex</span>(lib.symbols[datadiv]), datadiv)</span><br><span class="line">    emulator.reg_write(arm64_const.UC_ARM64_REG_LR, <span class="number">0</span>) <span class="comment"># 把return pointer (LR) 设置为0</span></span><br><span class="line">    emulator.emu_start(begin=lib.symbols[datadiv], until=<span class="number">0</span>)</span><br><span class="line">    log.info(<span class="string">&quot;[%s] Function return&quot;</span>,<span class="built_in">hex</span>(lib.symbols[datadiv]),)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-3-用解密后的数据patch掉原来加密的数据"><a href="#Step-3-用解密后的数据patch掉原来加密的数据" class="headerlink" title="Step 3: 用解密后的数据patch掉原来加密的数据"></a>Step 3: 用解密后的数据patch掉原来加密的数据</h3><p>这步也比较简单，因为所有的文本都在<code>.data</code>段里，直接把整个<code>.data</code>段覆盖掉就行了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">log.info(<span class="string">&quot;Patch .data section&quot;</span>)</span><br><span class="line">new_data = emulator.mem_read(lib.address + data_section_header.sh_addr, data_section_header.sh_size)</span><br><span class="line">libfile.seek(data_section_header.sh_offset)</span><br><span class="line">libfile.write(new_data)</span><br></pre></td></tr></table></figure>
+
+<h3 id="Step-4-Patch掉所有的解密函数"><a href="#Step-4-Patch掉所有的解密函数" class="headerlink" title="Step 4: Patch掉所有的解密函数"></a>Step 4: Patch掉所有的解密函数</h3><p>这步也比较简单，直接让函数ret就行了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">log.info(<span class="string">&quot;Patch .datadiv_decode functions&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> datadiv <span class="keyword">in</span> datadivs:</span><br><span class="line">    libfile.seek(lib.symbols[datadiv] &amp; <span class="number">0xFFFFFFFE</span>)</span><br><span class="line">    ret = <span class="string">b&#x27;&#x27;</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        ret = asm(shellcraft.ret())</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="comment"># fallback to manual</span></span><br><span class="line">        ret = asm(<span class="string">&quot;ret&quot;</span>)</span><br><span class="line">    libfile.write(ret)</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h2><p>把解密后的二进制拖入反编译软件，我们可以看到所有的字符串都已经被解密了，且对应的<code>JNINativeMethod</code>结构也比较好容易可以分辨出来。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_134523.png"></p>
+<p>找到了kpk对应的函数之后，就要考虑如何去模拟执行它了。</p>
+<h1 id="ELF文件是怎么Load的"><a href="#ELF文件是怎么Load的" class="headerlink" title="ELF文件是怎么Load的"></a>ELF文件是怎么Load的</h1><p>在开始正式模拟运行之前，让我先来回顾一点基础知识，就是elf文件是怎么从加载到内存到运行的。</p>
+<h2 id="Segment简单介绍"><a href="#Segment简单介绍" class="headerlink" title="Segment简单介绍"></a>Segment简单介绍</h2><p>通过<code>readelf -l libkpk.decrypt.so</code>我们可以读取ELF文件并获取到一些基本的信息，首先我们可以知道这个库文件是一个<strong>动态</strong>的共享库文件</p>
+<p>他包含了几个关键的segment</p>
+<p><code>PT_LOAD</code>: </p>
+<p>在前文中提到了，<code>PT_LOAD</code>即可装载段，代表这类段会被加载到内存中。</p>
+<p><code>PT_DYNAMIC</code>:</p>
+<p>这段也非常重要，代表了所有需要在运行时进行重定向的内容。这些内容包含got表，全局变量重定向信息以及任何其他需要在运行时重定向的内容。</p>
+<p>比如说，现在大部分程序运行的时候都会开启PIE(position-independent executable)，开启pie之后，程序的基值就不为0了，这个时候就需要通过重定向修正符号正确的地址。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240704_144421.png"></p>
+<p>如果一个二进制文件不是库文件而是一个<strong>动态的可执行文件</strong>，那么还会有另外一个重要的segment，<code>PT_INTERP</code></p>
+<p><code>PT_INTERP</code></p>
+<p>这个segment里存放了所需要的程序解释器（也就是<strong>动态链接器</strong>）的信息与位置。动态链接器的作用是加载可执行文件的共享库，并且解析可执行文件中使用的符号，以便在程序运行时正确地调用这些库函数。它在程序启动时将各个共享库加载到内存中，并根据需要将符号解析成实际的内存地址，使得程序可以顺利执行。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240709_084101.png"></p>
+<p>要注意的是，如果一个二进制文件是一个<strong>静态</strong>的可执行文件，简单来说，就是在build的时候加上<code>-static</code>参数的可执行文件，一般来说是没有<code>PT_DYNAMIC</code>和<code>PT_INTERP</code> segment的，因为没有必要。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240709_085255.png"></p>
+<h2 id="静态链接与动态链接"><a href="#静态链接与动态链接" class="headerlink" title="静态链接与动态链接"></a>静态链接与动态链接</h2><p>我们知道，elf可执行文件根据编译的时候链接方式可以分为两类：一个是静态程序，编译的时候使用静态链接，另一种是动态程序，编译的时候使用动态链接。</p>
+<h3 id="静态链接"><a href="#静态链接" class="headerlink" title="静态链接"></a>静态链接</h3><p>静态链接就是在编译链接时直接将目标的代码（也就是生成的.o文件）和所引用的库文件的代码一起打包的可执行文件中。也就是说，可执行文件本身就包含了所需的所有代码。</p>
+<p>所以，通过静态链接的程序在发布与运行的时候不需要依赖库，可以独立运行。但是相对的，由于静态链接把所有需要的库都打包了进去，生成的二进制的文件会比较大。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/1433301-20210917095422002-1757216665.png"></p>
+<blockquote>
+<p>source: 创建静态库的过程 <a href="#Reference">14</a></p>
+</blockquote>
+<h3 id="动态链接"><a href="#动态链接" class="headerlink" title="动态链接"></a>动态链接</h3><p>动态链接是在编译时并不将所有目标代码和库文件的代码打包到可执行文件中，而是仅包含对这些库的引用信息。在程序运行时，<strong>动态链接器</strong>会根据这些引用信息找到并加载所需的共享库。</p>
+<p><strong>编译时</strong>：编译器生成目标文件（.o 文件），并将动态库的引用信息嵌入到可执行文件中，而不是库的实际代码。</p>
+<p><strong>链接时</strong>：链接器会将这些目标文件和必要的符号表一起打包生成最终的可执行文件。</p>
+<p><strong>加载时</strong>：程序启动时，制定的动态链接器会根据可执行文件中的引用信息，查找并加载需要的共享库，将它们映射到进程的地址空间中。</p>
+<p><strong>符号解析</strong>：动态链接器负责解析程序中使用的符号（例如函数调用和全局变量），将它们与加载的共享库中的实际地址进行匹配。</p>
+<p><strong>重定位</strong>：对于那些需要在运行时确定的地址，动态链接器会进行必要的重定位操作，确保程序在内存中正确运行。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/1433301-20210917100753673-547023515.png"></p>
+<blockquote>
+<p>source: 动态库链接过程 <a href="#Reference">14</a></p>
+</blockquote>
+<h2 id="ELF-LOOOADING"><a href="#ELF-LOOOADING" class="headerlink" title="ELF LOOOADING....."></a>ELF LOOOADING.....</h2><p>一个elf文件的loading也分情况讨论，如果需要加载的二进制文件是静态链接的，那么elf加载的过程相对来说就比较简单。</p>
+<ol>
+<li>首先把所有<code>PT_LOAD</code>端都加载到内存中，设置并初始化好stack</li>
+<li>把pc(或者rip)指向elf头中的<code>entry</code>地址</li>
+</ol>
+<p>这样，一个静态elf文件就成功执行起来了。</p>
+<p>但是，如果是动态链接的elf，那么就稍微比较复杂一点了，再加载完<code>PT_LOAD</code>端后还需要额外处理<code>PT_DYNAMIC</code>段修复重定向。</p>
+<ol>
+<li>首先把所有<code>PT_LOAD</code>端都加载到内存中，设置并初始化好stack</li>
+<li>解析<code>PT_LOAD</code>并完成本程序内所有符号的重定向</li>
+<li>加载所有依赖的动态库</li>
+<li>根据重定位表（<code>.rel</code> 或 <code>.rela</code>），解析所有符号依赖，找到每个符号的实际地址，对符号引用进行重定位，修改内存中的代码或数据，使其指向正确的符号地址（包含即时绑定和懒绑定）。</li>
+<li>把pc设置为<code>entry</code>，开始执行程序。</li>
+</ol>
+<p>当然，在实际应用中，除了第一步，其他的步骤都不需要程序本体进行。这些步骤一般会被系统的动态链接器完成。所以动态加载的程序在完成自生程序的加载后，会首先用同样的方法把动态链接器加载到内存中，然后向动态链接器传入一定的数据，之后，程序就不需要管了，只需要等待动态连接器完成所有的操作并把pc重新指向程序本地的<code>entry</code>就好了。</p>
+<p>当然，在这里我们就不依赖动态链接器了，我们可以来手动实现程序的重定向</p>
+<h3 id="重定位"><a href="#重定位" class="headerlink" title="重定位"></a>重定位</h3><p>首先第一步是读取<code>PT_DYNAMIC</code>段来拿到所有需要的信息。在64位下，<code>PT_DYNAMIC</code>端中的数据结构可以由如下数据结构表示。</p>
+<p>其中<code>d_tag</code>相当于一个类型标识符，<code>d_un</code>由<code>d_tag</code>控制，内部的值根据<code>d_tag</code>的不同代表不同的值</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Elf64_Xword d_tag;</span><br><span class="line">    <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">        Elf64_Xword     d_val;</span><br><span class="line">        Elf64_Addr      d_ptr;</span><br><span class="line">    &#125; d_un;</span><br><span class="line">&#125; Elf64_Dyn;</span><br></pre></td></tr></table></figure>
+
+<p>我们主要关注以下几个<code>d_tag</code></p>
+<p><code>DT_STRTAB</code>&#x2F;<code>DT_STRSZ</code>: 字符串表的地址和长度。运行时链接程序所需的符号名称、依赖项名称和其他字符串位于该表中。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_105120.png"></p>
+<p><code>DT_SYMTAB</code>: 符号表的地址。</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_105454.png"></p>
+<p>64位下符号表可以用如下结构表示，我们主要关注<code>st_name</code>和<code>st_value</code>。</p>
+<p><code>st_name</code>表示该符号在字符串表的索引，可以通过这个值和字符串表拿到该符号的字符串名称，如果<code>st_name</code>的值为0，则代表该符号没有相对于的字符串名称。</p>
+<p><code>st_info</code>代表该符号的值。根据上下文，该值可以是绝对值或地址（和之后的重定向的类型相关）。 </p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">    Elf64_Word      st_name;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>   st_info;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>   st_other;</span><br><span class="line">    Elf64_Half      st_shndx;</span><br><span class="line">    Elf64_Addr      st_value;</span><br><span class="line">    Elf64_Xword     st_size;</span><br><span class="line">&#125; Elf64_Sym;</span><br></pre></td></tr></table></figure>
+
+<p><code>DT_RELA</code>&#x2F;<code>DT_REL</code>: 重定位表的地址。一个二进制文件里可以有多个重定位节。为可执行文件或共享目标文件创建重定位表时，链接编辑器会连接这些节以形成一个表。在64位下，ELF有两种重定位表的结构 REL and RELA，分别对于DT_REL和DT_RELA</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  Elf64_Addr    r_offset;   <span class="comment">// Address</span></span><br><span class="line">  Elf64_Xword   r_info;	    <span class="comment">// 32-bit relocation type; 32-bit symbol index</span></span><br><span class="line">&#125; Elf64_Rel;</span><br><span class="line"></span><br><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  Elf64_Addr    r_offset;   <span class="comment">// Address</span></span><br><span class="line">  Elf64_Xword   r_info;	    <span class="comment">// 32-bit relocation type; 32-bit symbol index</span></span><br><span class="line">  Elf64_Sxword  r_addend;   <span class="comment">// Addend</span></span><br><span class="line">&#125; Elf64_Rela;</span><br></pre></td></tr></table></figure>
+
+<p><code>r_offset</code>代表需要修复的虚拟地址</p>
+<p><code>r_info</code>存放了<code>r_info_sym</code>和<code>r_info_type</code>的值，其中<code>r_info_sym</code>表示该重定向指向了符号表中的第<em>N</em>项，<code>r_info_type</code>代表了重定向的类型，对于不同的架构，重定向类型也有不同，具体可以参考官方的ABI。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">r_info_sym = r_info &gt;&gt; <span class="number">8</span></span><br><span class="line">r_info_type = r_info &amp;&amp; <span class="number">0xff</span></span><br></pre></td></tr></table></figure>
+
+<p>开始重定向时，我们首先读取所有的重定位表，然后根据<code>r_info_sym</code>和符号表找到每一个重定位项对应的符号，最后根据符号表中的<code>st_value</code>，重定位表中的<code>r_info_type</code>, <code>r_addend</code>以及当前程序的base address计算出重定向之后的地址并写入内存中即可。</p>
+<h3 id="AArch64下的重定位"><a href="#AArch64下的重定位" class="headerlink" title="AArch64下的重定位"></a>AArch64下的重定位</h3><p>因为我们的测试用二进制是aarch64的，那我们这里就用aarch64作为例子来说明重定向的过程。</p>
+<p>首先我们需要知道不同的重定向类别即<code>r_info_type</code>是如何计算重定向值的，具体的计算方法我们可以参考arm官方的ABI <a href="#Reference">6</a>。在这里呢，我们来看一下比较常用的几个重定向类别。</p>
+<p><code>R_AARCH64_ABS64</code>: 符号地址+<code>r_addend</code> 即 程序基值 + <code>st_value</code> + <code>r_addened</code></p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_124250.png"></p>
+<p><code>R_AARCH64_GLOB_DAT</code>: 也是符号地址 + <code>r_addend </code>也是 程序基值 + <code>st_value</code> + <code>r_addened</code></p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_124526.png"></p>
+<p><code>R_AARCH64_RELATIVE</code>: 程序基值加上 +  <code>r_addend</code></p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_124757.png"></p>
+<p><code>R_AARCH64_JUMP_SLOT</code>: 这个比较特殊，代表了跳转表。这个类别一般和调用外部库时有关。当<code>st_value</code>的值为0的时候，说明这个符号是外部导入的，需要通过连接器从加载的库中找到并加载。当然，这个重定向也可以在运行时再链接，即在需要这个符号的时候进行懒加载，关于这段可以在搜索并参考**__dl_runtime_resolve()**的过程</p>
+<p>如果<code>st_value</code>的值不为0，则和<code>R_AARCH64_GLOB_DAT</code>一样，都是符号地址+<code>r_addend</code></p>
+<p>手动实现重定向代码的例子</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_symbol_table</span>(<span class="params">elf: <span class="string">&#x27;ELF&#x27;</span></span>) -&gt; SymbolTableSection:</span><br><span class="line">    <span class="keyword">for</span> section <span class="keyword">in</span> elf.iter_sections():</span><br><span class="line">        <span class="keyword">if</span> section.header.sh_type == <span class="string">&quot;SHT_DYNSYM&quot;</span>:</span><br><span class="line">            <span class="keyword">return</span> section</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">get_relocations</span>(<span class="params">elf: <span class="string">&#x27;ELF&#x27;</span></span>) -&gt; <span class="type">Dict</span>[<span class="built_in">int</span>, Relocation]:</span><br><span class="line">    rel_sections: <span class="type">List</span>[RelocationSection] = []</span><br><span class="line">    <span class="keyword">for</span> section <span class="keyword">in</span> elf.iter_sections():</span><br><span class="line">        <span class="keyword">if</span> section.header.sh_type <span class="keyword">in</span> [<span class="string">&quot;SHT_REL&quot;</span>, <span class="string">&quot;SHT_RELA&quot;</span>]:</span><br><span class="line">            rel_sections.append(section)</span><br><span class="line">        <span class="keyword">if</span> section.header.sh_type == <span class="string">&quot;SHT_DYNSYM&quot;</span>:</span><br><span class="line">            dynsym = section</span><br><span class="line"></span><br><span class="line">    relocs = <span class="built_in">dict</span>()</span><br><span class="line">    <span class="comment"># https://static1.squarespace.com/static/59c4375b8a02c798d1cce06f/t/59d55a7bf5e2319471bb94a4/1507154557709/ELF+for+ARM64.pdf</span></span><br><span class="line">    <span class="keyword">for</span> rel_section <span class="keyword">in</span> rel_sections:</span><br><span class="line">        <span class="keyword">for</span> reloc <span class="keyword">in</span> rel_section.iter_relocations():</span><br><span class="line">            r_offset = reloc.entry.r_offset  <span class="comment"># 表示 .text[r_offset]处需要进行修复</span></span><br><span class="line">            <span class="keyword">if</span> r_offset <span class="keyword">in</span> relocs:</span><br><span class="line">                <span class="keyword">raise</span> Exception(<span class="string">&quot;wtf&quot;</span>)</span><br><span class="line">            relocs[r_offset] = reloc</span><br><span class="line">            <span class="comment"># print(reloc.entry.r_info_sym)</span></span><br><span class="line">            <span class="comment"># r_info = reloc.entry.r_info  # 用来存放 r_info_sym 和 r_info_type</span></span><br><span class="line">            <span class="comment"># r_info_sym = reloc.entry.r_info_sym  # 表示该重定向为符号表中的第 N 项</span></span><br><span class="line">            <span class="comment"># r_info_type = reloc.entry.r_info_type  # 表示该重定向的类型，对应枚举值 ENUM_RELOC_TYPE_ARM</span></span><br><span class="line">            <span class="comment"># r_addend = reloc.entry.r_addend</span></span><br><span class="line">            <span class="comment"># print(f&quot;&#123;rel_section.name&#125; fixing &#123;dynsym.get_symbol(r_info_sym).name&#125; at &#123;hex(r_offset)&#125; to &#123;hex(dynsym.get_symbol(r_info_sym).entry.st_value)&#125; with type &#123;hex(r_info_type)&#125; added &#123;hex(r_addend)&#125;&quot;, )</span></span><br><span class="line">            <span class="comment"># # print(dynsym.get_symbol(r_info_sym).name,dynsym.get_symbol(r_info_sym).entry)</span></span><br><span class="line">    <span class="keyword">return</span> relocs</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># fix relocation</span></span><br><span class="line">relocs = get_relocations(lib)</span><br><span class="line">symtab = get_symbol_table(lib)</span><br><span class="line"><span class="keyword">for</span> addr, reloc <span class="keyword">in</span> relocs.items():</span><br><span class="line">    <span class="comment"># 0x4962a0</span></span><br><span class="line">    <span class="comment"># https://static1.squarespace.com/static/59c4375b8a02c798d1cce06f/t/59d55a7bf5e2319471bb94a4/1507154557709/ELF+for+ARM64.pdf</span></span><br><span class="line">    <span class="keyword">if</span> reloc.entry.r_info_type == ENUM_RELOC_TYPE_AARCH64[<span class="string">&#x27;R_AARCH64_JUMP_SLOT&#x27;</span>]:</span><br><span class="line">        name = symtab.get_symbol(relocs[addr].entry.r_info_sym).name</span><br><span class="line">        <span class="comment"># need to import from external library</span></span><br><span class="line">        <span class="keyword">if</span> symtab.get_symbol(relocs[addr].entry.r_info_sym).entry.st_value == <span class="number">0</span>:</span><br><span class="line">            <span class="built_in">print</span>(name, <span class="built_in">hex</span>(addr), symtab.get_symbol(relocs[addr].entry.r_info_sym).entry.st_value,</span><br><span class="line">                  relocs[addr].entry.r_addend)</span><br><span class="line">    <span class="keyword">if</span> reloc.entry.r_info_type <span class="keyword">in</span> [</span><br><span class="line">        ENUM_RELOC_TYPE_AARCH64[<span class="string">&#x27;R_AARCH64_ABS64&#x27;</span>],</span><br><span class="line">        ENUM_RELOC_TYPE_AARCH64[<span class="string">&#x27;R_AARCH64_GLOB_DAT&#x27;</span>],</span><br><span class="line">        ENUM_RELOC_TYPE_AARCH64[<span class="string">&#x27;R_AARCH64_JUMP_SLOT&#x27;</span>]]:</span><br><span class="line">        ql.mem.write(lib.address + addr,</span><br><span class="line">                     (lib.address + symtab.get_symbol(relocs[addr].entry.r_info_sym).entry.st_value + relocs[</span><br><span class="line">                         addr].entry.r_addend).to_bytes(<span class="number">8</span>,</span><br><span class="line">                                                        <span class="string">&quot;little&quot;</span>))</span><br><span class="line">    <span class="keyword">elif</span> reloc.entry.r_info_type <span class="keyword">in</span> [ENUM_RELOC_TYPE_AARCH64[<span class="string">&#x27;R_AARCH64_RELATIVE&#x27;</span>]]:</span><br><span class="line">        ql.mem.write(lib.address + addr,</span><br><span class="line">                     (lib.address + relocs[addr].entry.r_addend).to_bytes(<span class="number">8</span>, <span class="string">&quot;little&quot;</span>))</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">f&quot;not handled r_info_type <span class="subst">&#123;reloc.entry.r_info_type&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="comment"># exit(0)</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<p>当完成重定位之后，我们就可以把pc指向我们想要开始运行的地方，接着就可以开始执行代码了</p>
+<h1 id="用Qiling来模拟运行"><a href="#用Qiling来模拟运行" class="headerlink" title="用Qiling来模拟运行"></a>用Qiling来模拟运行</h1><p>在完成重定向之后，我们就可以来开始执行代码了。在这里，我使用了qiling框架来模拟运行aarch64下的代码。</p>
+<p>简单来说，qiling框架就是unicorn加上更高级别的模拟功能。不仅支持处理器仿真，还能够模拟操作系统的行为。这意味着我们可以在模拟器中运行完整的用户态程序，而不仅仅是单个指令或小段代码。qiling还支持文件系统、网络等外围设备的模拟，比较适合整体模拟运行整个程序。</p>
+<h3 id="导入函数的实现"><a href="#导入函数的实现" class="headerlink" title="导入函数的实现"></a>导入函数的实现</h3><p>在使用上面所讲的重定位方法重定位好二进制后，我们还需要处理外部导入的函数。这边我们可以有两种办法，一种是把依赖库也加载的内存里，然后寻找对应的导出函数并把地址写回。或者我们也可以用hook的形式在python里手动实现需要导入的函数。</p>
+<p>比如，<code>libkpk.so</code>需要使用<code>strlen</code>这个函数，那我们就可以hook<code>strlen</code>的地址并实现strlen的功能，这样就不需要寻找对于的依赖库了，而且还可以追踪函数调用的参数和结果。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">hook_strlen</span>(<span class="params">ql: Qiling</span>):</span><br><span class="line">    <span class="comment"># The string address is in X0 for AArch64</span></span><br><span class="line">    string_address = ql.arch.regs.read(arm64_const.UC_ARM64_REG_X0)</span><br><span class="line">    length = <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        byte = ql.mem.read(string_address + length, <span class="number">1</span>)</span><br><span class="line">        <span class="keyword">if</span> byte[<span class="number">0</span>] == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        length += <span class="number">1</span></span><br><span class="line">    stlogger.log(<span class="string">f&quot;strlen called with <span class="subst">&#123;ql.mem.read(string_address, length)&#125;</span>&quot;</span>)</span><br><span class="line">    <span class="comment"># Write the result back to X0</span></span><br><span class="line">    ql.arch.regs.write(arm64_const.UC_ARM64_REG_X0, length)</span><br><span class="line">    stlogger.callstack.pop(-<span class="number">1</span>)</span><br><span class="line">    ql.arch.regs.write(arm64_const.UC_ARM64_REG_PC, ql.arch.regs.read(arm64_const.UC_ARM64_REG_LR))</span><br><span class="line"></span><br><span class="line">ql.hook_address(hook_strlen, base_address + <span class="number">0x0013b970</span>)</span><br></pre></td></tr></table></figure>
+
+<h3 id="函数调用追踪"><a href="#函数调用追踪" class="headerlink" title="函数调用追踪"></a>函数调用追踪</h3><p>借助qiling的hook，我们同样可以实现对每个函数的调用追踪，并打印出函数的call stack</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">StackTracerLogger</span>:</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,</span></span><br><span class="line"><span class="params">                 addr_to_fname,</span></span><br><span class="line"><span class="params">                 base_address=<span class="number">0</span>,</span></span><br><span class="line"><span class="params">                 print_func_with_symbol_only=<span class="literal">False</span>,</span></span><br><span class="line"><span class="params">                 print_exit=<span class="literal">True</span>,</span></span><br><span class="line"><span class="params">                 printer=<span class="built_in">print</span></span></span><br><span class="line"><span class="params">                 </span>):</span><br><span class="line">        self.addr_to_fname = addr_to_fname</span><br><span class="line">        self.base_address = base_address</span><br><span class="line">        self.printer = printer</span><br><span class="line">        self.print_func_with_symbol_only = print_func_with_symbol_only</span><br><span class="line">        self.print_exit = print_exit</span><br><span class="line">        self.callstack = []</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">call</span>(<span class="params">self, func_addr: <span class="built_in">int</span>, call_from: <span class="built_in">int</span></span>):</span><br><span class="line">        self.callstack.append(func_addr)</span><br><span class="line">        fname = <span class="string">&quot;&quot;</span></span><br><span class="line">        <span class="keyword">if</span> func_addr <span class="keyword">in</span> self.addr_to_fname:</span><br><span class="line">            fname = self.addr_to_fname[func_addr]</span><br><span class="line">        <span class="keyword">if</span> fname == <span class="string">&quot;&quot;</span> <span class="keyword">and</span> self.print_func_with_symbol_only:</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">elif</span> fname == <span class="string">&quot;&quot;</span>:</span><br><span class="line">            fname = <span class="string">f&quot;func_<span class="subst">&#123;<span class="built_in">hex</span>(func_addr - base_address)&#125;</span>&quot;</span></span><br><span class="line">        self.printer(</span><br><span class="line">            <span class="string">f&quot;[<span class="subst">&#123;<span class="built_in">len</span>(self.callstack)&#125;</span>]<span class="subst">&#123;<span class="string">&#x27; &#x27;</span> * <span class="built_in">len</span>(self.callstack)&#125;</span>calls <span class="subst">&#123;fname&#125;</span> from <span class="subst">&#123;<span class="built_in">hex</span>(call_from - self.base_address)&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">exit</span>(<span class="params">self, exit_addr</span>):</span><br><span class="line">        <span class="keyword">if</span> self.print_exit:</span><br><span class="line">            self.printer(<span class="string">f&quot;[<span class="subst">&#123;<span class="built_in">len</span>(self.callstack)&#125;</span>]<span class="subst">&#123;<span class="string">&#x27; &#x27;</span> * <span class="built_in">len</span>(self.callstack)&#125;</span>exit at <span class="subst">&#123;<span class="built_in">hex</span>(exit_addr - base_address)&#125;</span>&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> self.callstack:</span><br><span class="line">            self.callstack.pop(-<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">log</span>(<span class="params">self, msg</span>):</span><br><span class="line">        self.printer(<span class="string">f&quot;[<span class="subst">&#123;<span class="built_in">len</span>(self.callstack)&#125;</span>]<span class="subst">&#123;<span class="string">&#x27; &#x27;</span> * (<span class="built_in">len</span>(self.callstack) + <span class="number">1</span>)&#125;</span><span class="subst">&#123;msg&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">select_qiling_backtrace</span>(<span class="params">self, arch_type: QL_ARCH</span>):</span><br><span class="line">        <span class="keyword">if</span> arch_type == QL_ARCH.ARM64:</span><br><span class="line">            <span class="keyword">return</span> self.ql_aarch64_backtrace</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">ql_aarch64_backtrace</span>(<span class="params">self, ql: Qiling, address, size</span>):</span><br><span class="line">        <span class="comment"># Read the code at the current address</span></span><br><span class="line">        code = ql.mem.read(address, size)</span><br><span class="line">        <span class="comment"># Decode the instruction (simple detection based on opcode; consider using Capstone for complex cases)</span></span><br><span class="line">        <span class="keyword">if</span> size == <span class="number">4</span>:</span><br><span class="line">            opcode = <span class="built_in">int</span>.from_bytes(code, <span class="string">&#x27;little&#x27;</span>)</span><br><span class="line">            <span class="comment"># Detect BL or BLX (0x94000000 for BL, check mask for lower bits)</span></span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">int</span>.from_bytes(code, <span class="string">&#x27;little&#x27;</span>) &amp; <span class="number">0xFC000000</span>) == <span class="number">0x94000000</span>:</span><br><span class="line">                <span class="comment"># Calculate target address (offset is 26 bits, shift left and sign extend)</span></span><br><span class="line">                offset = <span class="built_in">int</span>.from_bytes(code, <span class="string">&#x27;little&#x27;</span>) &amp; <span class="number">0x03FFFFFF</span></span><br><span class="line">                <span class="keyword">if</span> offset &amp; <span class="number">0x02000000</span>:  <span class="comment"># Sign bit of 26-bit offset</span></span><br><span class="line">                    offset -= <span class="number">0x04000000</span>  <span class="comment"># 2&#x27;s complement negative offset</span></span><br><span class="line">                target = address + (offset &lt;&lt; <span class="number">2</span>)  <span class="comment"># left shift to account for instruction size</span></span><br><span class="line">                self.call(target, address)</span><br><span class="line">            <span class="comment"># blr</span></span><br><span class="line">            <span class="keyword">elif</span> (opcode &amp; <span class="number">0xFFFFFC1F</span>) == <span class="number">0xD63F0000</span>:</span><br><span class="line">                reg_num = (opcode &gt;&gt; <span class="number">5</span>) &amp; <span class="number">0x1F</span></span><br><span class="line">                reg_val = ql.arch.regs.read(reg_num)</span><br><span class="line">                self.call(reg_val, address)</span><br><span class="line">            <span class="keyword">elif</span> opcode == <span class="number">0xd65f03c0</span>:  <span class="comment"># RET</span></span><br><span class="line">                self.exit(address)</span><br><span class="line"></span><br><span class="line">addr_to_fname = <span class="built_in">dict</span>((v, k) <span class="keyword">for</span> k, v <span class="keyword">in</span> lib.symbols.items())</span><br><span class="line">stlogger = StackTracerLogger(</span><br><span class="line">    addr_to_fname, lib.address, print_func_with_symbol_only=<span class="literal">True</span>, print_exit=<span class="literal">False</span>,</span><br><span class="line">    printer=log.info</span><br><span class="line">)</span><br><span class="line">ql.hook_code(stlogger.select_qiling_backtrace(ql.arch.<span class="built_in">type</span>))</span><br></pre></td></tr></table></figure>
+
+<h3 id="效果-1"><a href="#效果-1" class="headerlink" title="效果"></a>效果</h3><p>我们可以看见程序完美的运行了起来，并打印出了相对应的call stack</p>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_133247.png"></p>
+<blockquote>
+<p>call stack 追踪，发现使用了aec ecb作为加密方法</p>
+</blockquote>
+<p><img data-src="/images/ctf/how-to-emulate-elf-file-from-zero/Screenshot_20240710_133429.png"></p>
+<blockquote>
+<p>成功完成加密，并读取到了加密后的网址</p>
+</blockquote>
+<h1 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h1><p>通过以上的详细分析和步骤演示，我们成功地在一个不同架构的系统上模拟运行了特定的动态链接库函数。这一过程不仅涉及了对ELF文件格式的深入理解，包括其加载和链接的细节，还包括了使用高级工具如<code>unicorn</code>和<code>qiling</code>进行跨平台模拟。</p>
+<p>这种方法的优势在于其能够让我们在不具备目标架构硬件的情况下，进行复杂的二进制文件分析和调试。通过模拟运行，我们能够绕过传统物理设备的限制，更加灵活和深入地探索软件内部的运作机制。</p>
+<p>然而，虽然技术上可行并且相当强大，这种方法也要求研究者有较高的技术背景知识，包括对操作系统、编译原理及低级编程的深刻理解。因此，建议有志于深入逆向工程和安全研究领域的朋友们，可以以此作为一个学习的起点，逐步深入研究这些高级技术。</p>
+<p>通过实践这样的项目，不仅能够增强对ELF文件结构的理解，还能实际应用在安全分析、漏洞研究等多个领域，帮助我们在未来的安全挑战中占据有利地位。希望本文的内容能为你提供实际的帮助和启发，让你在技术的道路上更进一步。</p>
+<p>(结语 - by chatgpt)</p>
+<h1 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h1><ol>
+<li><a target="_blank" rel="noopener" href="https://leadroyal.cn/p/968/">Unicorn实战（二）：去掉armariris的字符串加密</a></li>
+<li><a target="_blank" rel="noopener" href="https://gist.github.com/LeadroyaL/9b0bc6f6a908db1adfc48d85ee43451d">armariris arm32 decode script</a></li>
+<li><a target="_blank" rel="noopener" href="https://refspecs.linuxfoundation.org/LSB_4.1.0/LSB-Core-S390/LSB-Core-S390/sections.html">ELF special sections</a></li>
+<li><a target="_blank" rel="noopener" href="https://maskray.me/blog/2021-10-31-relative-relocations-and-relr">Relative relocations and RELR</a>: REL &amp; RELA, basic relocation</li>
+<li><a target="_blank" rel="noopener" href="https://leadroyal.cn/p/783/">ARM连接时重定位简介（上）</a></li>
+<li><a target="_blank" rel="noopener" href="https://static1.squarespace.com/static/59c4375b8a02c798d1cce06f/t/59d55a7bf5e2319471bb94a4/1507154557709/ELF+for+ARM64.pdf">ELF for the ARM® 64-bit Architecture (AArch64)</a>: official specification in pdf</li>
+<li><a target="_blank" rel="noopener" href="https://bbs.kanxue.com/thread-272605.htm">一种新的Android Runtime环境仿真及调试方法</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.dbp-consulting.com/tutorials/debugging/linuxProgramStartup.html">Linux x86 Program Start Up</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.akkadia.org/drepper/dsohowto.pdf">How To Write Shared Libraries</a></li>
+<li><a target="_blank" rel="noopener" href="https://he1m4n6a.github.io/2020/07/01/ELF-Loader/">ELF Loader</a></li>
+<li><a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1629853">Hack ELF Loader:用户态execve</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E19683-01/816-7777/chapter6-83432/index.html">Program Header Reference</a></li>
+<li><a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/2254">ELF病毒分析</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/LXP-Never/p/15302534.html">C语言：静态库和动态库 </a></li>
+<li><a target="_blank" rel="noopener" href="https://lwn.net/Articles/631631/">How programs get run: ELF binaries</a></li>
+<li><a target="_blank" rel="noopener" href="https://paper.seebug.org/papers/Archive/refs/elf/Understanding_ELF.pdf">ELF 格式解析</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.oracle.com/cd/E26926_01/html/E25910/glcfv.html#scrolltoc">ELF 应用程序二进制接口</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/unicorn/" rel="tag"># unicorn</a>
+              <a href="/tags/qiling/" rel="tag"># qiling</a>
+              <a href="/tags/aarch64/" rel="tag"># aarch64</a>
+              <a href="/tags/emulation/" rel="tag"># emulation</a>
+              <a href="/tags/android/" rel="tag"># android</a>
+              <a href="/tags/deobfuscation/" rel="tag"># deobfuscation</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/coding/canny-algorithm-implementation/" rel="prev" title="Canny边缘检测算法的原理和实现">
+                  <i class="fa fa-angle-left"></i> Canny边缘检测算法的原理和实现
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>

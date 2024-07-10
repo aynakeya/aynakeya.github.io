@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">116</span>
+          <span class="site-state-item-count">117</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -191,6 +191,99 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/debugging-binary-with-pwntools-and-radare2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/debugging-binary-with-pwntools-and-radare2/" class="post-title-link" itemprop="url">Debugging binary with pwntools and radare2</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2021-10-18 00:47:39" itemprop="dateCreated datePublished" datetime="2021-10-18T00:47:39+08:00">2021-10-18</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Brief"><a href="#Brief" class="headerlink" title="Brief"></a>Brief</h1><p>When using radare2 debugger, How to deal with the user input when debugging? There are two simple method.</p>
+<ul>
+<li>use rarun2 with stdio</li>
+<li>use pwntools with debugger.</li>
+</ul>
+<h1 id="use-rarun2"><a href="#use-rarun2" class="headerlink" title="use rarun2"></a>use rarun2</h1><ol>
+<li>open second terminal, enter <code>tty</code>, record the output<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ tty</span><br><span class="line">/dev/pts/2</span><br></pre></td></tr></table></figure></li>
+<li>create a file p.rr2, write <code>stdio</code> equal the tty value you get from second termial<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"># p.rr2 content</span><br><span class="line">stdio=/dev/pts/1</span><br></pre></td></tr></table></figure></li>
+<li>in second terminal, run <code>sleep 9999999999</code> to wait for output and input</li>
+<li>run <code>r2 -r p.rr2 -d vuln</code> in the first terminal and start debugging!</li>
+</ol>
+<p>see more: <a target="_blank" rel="noopener" href="https://r2wiki.readthedocs.io/en/latest/tools/rarun2/">doc</a></p>
+<h1 id="use-pwntools"><a href="#use-pwntools" class="headerlink" title="use pwntools"></a>use pwntools</h1><p>in the pwntool template, add following code</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">io = start()</span><br><span class="line">pid = util.proc.pidof(io)[0]</span><br><span class="line">print(&quot;The pid is: &quot;+str(pid))</span><br><span class="line">util.proc.wait_for_debugger(pid)</span><br><span class="line">input(&quot;press enter to continue&quot;)</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>then, run radare2 with <code>r2 -d pid</code>, using the pid from scripts.</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -875,84 +968,6 @@
     
     <div class="post-body" itemprop="articleBody">
           <p>活着好累，要是能死就好了</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/life/hao-xiang-si/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/life/hao-xiang-si/" class="post-title-link" itemprop="url">好想死</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2021-02-23 03:29:29" itemprop="dateCreated datePublished" datetime="2021-02-23T03:29:29+08:00">2021-02-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/life/" itemprop="url" rel="index"><span itemprop="name">Life</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p>想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死想死</p>
 
       
     </div>

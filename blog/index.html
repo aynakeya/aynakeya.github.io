@@ -152,7 +152,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">116</span>
+          <span class="site-state-item-count">117</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -163,7 +163,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">89</span>
+        <span class="site-state-item-count">95</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -191,6 +191,95 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/ctf/how-to-emulate-elf-file-from-zero/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="blog | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/articles/ctf/how-to-emulate-elf-file-from-zero/" class="post-title-link" itemprop="url">如何模拟执行一个elf文件</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-07-04 08:47:37" itemprop="dateCreated datePublished" datetime="2024-07-04T08:47:37+08:00">2024-07-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/ctf/" itemprop="url" rel="index"><span itemprop="name">CTF</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>在尝试逆向一个动态链接库的时候，有时你可能希望单独运行某个函数，以探究它的具体作用。</p>
+<p>如果这个二进制文件的编译架构与你的机器架构相同，并且你拥有其所有依赖库，那么操作相对简单：直接使用<code>dlopen</code>加载动态库，然后通过 offset 获取函数地址，执行即可。</p>
+<p>然而，如果遇到不同架构的二进制文件，比如 aarch64 架构，应如何方便地进行调试和模拟运行呢？</p>
+<p>一种常见的方法是在相应架构上启动<code>gdbserver</code>或使用<code>frida</code>等类似工具进行跟踪。但这种方法过于笨重。是否存在一种更轻量级的方法来模拟运行这个 ELF 文件呢？</p>
+<p><em>unicorn模拟运行</em>, <em>外加elf简单介绍</em></p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/articles/ctf/how-to-emulate-elf-file-from-zero/#more" rel="contents">
+                Read more &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -950,98 +1039,6 @@
           <!--noindex-->
             <div class="post-button">
               <a class="btn" href="/articles/coding/should-i-use-cache-in-repository-or-service-layer/#more" rel="contents">
-                Read more &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/devops/setup-my-internal-network/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
-      <meta itemprop="name" content="Aynakeya">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Aynakeya's Blog">
-      <meta itemprop="description" content="my blog~">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="blog | Aynakeya's Blog">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/articles/devops/setup-my-internal-network/" class="post-title-link" itemprop="url">My Internal Network Setup and Configuration</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">Posted on</span>
-
-      <time title="Created: 2023-09-09 21:03:23" itemprop="dateCreated datePublished" datetime="2023-09-09T21:03:23+08:00">2023-09-09</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">In</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/devops/" itemprop="url" rel="index"><span itemprop="name">DevOps</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="Prologue"><a href="#Prologue" class="headerlink" title="Prologue"></a>Prologue</h2><p>For example, I have following services running in my local network.</p>
-<ul>
-<li><strong>Git Server</strong>: Located at <code>192.168.1.100:80</code></li>
-<li><strong>Jellyfin Server</strong>: Located at <code>192.168.1.101:8000</code></li>
-<li><strong>NAS (Network Attached Storage)</strong>: Located at <code>192.168.1.101:8010</code></li>
-</ul>
-<p>Is there any good way to access them without typing ip address?</p>
-<p>Yes. In this blog post, I&#39;ll walk you through how I set up my internal network. </p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/articles/devops/setup-my-internal-network/#more" rel="contents">
                 Read more &raquo;
               </a>
             </div>
