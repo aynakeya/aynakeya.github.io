@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="0x0 简介Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。 你甚至可以纯复制粘贴来得到90分，属实拉垮。 活动地址: https:&#x2F;&#x2F;www.bilibili.com&#x2F;blackboard&#x2F;20211024.html 但是不管怎么样，我们来写一点可爱的writeup吧">
 <meta property="og:type" content="website">
@@ -228,6 +228,7 @@
 
       
       
+      
       <div class="post-body">
           <h1 id="0x0-简介"><a href="#0x0-简介" class="headerlink" title="0x0 简介"></a>0x0 简介</h1><p>Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。</p>
 <p>你甚至可以纯复制粘贴来得到90分，属实拉垮。</p>
@@ -235,14 +236,14 @@
 <p>但是不管怎么样，我们来写一点可爱的writeup吧</p>
 <span id="more"></span>
 
-<h1 id="0x1-AES"><a href="#0x1-AES" class="headerlink" title="0x1 AES"></a>0x1 AES</h1><p><img data-src="/images/2021-10-28_224747.jpg" alt="2021-10-28_224747.jpg"></p>
+<h1 id="0x1-AES"><a href="#0x1-AES" class="headerlink" title="0x1 AES"></a>0x1 AES</h1><p><img data-src="/./images/2021-10-28_224747.jpg" alt="2021-10-28_224747.jpg"></p>
 <p>猜一下，给了一个类似密码的东西，又给了一个类似加密后文本的字符串，那么就嗯破解就完事了</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">a = &quot;e9ca6f21583a1533d3ff4fd47ddc463c6a1c7d2cf084d364&quot;</span><br><span class="line">b = &quot;0408abca7deabb96a58f50471171b60e02b1a8dbd32db156&quot;</span><br><span class="line"># with open(&quot;a1&quot;,&quot;wb&quot;) as f:</span><br><span class="line">#     f.write(bytes.fromhex(b+a))</span><br><span class="line"></span><br><span class="line">from Crypto.Cipher import AES</span><br><span class="line"></span><br><span class="line">mode = AES.MODE_ECB</span><br><span class="line">cryptos = AES.new(b&quot;happy_1024_2233\x00&quot;, mode)</span><br><span class="line">plain_text = cryptos.decrypt(bytes.fromhex(a+b))</span><br><span class="line">print(plain_text)</span><br></pre></td></tr></table></figure>
 
 <p>flag: a1cd5f84-27966146-3776f301-64031bb9</p>
-<h1 id="0x2-Forensic"><a href="#0x2-Forensic" class="headerlink" title="0x2 Forensic"></a>0x2 Forensic</h1><p><img data-src="/images/2021-10-28_225007.jpg" alt="2021-10-28_225007.jpg"></p>
+<h1 id="0x2-Forensic"><a href="#0x2-Forensic" class="headerlink" title="0x2 Forensic"></a>0x2 Forensic</h1><p><img data-src="/./images/2021-10-28_225007.jpg" alt="2021-10-28_225007.jpg"></p>
 <p>提示给的很明白了，没有含金量，直接在webpack里一翻就翻到了</p>
-<p><img data-src="/images/2021-10-28_225125.jpg" alt="2021-10-28_225125.jpg"></p>
+<p><img data-src="/./images/2021-10-28_225125.jpg" alt="2021-10-28_225125.jpg"></p>
 <p>flag: 36c7a7b4-cda04af0-8db0368d-b5166480</p>
 <h1 id="0x3-php-web"><a href="#0x3-php-web" class="headerlink" title="0x3 php web"></a>0x3 php web</h1><p>题目给了一段php的代码</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">    /* </span><br><span class="line">        bilibili- ( ゜- ゜)つロ 乾杯~</span><br><span class="line">        uat: http://192.168.3.2/uat/eval.php</span><br><span class="line">        pro: http://security.bilibili.com/sec1024/q/pro/eval.php</span><br><span class="line">    */</span><br><span class="line">    $args = @$_GET[&#x27;args&#x27;];</span><br><span class="line">    if (count($args) &gt;3) &#123;</span><br><span class="line">        exit();</span><br><span class="line">    &#125;</span><br><span class="line">    for ( $i=0; $i&lt;count($args); $i++ )&#123;</span><br><span class="line">        if ( !preg_match(&#x27;/^\w+$/&#x27;, $args[$i]) ) &#123;</span><br><span class="line">            exit();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // /bin/2233 args2 args3</span><br><span class="line">    // todo: other filter</span><br><span class="line">    $cmd = &quot;/bin/2233 &quot; . implode(&quot; &quot;, $args);</span><br><span class="line">    exec($cmd, $out);</span><br><span class="line">    for ($i=0; $i&lt;count($out); $i++)&#123;</span><br><span class="line">        echo($out[$i]);</span><br><span class="line">        echo(&#x27;&lt;br&gt;&#x27;);</span><br><span class="line">    &#125;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
@@ -257,8 +258,8 @@
 <p>flag: 3d5dd579-0678ef93-18b70cae-cabc5d51</p>
 <h1 id="0x5-安卓逆向"><a href="#0x5-安卓逆向" class="headerlink" title="0x5 安卓逆向"></a>0x5 安卓逆向</h1><p>先用dex2jar 把apk转成jar文件</p>
 <p>然后用jd-gui打开，在 MainActivity里找到账号密码的加密方式</p>
-<p><img data-src="/images/2021-10-28_230240.jpg" alt="2021-10-28_230240.jpg"></p>
-<p><img data-src="/images/2021-10-28_230317.jpg" alt="2021-10-28_230317.jpg"></p>
+<p><img data-src="/./images/2021-10-28_230240.jpg" alt="2021-10-28_230240.jpg"></p>
+<p><img data-src="/./images/2021-10-28_230317.jpg" alt="2021-10-28_230317.jpg"></p>
 <p>加密方式a为做异或，b为base64。反向解密一下就完事了。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"># dex2jar get jar file</span><br><span class="line"># jd gui decompile</span><br><span class="line">import base64</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def decrypt_a(s:bytes,paramInt:int):</span><br><span class="line">    bs = bytearray(s)</span><br><span class="line">    for i in range(len(bs)):</span><br><span class="line">        bs[i] = bs[i] ^ paramInt</span><br><span class="line">    return bytes(bs)</span><br><span class="line"></span><br><span class="line">def decrypt_b(s:bytes):</span><br><span class="line">    return base64.b64decode(s)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">encoded1 = [78, 106, 73, 49, 79, 122, 65, 51, 89, 71,</span><br><span class="line">                  65, 117, 78, 106, 78, 109, 78, 122, 99, 55,</span><br><span class="line">                  89, 109, 85, 61]</span><br><span class="line">encoded2 = [89, 87, 66, 108, 79, 109, 90, 110, 78, 106,</span><br><span class="line">                  65, 117, 79, 109, 74, 109, 78, 122, 65, 120,</span><br><span class="line">                  79, 50, 89, 61]</span><br><span class="line">print(decrypt_a(decrypt_b(bytes(encoded1)),3))</span><br><span class="line">print(decrypt_a(decrypt_b(bytes(encoded2)),3))</span><br><span class="line">print((decrypt_a(decrypt_b(bytes(encoded1)),3)+b&quot;-&quot;+decrypt_a(decrypt_b(bytes(encoded2)),3)).decode())</span><br></pre></td></tr></table></figure>
 
@@ -271,7 +272,7 @@
 <li>有读写权限</li>
 </ol>
 <p>那么这个flag就会写到&#x2F;data&#x2F;2233文件里</p>
-<p><img data-src="/images/2021-10-28_230949.jpg" alt="2021-10-28_230949.jpg"></p>
+<p><img data-src="/./images/2021-10-28_230949.jpg" alt="2021-10-28_230949.jpg"></p>
 <p>所以解题方法就是找一个安卓9, x86的系统，然后运行就完事了。</p>
 <p>具体过程如下</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"># C:\Users\aynakeya&gt;adb shell su 0 setenforce 0</span><br><span class="line">#</span><br><span class="line"># C:\Users\aynakeya&gt;adb shell</span><br><span class="line"># 1|generic_x86:/ $ su</span><br><span class="line"># generic_x86:/ # echo &quot;123&quot; &gt; /data/2233</span><br><span class="line"># generic_x86:/ # su</span><br><span class="line"># generic_x86:/ # chmod 777 /data/</span><br><span class="line"># generic_x86:/ # chmod 77 /data/2233</span><br><span class="line"># generic_x86:/ # chmod 777 /data/2233</span><br><span class="line"># generic_x86:/ # chown everybody:everybody /data/2233</span><br><span class="line"># generic_x86:/ # chown everybody:everybody /data/</span><br><span class="line"># generic_x86:/ # cat /data/2233</span><br><span class="line"># 123</span><br><span class="line"># b1</span><br><span class="line"># 39</span><br><span class="line"># 81</span><br><span class="line"># f4</span><br><span class="line"># 5a</span><br><span class="line"># e9</span><br><span class="line"># 96</span><br><span class="line"># d4</span><br><span class="line"># bc</span><br><span class="line"># 04</span><br><span class="line"># be</span><br><span class="line"># 5b</span><br><span class="line"># 34</span><br><span class="line"># 66</span><br><span class="line"># 2a</span><br><span class="line"># 78</span><br><span class="line"></span><br></pre></td></tr></table></figure>
@@ -320,6 +321,12 @@
   </footer>
 
   
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="Back to top">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -334,7 +341,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>

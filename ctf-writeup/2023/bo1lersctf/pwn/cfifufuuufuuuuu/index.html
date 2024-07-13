@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt files Analysis12345Arch:     amd64-64-littleRELRO:    No RELROStack:    No canary foundNX:       NX enabledPIE">
 <meta property="og:type" content="website">
@@ -224,6 +224,7 @@
 
       
       
+      
       <div class="post-body">
           <h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>A tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/b01lers/b01lers-ctf-2023-public/tree/main/pwn/cfifufuuufuuuuu">files</a></p>
@@ -234,18 +235,18 @@
 <p>This binary is run by a python loaders. python loader is acting like a debugger.</p>
 <p>Everytime a breakpoint instruction (<code>0xcc</code>) being executed. python loader will check next byte after rip. And determine what to do next depend on that byte.</p>
 <p>for example, if next byte is <code>0x48</code>. it will replace some register</p>
-<p><img data-src="/2023-03-28_214738.png" alt="image"></p>
+<p><img data-src="/./2023-03-28_214738.png" alt="image"></p>
 <p>otherwise, if the next byte is equal to some other bytes. it will do a canary check manually</p>
-<p><img data-src="/2023-03-28_214958.png" alt="image"></p>
+<p><img data-src="/./2023-03-28_214958.png" alt="image"></p>
 <h2 id="vulnerability-1-canary-check-failed"><a href="#vulnerability-1-canary-check-failed" class="headerlink" title="vulnerability 1 - canary check failed"></a>vulnerability 1 - canary check failed</h2><p>it did have canary check. The canary values are actually saved return pointers. However, when comparing return pointers, it only check if return pointer exists in the stack. So, we can still modify the saved return pointer to the caller&#39;s saved return pointer.</p>
 <h2 id="vulnerability-2-overwriting"><a href="#vulnerability-2-overwriting" class="headerlink" title="vulnerability 2 - overwriting"></a>vulnerability 2 - overwriting</h2><p>Bascially, the binary contains 2 main function. <code>encrypt</code> and <code>decrypt</code></p>
 <p><code>decrypt</code> function calls a function which read all bytes until it meet a new line character (<code>\n</code>). This is a trivial buffer overflow we can use to modify return pointer.</p>
 <p>using this vulnerability with the previous one, we can run <code>main</code> function again.</p>
 <p>since <code>_start</code> function is essentially a loop if return value of <code>main</code> is not equal to 1</p>
-<p><img data-src="/2023-03-28_220216.png" alt="image"></p>
+<p><img data-src="/./2023-03-28_220216.png" alt="image"></p>
 <h2 id="vulnerability-3-random-generation"><a href="#vulnerability-3-random-generation" class="headerlink" title="vulnerability 3 - random generation"></a>vulnerability 3 - random generation</h2><p>encrypt function generating random values by reading <code>/dev/urandom</code>. And store using input is .bss section.</p>
 <p>it also use a global variable to record index of the data array. everytime we call <code>encrypt</code>, the index will increase by one.</p>
-<p><img data-src="/2023-03-28_215944.png" alt="image"></p>
+<p><img data-src="/./2023-03-28_215944.png" alt="image"></p>
 <p>normally it&#39;s okay, because we are only executing <code>encrypt</code> function once.</p>
 <p>however, since we can run <code>encrypt</code> function multiple time. we increase the index value until we overwrite <code>/dev/urandom</code> string.</p>
 <h2 id="conclusion"><a href="#conclusion" class="headerlink" title="conclusion"></a>conclusion</h2><p>we overwrite <code>/dev/urandom</code>, and the program will print out the flag for us!</p>
@@ -289,6 +290,12 @@
   </footer>
 
   
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="Back to top">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -303,7 +310,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>

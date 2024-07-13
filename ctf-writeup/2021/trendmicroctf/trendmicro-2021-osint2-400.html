@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="main concept: code review, image stego, web, zero-width Steganography tl;drmissing The challenge came along with a README.txt, advisories.png, and pwnconfig-1.0.jar. The challenge url is http:&#x2F;&#x2F;pwniec">
 <meta property="og:type" content="website">
@@ -229,6 +229,7 @@
 
       
       
+      
       <div class="post-body">
           <p><strong>main concept: code review, image stego, web, zero-width Steganography</strong></p>
 <h1 id="tl-dr"><a href="#tl-dr" class="headerlink" title="tl;dr"></a>tl;dr</h1><p>missing</p>
@@ -246,24 +247,24 @@
 <h1 id="code-review"><a href="#code-review" class="headerlink" title="code review"></a>code review</h1><p>open <code>pwnieconfig-1.0.jar</code></p>
 <p>There are some easily spotted exploits.</p>
 <p><strong>Admin backend -  login with out password</strong></p>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled.png" alt="Untitled"></p>
 <p><strong>filename is used directly in the combination of file path</strong></p>
 <ul>
 <li>download file from upper directory using <code>../</code></li>
 </ul>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled1.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled1.png" alt="Untitled"></p>
 <p><strong>configBase also combine directly with the directory</strong></p>
 <ul>
 <li>list upper level directory using <code>../</code></li>
 </ul>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled2.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled2.png" alt="Untitled"></p>
 <h1 id="stego"><a href="#stego" class="headerlink" title="stego"></a>stego</h1><p>@Filip do the stego on the <code>advisories.png</code> and found two important information, the v1.0 are deployed in the <code>archive</code> subdomain. And the flag is encrypted using zero-width steganography.</p>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled3.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled3.png" alt="Untitled"></p>
 <h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><p>use <code>archive.pwnieconfig.tmctf.trendmicro.com</code> to access v1.0 web with security issues.</p>
 <p>using admin backend, we got the username and password (jeoqj&#x2F;hisgqjqlcg)</p>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled4.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled4.png" alt="Untitled"></p>
 <p>then login the system, find the flag file location using <code>list?configBase=../</code> and download the java class file <code>http://archive.pwnieconfig.tmctf.trendmicro.com/download?id=-1&amp;filename=../RetrieveFlag.class</code></p>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled5.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled5.png" alt="Untitled"></p>
 <p>after decompile the java class file. we get the flag content whiich is locate at <code>/view/3ec4e19a-2a70-4aac-9893-ac3712473928/b64content</code></p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">// </span><br><span class="line">// Decompiled by Procyon v0.5.36</span><br><span class="line">// </span><br><span class="line"></span><br><span class="line">package com.tmctf.pwnieconfig.flag;</span><br><span class="line"></span><br><span class="line">import org.springframework.web.bind.annotation.ResponseBody;</span><br><span class="line">import org.springframework.web.bind.annotation.GetMapping;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.util.Base64;</span><br><span class="line">import java.io.Reader;</span><br><span class="line">import java.io.BufferedReader;</span><br><span class="line">import java.io.InputStreamReader;</span><br><span class="line">import org.springframework.stereotype.Controller;</span><br><span class="line"></span><br><span class="line">@Controller</span><br><span class="line">public class RetrieveFlag</span><br><span class="line">&#123;</span><br><span class="line">    @GetMapping(&#123; &quot;/view/3ec4e19a-2a70-4aac-9893-ac3712473928/b64content&quot; &#125;)</span><br><span class="line">    @ResponseBody</span><br><span class="line">    public String content() throws IOException &#123;</span><br><span class="line">        final String note_fyi = &quot;TrendCTF requires flag format&quot;;</span><br><span class="line">        note_fyi.concat(&quot;to be formatted as TMCTF&#123;flag&#125;.&quot;);</span><br><span class="line">        note_fyi.concat(&quot;Keep this in mind!&quot;);</span><br><span class="line">        String b64_flag = &quot;&quot;;</span><br><span class="line">        final String salt = &quot;ac3712473928&quot;;</span><br><span class="line">        final ProcessBuilder pb = new ProcessBuilder(new String[] &#123; &quot;python&quot;, System.getProperty(&quot;user.dir&quot;) + &quot;/4aac-9893/decoder.py&quot;, salt &#125;);</span><br><span class="line">        final Process process = pb.start();</span><br><span class="line">        final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));</span><br><span class="line">        final StringBuilder builder = new StringBuilder();</span><br><span class="line">        builder.append(reader.read());</span><br><span class="line">        b64_flag = Base64.getEncoder().encodeToString(builder.toString().getBytes());</span><br><span class="line">        return b64_flag;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -273,7 +274,7 @@
 
 <p>note that every 8 unicode character is separate by <code>&quot;\u200d&quot;</code> </p>
 <p>so separate characters by <code>&quot;\u200d&quot;</code> and replace <code>&quot;\u200c&quot;</code> with 0 and <code>&quot;\u200b&quot;</code> with 1. we get the flag</p>
-<p><img data-src="/images/trendmicro-2021-osint2-400/Untitled6.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmicro-2021-osint2-400/Untitled6.png" alt="Untitled"></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">data = <span class="string">&quot;SGVsbG8sIOKAjOKAi+KAjOKAi+KAjOKAi+KAjOKAjOKAjeKAjOKAi+KAjOKAjOKAi+KAi+KAjOKAi1RyZW5kTWljcm8g4oCN4oCM4oCL4oCM4oCM4oCM4oCM4oCL4oCL4oCN4oCM4oCL4oCM4oCL4oCM4oCL4oCMQ1RGIOKAjOKAjeKAjOKAi+KAjOKAjOKAjOKAi+KAi+KAjOKAjeKAjOKAi+KAi+KAi+KAi+KAjHJlcXVpcmVzIOKAi+KAi+KAjeKAjOKAi+KAjOKAjOKAi+KAjOKAi+KAjOKAjeKAjOKAi+KAi+KAjOKAjHRoZSDigIzigIzigIvigI3igIzigIvigIvigIvigIzigIvigIvigIzigI3igIzigIvigIzigIxmbGFnIOKAjOKAjOKAjOKAjOKAjeKAjOKAi+KAjOKAi+KAjOKAi+KAi+KAi+KAjeKAjOKAi+KAi3RvIOKAjOKAjOKAi+KAjOKAi+KAjeKAjOKAi+KAi+KAjOKAjOKAjOKAi+KAjOKAjeKAjOKAi2JlIOKAjOKAjOKAjOKAjOKAjOKAi+KAjeKAjOKAi+KAi+KAi+KAjOKAjOKAjOKAjOKAjeKAjGluIOKAi+KAi+KAi+KAjOKAjOKAjOKAjOKAjeKAjOKAi+KAjOKAi+KAjOKAjOKAi+KAi+KAjXRoZSDigIzigIvigIvigIvigIzigIzigIzigIzigI3igIzigIvigIvigIzigIvigIvigIzigIxmb3JtYXQg4oCN4oCM4oCM4oCL4oCL4oCM4oCM4oCM4oCM4oCN4oCM4oCL4oCL4oCM4oCL4oCM4oCMVE1DVEZ7ZmxhZ30uIOKAi+KAjeKAjOKAi+KAi+KAi+KAjOKAi+KAjOKAjOKAjeKAjOKAi+KAi+KAi+KAi+KAjERvIOKAi+KAjOKAjeKAjOKAi+KAjOKAjOKAjOKAjOKAi+KAi+KAjeKAjOKAi+KAi+KAjOKAi3lvdSDigIzigIzigIzigI3igIzigIzigIvigIvigIzigIvigIzigIzigI3igIzigIvigIvigIxzZWUg4oCL4oCM4oCM4oCL4oCN4oCM4oCL4oCL4oCM4oCL4oCL4oCL4oCM4oCN4oCM4oCL4oCM4oCL4oCL4oCM4oCL4oCM4oCN4oCM4oCL4oCL4oCL4oCL4oCL4oCM4oCLaXQ/IA==&quot;</span></span><br><span class="line">data1 = base64.b64decode(data)</span><br><span class="line">a = data1.decode()</span><br><span class="line"><span class="comment"># remove standard unicode character</span></span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> a:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">ord</span>(s) &gt; <span class="number">128</span>:</span><br><span class="line">        uns.append(s)</span><br><span class="line">unss = <span class="string">&quot;&quot;</span>.join(uns)</span><br><span class="line">uns1 = unss.split(<span class="string">&quot;\u200d&quot;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">len</span>(uns1),uns1,unss.count(<span class="string">&quot;\u200d&quot;</span>))</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">replacer</span>(<span class="params">s:<span class="built_in">str</span></span>):</span><br><span class="line">    <span class="keyword">return</span> s.replace(<span class="string">&quot;\u200c&quot;</span>,<span class="string">&quot;0&quot;</span>).replace(<span class="string">&quot;\u200b&quot;</span>, <span class="string">&quot;1&quot;</span>)</span><br><span class="line"><span class="keyword">for</span> s <span class="keyword">in</span> uns1:</span><br><span class="line">    sss = replacer(s)</span><br><span class="line">    <span class="built_in">print</span>(<span class="built_in">chr</span>(<span class="built_in">int</span>(sss,<span class="number">2</span>)),end=<span class="string">&quot;&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># TMCTF&#123;Jav@WebAppSpl0itzCh4inZ&#125;</span></span><br></pre></td></tr></table></figure>
 
       </div>
@@ -313,6 +314,12 @@
   </footer>
 
   
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="Back to top">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -327,7 +334,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>

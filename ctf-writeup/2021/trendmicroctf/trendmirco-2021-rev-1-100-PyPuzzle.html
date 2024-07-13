@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
     <meta name="description" content="Main concept: how to decompile pyinstaller program First, this is a typical pyinstaller program.  So first we need find the source code.">
 <meta property="og:type" content="website">
@@ -228,16 +228,17 @@
 
       
       
+      
       <div class="post-body">
           <p><strong>Main concept: how to decompile pyinstaller program</strong></p>
 <p>First, this is a typical pyinstaller program.</p>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled.png" alt="Untitled"></p>
 <p>So first we need find the source code.</p>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled1.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled1.png" alt="Untitled"></p>
 <span id="more"></span>
 
 <p>The source code is in <code>pypuzzle.pyc</code> and the python version is python3.7 according to <code>python37.dll</code> </p>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled2.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled2.png" alt="Untitled"></p>
 <p>Due to bytecode header, using decompyle3 will show error.</p>
 <p>So, in order to decompile, we need to bytecode header first.</p>
 <ol>
@@ -245,19 +246,19 @@
 <li>open <a target="_blank" rel="noopener" href="http://pypuzzle.py/">PyPuzzle.py</a> suing hex editor</li>
 </ol>
 <p>not that, the file in base_library contains bytecode header. which is <code>42 0D 0D 0A 01 00 00 00</code> for python 3.7</p>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled3.png" alt="Untitled"></p>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled4.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled3.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled4.png" alt="Untitled"></p>
 <ol>
 <li>we need add <code>42 0D 0D 0A 01 00 00 00</code> to the <a target="_blank" rel="noopener" href="http://pypuzzle.py/">PyPuzzle.py</a> file and remove extra 0s</li>
 </ol>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled5.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled5.png" alt="Untitled"></p>
 <ol>
 <li>save <a target="_blank" rel="noopener" href="http://pypuzzle.py/">PyPuzzle.py</a> and decompile again.</li>
 </ol>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># uncompyle6 version 3.7.4</span></span><br><span class="line"><span class="comment"># Python bytecode 3.7 (3394)</span></span><br><span class="line"><span class="comment"># Decompiled from: Python 3.8.10 (default, Jun  2 2021, 10:49:15)</span></span><br><span class="line"><span class="comment"># [GCC 9.4.0]</span></span><br><span class="line"><span class="comment"># Embedded file name: PyPuzzle.py</span></span><br><span class="line"><span class="comment"># Compiled at: 1975-05-06 10:59:01</span></span><br><span class="line"></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        slideTo = <span class="literal">None</span></span><br><span class="line">        msg = <span class="string">&#x27;Click tile or press arrow keys to slide.&#x27;</span></span><br><span class="line">        <span class="keyword">if</span> mainBoard == SOLVEDBOARD:</span><br><span class="line">            msg = <span class="string">&#x27;Solved! But Wait you need to decrypt the flag *_^&#x27;</span></span><br><span class="line">            flag = <span class="string">&#x27;3blKlvIKqQoG0D6B4XDcZxQjbLbg4KVJQzbm8b&#x27;</span></span><br><span class="line"><span class="comment">#....ignoreed</span></span><br></pre></td></tr></table></figure>
 
 <p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
-<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled6.png" alt="Untitled"></p>
+<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled6.png" alt="Untitled"></p>
 
       </div>
       
@@ -296,6 +297,12 @@
   </footer>
 
   
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="Back to top">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -310,7 +317,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>

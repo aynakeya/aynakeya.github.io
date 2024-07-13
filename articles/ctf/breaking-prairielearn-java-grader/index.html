@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.0.0-rc2">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -15,17 +15,17 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.18.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#97;&#121;&#x6e;&#97;&#107;&#101;&#121;&#97;&#x2e;&#111;&#102;&#x66;&#105;&#x63;&#105;&#97;&#x6c;&#x40;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#x63;&amp;#x6">
+    <meta name="description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#x61;&#121;&#110;&#x61;&#x6b;&#x65;&#x79;&#97;&#46;&#111;&#x66;&#x66;&#105;&#99;&#x69;&#x61;&#108;&#64;&#103;&#109;&#97;&#x69;&#108;&#x2e;&#99;&amp;#x6f">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Breaking PrairieLearn Java Grader">
 <meta property="og:url" content="http://www.aynakeya.com/articles/ctf/breaking-prairielearn-java-grader/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#97;&#121;&#x6e;&#97;&#107;&#101;&#121;&#97;&#x2e;&#111;&#102;&#x66;&#105;&#x63;&#105;&#97;&#x6c;&#x40;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#x63;&amp;#x6">
+<meta property="og:description" content="PrairieLearn Java Autograder VulnerabilityAynakeya &#x61;&#121;&#110;&#x61;&#x6b;&#x65;&#x79;&#97;&#46;&#111;&#x66;&#x66;&#105;&#99;&#x69;&#x61;&#108;&#64;&#103;&#109;&#97;&#x69;&#108;&#x2e;&#99;&amp;#x6f">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/Breaking-PrairieLearn-Java-Grader/2023-01-23_184909.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/Breaking-PrairieLearn-Java-Grader/2023-01-23_191424.png">
@@ -260,7 +260,7 @@
     
     
     
-    <div class="post-body" itemprop="articleBody"><h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#97;&#121;&#x6e;&#97;&#107;&#101;&#121;&#97;&#x2e;&#111;&#102;&#x66;&#105;&#x63;&#105;&#97;&#x6c;&#x40;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#x63;&#x6f;&#x6d;">&#97;&#121;&#x6e;&#97;&#107;&#101;&#121;&#97;&#x2e;&#111;&#102;&#x66;&#105;&#x63;&#105;&#97;&#x6c;&#x40;&#x67;&#x6d;&#97;&#x69;&#108;&#x2e;&#x63;&#x6f;&#x6d;</a></p>
+    <div class="post-body" itemprop="articleBody"><h1 id="PrairieLearn-Java-Autograder-Vulnerability"><a href="#PrairieLearn-Java-Autograder-Vulnerability" class="headerlink" title="PrairieLearn Java Autograder Vulnerability"></a>PrairieLearn Java Autograder Vulnerability</h1><p>Aynakeya <a href="mailto:&#x61;&#121;&#110;&#x61;&#x6b;&#x65;&#x79;&#97;&#46;&#111;&#x66;&#x66;&#105;&#99;&#x69;&#x61;&#108;&#64;&#103;&#109;&#97;&#x69;&#108;&#x2e;&#99;&#x6f;&#x6d;">&#x61;&#121;&#110;&#x61;&#x6b;&#x65;&#x79;&#97;&#46;&#111;&#x66;&#x66;&#105;&#99;&#x69;&#x61;&#108;&#64;&#103;&#109;&#97;&#x69;&#108;&#x2e;&#99;&#x6f;&#x6d;</a></p>
 <h1 id="Abstract"><a href="#Abstract" class="headerlink" title="Abstract"></a>Abstract</h1><p>This is a walkthrough of one vulnerability I found in PrairieLearn Java autograder. </p>
 <p>The default Java autograder exists vulnerabilities that allow user to leak information and write files to the container.</p>
 <p>These vulnerabilities allow the user to modify the result of autograder score and get 100% without writing any actual code.</p>
@@ -395,6 +395,12 @@
   </footer>
 
   
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
   <div class="back-to-top" role="button" aria-label="Back to top">
     <i class="fa fa-arrow-up fa-lg"></i>
     <span>0%</span>
@@ -409,7 +415,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
 <script src="/js/third-party/search/local-search.js"></script>
