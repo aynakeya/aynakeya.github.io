@@ -31,10 +31,14 @@
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/2d_gaussian.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Discrete-approximation-of-the-Gaussian-kernels-3x3-5x5-7x7.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240620_102632.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20241003_174032.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20241003_175339.png">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20241003_181417.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/nms.jpg">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/nms_direction.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240620_104823.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/hysteresis.jpg">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20241003_180728.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240620_104716.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240620_104426.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240620_091644.png">
@@ -48,10 +52,11 @@
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240621_143300.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240621_143151.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240621_141608.png">
-<meta property="article:published_time" content="2024-06-21T07:00:11.000Z">
-<meta property="article:modified_time" content="2024-06-21T07:00:11.000Z">
+<meta property="article:published_time" content="2024-06-21T22:00:11.000Z">
+<meta property="article:modified_time" content="2024-06-21T22:00:11.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="cv">
+<meta property="article:tag" content="computer vision">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://www.aynakeya.com/images/coding/canny-algorithm-implementation/Screenshot_20240620_102803.png">
 
@@ -163,7 +168,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">原理解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E6%93%8D%E4%BD%9C-%E5%9B%BE%E5%83%8F%E7%81%B0%E5%BA%A6%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">前置操作 - 图像灰度化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%B6%88%E9%99%A4%E5%99%AA%E5%A3%B0-Gaussian-Filter"><span class="nav-number">2.2.</span> <span class="nav-text">高斯消除噪声 (Gaussian Filter)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%A2%AF%E5%BA%A6%E5%A4%A7%E5%B0%8F%E5%92%8C%E6%96%B9%E5%90%91-Gradient-Calculation"><span class="nav-number">2.3.</span> <span class="nav-text">计算梯度大小和方向 (Gradient Calculation)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%A2%AF%E5%BA%A6%E5%A4%A7%E5%B0%8F%E5%92%8C%E6%96%B9%E5%90%91%E5%8E%BB%E9%99%A4%E9%9D%9E%E6%9E%81%E5%A4%A7%E5%80%BC-Non-Maximum-Suppression"><span class="nav-number">2.4.</span> <span class="nav-text">利用梯度大小和方向去除非极大值 (Non Maximum Suppression)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E9%98%88%E5%80%BC%E6%A3%80%E6%B5%8B-Double-Threshold"><span class="nav-number">2.5.</span> <span class="nav-text">双阈值检测 (Double Threshold)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E8%BE%B9%E7%BC%98-hysteresis"><span class="nav-number">2.6.</span> <span class="nav-text">连接边缘  (hysteresis)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8EOpenCV%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BF%9B%E8%A1%8C%E6%AF%94%E8%BE%83"><span class="nav-number">3.</span> <span class="nav-text">与OpenCV的实现进行比较</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96-cache-line-optimization"><span class="nav-number">4.1.</span> <span class="nav-text">缓存优化 (cache line optimization)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E4%BC%98%E5%8C%96"><span class="nav-number">4.2.</span> <span class="nav-text">指针优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%BB%93%E6%9E%9C"><span class="nav-number">4.3.</span> <span class="nav-text">优化结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8E%9F%E7%90%86%E8%A7%A3%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">原理解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%89%8D%E7%BD%AE%E6%93%8D%E4%BD%9C-%E5%9B%BE%E5%83%8F%E7%81%B0%E5%BA%A6%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">前置操作 - 图像灰度化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E6%96%AF%E6%B6%88%E9%99%A4%E5%99%AA%E5%A3%B0-Gaussian-Filter"><span class="nav-number">2.2.</span> <span class="nav-text">高斯消除噪声 (Gaussian Filter)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E5%85%88%E5%81%9A%E9%AB%98%E6%96%AF%E5%B9%B3%E6%BB%91"><span class="nav-number">2.2.1.</span> <span class="nav-text">为什么需要先做高斯平滑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E6%A2%AF%E5%BA%A6%E5%A4%A7%E5%B0%8F%E5%92%8C%E6%96%B9%E5%90%91-Gradient-Calculation"><span class="nav-number">2.3.</span> <span class="nav-text">计算梯度大小和方向 (Gradient Calculation)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%90%88%E5%B9%B6%E8%AE%A1%E7%AE%97%E6%A2%AF%E5%BA%A6%E4%B8%8E%E9%AB%98%E6%96%AF%E5%B9%B3%E6%BB%91%E5%8A%A0%E9%80%9F%E8%BF%90%E7%AE%97"><span class="nav-number">2.3.1.</span> <span class="nav-text">通过合并计算梯度与高斯平滑加速运算</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%A2%AF%E5%BA%A6%E5%A4%A7%E5%B0%8F%E5%92%8C%E6%96%B9%E5%90%91%E5%8E%BB%E9%99%A4%E9%9D%9E%E6%9E%81%E5%A4%A7%E5%80%BC-Non-Maximum-Suppression"><span class="nav-number">2.4.</span> <span class="nav-text">利用梯度大小和方向去除非极大值 (Non Maximum Suppression)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8C%E9%98%88%E5%80%BC%E6%A3%80%E6%B5%8B-Double-Threshold"><span class="nav-number">2.5.</span> <span class="nav-text">双阈值检测 (Double Threshold)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E8%BE%B9%E7%BC%98-hysteresis"><span class="nav-number">2.6.</span> <span class="nav-text">连接边缘  (hysteresis)</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%8EOpenCV%E7%9A%84%E5%AE%9E%E7%8E%B0%E8%BF%9B%E8%A1%8C%E6%AF%94%E8%BE%83"><span class="nav-number">3.</span> <span class="nav-text">与OpenCV的实现进行比较</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96"><span class="nav-number">4.</span> <span class="nav-text">优化</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96-cache-line-optimization"><span class="nav-number">4.1.</span> <span class="nav-text">缓存优化 (cache line optimization)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8C%87%E9%92%88%E4%BC%98%E5%8C%96"><span class="nav-number">4.2.</span> <span class="nav-text">指针优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%BB%93%E6%9E%9C"><span class="nav-number">4.3.</span> <span class="nav-text">优化结果</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Reference"><span class="nav-number">5.</span> <span class="nav-text">Reference</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -189,7 +194,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">95</span>
+        <span class="site-state-item-count">96</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -256,7 +261,7 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2024-06-21 15:00:11" itemprop="dateCreated datePublished" datetime="2024-06-21T15:00:11+08:00">2024-06-21</time>
+      <time title="Created: 2024-06-21 15:00:11" itemprop="dateCreated datePublished" datetime="2024-06-21T15:00:11-07:00">2024-06-21</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -329,9 +334,17 @@
 <p>在经过运算后，中间的像素值就是</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">32 * 4 / 16 + 4 * 32 * 2 /16 + 4 * 32 * 1 / 16 = 32</span><br></pre></td></tr></table></figure>
 
-
-
 <p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_102632.png"></p>
+<h3 id="为什么需要先做高斯平滑"><a href="#为什么需要先做高斯平滑" class="headerlink" title="为什么需要先做高斯平滑"></a>为什么需要先做高斯平滑</h3><p>为什么消除噪声非常重要，如果我们不对图像做平滑处理，图像的信号就会如下所示。在这个时候直接计算derivative，会因为每个连续的点之间不够平滑，无法很好的得到一个first derivative signal，这就导致无法很好的通过first derivative判断边缘的位置</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20241003_174032.png" alt="a"></p>
+<blockquote>
+<p>credit: UBC CPSC427 @ Leonid Sigal </p>
+</blockquote>
+<p>在经过高斯后，我们可以发现信号就很平滑了，边缘的位置也比较好判断</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20241003_175339.png" alt="a"></p>
+<blockquote>
+<p>credit: UBC CPSC427 @ Leonid Sigal </p>
+</blockquote>
 <h2 id="计算梯度大小和方向-Gradient-Calculation"><a href="#计算梯度大小和方向-Gradient-Calculation" class="headerlink" title="计算梯度大小和方向 (Gradient Calculation)"></a>计算梯度大小和方向 (Gradient Calculation)</h2><p>边缘通常位于图像中灰度值变化较大的区域，因此我们需要计算图像中每个像素点的梯度。</p>
 <p>由于2d图直接算比较复杂，且消耗运算量，我们可以分别计算图像在水平方向(x轴)和垂直方向(y轴)上的梯度。最后在通过公式计算出方向和大小。</p>
 <p>梯度大小可以通过绝对值相加的方式计算（减少运算量）</p>
@@ -340,8 +353,11 @@
 <p>梯度方向可以通过<code>arctan</code>计算</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">direction = <span class="built_in">arctan</span>(dy/dx)</span><br></pre></td></tr></table></figure>
 
-
-
+<h3 id="通过合并计算梯度与高斯平滑加速运算"><a href="#通过合并计算梯度与高斯平滑加速运算" class="headerlink" title="通过合并计算梯度与高斯平滑加速运算"></a>通过合并计算梯度与高斯平滑加速运算</h3><p>通过预先计算高斯平滑的导数，我们可以合并高斯平滑和导数计算。事先计算好高斯平滑的导数，在用这个函数与图像在傅立叶空间中相乘，直接得到高斯平滑后的导数。</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20241003_181417.png" alt="a"></p>
+<blockquote>
+<p>credit: UBC CPSC427 @ Leonid Sigal </p>
+</blockquote>
 <h2 id="利用梯度大小和方向去除非极大值-Non-Maximum-Suppression"><a href="#利用梯度大小和方向去除非极大值-Non-Maximum-Suppression" class="headerlink" title="利用梯度大小和方向去除非极大值 (Non Maximum Suppression)"></a>利用梯度大小和方向去除非极大值 (Non Maximum Suppression)</h2><p>在计算出图像中每个像素点的梯度大小后，我们需要对其进行非极大值抑制。非极大值抑制的目的是去除那些不在边缘上的像素点，使得最终的边缘结果更加细致。</p>
 <p>非极大值抑制的原理是：对每个像素点，根据其梯度方向，检查其在梯度方向上的两个邻近像素点的梯度大小。如果当前像素点的梯度大小不是最大的，则将其梯度值置为0。</p>
 <p><img data-src="/images/coding/canny-algorithm-implementation/nms.jpg" alt="a"></p>
@@ -357,10 +373,15 @@
 
 <p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20240620_104823.png" alt="asdf"></p>
 <h2 id="双阈值检测-Double-Threshold"><a href="#双阈值检测-Double-Threshold" class="headerlink" title="双阈值检测 (Double Threshold)"></a>双阈值检测 (Double Threshold)</h2><p>双阈值检测的目的是将梯度值较大的边缘标记为强边缘，将梯度值较小但仍可能是边缘的像素标记为弱边缘。</p>
-<p>通过设定两个阈值（高阈值和低阈值），我们可以将图像中的像素分类为强边缘 (A)、弱边缘(B, C) 和 非边缘。</p>
+<p>通过设定两个阈值: 高阈值(k<sub>high</sub>), 和低阈值(k<sub>low</sub>)，我们可以将图像中的像素分类为强边缘 (A)、弱边缘(B, C) 和 非边缘。</p>
 <p><img data-src="/images/coding/canny-algorithm-implementation/hysteresis.jpg" alt="a"></p>
 <blockquote>
 <p>source: <a target="_blank" rel="noopener" href="https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html">https://docs.opencv.org/3.4/da/d22/tutorial_py_canny.html</a></p>
+</blockquote>
+<p>一般来说，高阀值设置为低阀值的两倍</p>
+<p><img data-src="/images/coding/canny-algorithm-implementation/Screenshot_20241003_180728.png" alt="a"></p>
+<blockquote>
+<p>credit: UBC CPSC427 @ Leonid Sigal </p>
 </blockquote>
 <p>在具体实现中，把高于<code>maxVal</code>的像素点直接设置为255，把低于<code>minVal</code>的点直接设置为0，弱边缘的值保持不变。</p>
 <figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (src.<span class="built_in">at</span>&lt;uchar&gt;(row, col) &lt; low_threshold) &#123;</span><br><span class="line">    dst.<span class="built_in">at</span>&lt;uchar&gt;(row, col) = <span class="number">0</span>;</span><br><span class="line">&#125;<span class="keyword">else</span> <span class="keyword">if</span> (src.<span class="built_in">at</span>&lt;uchar&gt;(row, col) &gt; high_threshold) &#123;</span><br><span class="line">    dst.<span class="built_in">at</span>&lt;uchar&gt;(row, col) = <span class="number">255</span>;</span><br><span class="line">&#125;<span class="keyword">else</span> &#123;</span><br><span class="line">    dst.<span class="built_in">at</span>&lt;uchar&gt;(row, col) = src.<span class="built_in">at</span>&lt;uchar&gt;(row, col);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -434,6 +455,7 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/cv/" rel="tag"># cv</a>
+              <a href="/tags/computer-vision/" rel="tag"># computer vision</a>
           </div>
 
         
