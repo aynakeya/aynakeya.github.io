@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
+  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
+  <link rel="manifest" href="/static/favicon/site.webmanifest">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="Introduction大家好，我是说的道理，今天来点大家想看的东西啊。 问题介绍那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。 12345678910111213141516171819202122232425">
+<meta property="og:type" content="article">
+<meta property="og:title" content="用一个例子来简单介绍保证并发安全的几种方式">
+<meta property="og:url" content="http://www.aynakeya.com/articles/coding/explain-thread-safe-methods-using-example/index.html">
+<meta property="og:site_name" content="Aynakeya&#39;s Blog">
+<meta property="og:description" content="Introduction大家好，我是说的道理，今天来点大家想看的东西啊。 问题介绍那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。 12345678910111213141516171819202122232425">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://www.aynakeya.com/images/coding/explain-thread-safe-methods-using-example/Screenshot_20241018_134544.png">
+<meta property="article:published_time" content="2024-10-18T04:42:03.000Z">
+<meta property="article:modified_time" content="2024-10-18T04:42:03.000Z">
+<meta property="article:author" content="Aynakeya">
+<meta property="article:tag" content="golang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.aynakeya.com/images/coding/explain-thread-safe-methods-using-example/Screenshot_20241018_134544.png">
+
+
+<link rel="canonical" href="http://www.aynakeya.com/articles/coding/explain-thread-safe-methods-using-example/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/explain-thread-safe-methods-using-example/","path":"articles/coding/explain-thread-safe-methods-using-example/","title":"用一个例子来简单介绍保证并发安全的几种方式"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>用一个例子来简单介绍保证并发安全的几种方式 | Aynakeya's Blog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Aynakeya's Blog</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="Search" role="button">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup"><div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close" role="button">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Introduction"><span class="nav-number">1.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E4%BB%8B%E7%BB%8D"><span class="nav-number">2.</span> <span class="nav-text">问题介绍</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%94%81-Locking"><span class="nav-number">4.</span> <span class="nav-text">锁 Locking</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%82%B2%E8%A7%82%E9%94%81"><span class="nav-number">4.1.</span> <span class="nav-text">悲观锁</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E9%94%81"><span class="nav-number">4.2.</span> <span class="nav-text">乐观锁</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1-Transaction"><span class="nav-number">5.</span> <span class="nav-text">事务 (Transaction)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%98%9F%E5%88%97-Queue"><span class="nav-number">6.</span> <span class="nav-text">队列 (Queue)</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Aynakeya"
+      src="/static/intro/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Aynakeya</p>
+  <div class="site-description" itemprop="description">my blog~</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives">
+          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags">
+        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:aynakeya.official@gmail.com" title="E-Mail → mailto:aynakeya.official@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
+      </span>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://www.aynakeya.com/articles/coding/explain-thread-safe-methods-using-example/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/static/intro/images/avatar.jpg">
+      <meta itemprop="name" content="Aynakeya">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Aynakeya's Blog">
+      <meta itemprop="description" content="my blog~">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="用一个例子来简单介绍保证并发安全的几种方式 | Aynakeya's Blog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          用一个例子来简单介绍保证并发安全的几种方式
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">Posted on</span>
+
+      <time title="Created: 2024-10-17 21:42:03" itemprop="dateCreated datePublished" datetime="2024-10-17T21:42:03-07:00">2024-10-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">In</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/coding/" itemprop="url" rel="index"><span itemprop="name">Coding</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>大家好，我是说的道理，今天来点大家想看的东西啊。</p>
+<h1 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h1><p>那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// todo: make it thread safe, now it&#x27;s not, photos might be overwritten</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *srvImpl)</span></span> AddPhotos(userID <span class="type">string</span>, mealCreateAt time.Time, photo [][]<span class="type">byte</span>) <span class="type">error</span> &#123;</span><br><span class="line">    fileIds := <span class="built_in">make</span>([]storage.FileID, <span class="number">0</span>, <span class="built_in">len</span>(photo))</span><br><span class="line">    <span class="keyword">for</span> _, p := <span class="keyword">range</span> photo &#123;</span><br><span class="line">        fileId, err := s.storageApi.StoreAt(<span class="string">&quot;&quot;</span>, <span class="string">&quot;photo&quot;</span>, p, storage.FileMeta&#123;</span><br><span class="line">            Prefix:   <span class="string">&quot;&quot;</span>,</span><br><span class="line">            Filename: <span class="string">&quot;&quot;</span>,</span><br><span class="line">            Length:   <span class="number">0</span>,</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            s.log.ErrorW(<span class="string">&quot;store photo failed&quot;</span>, <span class="string">&quot;err&quot;</span>, err, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">            <span class="keyword">return</span> foodiary.ErrFailToGetMeal</span><br><span class="line">        &#125;</span><br><span class="line">        fileIds = <span class="built_in">append</span>(fileIds, fileId)</span><br><span class="line">    &#125;</span><br><span class="line">    meal, err := s.repo.FindMeal(userID, mealCreateAt)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.log.ErrorW(<span class="string">&quot;find meal failed&quot;</span>, <span class="string">&quot;err&quot;</span>, err, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">        <span class="keyword">return</span> foodiary.ErrMealNotFound</span><br><span class="line">    &#125;</span><br><span class="line">    meal.Photos = <span class="built_in">append</span>(meal.Photos, fileIds...)</span><br><span class="line">    err = s.repo.Upsert(meal)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.log.ErrorW(<span class="string">&quot;upsert meal failed&quot;</span>, <span class="string">&quot;err&quot;</span>, err, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">        <span class="keyword">return</span> foodiary.ErrFailModifyMeal</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h1><p>先不提repo层的设计问题，单纯来看如何解决并发问题。实际上，问题出现在<code>FindMeal</code>和<code>Upsert</code>之间，如果两个线程同时执行这个函数，一个线程往<code>Meal</code>中添加图片A，另一个线程往同一个<code>Meal</code>里添加图片B，那么就很有可能出现只有图片A被添加，或者只有图片B被添加的情况。</p>
+<p><img data-src="/images/coding/explain-thread-safe-methods-using-example/Screenshot_20241018_134544.png"></p>
+<p>所以要解决这个问题，就是要保证一个线程在<code>FindMeal</code>到<code>Upsert</code>这段完成之间，没有其他线程能够修改这个<code>Meal</code>。</p>
+<p>那么要实现这些功能，我们可以从如下几个方向思考：</p>
+<ol>
+<li>锁 (Locking)</li>
+<li>事务 (Transaction)</li>
+<li>队列 (Queue)</li>
+</ol>
+<h1 id="锁-Locking"><a href="#锁-Locking" class="headerlink" title="锁 Locking"></a>锁 Locking</h1><p>锁大致可以分为乐观锁和悲观锁，在这里我们会分别介绍</p>
+<h2 id="悲观锁"><a href="#悲观锁" class="headerlink" title="悲观锁"></a>悲观锁</h2><p>这个就是最常见的锁的概念，假设一定会发生冲突，所以在操作一个资源的时候，停止一切其他线程对这个资源的操作。</p>
+<p>至于这个锁要怎么实现，那就取决与你自己的选择了。比如，如果你的资源需要在好多个服务间或者分布式系统中使用，那么可以使用类似redis的方式来<strong>实现分布式锁</strong>，这种方式可以在分布式环境下有效保证资源的一致性。如果只是单个应用，那么可以直接使用<strong>应用内存锁</strong>，例如使用<code>sync.Mutex</code>，来控制同一时刻只有一个线程能访问资源。</p>
+<p><strong>优缺点：</strong></p>
+<ul>
+<li><strong>优点：</strong>适用于高冲突场景，确保数据的一致性和正确性。任何时候只有一个线程可以操作资源，避免了并发修改导致的数据不一致问题。</li>
+<li><strong>缺点：</strong>会阻塞其他线程的访问，可能会导致性能下降，尤其是在资源锁定时间长的情况下，降低系统的并发性。</li>
+</ul>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">lockKey := fmt.Sprintf(<span class="string">&quot;meal_lock:%s:%d&quot;</span>, userID, mealCreateAt.Unix())</span><br><span class="line">lock, err := redisClient.Lock(lockKey, <span class="number">5</span>*time.Second)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">defer</span> lock.Unlock()</span><br><span class="line"></span><br><span class="line">meal, err := s.repo.FindMeal(userID, mealCreateAt)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> foodiary.ErrMealNotFound</span><br><span class="line">&#125;</span><br><span class="line">meal.Photos = <span class="built_in">append</span>(meal.Photos, fileIds...)</span><br><span class="line">err = s.repo.Upsert(meal)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> foodiary.ErrFailModifyMeal</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="乐观锁"><a href="#乐观锁" class="headerlink" title="乐观锁"></a>乐观锁</h2><p>简单来说就是假设每次拿数据的时候都认为没有其他线程会对同一个资源进行修改，所以不对该操作进行上锁。但是如果要修改资源，则先提交资源修改的请求，再确认这个资源是否被修改过了。如果没有被修改过，那就很好。如果被修改过了，那么就放弃本次操作，或者重新获取资源，并重试本次操作直到成功。</p>
+<p>一般来说，实现乐观锁可以通过添加一个独立的可比较的字段实现，比如版本号、时间戳等。</p>
+<p>比如使用版本号，可以在每次对数据进行更新的时候对版本号+1，在更新的时候判断这条数据是否还是原来的版本号，如果是的就更新，如果不是，就是有另外一个线程修改了这个资源。</p>
+<p><strong>优缺点</strong>：</p>
+<ul>
+<li><strong>优点</strong>：不需要持有锁，性能好，适用于低并发场景。</li>
+<li><strong>缺点</strong>：如果冲突频繁，会导致不断重试，降低性能。</li>
+</ul>
+<p>比如，我们可以通过如下代码实现乐观锁，当出现<code>foodiary.ErrConflict</code>的时候，对该操作进行重试。</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">meal, err := s.repo.FindMeal(userID, mealCreateAt)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> foodiary.ErrMealNotFound</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">originalVersion := meal.Version</span><br><span class="line">meal.Photos = <span class="built_in">append</span>(meal.Photos, newFileIds...)</span><br><span class="line">meal.Version++</span><br><span class="line"></span><br><span class="line">err = s.repo.UpsertWithVersion(meal, originalVersion)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">    <span class="keyword">if</span> err == foodiary.ErrVersionConflict &#123;</span><br><span class="line">        s.log.ErrorW(<span class="string">&quot;conflict detected while updating meal&quot;</span>, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">        <span class="keyword">return</span> foodiary.ErrConflict</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> foodiary.ErrFailModifyMeal</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h1 id="事务-Transaction"><a href="#事务-Transaction" class="headerlink" title="事务 (Transaction)"></a>事务 (Transaction)</h1><p>事务是数据库管理中的概念，通常用来保证一组操作要么全部成功，要么全部失败回滚。事务在保证数据一致性方面非常有用，尤其是在多个操作需要原子性的时候。</p>
+<p>例如，在处理<code>Meal</code>时，如果我们需要同时更新<code>Meal</code>的多个字段（如添加照片和更新描述），使用事务可以确保这些操作要么全部成功，要么全部失败，以保持数据的一致性。</p>
+<p>但是在我们的场景中，事务并不完全适用。因为我们的问题是多个线程在同时尝试修改同一个<code>Meal</code>，而事务的作用是在单次操作中保证原子性，并不能防止多个线程竞争修改同一条数据。因此，单纯使用事务并不能彻底解决并发冲突的问题。</p>
+<h1 id="队列-Queue"><a href="#队列-Queue" class="headerlink" title="队列 (Queue)"></a>队列 (Queue)</h1><p>另一种常见的解决并发修改问题的方法是使用队列。我们可以将每个对<code>Meal</code>的修改请求都放入一个队列中，确保所有的修改操作是按顺序执行的。</p>
+<p>在Go语言中，我们可以使用<code>chan</code>来实现一个简单的队列。例如：</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> mealUpdateTask <span class="keyword">struct</span> &#123;</span><br><span class="line">    userID      <span class="type">string</span></span><br><span class="line">    mealCreateAt time.Time</span><br><span class="line">    photos       [][]<span class="type">byte</span></span><br><span class="line">    errChan      <span class="keyword">chan</span> <span class="type">error</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">tasksChan := <span class="built_in">make</span>(<span class="keyword">chan</span> mealUpdateTask)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *srvImpl)</span></span> processTasks() &#123;</span><br><span class="line">    <span class="keyword">for</span> task := <span class="keyword">range</span> tasksChan &#123;</span><br><span class="line">        err := s.addPhotosInternal(task.userID, task.mealCreateAt, task.photos)</span><br><span class="line">        task.errChan &lt;- err</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *srvImpl)</span></span> AddPhotos(userID <span class="type">string</span>, mealCreateAt time.Time, photos [][]<span class="type">byte</span>) <span class="type">error</span> &#123;</span><br><span class="line">    errChan := <span class="built_in">make</span>(<span class="keyword">chan</span> <span class="type">error</span>)</span><br><span class="line">    tasksChan &lt;- mealUpdateTask&#123;userID, mealCreateAt, photos, errChan&#125;</span><br><span class="line">    <span class="keyword">return</span> &lt;-errChan</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>这种方式通过一个单独的处理线程来串行化所有的对<code>Meal</code>的修改操作，确保不会有并发问题。当然，对于复杂的生产环境，我们可以引入消息队列系统，例如RabbitMQ、Kafka等，用来处理更多的请求和提高可靠性。</p>
+<p><strong>优缺点</strong>：</p>
+<ul>
+<li><strong>优点</strong>：保证操作顺序，避免并发问题。</li>
+<li><strong>缺点</strong>：可能会带来延迟，队列的处理速度可能成为瓶颈。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/golang/" rel="tag"># golang</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/articles/ctf/how-to-emulate-elf-file-from-zero/" rel="prev" title="如何模拟执行一个elf文件">
+                  <i class="fa fa-angle-left"></i> 如何模拟执行一个elf文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2024</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
+  </div>
+  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="Back to top">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
+<script src="/js/third-party/search/local-search.js"></script>
+
+
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
