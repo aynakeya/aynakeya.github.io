@@ -20,12 +20,12 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Introduction大家好，我是说的道理，今天来点大家想看的东西啊。 问题介绍那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。 12345678910111213141516171819202122232425">
+    <meta name="description" content="Introduction大家好，我是说的道理，今天来点大家想看的东西啊。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="用一个例子来简单介绍保证并发安全的几种方式">
 <meta property="og:url" content="http://www.aynakeya.com/articles/coding/explain-thread-safe-methods-using-example/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="Introduction大家好，我是说的道理，今天来点大家想看的东西啊。 问题介绍那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。 12345678910111213141516171819202122232425">
+<meta property="og:description" content="Introduction大家好，我是说的道理，今天来点大家想看的东西啊。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/explain-thread-safe-methods-using-example/Screenshot_20241018_134544.png">
 <meta property="article:published_time" content="2024-10-18T04:42:03.000Z">
@@ -56,7 +56,11 @@
   <noscript>
     <link rel="stylesheet" href="/css/noscript.css">
   </noscript>
-</head>
+<!-- hexo injector head_end start -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
+<!-- hexo injector head_end end --></head>
 
 <body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
   <div class="headband"></div>
@@ -158,7 +162,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">118</span>
+          <span class="site-state-item-count">119</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -258,6 +262,8 @@
     
     
     <div class="post-body" itemprop="articleBody"><h1 id="Introduction"><a href="#Introduction" class="headerlink" title="Introduction"></a>Introduction</h1><p>大家好，我是说的道理，今天来点大家想看的东西啊。</p>
+<span id="more"></span>
+
 <h1 id="问题介绍"><a href="#问题介绍" class="headerlink" title="问题介绍"></a>问题介绍</h1><p>那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。</p>
 <figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// todo: make it thread safe, now it&#x27;s not, photos might be overwritten</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(s *srvImpl)</span></span> AddPhotos(userID <span class="type">string</span>, mealCreateAt time.Time, photo [][]<span class="type">byte</span>) <span class="type">error</span> &#123;</span><br><span class="line">    fileIds := <span class="built_in">make</span>([]storage.FileID, <span class="number">0</span>, <span class="built_in">len</span>(photo))</span><br><span class="line">    <span class="keyword">for</span> _, p := <span class="keyword">range</span> photo &#123;</span><br><span class="line">        fileId, err := s.storageApi.StoreAt(<span class="string">&quot;&quot;</span>, <span class="string">&quot;photo&quot;</span>, p, storage.FileMeta&#123;</span><br><span class="line">            Prefix:   <span class="string">&quot;&quot;</span>,</span><br><span class="line">            Filename: <span class="string">&quot;&quot;</span>,</span><br><span class="line">            Length:   <span class="number">0</span>,</span><br><span class="line">        &#125;)</span><br><span class="line">        <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">            s.log.ErrorW(<span class="string">&quot;store photo failed&quot;</span>, <span class="string">&quot;err&quot;</span>, err, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">            <span class="keyword">return</span> foodiary.ErrFailToGetMeal</span><br><span class="line">        &#125;</span><br><span class="line">        fileIds = <span class="built_in">append</span>(fileIds, fileId)</span><br><span class="line">    &#125;</span><br><span class="line">    meal, err := s.repo.FindMeal(userID, mealCreateAt)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.log.ErrorW(<span class="string">&quot;find meal failed&quot;</span>, <span class="string">&quot;err&quot;</span>, err, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">        <span class="keyword">return</span> foodiary.ErrMealNotFound</span><br><span class="line">    &#125;</span><br><span class="line">    meal.Photos = <span class="built_in">append</span>(meal.Photos, fileIds...)</span><br><span class="line">    err = s.repo.Upsert(meal)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        s.log.ErrorW(<span class="string">&quot;upsert meal failed&quot;</span>, <span class="string">&quot;err&quot;</span>, err, <span class="string">&quot;userID&quot;</span>, userID, <span class="string">&quot;createAt&quot;</span>, mealCreateAt)</span><br><span class="line">        <span class="keyword">return</span> foodiary.ErrFailModifyMeal</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
@@ -325,6 +331,9 @@
                 </a>
             </div>
             <div class="post-nav-item">
+                <a href="/articles/coding/computer-vision-basic-filter/" rel="next" title="计算机视觉基础: Filtering (滤波)">
+                  计算机视觉基础: Filtering (滤波) <i class="fa fa-angle-right"></i>
+                </a>
             </div>
           </div>
     </footer>
