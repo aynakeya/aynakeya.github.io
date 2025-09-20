@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="引言在最近的RESTful API设计过程中，我遇到了一个问题。当业务逻辑需要返回一个错误代码时，究竟应该遵循HTTP的原则返回对应的状态码，如200, 403, 500等，还是统一返回200，而将详细的错误信息写入响应体内？ 这个问题涉及到了RESTful API是否应该遵循HTTP状态码的原则，让我们一起来探讨一下。">
 <meta property="og:type" content="article">
@@ -28,8 +28,8 @@
 <meta property="og:description" content="引言在最近的RESTful API设计过程中，我遇到了一个问题。当业务逻辑需要返回一个错误代码时，究竟应该遵循HTTP的原则返回对应的状态码，如200, 403, 500等，还是统一返回200，而将详细的错误信息写入响应体内？ 这个问题涉及到了RESTful API是否应该遵循HTTP状态码的原则，让我们一起来探讨一下。">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://www.aynakeya.com/images/coding/my-approach-for-using-status-code-in-restful-api/Prag_REST_errors_1.png">
-<meta property="article:published_time" content="2023-08-09T19:03:24.000Z">
-<meta property="article:modified_time" content="2023-08-09T19:03:24.000Z">
+<meta property="article:published_time" content="2023-08-09T04:03:24.000Z">
+<meta property="article:modified_time" content="2023-08-09T04:03:24.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="RESTful">
 <meta property="article:tag" content="http">
@@ -41,7 +41,6 @@
 <link rel="canonical" href="http://www.aynakeya.com/articles/coding/my-approach-for-using-status-code-in-restful-api/">
 
 
-
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/coding/my-approach-for-using-status-code-in-restful-api/","path":"articles/coding/my-approach-for-using-status-code-in-restful-api/","title":"在RESTful API中如何选择合适的HTTP状态码"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
@@ -50,6 +49,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -109,25 +129,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -164,7 +184,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -175,7 +195,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -242,7 +262,7 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2023-08-09 12:03:24" itemprop="dateCreated datePublished" datetime="2023-08-09T12:03:24-07:00">2023-08-09</time>
+      <time title="Created: 2023-08-09 12:03:24" itemprop="dateCreated datePublished" datetime="2023-08-09T12:03:24+08:00">2023-08-09</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -276,7 +296,11 @@
 </ol>
 <p>这两种方案都有一定的道理。</p>
 <p>比如在客户端调用时，大多数HTTP客户端都是按照HTTP的协议来设计的，例如axios。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">    let result = await axios.get(&quot;/api&quot;);</span><br><span class="line">&#125; catch (e)&#123;</span><br><span class="line">    // do error hanlding</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">try &#123;
+    let result &#x3D; await axios.get(&quot;&#x2F;api&quot;);
+&#125; catch (e)&#123;
+    &#x2F;&#x2F; do error hanlding
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>使用状态码的方式返回可以让客户端快速判断出请求的状态 <em>[6]</em>， 从而做出相应的反应。</p>
 <p>当然，反对者可能会认为这种方式过于繁琐，如果直接使用200作为所有请求的返回值，那么就不需要考虑其他请求状态了，直接依据body里的code作为判断依据岂不是更为简单？</p>
@@ -290,7 +314,23 @@
 <p>由此，我直觉地将所有错误分为两个场景：第一个场景是在传递层发生的错误，这些错误直接与HTTP有关，例如参数验证、路径参数、URL、速率限制等。第二个场景是服务层发生的错误，包括仓储层错误和其他错误。</p>
 <p>在将错误分为这两层之后，解决方案自然而然地浮现出来。如果错误发生在传递层，我将使用HTTP状态码进行响应。否则，我将使用200状态码，并在响应体内附带错误信息。</p>
 <p>例子:</p>
-<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(g *ginApp)</span></span> handleCreatePaste(c *gin.Context) &#123;</span><br><span class="line">    <span class="keyword">var</span> param pasteReq = pasteReq&#123;Expires: <span class="number">3600</span>&#125;</span><br><span class="line">    <span class="keyword">if</span> err := c.ShouldBindJSON(&amp;param); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        c.JSON(http.StatusBadRequest, model.NewErrorCodeResponse(</span><br><span class="line">            errcode.ParameterError.WithDetail(err)))</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span> param.Title == <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">        param.Title = fmt.Sprintf(<span class="string">&quot;%s %s&quot;</span>, time.Now().Format(<span class="string">&quot;2006-01-02 15:04:05&quot;</span>), c.ClientIP())</span><br><span class="line">    &#125;</span><br><span class="line">    paste, err := g.pasteSrv.CreatePaste(param.ContentType, param.Title, param.Content, param.Password, c.ClientIP(), param.Expires)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        c.JSON(http.StatusOK, model.TryErrorCodeResponse(err))</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    &#125;</span><br><span class="line">    c.JSON(http.StatusOK, model.NewDataResponse(paste))</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go"><span class="token keyword">func</span> <span class="token punctuation">(</span>g <span class="token operator">*</span>ginApp<span class="token punctuation">)</span> <span class="token function">handleCreatePaste</span><span class="token punctuation">(</span>c <span class="token operator">*</span>gin<span class="token punctuation">.</span>Context<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    <span class="token keyword">var</span> param pasteReq <span class="token operator">=</span> pasteReq<span class="token punctuation">&#123;</span>Expires<span class="token punctuation">:</span> <span class="token number">3600</span><span class="token punctuation">&#125;</span>
+    <span class="token keyword">if</span> err <span class="token operator">:=</span> c<span class="token punctuation">.</span><span class="token function">ShouldBindJSON</span><span class="token punctuation">(</span><span class="token operator">&amp;</span>param<span class="token punctuation">)</span><span class="token punctuation">;</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+        c<span class="token punctuation">.</span><span class="token function">JSON</span><span class="token punctuation">(</span>http<span class="token punctuation">.</span>StatusBadRequest<span class="token punctuation">,</span> model<span class="token punctuation">.</span><span class="token function">NewErrorCodeResponse</span><span class="token punctuation">(</span>
+            errcode<span class="token punctuation">.</span>ParameterError<span class="token punctuation">.</span><span class="token function">WithDetail</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">&#125;</span>
+    <span class="token keyword">if</span> param<span class="token punctuation">.</span>Title <span class="token operator">==</span> <span class="token string">""</span> <span class="token punctuation">&#123;</span>
+        param<span class="token punctuation">.</span>Title <span class="token operator">=</span> fmt<span class="token punctuation">.</span><span class="token function">Sprintf</span><span class="token punctuation">(</span><span class="token string">"%s %s"</span><span class="token punctuation">,</span> time<span class="token punctuation">.</span><span class="token function">Now</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">Format</span><span class="token punctuation">(</span><span class="token string">"2006-01-02 15:04:05"</span><span class="token punctuation">)</span><span class="token punctuation">,</span> c<span class="token punctuation">.</span><span class="token function">ClientIP</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+    <span class="token punctuation">&#125;</span>
+    paste<span class="token punctuation">,</span> err <span class="token operator">:=</span> g<span class="token punctuation">.</span>pasteSrv<span class="token punctuation">.</span><span class="token function">CreatePaste</span><span class="token punctuation">(</span>param<span class="token punctuation">.</span>ContentType<span class="token punctuation">,</span> param<span class="token punctuation">.</span>Title<span class="token punctuation">,</span> param<span class="token punctuation">.</span>Content<span class="token punctuation">,</span> param<span class="token punctuation">.</span>Password<span class="token punctuation">,</span> c<span class="token punctuation">.</span><span class="token function">ClientIP</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">,</span> param<span class="token punctuation">.</span>Expires<span class="token punctuation">)</span>
+    <span class="token keyword">if</span> err <span class="token operator">!=</span> <span class="token boolean">nil</span> <span class="token punctuation">&#123;</span>
+        c<span class="token punctuation">.</span><span class="token function">JSON</span><span class="token punctuation">(</span>http<span class="token punctuation">.</span>StatusOK<span class="token punctuation">,</span> model<span class="token punctuation">.</span><span class="token function">TryErrorCodeResponse</span><span class="token punctuation">(</span>err<span class="token punctuation">)</span><span class="token punctuation">)</span>
+        <span class="token keyword">return</span>
+    <span class="token punctuation">&#125;</span>
+    c<span class="token punctuation">.</span><span class="token function">JSON</span><span class="token punctuation">(</span>http<span class="token punctuation">.</span>StatusOK<span class="token punctuation">,</span> model<span class="token punctuation">.</span><span class="token function">NewDataResponse</span><span class="token punctuation">(</span>paste<span class="token punctuation">)</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>我的这种方案的优势在于，如果客户端的请求方式正确，那么它只会收到200的响应，至于具体结果如何，则需要自己判断。如果请求方式错误，那么它会得到相应的HTTP状态码。</p>
 <p>这样做实际上是对错误进行了分类和分别处理。只要客户端能保证请求方式正确，就不需要考虑状态码的问题。</p>
@@ -348,7 +388,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -375,28 +415,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

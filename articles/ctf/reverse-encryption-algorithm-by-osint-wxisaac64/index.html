@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="前言书接上回 微信视频号视频加密逆向。在之前的一篇文章中，我们留下了一个问题，就是WxIsacc64这个加密算法到底是怎么个回事捏。 虽然名字已经很清楚了，必然是ISAAC64算法，但是他具体是怎么生成的捏，今天我们就来一起逆向吧。">
 <meta property="og:type" content="article">
@@ -35,8 +35,8 @@
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-encryption-algorithm-by-osint-wxisaac64/Screenshot_20240130_020213.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-encryption-algorithm-by-osint-wxisaac64/Screenshot_20240130_020649.png">
 <meta property="og:image" content="http://www.aynakeya.com/images/reverse-encryption-algorithm-by-osint-wxisaac64/image-20240130021256004.png">
-<meta property="article:published_time" content="2024-01-30T08:30:40.000Z">
-<meta property="article:modified_time" content="2024-01-30T08:30:40.000Z">
+<meta property="article:published_time" content="2024-01-29T16:30:40.000Z">
+<meta property="article:modified_time" content="2024-01-29T16:30:40.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="reverse">
 <meta name="twitter:card" content="summary">
@@ -44,7 +44,6 @@
 
 
 <link rel="canonical" href="http://www.aynakeya.com/articles/ctf/reverse-encryption-algorithm-by-osint-wxisaac64/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/ctf/reverse-encryption-algorithm-by-osint-wxisaac64/","path":"articles/ctf/reverse-encryption-algorithm-by-osint-wxisaac64/","title":"用OSINT的方法逆向加密算法 - WxIsaac64"}</script>
@@ -55,6 +54,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -114,25 +134,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -169,7 +189,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -180,7 +200,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -247,7 +267,7 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2024-01-30 00:30:40" itemprop="dateCreated datePublished" datetime="2024-01-30T00:30:40-08:00">2024-01-30</time>
+      <time title="Created: 2024-01-30 00:30:40" itemprop="dateCreated datePublished" datetime="2024-01-30T00:30:40+08:00">2024-01-30</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -293,13 +313,26 @@
 <p>他把转换成的数字的地址传给了<code>$687</code>，很明显，这就是在传我们的seed啊！</p>
 <p><img data-src="/images/reverse-encryption-algorithm-by-osint-wxisaac64/Screenshot_20240130_014211.png" alt="Screenshot_20240130_014211"></p>
 <p>我们把<code>$687</code>函数单独提出来运行看看</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="title class_">HEAP32</span> = <span class="keyword">new</span> <span class="title class_">Int32Array</span>(<span class="keyword">new</span> <span class="title class_">ArrayBuffer</span>(<span class="number">1</span> &lt;&lt; <span class="number">24</span>));</span><br><span class="line"><span class="comment">// 18446744073709551615 = 0xffffffffffffffff</span></span><br><span class="line"><span class="title class_">HEAP32</span>[<span class="number">0</span>] = -<span class="number">1</span>;</span><br><span class="line"><span class="title class_">HEAP32</span>[<span class="number">1</span>] = -<span class="number">1</span>;</span><br><span class="line">$687(<span class="number">0</span>,<span class="number">1</span>)</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">let</span> <span class="token constant">HEAP32</span> <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Int32Array</span><span class="token punctuation">(</span><span class="token keyword">new</span> <span class="token class-name">ArrayBuffer</span><span class="token punctuation">(</span><span class="token number">1</span> <span class="token operator">&lt;&lt;</span> <span class="token number">24</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token comment">// 18446744073709551615 = 0xffffffffffffffff</span>
+<span class="token constant">HEAP32</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token constant">HEAP32</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token function">$687</span><span class="token punctuation">(</span><span class="token number">0</span><span class="token punctuation">,</span><span class="token number">1</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>诶，0x7c &#x3D; 124, 0x38 &#x3D; 56, 0xf9 &#x3D; 253。这不是我们的的解密序列嘛！</p>
 <p>看起来我们找到关键函数了，就是<code>$687</code></p>
 <p><img data-src="/images/reverse-encryption-algorithm-by-osint-wxisaac64/image-20240130015427371.png" alt="image-20240130015427371"></p>
 <h2 id="重生之我是OSINT大神"><a href="#重生之我是OSINT大神" class="headerlink" title="重生之我是OSINT大神"></a>重生之我是OSINT大神</h2><p><code>$687</code>中有一些非常有有趣的值</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">$687</span>(<span class="params">$0_1, $1_1</span>) &#123;</span><br><span class="line">  $0_1 = $0_1 | <span class="number">0</span>;</span><br><span class="line">  $1_1 = $1_1 | <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">var</span> i64toi32_i32$1 = <span class="number">0</span>,<span class="comment">// ........  ignored;</span></span><br><span class="line">  <span class="comment">// ......</span></span><br><span class="line">  i64toi32_i32$0 = <span class="number">1685866103</span>;</span><br><span class="line">  $177_1 = -<span class="number">1568126084</span>;</span><br><span class="line">  $177$hi = i64toi32_i32$0;</span><br><span class="line">  i64toi32_i32$0 = -<span class="number">1174883550</span>;</span><br><span class="line">  <span class="comment">//...  ignored</span></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-javascript" data-language="javascript"><code class="language-javascript"><span class="token keyword">function</span> <span class="token function">$687</span><span class="token punctuation">(</span><span class="token parameter">$0_1<span class="token punctuation">,</span> $1_1</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+  $0_1 <span class="token operator">=</span> $0_1 <span class="token operator">|</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  $1_1 <span class="token operator">=</span> $1_1 <span class="token operator">|</span> <span class="token number">0</span><span class="token punctuation">;</span>
+  <span class="token keyword">var</span> i64toi32_i32$1 <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">,</span><span class="token comment">// ........  ignored;</span>
+  <span class="token comment">// ......</span>
+  i64toi32_i32$0 <span class="token operator">=</span> <span class="token number">1685866103</span><span class="token punctuation">;</span>
+  $177_1 <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1568126084</span><span class="token punctuation">;</span>
+  $177$hi <span class="token operator">=</span> i64toi32_i32$0<span class="token punctuation">;</span>
+  i64toi32_i32$0 <span class="token operator">=</span> <span class="token operator">-</span><span class="token number">1174883550</span><span class="token punctuation">;</span>
+  <span class="token comment">//...  ignored</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>比如通过<code>1685866103</code>，我们可以知道stack上存在一连串非常有特点的值。我的直觉告诉我，这些值很有可能和加密算法有关。</p>
 <p>比如这个 <code>0x647c4677a2884b7c</code></p>
@@ -363,7 +396,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -390,28 +423,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

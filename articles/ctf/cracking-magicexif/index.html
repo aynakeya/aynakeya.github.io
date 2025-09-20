@@ -15,10 +15,10 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="从0开始的VB程序破解上周，为了整点乐子，我打算寻找一个简单的软件来进行破解。正好某群友有一个需要破解的应用，于是这个应用就不幸的成为了我的目标。 开始之前先来介绍一下这个程序，MagicEXIF一个非常强大的图片元数据编辑器。 分为免费版，专业版，旗舰版。  安装完程序后，先来看看程序的基本信息">
 <meta property="og:type" content="article">
@@ -41,8 +41,8 @@
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/cracking-magicexif/2022-11-26_225329.jpg">
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/cracking-magicexif/2022-11-26_225734.jpg">
 <meta property="og:image" content="http://www.aynakeya.com/images/ctf/cracking-magicexif/2022-11-26_222539.jpg">
-<meta property="article:published_time" content="2022-11-26T09:31:36.000Z">
-<meta property="article:modified_time" content="2022-11-26T09:31:36.000Z">
+<meta property="article:published_time" content="2022-11-25T17:31:36.000Z">
+<meta property="article:modified_time" content="2022-11-25T17:31:36.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta property="article:tag" content="crack">
 <meta property="article:tag" content="reverse">
@@ -54,7 +54,6 @@
 <link rel="canonical" href="http://www.aynakeya.com/articles/ctf/cracking-magicexif/">
 
 
-
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/articles/ctf/cracking-magicexif/","path":"articles/ctf/cracking-magicexif/","title":"MagicEXIF破解思路之VB程序破解"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
@@ -63,6 +62,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -122,25 +142,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -177,7 +197,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -188,7 +208,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -255,7 +275,7 @@
       </span>
       <span class="post-meta-item-text">Posted on</span>
 
-      <time title="Created: 2022-11-26 01:31:36" itemprop="dateCreated datePublished" datetime="2022-11-26T01:31:36-08:00">2022-11-26</time>
+      <time title="Created: 2022-11-26 01:31:36" itemprop="dateCreated datePublished" datetime="2022-11-26T01:31:36+08:00">2022-11-26</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -298,7 +318,9 @@
 <p>继续看激活的过程，具体代码位于<code>cmdActivate_click</code>中，可以发现一旦激活成功后，软件会将激活信息<strong>明文</strong>储存在<code>reg_info.cfg</code>文件里，这个文件包含用户名，注册码，以及注册模式。注册模式这个之后会说。</p>
 <p><img data-src="/images/ctf/cracking-magicexif/2022-11-26_154638.jpg"></p>
 <p>观察软件对全局变量的修改与读取，我们同样可以知道<code>0x68002c</code>储存了软件的版本信息（即未注册，专业，旗舰）。 在BN里查找code reference之后，我们也可以推断出每个版本对应的数值。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0x87 = 旗舰版</span><br><span class="line">0x63 = 专业版</span><br><span class="line">0x1 = 免费版</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">0x87 &#x3D; 旗舰版
+0x63 &#x3D; 专业版
+0x1 &#x3D; 免费版<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
 <p><img data-src="/images/ctf/cracking-magicexif/2022-11-26_155237.jpg"></p>
 <p>激活完成后，程序会跳出一个窗口让用户重启，在这里可以合理推断验证注册码的代码会在程序启动的时候运行。</p>
@@ -311,13 +333,22 @@
 <p><img data-src="/images/ctf/cracking-magicexif/2022-11-26_215613.jpg"> </p>
 <p>这两个验证函数都会返回一个值，这个值会赋值给<code>0x68002c</code>也就是软件版本。</p>
 <p>同时，这两个函数也会设置<code>0x680030</code>的值。 查看这个的值的cross reference，我们可以知道这个值代表了授权模式。 </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">0 永久授权</span><br><span class="line">1 企业永久授权</span><br><span class="line">2 个人授权（时间有限）</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">0 永久授权
+1 企业永久授权
+2 个人授权（时间有限）<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
 
 <p><img data-src="/images/ctf/cracking-magicexif/2022-11-26_221412.jpg"> </p>
 <p>这也是为什么在注册码验证的那部分里，如果这个值是2(也就是不是永久验证)，他会去检查到期时间来确保验证码没有过期。</p>
 <h1 id="破解"><a href="#破解" class="headerlink" title="破解"></a>破解</h1><p>了解了程序具体的具体验证思路，那么就可以进行破解了。</p>
 <p>破解的思路比较粗暴，直接给那两个验证函数(<code>0x56e360</code>,<code>0x56e9b0</code>)打补丁，让那两个返回我们要的版本号，设置授权模式为我们想要的模式即可</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">; 设置为旗舰版（实际上没用这个代码没用</span><br><span class="line">mov word [0x68002c], 0x87 </span><br><span class="line">; 设置为企业永久激活</span><br><span class="line">mov word [0x680030], 1</span><br><span class="line">; 设置返回值为旗舰版</span><br><span class="line">xor eax,eax</span><br><span class="line">mov eax, 0x87</span><br><span class="line">ret</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-asm" data-language="asm"><code class="language-asm">; 设置为旗舰版（实际上没用这个代码没用
+mov word [0x68002c], 0x87 
+; 设置为企业永久激活
+mov word [0x680030], 1
+; 设置返回值为旗舰版
+xor eax,eax
+mov eax, 0x87
+ret<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p><img data-src="/images/ctf/cracking-magicexif/2022-11-26_224917.jpg"> </p>
 <p>然后在程序目录下新建注册信息 <code>reg_info.cfg</code></p>
@@ -373,7 +404,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -400,28 +431,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

