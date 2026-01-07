@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
 
   <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
@@ -18,7 +19,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
 
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.25.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
+<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
 
     <meta name="description" content="前言本文由 @Rorical 的文章《优雅的在哔哩哔哩评论区发送链接》启发，目的在于学习正则匹配的基本技巧。 本文将用介绍简单的正则匹配，并通过站内链接的正则匹配作为例子进行讲解。">
 <meta property="og:type" content="article">
@@ -127,7 +128,7 @@
 
 
 <nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-js-projects"><a href="/my-js-project" rel="section"><i class="fas fa-folder fa-fw"></i>Js-projects</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-pages"><a href="/pages" rel="section"><i class="fas fa-folder fa-fw"></i>Pages</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
       <li class="menu-item menu-item-search">
         <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
         </a>
@@ -377,13 +378,13 @@ $ - 字符串必须由该正则匹配结束
 <p><img data-src="https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/e7bddac56200eb3ca42ccb5bd83ee02a0f0b45e2.png" alt="acg.tv bypass 1"></p>
 <p>可能的解决方式: <code>^((http(s)?:\/\/)|(\/\/))?(acg.tv)(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
 <hr>
-<p><code>^(http:)?(https:)?(\/\/)?(([a-zA-Z0-9_-])+(\.)?)&#123;0,2&#125;(\.biligame.com)+(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
+<p><code>^(http:)?(https:)?(\/\/)?(([a-zA-Z0-9_-])+(\.)?){0,2}(\.biligame.com)+(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
 <p>重复的不再说明了</p>
 <pre>
 {n,m} -  m 和 n 均为非负整数，其中n <= m。最少匹配 n 次且最多匹配 m 次。
 </pre>
 
-<p><code>(([a-zA-Z0-9_-])+(\.)?)&#123;0,2&#125;</code> 代表 (匹配任意字符最少一次+0个或者1个点)，并且该子表达式最多匹配两次最少不匹配。</p>
+<p><code>(([a-zA-Z0-9_-])+(\.)?){0,2}</code> 代表 (匹配任意字符最少一次+0个或者1个点)，并且该子表达式最多匹配两次最少不匹配。</p>
 <p>比如 a.a. , ab.a , a. 等可以都匹配。但是 a.a.a.就不行了。说白了就是想要匹配子域名，且最多匹配到3级子域名。</p>
 <p>该正则的本意是匹配biligame.com旗下的网站已经其2&#x2F;3级子域名。</p>
 <p>例如 <a target="_blank" rel="noopener" href="https://www.biligame.com/detail/?id=101772">https://www.biligame.com/detail/?id=101772</a> 。</p>
@@ -394,12 +395,12 @@ $ - 字符串必须由该正则匹配结束
 <p>还有更奇妙的是</p>
 <p>biligame.com 居然是非法链接。</p>
 <p><img data-src="https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/1e69aa374905b67ab43a1778eefe131f47351b97.png" alt="我人傻了"></p>
-<p>可能的解决方式: <code>^((http(s)?:\/\/)|(\/\/))?([a-zA-Z0-9_-]+\.)&#123;0,2&#125;(biligame.com)(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
+<p>可能的解决方式: <code>^((http(s)?:\/\/)|(\/\/))?([a-zA-Z0-9_-]+\.){0,2}(biligame.com)(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
 <hr>
-<p><code>^(http:)?(https:)?(\/\/)?((([a-zA-Z0-9_-])+(\.)?)&#123;1,2&#125;\.)?(bilibili.com)+(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
+<p><code>^(http:)?(https:)?(\/\/)?((([a-zA-Z0-9_-])+(\.)?){1,2}\.)?(bilibili.com)+(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
 <p>这个没啥新的好说了，基本和上一个一致</p>
 <p><img data-src="https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/1a8f5c6d9b3e397a0ce1d28dbc17ea24f25301e0.png" alt="bilibili.com bypass 1"></p>
-<p>可能的解法: <code>^((http(s)?:\/\/)|(\/\/))?([a-zA-Z0-9_-]+\.)&#123;0,2&#125;(bilibili.com)(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
+<p>可能的解法: <code>^((http(s)?:\/\/)|(\/\/))?([a-zA-Z0-9_-]+\.){0,2}(bilibili.com)(:\d+)?(\/((\.)?(\?)?=?&amp;?%?[#!a-zA-Z0-9_-](\?)?)*)*$</code></p>
 <hr>
 <h3 id="Part2-评论区中站内链接的正则匹配"><a href="#Part2-评论区中站内链接的正则匹配" class="headerlink" title="Part2-评论区中站内链接的正则匹配"></a>Part2-评论区中站内链接的正则匹配</h3><p>详情参照<a target="_blank" rel="noopener" href="https://blog.boxpaper.club/">@Rorical</a> 的文章<a target="_blank" rel="noopener" href="https://blog.boxpaper.club/archives/72/">《优雅的在哔哩哔哩评论区发送链接》</a></p>
 <p>评论区有个功能，就是自动把b站的官方链接直接变成超链接(蓝链)，这样就可以直接点链接跳转了。</p>
@@ -423,7 +424,7 @@ $ - 字符串必须由该正则匹配结束
 <p>包括<code>([a-z0-9A-Z]+.)?</code> 和 <code>(bilibili.(com|tv|cn)|biligame.(com|cn)|(bilibiliyoo|im9).com|biliapi.net|b23.tv|sugs.suning.com|kaola.com)</code>在内的所有.都没有转义</p>
 <p>就拿第一个来说</p>
 <p><code>([a-z0-9A-Z]+.)?</code> 匹配一串字符+一个 . ，最多一次。</p>
-<p>同时，因为 . 代表任意字符, 所以该子表达式就几乎等同于 <code>([a-z0-9A-Z]&#123;1,&#125;)?</code></p>
+<p>同时，因为 . 代表任意字符, 所以该子表达式就几乎等同于 <code>([a-z0-9A-Z]{1,})?</code></p>
 <p>也就是说，要么匹配两个以上的任意字符，要么不匹配。</p>
 <p>但是该子表达式的本意匹配一个二级域名或者不匹配二级域名， .的不转义导致该表达式失去效果。</p>
 <p><img data-src="https://images.weserv.nl/?url=https://i0.hdslb.com/bfs/article/48961f4937f3610fafdc154cf75004b9a3c8f7c0.png" alt="commet bypass 2"></p>
@@ -530,7 +531,7 @@ https://www.bsfdvbsbilibili.com
 
   <div class="copyright">
     &copy; 
-    <span itemprop="copyrightYear">2025</span>
+    <span itemprop="copyrightYear">2026</span>
     <span class="with-love">
       <i class="fa fa-heart"></i>
     </span>
