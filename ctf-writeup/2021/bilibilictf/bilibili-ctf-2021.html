@@ -191,7 +191,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -202,7 +202,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -261,7 +261,7 @@
 <p>但是不管怎么样，我们来写一点可爱的writeup吧</p>
 <span id="more"></span>
 
-<h1 id="0x1-AES"><a href="#0x1-AES" class="headerlink" title="0x1 AES"></a>0x1 AES</h1><p><img data-src="/./images/2021-10-28_224747.jpg" alt="2021-10-28_224747.jpg"></p>
+<h1 id="0x1-AES"><a href="#0x1-AES" class="headerlink" title="0x1 AES"></a>0x1 AES</h1><p><img data-src="/images/2021-10-28_224747.jpg" alt="2021-10-28_224747.jpg"></p>
 <p>猜一下，给了一个类似密码的东西，又给了一个类似加密后文本的字符串，那么就嗯破解就完事了</p>
 <pre class="line-numbers language-none"><code class="language-none">a &#x3D; &quot;e9ca6f21583a1533d3ff4fd47ddc463c6a1c7d2cf084d364&quot;
 b &#x3D; &quot;0408abca7deabb96a58f50471171b60e02b1a8dbd32db156&quot;
@@ -276,9 +276,9 @@ plain_text &#x3D; cryptos.decrypt(bytes.fromhex(a+b))
 print(plain_text)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>flag: a1cd5f84-27966146-3776f301-64031bb9</p>
-<h1 id="0x2-Forensic"><a href="#0x2-Forensic" class="headerlink" title="0x2 Forensic"></a>0x2 Forensic</h1><p><img data-src="/./images/2021-10-28_225007.jpg" alt="2021-10-28_225007.jpg"></p>
+<h1 id="0x2-Forensic"><a href="#0x2-Forensic" class="headerlink" title="0x2 Forensic"></a>0x2 Forensic</h1><p><img data-src="/images/2021-10-28_225007.jpg" alt="2021-10-28_225007.jpg"></p>
 <p>提示给的很明白了，没有含金量，直接在webpack里一翻就翻到了</p>
-<p><img data-src="/./images/2021-10-28_225125.jpg" alt="2021-10-28_225125.jpg"></p>
+<p><img data-src="/images/2021-10-28_225125.jpg" alt="2021-10-28_225125.jpg"></p>
 <p>flag: 36c7a7b4-cda04af0-8db0368d-b5166480</p>
 <h1 id="0x3-php-web"><a href="#0x3-php-web" class="headerlink" title="0x3 php web"></a>0x3 php web</h1><p>题目给了一段php的代码</p>
 <pre class="line-numbers language-none"><code class="language-none">&lt;?php
@@ -319,8 +319,8 @@ print(a.text)<span aria-hidden="true" class="line-numbers-rows"><span></span><sp
 <p>flag: 3d5dd579-0678ef93-18b70cae-cabc5d51</p>
 <h1 id="0x5-安卓逆向"><a href="#0x5-安卓逆向" class="headerlink" title="0x5 安卓逆向"></a>0x5 安卓逆向</h1><p>先用dex2jar 把apk转成jar文件</p>
 <p>然后用jd-gui打开，在 MainActivity里找到账号密码的加密方式</p>
-<p><img data-src="/./images/2021-10-28_230240.jpg" alt="2021-10-28_230240.jpg"></p>
-<p><img data-src="/./images/2021-10-28_230317.jpg" alt="2021-10-28_230317.jpg"></p>
+<p><img data-src="/images/2021-10-28_230240.jpg" alt="2021-10-28_230240.jpg"></p>
+<p><img data-src="/images/2021-10-28_230317.jpg" alt="2021-10-28_230317.jpg"></p>
 <p>加密方式a为做异或，b为base64。反向解密一下就完事了。</p>
 <pre class="line-numbers language-none"><code class="language-none"># dex2jar get jar file
 # jd gui decompile
@@ -360,7 +360,7 @@ print(&quot;ro.build.version.release&quot;,(57).to_bytes(0x8,&quot;little&quot;)
 <li>有读写权限</li>
 </ol>
 <p>那么这个flag就会写到&#x2F;data&#x2F;2233文件里</p>
-<p><img data-src="/./images/2021-10-28_230949.jpg" alt="2021-10-28_230949.jpg"></p>
+<p><img data-src="/images/2021-10-28_230949.jpg" alt="2021-10-28_230949.jpg"></p>
 <p>所以解题方法就是找一个安卓9, x86的系统，然后运行就完事了。</p>
 <p>具体过程如下</p>
 <pre class="line-numbers language-none"><code class="language-none"># C:\Users\aynakeya&gt;adb shell su 0 setenforce 0

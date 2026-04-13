@@ -191,7 +191,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -202,7 +202,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -257,13 +257,13 @@
       <div class="post-body">
           <p><strong>Main concept: how to decompile pyinstaller program</strong></p>
 <p>First, this is a typical pyinstaller program.</p>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled.png" alt="Untitled"></p>
 <p>So first we need find the source code.</p>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled1.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled1.png" alt="Untitled"></p>
 <span id="more"></span>
 
 <p>The source code is in <code>pypuzzle.pyc</code> and the python version is python3.7 according to <code>python37.dll</code> </p>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled2.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled2.png" alt="Untitled"></p>
 <p>Due to bytecode header, using decompyle3 will show error.</p>
 <p>So, in order to decompile, we need to bytecode header first.</p>
 <ol>
@@ -271,12 +271,12 @@
 <li>open <a target="_blank" rel="noopener" href="http://pypuzzle.py/">PyPuzzle.py</a> suing hex editor</li>
 </ol>
 <p>not that, the file in base_library contains bytecode header. which is <code>42 0D 0D 0A 01 00 00 00</code> for python 3.7</p>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled3.png" alt="Untitled"></p>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled4.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled3.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled4.png" alt="Untitled"></p>
 <ol>
 <li>we need add <code>42 0D 0D 0A 01 00 00 00</code> to the <a target="_blank" rel="noopener" href="http://pypuzzle.py/">PyPuzzle.py</a> file and remove extra 0s</li>
 </ol>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled5.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled5.png" alt="Untitled"></p>
 <ol>
 <li>save <a target="_blank" rel="noopener" href="http://pypuzzle.py/">PyPuzzle.py</a> and decompile again.</li>
 </ol>
@@ -297,7 +297,7 @@
 <span class="token comment">#....ignoreed</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <p>use <code>ciphey</code> to get the flag. FU trendmicro.</p>
-<p><img data-src="/./images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled6.png" alt="Untitled"></p>
+<p><img data-src="/images/trendmirco-2021-rev-1-100-PyPuzzle/Untitled6.png" alt="Untitled"></p>
 
       </div>
       

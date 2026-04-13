@@ -187,7 +187,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -198,7 +198,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -262,9 +262,9 @@
 <p>using decompiler and take a deep look at functions.</p>
 <span id="more"></span>
 
-<p><img data-src="/./images/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
+<p><img data-src="/images/2021-10-31_151419.jpg" alt="2021-10-31_151419.jpg"></p>
 <p>after enter the correct command and enter three variable, it will jump to function at 108e0, 108e0 contains a switch that call different function depending on the command user enter.</p>
-<p><img data-src="/./images/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
+<p><img data-src="/images/2021-10-31_151832.jpg" alt="2021-10-31_151832.jpg"></p>
 <p>notice that string &quot;stonks.txt&quot; are stored in the <code>byte_22058</code>, and with commmand <em>48</em>, function <code>sub_10B80</code> will read <code>byte_22058</code> as a filename, and print out whether in the file.</p>
 <p>so, we got an idea that if we need get the flag, we need to change <code>byte_22058</code> to &quot;flag.txt&quot; instead of &quot;stonks.txt&quot;</p>
 <p>looking at other commands, command <em>1056</em> allow us pass a integer as a pointer to an function (lets say <strong>funcA</strong>).</p>

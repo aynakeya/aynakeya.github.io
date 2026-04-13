@@ -193,7 +193,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -204,7 +204,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -267,8 +267,8 @@
 <span id="more"></span>
 
 <h1 id="0x1-Web-vulnerabilities"><a href="#0x1-Web-vulnerabilities" class="headerlink" title="0x1 Web - vulnerabilities"></a>0x1 Web - vulnerabilities</h1><h2 id="basic-idea"><a href="#basic-idea" class="headerlink" title="basic idea"></a>basic idea</h2><p>The program is a web service written in golang. The flag is stored in a in-memory sqlite database.</p>
-<p>The data structure of table is called <strong>Vulnerability</strong><img data-src="/./images/2021-12-12_144720.jpg" alt="2021-12-12_144720.jpg"></p>
-<p>the flag is stored at the last row of the sqlite table.<img data-src="/./images/2021-12-12_144910.jpg" alt="2021-12-12_144910.jpg"></p>
+<p>The data structure of table is called <strong>Vulnerability</strong><img data-src="/images/2021-12-12_144720.jpg" alt="2021-12-12_144720.jpg"></p>
+<p>the flag is stored at the last row of the sqlite table.<img data-src="/images/2021-12-12_144910.jpg" alt="2021-12-12_144910.jpg"></p>
 <h2 id="vulnerable"><a href="#vulnerable" class="headerlink" title="vulnerable"></a>vulnerable</h2><p>the vulnerable is locate at the post method of api</p>
 <pre class="line-numbers language-none"><code class="language-none">r.POST(&quot;&#x2F;api&#x2F;vulnerability&quot;, func(c *gin.Context) &#123;
 	&#x2F;&#x2F;	Validate the parameter
@@ -300,7 +300,7 @@
 	&#125;)
 &#125;)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-<p>if we want to query the flag by the <strong>Vulnerability</strong> struct, the only way is query the flag by its&#39; ID (in this case flag have id 14), as defined in the <strong>gorm.Model</strong><br><img data-src="/./images/2021-12-12_145338.jpg" alt="2021-12-12_145338.jpg"></p>
+<p>if we want to query the flag by the <strong>Vulnerability</strong> struct, the only way is query the flag by its&#39; ID (in this case flag have id 14), as defined in the <strong>gorm.Model</strong><br><img data-src="/images/2021-12-12_145338.jpg" alt="2021-12-12_145338.jpg"></p>
 <p>And every other field in the struct should be zero values (&quot;&quot;,0 ...),  Therefore, we need to find a way to let <code>json[&quot;Name&quot;]!=&quot;&quot;</code> and <code>vuln.Name == &quot;&quot;</code></p>
 <p>Since <em>json</em> is a <strong>map[string]interface{}</strong>, which means it is case sensitive, <code>&quot;Name&quot;</code> and <code>&quot;name&quot;</code> are two different thing. But how golang struct, when unmarshal, <code>&quot;Name&quot;</code> and <code>&quot;name&quot;</code> are considered as same key, also the second value will overwrite first value.</p>
 <h2 id="exp-py"><a href="#exp-py" class="headerlink" title="exp.py"></a>exp.py</h2><p>Make &quot;Name&quot; &#x3D; &quot;Heartbleed&quot; two bypass first check, than use &quot;name&quot; &#x3D; &quot;&quot; to overwrite <code>vuln.Name</code>. Use &quot;ID&quot; &#x3D; 14 to query the flag</p>
@@ -314,7 +314,7 @@ print(response.text)
 <h2 id="flag"><a href="#flag" class="headerlink" title="flag"></a>flag</h2><p>SECCON{LE4RNING_FR0M_7HE_PA5T_FINDIN6_N0TABLE_VULNERABILITIE5}</p>
 <h1 id="0x2-Misc-hitchhike"><a href="#0x2-Misc-hitchhike" class="headerlink" title="0x2 Misc - hitchhike"></a>0x2 Misc - hitchhike</h1><p><strong>Everything is 42</strong></p>
 <h2 id="tl-dr"><a href="#tl-dr" class="headerlink" title="tl;dr"></a>tl;dr</h2><p>the server.py.</p>
-<p><img data-src="/./images/2021-12-12_150212.jpg" alt="2021-12-12_150212.jpg"></p>
+<p><img data-src="/images/2021-12-12_150212.jpg" alt="2021-12-12_150212.jpg"></p>
 <h2 id="solution"><a href="#solution" class="headerlink" title="solution"></a>solution</h2><p>The first 4 element can convert to 42 by a general solution <code>&quot;0 or 42&quot;</code></p>
 <p>It is impossible to find a string v that makes <code>eval(f&#39;&#123;&#123;b'6':6666&#125;&#125; * &#123;v&#125;&#39;, &#123;&#125;, &#123;&#125;) == 42</code>, because dict can&#39;t multiply with any other thing.</p>
 <p>but sinces it use eval, we can get a simple shell using <code>help()</code></p>
@@ -323,7 +323,7 @@ print(response.text)
 <li>enter os</li>
 <li>since the flag is in the environment variable, use !env to get the flag</li>
 </ol>
-<p><img data-src="/./images/2021-12-12_150834.jpg" alt="2021-12-12_150834.jpg"><img data-src="/./images/2021-12-12_150918.jpg" alt="2021-12-12_150918.jpg"></p>
+<p><img data-src="/images/2021-12-12_150834.jpg" alt="2021-12-12_150834.jpg"><img data-src="/images/2021-12-12_150918.jpg" alt="2021-12-12_150918.jpg"></p>
 <h2 id="flag-1"><a href="#flag-1" class="headerlink" title="flag"></a>flag</h2><p>SECCON{1_b3li3v3_th1s_1s_th3_sh0rt3st_Pyth0n_c0d3_2_g3t_SH3LL}</p>
 <h1 id="0x3-Pwn-kasu-bof"><a href="#0x3-Pwn-kasu-bof" class="headerlink" title="0x3 Pwn - kasu_bof"></a>0x3 Pwn - kasu_bof</h1><h2 id="tl-dr-1"><a href="#tl-dr-1" class="headerlink" title="tl;dr"></a>tl;dr</h2><p>return to dl resolve. just refer to my article <a href="/2021/11/18/ret2-dl-resolve-example-silent-rop/">ret2-dl-resolve-example-silent-rop</a></p>
 <h2 id="exp-py-1"><a href="#exp-py-1" class="headerlink" title="exp.py"></a>exp.py</h2><pre class="line-numbers language-none"><code class="language-none">from pwn import *

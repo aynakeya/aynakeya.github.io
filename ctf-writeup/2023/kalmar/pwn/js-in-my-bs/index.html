@@ -194,7 +194,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -205,7 +205,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -266,7 +266,7 @@
 
 <p>qemu simulator will load boot section in bootjs.bin and spawn a javascript console(?).</p>
 <p>In this javascript console, I was able to executing some basic command such as simple math operation, print(function calling), and variable assignment.</p>
-<p><img data-src="/./2023-03-05_220531.png" alt="2023-03-05_220531.png"></p>
+<p><img data-src="/2023-03-05_220531.png" alt="2023-03-05_220531.png"></p>
 <p>However, I found certain limitation when playing with this simulator</p>
 <ol>
 <li>variable name can only be an one byte character, (eg <code>a</code>,<code>b</code>)</li>
@@ -275,40 +275,40 @@
 <p>OK, then where is the flag. Lets take look at bootjs.bin</p>
 <h1 id="0x2-Preparation"><a href="#0x2-Preparation" class="headerlink" title="0x2 Preparation"></a>0x2 Preparation</h1><p>Before starting reversing, I first did some research about i386 boot loader. (see reference section)</p>
 <p>boot loader is loaded after bios. and bios will load first sector of  boot loader (<strong>512 bytes</strong>) to a fixed address in memory (0x7c00). </p>
-<p><img data-src="/./2023-03-05_221209.png" alt="2023-03-05_221209.png"></p>
+<p><img data-src="/2023-03-05_221209.png" alt="2023-03-05_221209.png"></p>
 <p>Boot loader is usually written in 16-bit assembly. executing in cpu real mode. </p>
 <p>The main task for boot loader is to load kernel into memory. Then, kernel will deal with everything else after that. (Which is not the case for this challenge, the boot loader for this challenge is a js engine)</p>
 <h1 id="0x3-Reversing-Analyzing"><a href="#0x3-Reversing-Analyzing" class="headerlink" title="0x3 Reversing &amp; Analyzing"></a>0x3 Reversing &amp; Analyzing</h1><p>After loaded <code>bootjs.bin</code> in Binary Ninja. I found the placeholder flag instantaneously. flag bytes start at <code>0x7e00</code> after a MBR boot signature <code>55AA</code>. </p>
 <p>Above flag bytes, there is a huge chunk of suspicious <code>A</code>s. </p>
-<p><img data-src="/./2023-03-05_222644.png" alt="2023-03-05_222644.png"></p>
+<p><img data-src="/2023-03-05_222644.png" alt="2023-03-05_222644.png"></p>
 <p>We know that bios only load first sector of boot loader into memory, flag bytes was clearly not in the memory (0x7e00-0x7c00 &#x3D; 0x200 &#x3D; 512).</p>
 <p>(Therefore, at some point, I have to executing some shellcode so that I could load flag bytes into the memory.)</p>
 <p>After took some time analyzing the binary file, I came up with those  functions</p>
-<p><img data-src="/./2023-03-05_224254.png" alt="2023-03-05_224254.png"></p>
+<p><img data-src="/2023-03-05_224254.png" alt="2023-03-05_224254.png"></p>
 <p><code>print_byte</code>: print one byte as ascii to screen.</p>
 <p><code>print_crlf</code>: print CRLF to screen <code>\r\n</code> </p>
 <p><code>print_hex</code>: print 4 bit as hex.</p>
-<p><img data-src="/./2023-03-05_224037.png" alt="2023-03-05_224037.png"></p>
+<p><img data-src="/2023-03-05_224037.png" alt="2023-03-05_224037.png"></p>
 <p><code>read_input</code>: read one byte from user input and print it back to screen</p>
-<p><img data-src="/./2023-03-05_224658.png" alt="2023-03-05_224658.png"></p>
+<p><img data-src="/2023-03-05_224658.png" alt="2023-03-05_224658.png"></p>
 <p><code>math_op</code>: perform math operation recursively</p>
-<p><img data-src="/./2023-03-05_224909.png" alt="2023-03-05_224909.png"></p>
+<p><img data-src="/2023-03-05_224909.png" alt="2023-03-05_224909.png"></p>
 <p><code>input_to_num</code>: ask one byte from user input. </p>
 <p>If user input is a number then return the number itself (<code>sub al, 0x30</code>). </p>
 <p>Otherwise, it is a variable. So, it will get the value of that variable using <code>var_to_num</code>(actually set si to the data offset) and return the value.</p>
-<p><img data-src="/./2023-03-05_225041.png" alt="2023-03-05_225041.png"></p>
+<p><img data-src="/2023-03-05_225041.png" alt="2023-03-05_225041.png"></p>
 <p><code>entry</code>: main loop</p>
 <p>if second byte is <code>=</code>, it will perform variable assignment <code>mov word ptr [si], bx</code>. </p>
 <p>If second byte is a <code>(</code>, it will regard first byte as a fucntion name. and call this function. <code>call word ptr [si]</code></p>
-<p><img data-src="/./2023-03-05_225456.png" alt="2023-03-05_225456.png"></p>
+<p><img data-src="/2023-03-05_225456.png" alt="2023-03-05_225456.png"></p>
 <p><code>log_print</code>: print two bytes as hex</p>
-<p><img data-src="/./2023-03-05_230553.png" alt="2023-03-05_230553.png"></p>
+<p><img data-src="/2023-03-05_230553.png" alt="2023-03-05_230553.png"></p>
 <p><strong>Finally</strong>, the vulnerable funtion <code>var_to_num</code></p>
 <p>This function uses the suspicious chunk start from <code>0x7cda</code> as a <strong>variable table</strong></p>
 <p>This <strong>variable table</strong> store all existing variable name and value (or function name and address). Each variable entry (or function entry) occupy 3 bytes (1 byte name, 2 byte data).</p>
 <p>For example, the binary came with a built in function <code>l</code> (which print value in a variable as hex). </p>
 <p>So, in the variable table, <code>6c7a7c</code> represents this entry. Where <code>6c</code> is the function name <code>l</code>, <code>7a7c</code> is the function address of <code>log_print</code> in little endian (<code>0x7c7a</code>) </p>
-<p><img data-src="/./2023-03-05_225921.png" alt="2023-03-05_225921.png"></p>
+<p><img data-src="/2023-03-05_225921.png" alt="2023-03-05_225921.png"></p>
 <p>Also, register <code>cx</code> hold how many variables&#x2F;functions are in the variable table.</p>
 <p>Here is the pesudo code for <code>var_to_num</code></p>
 <pre class="line-numbers language-none"><code class="language-none">func var_to_num(var_name):
@@ -395,7 +395,7 @@ loop:
 <p>compile it with</p>
 <p><code>nasm shellcode.asm -o shellcode.o</code></p>
 <p>yep! all the first bytes are different!!!!!</p>
-<p><img data-src="/./2023-03-05_233622.png" alt="2023-03-05_233622.png"></p>
+<p><img data-src="/2023-03-05_233622.png" alt="2023-03-05_233622.png"></p>
 <h1 id="0x5-Script-Steps"><a href="#0x5-Script-Steps" class="headerlink" title="0x5 Script Steps"></a>0x5 Script Steps</h1><ol>
 <li>write function which point to shell code</li>
 <li>write shellcode</li>

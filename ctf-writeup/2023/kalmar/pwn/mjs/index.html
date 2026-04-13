@@ -185,7 +185,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -196,7 +196,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -256,9 +256,9 @@
 <p>I found three vary suspicious function. <code>mkstr</code> and <code>ffi</code>. </p>
 <p><code>mkstr</code> allow you make string in <strong>any</strong> memory address.</p>
 <p><code>ffi</code> allow you to import C function into js environment. This means we can import <code>system</code> into js environment and call <code>system(&#39;/bin/sh&#39;)</code> to getting a shell.</p>
-<p><img data-src="/./2023-03-05_171001.png" alt="2023-03-05_171001.png"></p>
+<p><img data-src="/2023-03-05_171001.png" alt="2023-03-05_171001.png"></p>
 <p>However, challenge disabled those function. So, if you are trying to call those function, you will find this function is not defined. </p>
-<p><img data-src="/./2023-03-05_171552.png" alt="2023-03-05_171552.png"></p>
+<p><img data-src="/2023-03-05_171552.png" alt="2023-03-05_171552.png"></p>
 <p>When I&#39;m playing around with this javascript engine. I found following interesting statements. </p>
 <p>We can operate function pointer using mathematical operation (like C). </p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>aynakeya @ LAPTOP-T6NBK8L5<span class="token punctuation">]</span>:/mnt/d/workspace/kalmarctf/mjs_handout
@@ -276,7 +276,7 @@ undefined<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
 
 <p><em>The binary is compiled with glibc2.34. I&#39;m using Ubuntu20.04, so I need to recompile the binary again. So, some function offset might is different from the original binary.</em></p>
 <p>I calculated the offset between <code>print</code> and <code>ffi</code>. And try to call <code>ffi</code> again. This time, it succeed with an unknown function pointer.</p>
-<p><img data-src="/./2023-03-05_183906.png" alt="2023-03-05_183906.png"></p>
+<p><img data-src="/2023-03-05_183906.png" alt="2023-03-05_183906.png"></p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>aynakeya @ LAPTOP-T6NBK8L5<span class="token punctuation">]</span>:/mnt/d/workspace/kalmarctf/mjs_handout
 <span class="token number">18</span>:46:33 $ python <span class="token parameter variable">-c</span> <span class="token string">"print(0x0040cbb0-0x00405920)"</span>
 <span class="token number">29328</span>

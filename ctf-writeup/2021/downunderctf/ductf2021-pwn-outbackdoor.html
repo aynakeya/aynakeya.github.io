@@ -188,7 +188,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives">
-          <span class="site-state-item-count">120</span>
+          <span class="site-state-item-count">121</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -199,7 +199,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags">
-        <span class="site-state-item-count">98</span>
+        <span class="site-state-item-count">101</span>
         <span class="site-state-item-name">tags</span></a>
       </div>
   </nav>
@@ -259,7 +259,7 @@
 # PIE:      No PIE (0x400000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 <h2 id="Solution"><a href="#Solution" class="headerlink" title="Solution"></a>Solution</h2><h3 id="vuln-1"><a href="#vuln-1" class="headerlink" title="vuln 1"></a>vuln 1</h3><p>there is a backdoor function called <code>outBackdoor</code> in the function, which give as a shell.</p>
-<p><img data-src="/./images/2021-10-09_121913.jpg" alt="stack"></p>
+<p><img data-src="/images/2021-10-09_121913.jpg" alt="stack"></p>
 <span id="more"></span>
 
 <h3 id="vuln-2"><a href="#vuln-2" class="headerlink" title="vuln 2"></a>vuln 2</h3><p>the main function utilze gets, we can overwrite rip to outBackdoor which give as a shell when return.</p>
