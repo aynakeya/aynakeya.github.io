@@ -28,14 +28,14 @@
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
 <meta property="og:description" content="0x0 IntroductionDescription: TDB Files: TBD 0x1 Investigating Repositorylooking at mjs github repo I found three vary suspicious function. mkstr and ffi.  mkstr allow you make string in any memory add">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_171001.png">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_171552.png">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-05_183906.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_171001.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_171552.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_183906.png">
 <meta property="article:published_time" content="2023-03-05T06:39:00.000Z">
 <meta property="article:modified_time" content="2023-03-05T06:39:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://www.aynakeya.com/2023-03-05_171001.png">
+<meta name="twitter:image" content="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_171001.png">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2023/kalmar/pwn/mjs/">
@@ -256,9 +256,9 @@
 <p>I found three vary suspicious function. <code>mkstr</code> and <code>ffi</code>. </p>
 <p><code>mkstr</code> allow you make string in <strong>any</strong> memory address.</p>
 <p><code>ffi</code> allow you to import C function into js environment. This means we can import <code>system</code> into js environment and call <code>system(&#39;/bin/sh&#39;)</code> to getting a shell.</p>
-<p><img data-src="/2023-03-05_171001.png" alt="2023-03-05_171001.png"></p>
+<p><img data-src="/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_171001.png" alt="2023-03-05_171001.png"></p>
 <p>However, challenge disabled those function. So, if you are trying to call those function, you will find this function is not defined. </p>
-<p><img data-src="/2023-03-05_171552.png" alt="2023-03-05_171552.png"></p>
+<p><img data-src="/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_171552.png" alt="2023-03-05_171552.png"></p>
 <p>When I&#39;m playing around with this javascript engine. I found following interesting statements. </p>
 <p>We can operate function pointer using mathematical operation (like C). </p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>aynakeya @ LAPTOP-T6NBK8L5<span class="token punctuation">]</span>:/mnt/d/workspace/kalmarctf/mjs_handout
@@ -276,7 +276,7 @@ undefined<span aria-hidden="true" class="line-numbers-rows"><span></span><span><
 
 <p><em>The binary is compiled with glibc2.34. I&#39;m using Ubuntu20.04, so I need to recompile the binary again. So, some function offset might is different from the original binary.</em></p>
 <p>I calculated the offset between <code>print</code> and <code>ffi</code>. And try to call <code>ffi</code> again. This time, it succeed with an unknown function pointer.</p>
-<p><img data-src="/2023-03-05_183906.png" alt="2023-03-05_183906.png"></p>
+<p><img data-src="/ctf-writeup/2023/kalmar/pwn/mjs/2023-03-05_183906.png" alt="2023-03-05_183906.png"></p>
 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token punctuation">[</span>aynakeya @ LAPTOP-T6NBK8L5<span class="token punctuation">]</span>:/mnt/d/workspace/kalmarctf/mjs_handout
 <span class="token number">18</span>:46:33 $ python <span class="token parameter variable">-c</span> <span class="token string">"print(0x0040cbb0-0x00405920)"</span>
 <span class="token number">29328</span>

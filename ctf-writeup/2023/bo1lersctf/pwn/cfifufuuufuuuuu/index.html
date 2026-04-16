@@ -28,15 +28,15 @@
 <meta property="og:site_name" content="Aynakeya&#39;s Blog">
 <meta property="og:description" content="DescriptionA tiny program, protected by some Python code. The flag is in: .&#x2F;flag.txt files AnalysisArch:     amd64-64-little RELRO:    No RELRO Stack:    No canary found NX:       NX enabled PIE:">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-28_214738.png">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-28_214958.png">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-28_220216.png">
-<meta property="og:image" content="http://www.aynakeya.com/2023-03-28_215944.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_214738.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_214958.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_220216.png">
+<meta property="og:image" content="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_215944.png">
 <meta property="article:published_time" content="2023-03-28T13:24:00.000Z">
 <meta property="article:modified_time" content="2023-03-28T13:24:00.000Z">
 <meta property="article:author" content="Aynakeya">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://www.aynakeya.com/2023-03-28_214738.png">
+<meta name="twitter:image" content="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_214738.png">
 
 
 <link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/">
@@ -260,22 +260,22 @@ NX:       NX enabled
 PIE:      No PIE (0x400000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
 
-<h2 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h2><p>my analysis database <a href="./s.bndb">s.bndb</a></p>
+<h2 id="loader"><a href="#loader" class="headerlink" title="loader"></a>loader</h2><p>my analysis database <a target="_blank" rel="noopener" href="https://github.com/aynakeya/ctf-writeup/blob/main/2023/bo1lersctf/pwn/cfifufuuufuuuuu/s.bndb">s.bndb</a></p>
 <p>This binary is run by a python loaders. python loader is acting like a debugger.</p>
 <p>Everytime a breakpoint instruction (<code>0xcc</code>) being executed. python loader will check next byte after rip. And determine what to do next depend on that byte.</p>
 <p>for example, if next byte is <code>0x48</code>. it will replace some register</p>
-<p><img data-src="/2023-03-28_214738.png" alt="image"></p>
+<p><img data-src="/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_214738.png" alt="image"></p>
 <p>otherwise, if the next byte is equal to some other bytes. it will do a canary check manually</p>
-<p><img data-src="/2023-03-28_214958.png" alt="image"></p>
+<p><img data-src="/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_214958.png" alt="image"></p>
 <h2 id="vulnerability-1-canary-check-failed"><a href="#vulnerability-1-canary-check-failed" class="headerlink" title="vulnerability 1 - canary check failed"></a>vulnerability 1 - canary check failed</h2><p>it did have canary check. The canary values are actually saved return pointers. However, when comparing return pointers, it only check if return pointer exists in the stack. So, we can still modify the saved return pointer to the caller&#39;s saved return pointer.</p>
 <h2 id="vulnerability-2-overwriting"><a href="#vulnerability-2-overwriting" class="headerlink" title="vulnerability 2 - overwriting"></a>vulnerability 2 - overwriting</h2><p>Bascially, the binary contains 2 main function. <code>encrypt</code> and <code>decrypt</code></p>
 <p><code>decrypt</code> function calls a function which read all bytes until it meet a new line character (<code>\n</code>). This is a trivial buffer overflow we can use to modify return pointer.</p>
 <p>using this vulnerability with the previous one, we can run <code>main</code> function again.</p>
 <p>since <code>_start</code> function is essentially a loop if return value of <code>main</code> is not equal to 1</p>
-<p><img data-src="/2023-03-28_220216.png" alt="image"></p>
+<p><img data-src="/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_220216.png" alt="image"></p>
 <h2 id="vulnerability-3-random-generation"><a href="#vulnerability-3-random-generation" class="headerlink" title="vulnerability 3 - random generation"></a>vulnerability 3 - random generation</h2><p>encrypt function generating random values by reading <code>/dev/urandom</code>. And store using input is .bss section.</p>
 <p>it also use a global variable to record index of the data array. everytime we call <code>encrypt</code>, the index will increase by one.</p>
-<p><img data-src="/2023-03-28_215944.png" alt="image"></p>
+<p><img data-src="/ctf-writeup/2023/bo1lersctf/pwn/cfifufuuufuuuuu/2023-03-28_215944.png" alt="image"></p>
 <p>normally it&#39;s okay, because we are only executing <code>encrypt</code> function once.</p>
 <p>however, since we can run <code>encrypt</code> function multiple time. we increase the index value until we overwrite <code>/dev/urandom</code> string.</p>
 <h2 id="conclusion"><a href="#conclusion" class="headerlink" title="conclusion"></a>conclusion</h2><p>we overwrite <code>/dev/urandom</code>, and the program will print out the flag for us!</p>
