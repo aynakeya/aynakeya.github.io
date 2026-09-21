@@ -1,0 +1,243 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/a-brief-introduction-to-seccomp-and-how-to-bypass/"><meta name="generator" content="Astro v7.3.3"><title>A Brief Introduction of Seccomp and How to Bypass it | Aynakeya</title><meta name="description" content="IntroductionI have solve several seccomp related challenges in past few ctfs. To further enhance my understanding on seccomp, I decide to take a some time and learn how seccomm wor"><meta property="og:type" content="article"><meta property="og:title" content="A Brief Introduction of Seccomp and How to Bypass it | Aynakeya"><meta property="og:description" content="IntroductionI have solve several seccomp related challenges in past few ctfs. To further enhance my understanding on seccomp, I decide to take a some time and learn how seccomm wor"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/a-brief-introduction-to-seccomp-and-how-to-bypass/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="A Brief Introduction of Seccomp and How to Bypass it | Aynakeya"><meta name="twitter:description" content="IntroductionI have solve several seccomp related challenges in past few ctfs. To further enhance my understanding on seccomp, I decide to take a some time and learn how seccomm wor"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#introduction">Introduction</a></li><li style="--depth: 0"><a href="#seccomp">Seccomp</a></li><li style="--depth: 0"><a href="#seccomp-strict-mode">Seccomp strict mode</a></li><li style="--depth: 0"><a href="#seccomp-bpf-filter-mode">Seccomp BPF (filter mode)</a></li><li style="--depth: 0"><a href="#common-strategies-in-ctf">Common strategies in CTF</a></li><li style="--depth: 1"><a href="#seccomp-with-no-x32-abi-check">Seccomp with no x32 ABI check</a></li><li style="--depth: 1"><a href="#seccomp-with-no-arch-check">Seccomp with no arch check</a></li><li style="--depth: 1"><a href="#other">Other</a></li><li style="--depth: 0"><a href="#reference">Reference</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>A Brief Introduction of Seccomp and How to Bypass it</h1><div class="post-meta"><time datetime="2022-11-08T03:08:50.000Z">2022-11-08</time><a href="/blog/categories/ctf/">CTF</a></div></header><div class="prose"><p><a id="Introduction"></a></p>
+<h1 id="introduction">Introduction</h1>
+<p>I have solve several seccomp related challenges in past few ctfs. To further enhance my understanding on <em>seccomp</em>, I decide to take a some time and learn how seccomm works.</p>
+<p>All the codes used in this post can be download from here <a href="./files/seccomp.zip">seccomp.zip</a></p>
+<p><a id="Seccomp"></a></p>
+<h1 id="seccomp">Seccomp</h1>
+<p>So whats is seccomp? "Seccomp is a computer secuirty facility in Linux kernel.[1]"</p>
+<p>Basically, seccomp create a sandbox which limit user's ability to use syscalls. Using seccomp, we can create a environment that allow/disallow specific syscall being used.</p>
+<p>The first version seccomp released at 2005. At that time, seccomp only have one node: <em>strict mode</em>. In this mode, users are only allowed to use four type of syscall <code>read</code>, <code>write</code>, <code>exit</code> and <code>sigreturn</code>. In strict mode, if user use any of syscall other than those four, the program will terminate immediately. (This is not very useful because there are too many limits!)</p>
+<p>Then, in 2012, the second version of seccomp was introduced. Now seccomp have a new mode called <em>filter mode</em>. In this mode, user can specify syscalls that are allowed to run using BPF (Berkeley Packet Filter) virtual machine.</p>
+<p><a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/seccomp.h">seccomp.h</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">/* Valid values for seccomp.mode and prctl(PR_SET_SECCOMP, &#x3C;mode>) */</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#define</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> SECCOMP_MODE_DISABLED</span><span style="color:#005CC5;--shiki-dark:#79B8FF">	0</span><span style="color:#6A737D;--shiki-dark:#6A737D"> /* seccomp is not in use. */</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#define</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> SECCOMP_MODE_STRICT</span><span style="color:#005CC5;--shiki-dark:#79B8FF">	1</span><span style="color:#6A737D;--shiki-dark:#6A737D"> /* uses hard-coded filter. */</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#define</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> SECCOMP_MODE_FILTER</span><span style="color:#005CC5;--shiki-dark:#79B8FF">	2</span><span style="color:#6A737D;--shiki-dark:#6A737D"> /* uses user-supplied filter. */</span></span></code></pre>
+<p><a id="Seccomp-strict-mode"></a></p>
+<h1 id="seccomp-strict-mode">Seccomp strict mode</h1>
+<p>Lets start with the basic mode of seccomp - <em>strict mode</em>.</p>
+<p>To do that, we are going to ues a syscall called <code>prctl</code>.</p>
+<p>more on <a href="https://man7.org/linux/man-pages/man2/prctl.2.html">prctl man page</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#include &#x3C;sys/prctl.h></span></span>
+<span class="line"><span>int prctl(int option, unsigned long arg2, unsigned long arg3,</span></span>
+<span class="line"><span>                 unsigned long arg4, unsigned long arg5);</span></span></code></pre>
+<p><code>prctl</code> is a syscall that allow you manipulate various aspects of the calling thread or process. There are lot of option we can use. In the case of of seccomp, we only need to focus on <code>PR_GET_SECCOMP</code> and <code>PR_SET_SECCOMP</code></p>
+<p>To get current seccomp mode, we can simply use <code>prctl(PR_GET_SECCOMP)</code></p>
+<p>To change current seccomp mode, we need to use <code>prctl(PR_SET_SECCOMP,mode,arg1...)</code></p>
+<p>Here is the example program using seccomp strict mode</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">// https://man7.org/linux/man-pages/man2/seccomp.2.html</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#include</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> &#x3C;stdio.h></span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#include</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> &#x3C;sys/prctl.h></span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#include</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> &#x3C;linux/seccomp.h></span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#include</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> &#x3C;sys/syscall.h></span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">#include</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> &#x3C;unistd.h></span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">// demo of strict mode, only allow read(), write(), sigreturn()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">int</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> main</span><span style="color:#24292E;--shiki-dark:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    char</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> msg</span><span style="color:#D73A49;--shiki-dark:#F97583">[]</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "hello world1!</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">    write</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span><span style="color:#D73A49;--shiki-dark:#F97583">&#x26;</span><span style="color:#24292E;--shiki-dark:#E1E4E8">msg,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">14</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">    printf</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"current mode </span><span style="color:#005CC5;--shiki-dark:#79B8FF">%d</span><span style="color:#032F62;--shiki-dark:#9ECBFF">, change to strict mode now...</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#6F42C1;--shiki-dark:#B392F0">prctl</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(PR_GET_SECCOMP));</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    // two way of using prctl</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    // prctl(PR_SET_SECCOMP,SECCOMP_MODE_STRICT);</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">    syscall</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(__NR_prctl,PR_SET_SECCOMP,SECCOMP_MODE_STRICT);</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    </span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    // printf only use write, so it works</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">    printf</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"seccomp change to mode strict</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    // because prctl is a syscall. so no luck on that</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">    printf</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"This line shouldn't appear; current mode </span><span style="color:#005CC5;--shiki-dark:#79B8FF">%d\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#6F42C1;--shiki-dark:#B392F0">prctl</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(PR_GET_SECCOMP));</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span></code></pre>
+<p>Output:</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>17:01:07 $ ./seccomp_strict </span></span>
+<span class="line"><span>hello world1!</span></span>
+<span class="line"><span>current mode 0, change to strict mode now...</span></span>
+<span class="line"><span>seccomp change to mode strict</span></span>
+<span class="line"><span>Killed</span></span></code></pre>
+<p>As we can see, after we switch to strict mode, we can only use <code>read</code>, <code>write</code>, <code>exit</code>, <code>sigreturn</code>. If we try to use other syscall, such as <code>prctl</code>, the program would quit immediately.</p>
+<p><a id="Seccomp-BPF-filter-mode"></a></p>
+<h1 id="seccomp-bpf-filter-mode">Seccomp BPF (filter mode)</h1>
+<p>As we said, <em>filter mode</em> allow user use bpf filter and limit the usage of certain syscall. So before talking about seccomp, Lets talk about bpf first.</p>
+<p>BPF was initially used in data link layer, allowing user to run code quickly inside kernel. So, user can manipulate witch data packets such filter data packet using bpf. Later bpf was also used in other places.</p>
+<p>seccomp <em>filter mode</em> also use a bgf vritual machine for syscall filtering.</p>
+<p>To do that, we need make a <em>small program</em> and load that program to kernel. <strong>Noted that loading process is invertible</strong>. So, once you loaded your bpf filter to the kernel, you will not able to modify or delete that.</p>
+<p>a bpf program is defined by <code>sock_fprog</code>.  In this struct, there is a len field showing the total number of instructions and a pointer to a list of instructions.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct sock_fprog {	/* Required for SO_ATTACH_FILTER. */</span></span>
+<span class="line"><span>	unsigned short		len;	/* Number of filter blocks */</span></span>
+<span class="line"><span>	struct sock_filter __user *filter;</span></span>
+<span class="line"><span>};</span></span></code></pre>
+<p>each instruction is defined by <code>sock_filter</code>. We can use different instruction code to perform different operation.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>struct sock_filter {	/* Filter block */</span></span>
+<span class="line"><span>	__u16	code;   /* Actual filter code */</span></span>
+<span class="line"><span>	__u8	jt;	/* Jump true */</span></span>
+<span class="line"><span>	__u8	jf;	/* Jump false */</span></span>
+<span class="line"><span>	__u32	k;      /* Generic multiuse field */</span></span>
+<span class="line"><span>};</span></span>
+<span class="line"><span></span></span></code></pre>
+<p><code>sock_fprog</code> and <code>sock_filter</code> are defined in <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/filter.h">filter.h</a>. Detailed explanation be also be found in the header file.</p>
+<p>bpf instruction include basic load, save, arithmetic op, jmp (condition/uncondition), and return.</p>
+<p>all these instructions can be found in <a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/bpf_common.h">bpf_common.h</a>.</p>
+<p>When writing the bpf program, we can use two macro (<code>BPF_STMT</code> and <code>BPF_JUMP</code> to simplify our code.</p>
+<p><a href="https://github.com/torvalds/linux/blob/master/include/uapi/linux/filter.h">filter.h</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#ifndef BPF_STMT</span></span>
+<span class="line"><span>#define BPF_STMT(code, k) { (unsigned short)(code), 0, 0, k }</span></span>
+<span class="line"><span>#endif</span></span>
+<span class="line"><span>#ifndef BPF_JUMP</span></span>
+<span class="line"><span>#define BPF_JUMP(code, k, jt, jf) { (unsigned short)(code), jt, jf, k }</span></span>
+<span class="line"><span>#endif</span></span></code></pre>
+<p><code>BPF_STMT</code> is used for manipulate register and return value. It has two parameter. the first parameter is bpf instruction and second parameter is the value.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">// find load nr (syscall number) to internal register</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">BPF_STMT</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(BPF_LD </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> BPF_W </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> BPF_ABS </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> BPF_K,(</span><span style="color:#6F42C1;--shiki-dark:#B392F0">offsetof</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">struct</span><span style="color:#E36209;--shiki-dark:#FFAB70"> seccomp_data</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, nr)))</span></span></code></pre>
+<p><code>BPF_LD</code> means load value from <code>seccomp_data</code>, <code>BPF_ABS</code> means use absolute offset for data. <code>BPF_K</code> means load value to that internal register.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">BPF_STMT</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(BPF_RET </span><span style="color:#D73A49;--shiki-dark:#F97583">|</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> BPF_K,SECCOMP_RET_KILL)</span></span></code></pre>
+<p>This just means return kill and end the process</p>
+<p><code>BPF_JUMP</code> is used for design control flow of our mini program. There are four arguments: instruction number, the value, jmp number if true, jump number is false</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K ,__NR_execve , 0, 2)</span></span></code></pre>
+<p>This statement means if value in the internal register is equal to <code>__NR_execve</code>, it will skip next <code>jt=0</code> instruction (so doesn't do anything). if they are not equal, it will skip next <code>jf=2</code> instructions.</p>
+<p>After we create struct for seccomp, we can load our program to kernel using <code>prctl(PR_SET_SECCOMP,SECCOMP_MODE_FILTER,&#x26;prog)</code>.</p>
+<p>One thing to mention is that we must set <code>PR_SET_NO_NEW_PRIVS</code> to 1, otherwise seccomp filter mode won't work <code>prctl(PR_SET_NO_NEW_PRIVS,1,0,0,0);</code></p>
+<p>Lets look at an example which trying to print out the flag for us.</p>
+<p><code>seccomp_filter.c</code></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// https://man7.org/linux/man-pages/man2/seccomp.2.html</span></span>
+<span class="line"><span>#include &#x3C;linux/seccomp.h>  /* Definition of SECCOMP_* constants */</span></span>
+<span class="line"><span>#include &#x3C;linux/filter.h>   /* Definition of struct sock_fprog */</span></span>
+<span class="line"><span>#include &#x3C;stdio.h></span></span>
+<span class="line"><span>#include &#x3C;sys/prctl.h></span></span>
+<span class="line"><span>#include &#x3C;sys/syscall.h></span></span>
+<span class="line"><span>#include &#x3C;unistd.h></span></span>
+<span class="line"><span>#include &#x3C;stddef.h></span></span>
+<span class="line"><span>#include &#x3C;fcntl.h></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// demo of filter mode, not allow open</span></span>
+<span class="line"><span>int main() {</span></span>
+<span class="line"><span>    char msg[] = "hello world1!\n";</span></span>
+<span class="line"><span>    write(0,&#x26;msg,14);</span></span>
+<span class="line"><span>    printf("current mode %d, change to filter mode now...\n", prctl(PR_GET_SECCOMP));</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // must set to PR_SET_NO_NEW_PRIVS to 1, otherwise SECCOMP_MODE_FILTER will fail.</span></span>
+<span class="line"><span>    // https://man7.org/linux/man-pages/man2/seccomp.2.html</span></span>
+<span class="line"><span>    prctl(PR_SET_NO_NEW_PRIVS,1,0,0,0);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    struct sock_filter filter[] = {</span></span>
+<span class="line"><span>        BPF_STMT(BPF_LD | BPF_W |BPF_ABS,(offsetof(struct seccomp_data, nr))), // get syscall number</span></span>
+<span class="line"><span>        BPF_JUMP(BPF_JMP | BPF_JEQ | BPF_K,__NR_open,0,2), // if equal, continue (jump 0 instruction, jump to kill), else jump 2 instructions (jump to allow)</span></span>
+<span class="line"><span>        BPF_STMT(BPF_RET | BPF_K,SECCOMP_RET_KILL), // return kill</span></span>
+<span class="line"><span>        BPF_STMT(BPF_RET | BPF_K,SECCOMP_RET_TRACE), // return trace</span></span>
+<span class="line"><span>        BPF_STMT(BPF_RET | BPF_K,SECCOMP_RET_ALLOW), // return allow</span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span>    // </span></span>
+<span class="line"><span>    struct sock_fprog prog = {</span></span>
+<span class="line"><span>        .len = (unsigned short)(sizeof(filter)/sizeof(filter[0])),</span></span>
+<span class="line"><span>        .filter = filter,                                         </span></span>
+<span class="line"><span>    };</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    printf("set mode return %d\n",prctl(PR_SET_SECCOMP,SECCOMP_MODE_FILTER,&#x26;prog));</span></span>
+<span class="line"><span>    printf("seccomp change to mode filter\n");</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // open should not work</span></span>
+<span class="line"><span>    int fd = syscall(__NR_open,"flag.txt",O_RDONLY);</span></span>
+<span class="line"><span>    </span></span>
+<span class="line"><span>    // rest of the program wont execute</span></span>
+<span class="line"><span>    char flag[23];</span></span>
+<span class="line"><span>    read(fd,&#x26;flag,23);</span></span>
+<span class="line"><span>    write(1,&#x26;flag,23);</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>Output:</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>hello world1!</span></span>
+<span class="line"><span>current mode 0, change to filter mode now...</span></span>
+<span class="line"><span>set mode return 0</span></span>
+<span class="line"><span>seccomp change to mode filter</span></span>
+<span class="line"><span>Bad system call</span></span></code></pre>
+<p>We can see seccomp successfully stop <code>open</code> syscall from executing!</p>
+<p>We can also validate our seccomp filter using a tool call <a href="https://github.com/david942j/seccomp-tools">seccomp-tools</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>17:06:17 $ seccomp-tools dump ./seccomp_filter</span></span>
+<span class="line"><span>hello world1!</span></span>
+<span class="line"><span>current mode 0, change to filter mode now...</span></span>
+<span class="line"><span> line  CODE  JT   JF      K</span></span>
+<span class="line"><span>=================================</span></span>
+<span class="line"><span> 0000: 0x20 0x00 0x00 0x00000000  A = sys_number</span></span>
+<span class="line"><span> 0001: 0x15 0x00 0x02 0x00000002  if (A != open) goto 0004</span></span>
+<span class="line"><span> 0002: 0x06 0x00 0x00 0x00000000  return KILL</span></span>
+<span class="line"><span> 0003: 0x06 0x00 0x00 0x7ff00000  return TRACE</span></span>
+<span class="line"><span> 0004: 0x06 0x00 0x00 0x7fff0000  return ALLOW</span></span></code></pre>
+<p><a id="Common-strategies-in-CTF"></a></p>
+<h1 id="common-strategies-in-ctf">Common strategies in CTF</h1>
+<p>Now lets try to bypass our seccomp restriction.</p>
+<p><a id="Seccomp-with-no-x32-ABI-check"></a></p>
+<h2 id="seccomp-with-no-x32-abi-check">Seccomp with no x32 ABI check</h2>
+<p>Here is our code from previous example. (see <code>seccomp_filter_no_x32_abi_check.c</code>)</p>
+<p><img alt="img" loading="lazy" decoding="async" width="1805" height="1171" src="/_astro/2022-11-08_171915.CnlI3r7o_CrfJM.webp"></p>
+<p>Is there anyway we can bypass that? The answer is yes. Because we restricting <code>x64</code> syscall, <code>x32</code> syscalls are not limited!</p>
+<p>We can still use x32 ABI syscalls</p>
+<p>Therefore, if set x32 syscall flag bit for our syscall number, we can use our system call again!</p>
+<p>We replace our syscall of open with <code>__NR_open|__X32_SYSCALL_BIT</code>.</p>
+<p><code>seccomp_filter_no_x32_abi_check_bypass.c</code></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// https://github.com/torvalds/linux/blob/master/arch/x86/entry/syscalls/syscall_64.tbl</span></span>
+<span class="line"><span>// only works for common syscalls</span></span>
+<span class="line"><span>// using x32 ABI to bypass :)</span></span>
+<span class="line"><span>// 0x2 | 0x40000000</span></span>
+<span class="line"><span>int fd = syscall(__NR_open|__X32_SYSCALL_BIT,"flag.txt",O_RDONLY);</span></span>
+<span class="line"><span>printf("why open works????????????????\n");</span></span></code></pre>
+<p>Execute our program again, we get the flag!</p>
+<p><img alt="get_flag" loading="lazy" decoding="async" width="618" height="174" src="/_astro/2022-11-08_174020.J6pggcKi_Z1DyWtK.webp"></p>
+<p><a id="Seccomp-with-no-arch-check"></a></p>
+<h2 id="seccomp-with-no-arch-check">Seccomp with no arch check</h2>
+<p>To prevent user from calling x32 ABI calls, we add another restriction. Check if syscall number is larger than <code>0x40000000</code></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>BPF_JUMP(BPF_JMP | BPF_JGE| BPF_K,__X32_SYSCALL_BIT,1,0),</span></span></code></pre>
+<p><code>seccomp_filter_no_arch_check.c</code>
+<img alt="img" loading="lazy" decoding="async" width="1874" height="1244" src="/_astro/2022-11-08_174430.DfqVRDqH_Zmyv1f.webp"></p>
+<p>Output for seccomp</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>17:48:35 $ seccomp-tools dump ./seccomp_filter_no_arch_check</span></span>
+<span class="line"><span> line  CODE  JT   JF      K</span></span>
+<span class="line"><span>=================================</span></span>
+<span class="line"><span> 0000: 0x20 0x00 0x00 0x00000000  A = sys_number</span></span>
+<span class="line"><span> 0001: 0x35 0x01 0x00 0x40000000  if (A >= 0x40000000) goto 0003</span></span>
+<span class="line"><span> 0002: 0x15 0x00 0x02 0x00000002  if (A != open) goto 0005</span></span>
+<span class="line"><span> 0003: 0x06 0x00 0x00 0x00000000  return KILL</span></span>
+<span class="line"><span> 0004: 0x06 0x00 0x00 0x7ff00000  return TRACE</span></span>
+<span class="line"><span> 0005: 0x06 0x00 0x00 0x7fff0000  return ALLOW</span></span></code></pre>
+<p>Now, previous method wont work because if our syscall number is larger than 0x40000000, program will return Kill and stop executing.</p>
+<p>But, in this example, our rule doesn't check syscall for <code>i386</code> architecture. We can use <code>retf</code> and return to 32 bit. Then, we can use syscall from <code>i386</code>.</p>
+<p>Here is the shellcode we can use to return to i386 code execution.</p>
+<ol>
+<li>xor return address with 0x2300000000 to return to 32 bit</li>
+<li>push return address to the stack</li>
+<li>use retf</li>
+</ol>
+<p><img alt="get_flag_2" loading="lazy" decoding="async" width="475" height="832" src="/_astro/2022-11-08_175806.BYTe8_Gx_1he5mS.webp"></p>
+<p>full exploit can be found in <code>seccomp_filter_no_arch_check_bypass.c</code></p>
+<p>Result</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>17:57:59 $ ./seccomp_filter_no_arch_check_bypass</span></span>
+<span class="line"><span>hello world1!</span></span>
+<span class="line"><span>current mode 0, change to filter mode now...</span></span>
+<span class="line"><span>set mode return 0</span></span>
+<span class="line"><span>seccomp change to mode filter</span></span>
+<span class="line"><span>now you can't use open lol</span></span>
+<span class="line"><span>flag{here_is_the_flag}</span></span></code></pre>
+<p><a id="Other"></a></p>
+<h2 id="other">Other</h2>
+<p>TBD</p>
+<p><a id="Reference"></a></p>
+<h1 id="reference">Reference</h1>
+<ol>
+<li><a href="https://en.wikipedia.org/wiki/Seccomp">https://en.wikipedia.org/wiki/Seccomp</a></li>
+<li><a href="https://xz.aliyun.com/t/11480">https://xz.aliyun.com/t/11480</a></li>
+<li><a href="https://n132.github.io/2022/07/04/S2.html">https://n132.github.io/2022/07/04/S2.html</a></li>
+<li><a href="https://tripoloski1337.github.io/ctf/2021/07/12/bypassing-seccomp-prctl.html">https://tripoloski1337.github.io/ctf/2021/07/12/bypassing-seccomp-prctl.html</a></li>
+<li><a href="http://blog.redrocket.club/2019/04/11/midnightsunctf-quals-2019-gissa2/">http://blog.redrocket.club/2019/04/11/midnightsunctf-quals-2019-gissa2/</a></li>
+</ol></div><footer class="post-tags"><a href="/blog/tags/ctf/">#ctf</a><a href="/blog/tags/pwn/">#pwn</a><a href="/blog/tags/seccomp/">#seccomp</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/ri-ji-20221012/"><span class="eyebrow">Older</span>[日记] 20221012</a></div><div><a href="/blog/posts/journey-to-csaw-final-2022/"><span class="eyebrow">Newer</span>CSAW CTF 2022 决赛记</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

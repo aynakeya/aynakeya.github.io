@@ -1,0 +1,138 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/intranet-penetration-with-frp-and-oracle-vms/"><meta name="generator" content="Astro v7.3.3"><title>利用frp进行内网穿透，从外网访问内部服务器 (使用Oracle VM) | Aynakeya</title><meta name="description" content="前言 &amp; 简要介绍我为什么突然要搞一个内网穿透呢，因为oracle有一个免费的机器，放着也没用，不如整一个frp做内网穿透好了。 什么是内网穿透，简单来说就是你家里有一个服务器，开放了一些服务想要给外面的人用。但是你没有公网ip，所以外面访问不了。 这个时候，就需要内网穿透。通过一个有公网地址的服务器，把流量转发过来。 接下来就是我如何配置内网穿透的过程了。"><meta property="og:type" content="article"><meta property="og:title" content="利用frp进行内网穿透，从外网访问内部服务器 (使用Oracle VM) | Aynakeya"><meta property="og:description" content="前言 &amp; 简要介绍我为什么突然要搞一个内网穿透呢，因为oracle有一个免费的机器，放着也没用，不如整一个frp做内网穿透好了。 什么是内网穿透，简单来说就是你家里有一个服务器，开放了一些服务想要给外面的人用。但是你没有公网ip，所以外面访问不了。 这个时候，就需要内网穿透。通过一个有公网地址的服务器，把流量转发过来。 接下来就是我如何配置内网穿透的过程了。"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/intranet-penetration-with-frp-and-oracle-vms/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="利用frp进行内网穿透，从外网访问内部服务器 (使用Oracle VM) | Aynakeya"><meta name="twitter:description" content="前言 &amp; 简要介绍我为什么突然要搞一个内网穿透呢，因为oracle有一个免费的机器，放着也没用，不如整一个frp做内网穿透好了。 什么是内网穿透，简单来说就是你家里有一个服务器，开放了一些服务想要给外面的人用。但是你没有公网ip，所以外面访问不了。 这个时候，就需要内网穿透。通过一个有公网地址的服务器，把流量转发过来。 接下来就是我如何配置内网穿透的过程了。"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#前言--简要介绍">前言 &amp; 简要介绍</a></li><li style="--depth: 0"><a href="#我的配置">我的配置</a></li><li style="--depth: 1"><a href="#服务器设置服务端">服务器设置（服务端）</a></li><li style="--depth: 2"><a href="#安装配置-frps">安装&amp;配置 frps</a></li><li style="--depth: 2"><a href="#将frps注册为系统服务并启动">将frps注册为系统服务并启动</a></li><li style="--depth: 2"><a href="#打开允许程序通过服务器防火墙">打开允许程序通过服务器防火墙</a></li><li style="--depth: 1"><a href="#客户端设置-frpc">客户端设置 frpc</a></li><li style="--depth: 2"><a href="#安装配置-frpc">安装&amp;配置 frpc</a></li><li style="--depth: 2"><a href="#将frpc注册为系统服务并启动">将frpc注册为系统服务并启动</a></li><li style="--depth: 1"><a href="#域名设置">域名设置</a></li><li style="--depth: 1"><a href="#完成">完成</a></li><li style="--depth: 0"><a href="#效果展示">效果展示</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>利用frp进行内网穿透，从外网访问内部服务器 (使用Oracle VM)</h1><div class="post-meta"><time datetime="2022-09-18T16:30:37.000Z">2022-09-19</time><a href="/blog/categories/devops/">DevOps</a></div></header><div class="prose"><p><a id="前言-简要介绍"></a></p>
+<h1 id="前言--简要介绍">前言 &#x26; 简要介绍</h1>
+<p>我为什么突然要搞一个内网穿透呢，因为oracle有一个免费的机器，放着也没用，不如整一个frp做内网穿透好了。</p>
+<p>什么是内网穿透，简单来说就是你家里有一个服务器，开放了一些服务想要给外面的人用。但是你没有公网ip，所以外面访问不了。</p>
+<p>这个时候，就需要内网穿透。通过一个有公网地址的服务器，把流量转发过来。</p>
+<p>接下来就是我如何配置内网穿透的过程了。</p>
+<h1 id="我的配置">我的配置</h1>
+<p>首先你得有一个具有公网ip的服务器，一个域名(如果你没有http的流量需要转发的话就不需要)。公网的服务器用来安装<code>frp</code>的服务器端，一个域名用来对不同的web服务进行转发。</p>
+<p><code>frp</code>的代码开源在github<a href="https://github.com/fatedier/frp">frp</a>，文档在<a href="https://gofrp.org/docs/">文档</a>。最基本的安装教程以及配置都可以在这两个链接中找到。</p>
+<p><a id="服务器设置（服务端）"></a></p>
+<h2 id="服务器设置服务端">服务器设置（服务端）</h2>
+<p><a id="安装-配置-frps"></a></p>
+<h3 id="安装配置-frps">安装&#x26;配置 frps</h3>
+<p>首先在Github的<a href="https://github.com/fatedier/frp/releases">Release</a>页面中下载对应操作系统架构的可执行文件，然后解压</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>wget https://github.com/fatedier/frp/releases/download/v0.44.0/frp_0.44.0_linux_amd64.tar.gz</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>tar -zxvf frp_0.44.0_linux_amd64.tar.gz</span></span></code></pre>
+<p>打开<code>fprs.ini</code>，记住是<code>fprs.ini</code></p>
+<p>修改内容为</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[common]</span></span>
+<span class="line"><span>bind_port = 7000 # 这个是服务器的端口</span></span>
+<span class="line"><span>token=your_token # 改成你自己的token，随便取</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>dashboard_port = 7500 # 这个是管理界面的端口</span></span>
+<span class="line"><span>dashboard_user = aynakeya # 这个是管理界面的账号</span></span>
+<span class="line"><span>dashboard_pwd = your_password # 这个是管理界面的密码</span></span>
+<span class="line"><span>enable_prometheus = true # 这个是开始管理界面</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>subdomain_host = aa.xxxx.com # 这个是http服务的自定义二级域名</span></span>
+<span class="line"><span>vhost_http_port = 80 # 这个是http服务的端口，如果不需要转发http就不用写</span></span></code></pre>
+<p>关于自定义二级域名的跟多信息可以看<a href="https://gofrp.org/docs/features/http-https/subdomain/">自定义二级域名</a></p>
+<h3 id="将frps注册为系统服务并启动">将frps注册为系统服务并启动</h3>
+<p>创建<code>frps.service</code>文件</p>
+<p>在<code>/etc/systemd/system/frps.service</code>中填上</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Unit]</span></span>
+<span class="line"><span># 服务名称，可自定义</span></span>
+<span class="line"><span>Description = frp server</span></span>
+<span class="line"><span>After = network.target syslog.target</span></span>
+<span class="line"><span>Wants = network.target</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Service]</span></span>
+<span class="line"><span>Type = simple</span></span>
+<span class="line"><span># 启动frps的命令，需修改为frps的安装路径</span></span>
+<span class="line"><span>ExecStart = /home/ubuntu/repo/frp/frps -c /home/ubuntu/repo/frp/frps.ini</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Install]</span></span>
+<span class="line"><span>WantedBy = multi-user.target</span></span></code></pre>
+<p>然后启动并查看服务状态</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>sudo systemctl start frps.service</span></span>
+<span class="line"><span>sudo systemctl status frps.service</span></span></code></pre>
+<h3 id="打开允许程序通过服务器防火墙">打开允许程序通过服务器防火墙</h3>
+<p>这里以Oracle VM作为例子</p>
+<p>打开Oracle VM Ubuntu系统instance的防火墙 <a href="https://jili.uk/2020/06/oracle-vm-%E5%BC%80%E6%94%BE-80-443-%E7%AB%AF%E5%8F%A3/">reference</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>sudo iptables -P INPUT ACCEPT</span></span>
+<span class="line"><span>sudo iptables -P OUTPUT ACCEPT</span></span>
+<span class="line"><span>sudo iptables -P FORWARD ACCEPT</span></span>
+<span class="line"><span>sudo iptables -F</span></span></code></pre>
+<p>找到Instance -> subnet -> security list -> 选一个security list</p>
+<p>在security list中添加规则 Ingress Rule，把管理端口，程序端口，以及你要映射的端口都加上</p>
+<p><img alt="图片" loading="lazy" decoding="async" width="2062" height="431" src="/_astro/2022-09-19_011448.B0DgI6L2_Z1RIRJL.webp"></p>
+<h2 id="客户端设置-frpc">客户端设置 frpc</h2>
+<p><a id="安装-配置-frpc"></a></p>
+<h3 id="安装配置-frpc">安装&#x26;配置 frpc</h3>
+<p>同样在Github的<a href="https://github.com/fatedier/frp/releases">Release</a>页面中下载对应操作系统架构的可执行文件，然后解压</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>wget https://github.com/fatedier/frp/releases/download/v0.44.0/frp_0.44.0_linux_amd64.tar.gz</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>tar -zxvf frp_0.44.0_linux_amd64.tar.gz</span></span></code></pre>
+<p>打开<code>fprc.ini</code>，这次是<code>fprc.ini</code></p>
+<p>填入如下内容，更多功能可以参考<a href="https://gofrp.org/docs/features/">frp功能</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[common]</span></span>
+<span class="line"><span>server_addr =  x.x.x.x # 服务器的地址</span></span>
+<span class="line"><span>server_port = 7000</span></span>
+<span class="line"><span>token=your_token  # 在服务器设置里填的token</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[frontpage]</span></span>
+<span class="line"><span>type = http </span></span>
+<span class="line"><span>local_ip = 127.0.0.1 # 本地的地址</span></span>
+<span class="line"><span>local_port = 80 # 本地的端口</span></span>
+<span class="line"><span>custom_domains = aa.xxxx.com # 用aa.xxxx.com访问</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[calibre]</span></span>
+<span class="line"><span>type = http</span></span>
+<span class="line"><span>local_ip = 127.0.0.1</span></span>
+<span class="line"><span>local_port = 8020</span></span>
+<span class="line"><span># 用calibre.&#x3C;subdomain_host> 也就是 用calibre.aa.xxxx.com</span></span>
+<span class="line"><span>subdomain = calibre </span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[jellyfin]</span></span>
+<span class="line"><span>type = http</span></span>
+<span class="line"><span>local_ip = 127.0.0.1</span></span>
+<span class="line"><span>local_port = 8030</span></span>
+<span class="line"><span>subdomain = jellyfin</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[aria2web]</span></span>
+<span class="line"><span>type = http</span></span>
+<span class="line"><span>local_ip = 127.0.0.1</span></span>
+<span class="line"><span>local_port = 6801</span></span>
+<span class="line"><span>subdomain = aria2web</span></span></code></pre>
+<h3 id="将frpc注册为系统服务并启动">将frpc注册为系统服务并启动</h3>
+<p>创建<code>frpc.service</code>文件</p>
+<p>在<code>/etc/systemd/user/frps.service</code>中填上</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>[Unit]</span></span>
+<span class="line"><span>Description = frp client</span></span>
+<span class="line"><span>After = network.target syslog.target</span></span>
+<span class="line"><span>Wants = network.target</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Service]</span></span>
+<span class="line"><span>Type = simple</span></span>
+<span class="line"><span>ExecStart = /home/aynakeya/repo/frp/frpc -c /home/aynakeya/repo/frp/frpc.ini</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>[Install]</span></span>
+<span class="line"><span>WantedBy = multi-user.target</span></span></code></pre>
+<p>启动并检查</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>systemctl --user start frpc.service</span></span>
+<span class="line"><span>systemctl --user status frpc.service</span></span></code></pre>
+<h2 id="域名设置">域名设置</h2>
+<p>打开dns记录，添加上两个记录，一个是次级域名的解析，一个是次级域名的次级域名的解析.</p>
+<p>比如在这里就是<code>aa.xxxx.com</code>和<code>*.aa.xxxx.com</code></p>
+<p><img alt="图片" loading="lazy" decoding="async" width="832" height="131" src="/_astro/2022-09-19_012823.D1Y4ZYcq_rGoNG.webp"></p>
+<h2 id="完成">完成</h2>
+<p>然后你就可以从外网访问你的内部服务器啦</p>
+<h1 id="效果展示">效果展示</h1>
+<p>这个就不放了，效果和内网访问一样的。</p></div><footer class="post-tags"><a href="/blog/tags/内网穿透/">#内网穿透</a><a href="/blog/tags/frp/">#frp</a><a href="/blog/tags/reverse-proxy/">#reverse proxy</a><a href="/blog/tags/oracle/">#oracle</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/ubuntu-ssh-rsa-key-is-not-working-since-upgrade-to-22-04/"><span class="eyebrow">Older</span>Ubuntu22.04 SSH的RSA私钥不能用了</a></div><div><a href="/blog/posts/jian-ping-2022-nian-qi-yue-fan/"><span class="eyebrow">Newer</span>[动漫碎碎念] 简评2022年七月番</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

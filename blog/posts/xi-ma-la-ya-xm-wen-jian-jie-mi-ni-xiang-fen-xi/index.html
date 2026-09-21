@@ -1,0 +1,776 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/xi-ma-la-ya-xm-wen-jian-jie-mi-ni-xiang-fen-xi/"><meta name="generator" content="Astro v7.3.3"><title>喜马拉雅xm文件解密逆向分析 [Electron] | Aynakeya</title><meta name="description" content="前言说点前言，但是我又不知道说啥了。 由于最近突然喜欢在做事情的时候开个有声小说，于是我就把喜马拉雅这个软件重新下载了下来，并小冲了一个会员。 我注意到喜马拉雅这个客户端同时具有下载的功能，小小的尝试了一下，发现下载下来的文件为.xm文件格式。这个格式属于一种加密的格式，除了喜马拉雅客户端之外都不能播放。 什么，加密的？这怎么能忍。 仅限于学习交流使用，本文"><meta property="og:type" content="article"><meta property="og:title" content="喜马拉雅xm文件解密逆向分析 [Electron] | Aynakeya"><meta property="og:description" content="前言说点前言，但是我又不知道说啥了。 由于最近突然喜欢在做事情的时候开个有声小说，于是我就把喜马拉雅这个软件重新下载了下来，并小冲了一个会员。 我注意到喜马拉雅这个客户端同时具有下载的功能，小小的尝试了一下，发现下载下来的文件为.xm文件格式。这个格式属于一种加密的格式，除了喜马拉雅客户端之外都不能播放。 什么，加密的？这怎么能忍。 仅限于学习交流使用，本文"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/xi-ma-la-ya-xm-wen-jian-jie-mi-ni-xiang-fen-xi/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="喜马拉雅xm文件解密逆向分析 [Electron] | Aynakeya"><meta name="twitter:description" content="前言说点前言，但是我又不知道说啥了。 由于最近突然喜欢在做事情的时候开个有声小说，于是我就把喜马拉雅这个软件重新下载了下来，并小冲了一个会员。 我注意到喜马拉雅这个客户端同时具有下载的功能，小小的尝试了一下，发现下载下来的文件为.xm文件格式。这个格式属于一种加密的格式，除了喜马拉雅客户端之外都不能播放。 什么，加密的？这怎么能忍。 仅限于学习交流使用，本文"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#前言">前言</a></li><li style="--depth: 0"><a href="#动态分析">动态分析</a></li><li style="--depth: 0"><a href="#分析过程">分析过程</a></li><li style="--depth: 1"><a href="#updaterchunkjs">updater.chunk.js</a></li><li style="--depth: 1"><a href="#24chunkjs">24.chunk.js</a></li><li style="--depth: 2"><a href="#js部分">Js部分</a></li><li style="--depth: 2"><a href="#webassembly-部分">WebAssembly 部分</a></li><li style="--depth: 2"><a href="#合起来分析">合起来分析</a></li><li style="--depth: 0"><a href="#解密脚本">解密脚本</a></li><li style="--depth: 0"><a href="#reference">Reference</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>喜马拉雅xm文件解密逆向分析 [Electron]</h1><div class="post-meta"><time datetime="2023-03-15T14:56:07.000Z">2023-03-15</time><a href="/blog/categories/ctf/">CTF</a></div></header><div class="prose"><h1 id="前言">前言</h1>
+<p>说点前言，但是我又不知道说啥了。</p>
+<p>由于最近突然喜欢在做事情的时候开个有声小说，于是我就把喜马拉雅这个软件重新下载了下来，并小冲了一个会员。</p>
+<p>我注意到喜马拉雅这个客户端同时具有下载的功能，小小的尝试了一下，发现下载下来的文件为<code>.xm</code>文件格式。这个格式属于一种加密的格式，除了喜马拉雅客户端之外都不能播放。</p>
+<p>什么，加密的？这怎么能忍。</p>
+<p><strong>仅限于学习交流使用，本文作者不负任何其他责任</strong></p>
+<p><strong>Disclaimer: Only used for educational purpose.</strong></p>
+<h1 id="动态分析">动态分析</h1>
+<p>Electron自带的参数可以很好的帮助我们对electron程序进行动态分析。</p>
+<p>electron在运行的时候一般会有两个process。一个为main process，另外一个为render process</p>
+<p>在调试这个程序的时候，主要需要调试的main process。 所以我们可以加上<code>--enable-logging</code>来显示main process中<code>console.log</code>的内容。</p>
+<p>同时，我们也可以用<code>--inspect=9000</code> + chrome v8 debugger 的方式进行调试。</p>
+<p><em>在使用inspect的时候需要给<code>main.prod.js</code>加上一个patch，不然启动不了</em>
+<img alt="2023-03-16_022033.png" loading="lazy" decoding="async" width="1777" height="552" src="/_astro/2023-03-16_022033.MhmjQzVM_RQAw0.webp"></p>
+<p>如果我们需要对 render process 进行调试，我们可以在代码中加上</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>const { BrowserWindow } = require('electron')</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>const win = new BrowserWindow()</span></span>
+<span class="line"><span>win.webContents.openDevTools()</span></span></code></pre>
+<p>并重新打包<code>app.asar</code>。</p>
+<p>当然，喜马拉雅app提供了另外一个flag <code>--xmdebugger</code>来启动render process的debugger</p>
+<p><img alt="2023-03-16_021727.png" loading="lazy" decoding="async" width="1775" height="139" src="/_astro/2023-03-16_021727.DChTsx8P_Z1hbuVU.webp"></p>
+<blockquote>
+<p>具体可以看 Reference Section</p>
+</blockquote>
+<h1 id="分析过程">分析过程</h1>
+<p>首先来看一眼文件结构，ok，一眼electron，直接解压app.asar开破。</p>
+<p><img alt="img" loading="lazy" decoding="async" width="791" height="642" src="/_astro/2023-03-15_230658.BH-L8m4e_ZGAFxp.webp"></p>
+<p><code>app.asar</code> 在 <code>resourses</code> 目录下，解压之后发现了一堆文件。</p>
+<p><img alt="2023-03-15_231056.png" loading="lazy" decoding="async" width="552" height="964" src="/_astro/2023-03-15_231056.BjiwYKwJ_Zv8StU.webp"></p>
+<p>总之在经过一番寻找之后，我定位到了几个和解密加密有关的重要javascript文件。</p>
+<p><code>24.chunk.js</code> 以及 <code>updater.chunk.js</code>。(和加密解密完全无关的名字，这就是混淆么)</p>
+<p>首先我们用<code>js-beautify</code>来格式化代码，不然代码在都在一行里分析起来太折磨了。</p>
+<blockquote>
+<p>关于<code>js-beautify</code>的安装使用可以参考<a href="https://github.com/beautify-web/js-beautify">js-beautify</a></p>
+</blockquote>
+<p><a id="updater-chunk-js"></a></p>
+<h2 id="updaterchunkjs">updater.chunk.js</h2>
+<details>
+<summary>updater.chunk.js</summary>
+```javascript
+n.e(24).then(n.bind(null, 1297)).then(e => {
+    window.xmDecrypt = e.ext_xm_decode, window.xmEncrypt = e.ext_xm_encode
+});
+// ignored
+// ignored
+// ignored
+// ignored
+// ignored
+class N extends u.WriteStream {
+    constructor(e, t, n, r) {
+        super(e), C(this, "tags", void 0), C(this, "info", void 0), C(this, "iv", void 0), C(this, "chunkCount", void 0), this.tags = n, this.info = t;
+            const o = this.tags.ISRC || this.tags.encodedBy || "";
+                this.iv = Buffer.from(o, "hex"), this.chunkCount = 0
+    }
+    // 加密函数
+    write(e, t) {
+        let n = e;
+        if (this.chunkCount &#x3C; 1) {
+             const r = e.slice(0, 12).toString("base64"),
+                o = e.slice(12).toString("base64");
+            try {
+                console.log("restChunk", o, o.length, this.info.trackId);
+                console.time("加密耗时:");
+                const e = window.xmEncrypt(o, "" + this.info.trackId);
+                        console.log(e);
+                console.timeEnd("加密耗时:"), e || t("下载遇到了问题，保存失败");
+                console.log(`[nodeEncrypt] trackId:${this.info.trackId}, iv: ${this.iv.toString("hex")}`);
+                const a = function(e, t) {
+                    const n = m.a.createCipheriv("aes-256-cbc", Buffer.from(j), t);
+                                let r = n.update(e);
+                                return r = Buffer.concat([r, n.final()]), r
+                    }(e, this.iv),
+                    i = a.length,
+                    s = {
+                        ...this.tags,
+                        encodingTechnology: r,
+                        size: i
+                    },
+                    l = I.a.create(s);
+                n = Buffer.concat([l, a])
+            } catch (e) {
+                throw console.error("handle audio buffer error: ", e), e
+            }
+        }
+        return this.chunkCount++, super.write(n, t)
+    }
+}
+// ignored
+// ignored
+// ignored
+// ignored
+// ignored
+function U(e, t) {
+    t = t.toString();
+    const n = Buffer.alloc(16, t.slice(0, 16));
+    let r = "";
+    const o = m.a.createDecipheriv("aes-192-cbc", Buffer.alloc(24, t), n);
+    return r += o.update(e, "base64"), r += o.final(), r
+}
+var L = n(234);
+// 解密函数
+var Q = () => {
+    const e = (e, {
+        filePath: t,
+        trackId: n,
+        decryptVersion: r
+    }) => {
+        try {
+            // console.log(`[nodeDecrypt] trackId: ${n}, decryptVersion:${r}`);
+            // NODEID3
+            const o = f.a.readFileSync(t),
+                a = I.a.getTagsFromBuffer(o);
+            if (!a || n &#x26;&#x26; +a.trackNumber !== n) throw new Error("incorrect track");
+            // console.log(a.title,a.size);
+            const {
+                title: s,
+                artist: l,
+                subtitle: c,
+                length: d,
+                comment: {
+                    language: u,
+                    text: p
+                },
+                album: h,
+                trackNumber: b,
+                size: g,
+                encodingTechnology: v,
+                ISRC: _,
+                fileType: y,
+                encodedBy: w,
+                publisher: k,
+                composer: x,
+                mediaType: S
+            } = a;
+            n = +b;
+            const E = I.a.removeTagsFromBuffer(o);
+            console.log(`[nodeDecrypt] trackId: ${n}, iv:${_||w}`);
+            const P = function(e, t) {
+                    const n = e,
+                        r = m.a.createDecipheriv("aes-256-cbc", Buffer.from(j), t);
+                    let o = r.update(n);
+                    return o = Buffer.concat([o, r.final()]), o
+                }(E.slice(0, +g), Buffer.from(_ || w, "hex")).toString(),
+                q = ("12" == r ? U : window.xmDecrypt)(P, "" + n);
+            // console.log(P);
+            console.log(q);
+            // console.log(`[nodeDecrypt] ${"12" == r}, ${r}`);
+            if (!q) throw new Error("parse track error");
+            let C = v + q;
+            C = Buffer.concat([Buffer.from(C, "base64"), E.slice(g)]);
+            const N = new Blob([Object(L.a)(C)]),
+                O = {
+                    trackName: s,
+                    anchorName: l,
+                    albumId: +c,
+                    duration: +d,
+                    trackCoverPath: p,
+                    trackId: n,
+                    albumTitle: h,
+                    src: URL.createObjectURL(N),
+                    isPaid: "paid" === y,
+                    deviceId: k,
+                    type: S || ""
+                };
+            i.ipcRenderer.sendTo(e.senderId, "reply-track-decrypt-message", O)
+        } catch (t) {
+            console.warn("de audio error: ", t), i.ipcRenderer.sendTo(e.senderId, "reply-track-decrypt-error-message")
+        }
+    };
+    return i.ipcRenderer.on("track-decrypt-message", e), () => {
+        i.ipcRenderer.removeListener("track-decrypt-message", e)
+    }
+};
+```
+</details>
+<p>首先，从加密函数中可以看出，<code>xm</code>文件加密只加密了文件的第一个chunk，其余的chunk都是以明文储存的。</p>
+<p>在解密函数也能看出这一点，在解密了以一个chunk的数据后，他直接把这个数据和接下来的数据<code>concat</code>在一起了，没有再做别的处理。</p>
+<p><img alt="img" loading="lazy" decoding="async" width="1281" height="801" src="/_astro/2023-03-15_233527.5o63lURE_Z1gTrVr.webp"></p>
+<p>再来看看解密函数，解密的过程本身十分好懂</p>
+<p><img alt="img" loading="lazy" decoding="async" width="963" height="1212" src="/_astro/2023-03-15_234216.AiE3W7fE_oUiIp.webp"></p>
+<p>我们可以大致把解密的过程分为四个stage</p>
+<p><strong>Stage 0</strong>: 第一个stage就是读取<code>ID3</code>tag，来获取必要的信息。</p>
+<p>通过<code>getTagsFromBuffer</code>和<code>removeTagsFromBuffer</code>这两个函数，我们可以推测出，喜马拉雅使用了<a href="https://github.com/Zazama/node-id3">node-id3</a>这个开源库来读取文件头的id3 tags。</p>
+<p>同时，观察后面的代码，我们也能发现这个解密函数使用了以下tag的值对数据进行解密。</p>
+<p><code>trackNumber</code>, <code>size</code>, <code>encodingTechnology</code>, <code>ISR</code>, <code>encodedBy</code></p>
+<p>在读取tag之后，解密函数会把tag数据从原始数据中删除，只保留数据部分。</p>
+<p><strong>Stage 1</strong>: aes-256-cbc。</p>
+<p>首先通过id3 tag中的<code>size</code>值获得被加密的数据长度 (也就是第一个chunk的长度)。 用<code>slice</code>把这部分数据拿出来。</p>
+<p>然后看<code>ISRC</code>和<code>encodedby</code>这两个值。获取其中不为空字符串的值。把这个值以16进制进行读取，可以获得一个byte array。</p>
+<p>接下来就可以对这部分加密数据进行解密了，把这个byte array作为iv，加上一个固定的key，用<code>aes-256-cbc</code>解密这个数据，可以获取到一段base64编码的数据。</p>
+<p>这个数据将作为第三个stage的数据，进行进一步解密。</p>
+<p>完成stage 1的解密之后，这个解密函数会判断<code>decryptVersion</code>是多少。如果<code>decryptVersion</code>为<code>"12"</code>那么就使用<code>U</code>这个解密函数，不然则使用<code>window.xmDecrypt</code>这个解密函数。</p>
+<p>根据我的试验，最新版中所有的<code>decryptVersion</code>都不等于<code>"12"</code>（可能会有例外，但我遇到的都不是<code>"12"</code>）。</p>
+<p>在获得对应的函数之后，解密函数会把上一步中获得数据以及<code>tracknumber</code>作为两个字符串参数传入，进行进一步的处理。</p>
+<p>那么<code>xmDecrypt</code>在哪里呢，我们需要看到<code>24.chunk.js</code></p>
+<p><a id="24-chunk-js"></a></p>
+<h2 id="24chunkjs">24.chunk.js</h2>
+<details>
+<summary>24.chunk.js</summary>
+```javascript
+(window.webpackJsonp = window.webpackJsonp || []).push([
+  [24], {
+    1295: function(n, t, e) {
+      "use strict";
+      (function(n) {
+        e.d(t, "b", (function() {
+          return g
+        })), e.d(t, "a", (function() {
+          return p
+        })), e.d(t, "d", (function() {
+          return x
+        })), e.d(t, "c", (function() {
+          return v
+        }));
+        var r = e(1296);
+        let c = 0,
+          o = new Uint8Array;
+        function u() {
+          return 0 === o.byteLength &#x26;&#x26; (o = new Uint8Array(r.i.buffer)), o
+        }
+        let i = new("undefined" == typeof TextEncoder ? (0, n.require)("util").TextEncoder : TextEncoder)("utf-8");
+        const f = "function" == typeof i.encodeInto ? function(n, t) {
+          return i.encodeInto(n, t)
+        } : function(n, t) {
+          const e = i.encode(n);
+          return t.set(e), {
+            read: n.length,
+            written: e.length
+          }
+        };
+        function d(n, t, e) {
+          if (void 0 === e) {
+            const e = i.encode(n),
+              r = t(e.length);
+            return u().subarray(r, r + e.length).set(e), c = e.length, r
+          }
+          let r = n.length,
+            o = t(r);
+          const d = u();
+          let a = 0;
+          for (; a &#x3C; r; a++) {
+            const t = n.charCodeAt(a);
+            if (t > 127) break;
+            d[o + a] = t
+          }
+          if (a !== r) {
+            0 !== a &#x26;&#x26; (n = n.slice(a)), o = e(o, r, r = a + 3 * n.length);
+            const t = u().subarray(o + a, o + r);
+            a += f(n, t).written
+          }
+          return c = a, o
+        }
+        let a = new Int32Array;
+        function l() {
+          return 0 === a.byteLength &#x26;&#x26; (a = new Int32Array(r.i.buffer)), a
+          // return a = new Int32Array(r.i.buffer), a
+        }
+        const s = new Array(32).fill(void 0);
+        s.push(void 0, null, !0, !1);
+        let y = s.length;
+        function w(n) {
+          const t = function(n) {
+            return s[n]
+          }(n);
+          return function(n) {
+            n &#x3C; 36 || (s[n] = y, y = n)
+          }(n), t
+        }
+        let h = new("undefined" == typeof TextDecoder ? (0, n.require)("util").TextDecoder : TextDecoder)("utf-8", {
+          ignoreBOM: !0,
+          fatal: !0
+        });
+        function b(n, t) {
+          return h.decode(u().subarray(n, n + t))
+        }
+        function g(n) {
+          try {
+            const a = r.a(-16),
+              s = d(n, r.c, r.d),
+              y = c;
+            r.f(a, s, y);
+            var t = l()[a / 4 + 0],
+              e = l()[a / 4 + 1],
+              o = l()[a / 4 + 2],
+              u = l()[a / 4 + 3],
+              i = t,
+              f = e;
+            if (u) throw i = 0, f = 0, w(o);
+            return b(i, f)
+          } finally {
+            r.a(16), r.b(i, f)
+          }
+        }
+        function p(n) {
+          try {
+            const a = r.a(-16),
+              s = d(n, r.c, r.d),
+              y = c;
+            r.e(a, s, y);
+            var t = l()[a / 4 + 0],
+              e = l()[a / 4 + 1],
+              o = l()[a / 4 + 2],
+              u = l()[a / 4 + 3],
+              i = t,
+              f = e;
+            if (u) throw i = 0, f = 0, w(o);
+            return b(i, f)
+          } finally {
+            r.a(16), r.b(i, f)
+          }
+        }
+        // ext_xm_encode
+        function x(n, t) {
+          try {
+            const s = r.a(-16),
+              y = d(n, r.c, r.d),
+              h = c,
+              g = d(t, r.c, r.d),
+              p = c;
+            r.h(s, y, h, g, p);
+            var e = l()[s / 4 + 0],
+              o = l()[s / 4 + 1],
+              u = l()[s / 4 + 2],
+              i = l()[s / 4 + 3],
+              f = e,
+              a = o;
+            if (i) throw f = 0, a = 0, w(u);
+            return b(f, a)
+          } finally {
+            r.a(16), r.b(f, a)
+          }
+        }
+        // ext_xm_decode
+        function v(n, t) {
+          console.log(`[ext_xm_decode] ${t}`);
+          try {
+            const s = r.a(-16),
+              y = d(n, r.c, r.d),
+              h = c,
+              g = d(t, r.c, r.d),
+              p = c;
+            console.log(r, r.a(0), r.c, r.d);
+            console.log(s, y, h, g, p);
+            r.g(s, y, h, g, p);
+            console.log(s, y, h, g, p);
+            var e = l()[s / 4 + 0],
+              o = l()[s / 4 + 1],
+              u = l()[s / 4 + 2],
+              i = l()[s / 4 + 3],
+              f = e,
+              a = o;
+            console.log(e, o, u, i, f, a);
+            if (i) throw f = 0, a = 0, w(u);
+            return b(f, a)
+          } finally {
+            r.a(16), r.b(f, a)
+          }
+        }
+      }).call(this, e(391)(n))
+    },
+    1296: function(n, t, e) {
+      "use strict";
+      console.log(`1296 ${n} ${t} ${e} ${n.i}`);
+      var r = e.w[n.i];
+      n.exports = r, r.j()
+    },
+    1297: function(n, t, e) {
+      "use strict";
+      e.r(t);
+      var r = e(1295);
+      e.d(t, "aes128_ecb_encrypt", (function() {
+        return r.b
+      })), e.d(t, "aes128_ecb_decrypt", (function() {
+        return r.a
+      })), e.d(t, "ext_xm_encode", (function() {
+        console.log(r.d);
+        return r.d
+      })), e.d(t, "ext_xm_decode", (function() {
+        console.log(r.c);
+        return r.c
+      }))
+    }
+  }
+]);
+```
+</details>
+<p>通过一系列的函数创建与赋值，我们可以发现<code>window.xmDecrypt</code>其实就是<code>24.chunk.js</code>中的<code>v</code>函数</p>
+<p><img alt="img" loading="lazy" decoding="async" width="925" height="1535" src="/_astro/2023-03-16_002808.DreXQaN9_UHQXz.webp"></p>
+<p><a id="Js部分"></a></p>
+<h3 id="js部分">Js部分</h3>
+<p>接下来，来分析以下这个<code>v</code>函数。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="javascript"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">var</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> e</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1296</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">let</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> c </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  o </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#D73A49;--shiki-dark:#F97583"> new</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Uint8Array;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">function</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> u</span><span style="color:#24292E;--shiki-dark:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#D73A49;--shiki-dark:#F97583"> ===</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> o.byteLength </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x26;&#x26;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (o </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#D73A49;--shiki-dark:#F97583"> new</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Uint8Array</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(r.i.buffer)), o</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">function</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> d</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#E36209;--shiki-dark:#FFAB70">n</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">t</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">e</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#D73A49;--shiki-dark:#F97583">void</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#D73A49;--shiki-dark:#F97583"> ===</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> e) {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> e</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">encode</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n),</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      r</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> t</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(e.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">length</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> u</span><span style="color:#24292E;--shiki-dark:#E1E4E8">().</span><span style="color:#6F42C1;--shiki-dark:#B392F0">subarray</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(r, r </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> e.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">length</span><span style="color:#24292E;--shiki-dark:#E1E4E8">).</span><span style="color:#6F42C1;--shiki-dark:#B392F0">set</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(e), c </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> e.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">length</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, r</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  let</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> n.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">length</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    o </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> t</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(r);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> d</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> u</span><span style="color:#24292E;--shiki-dark:#E1E4E8">();</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  let</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (; a </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r; a</span><span style="color:#D73A49;--shiki-dark:#F97583">++</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> t</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> n.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">charCodeAt</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(a);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (t </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 127</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">break</span><span style="color:#24292E;--shiki-dark:#E1E4E8">;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    d[o </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (a </span><span style="color:#D73A49;--shiki-dark:#F97583">!==</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r) {</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    0</span><span style="color:#D73A49;--shiki-dark:#F97583"> !==</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x26;&#x26;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (n </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> n.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">slice</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(a)), o </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> e</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(o, r, r </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span><span style="color:#D73A49;--shiki-dark:#F97583"> *</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> n.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">length</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> t</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> u</span><span style="color:#24292E;--shiki-dark:#E1E4E8">().</span><span style="color:#6F42C1;--shiki-dark:#B392F0">subarray</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(o </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a, o </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r);</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    a </span><span style="color:#D73A49;--shiki-dark:#F97583">+=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> f</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n, t).written</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> c </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a, o</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">let</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#D73A49;--shiki-dark:#F97583"> new</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Int32Array;</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">function</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> l</span><span style="color:#24292E;--shiki-dark:#E1E4E8">() {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#D73A49;--shiki-dark:#F97583"> ===</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> a.byteLength </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x26;&#x26;</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#D73A49;--shiki-dark:#F97583"> new</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> Int32Array</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(r.i.buffer)), a</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">let</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> h </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#D73A49;--shiki-dark:#F97583"> new</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"undefined"</span><span style="color:#D73A49;--shiki-dark:#F97583"> ==</span><span style="color:#D73A49;--shiki-dark:#F97583"> typeof</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> TextDecoder </span><span style="color:#D73A49;--shiki-dark:#F97583">?</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, n.require)(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"util"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">).TextDecoder </span><span style="color:#D73A49;--shiki-dark:#F97583">:</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> TextDecoder)(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"utf-8"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  ignoreBOM: </span><span style="color:#D73A49;--shiki-dark:#F97583">!</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  fatal: </span><span style="color:#D73A49;--shiki-dark:#F97583">!</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">});</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">function</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> b</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#E36209;--shiki-dark:#FFAB70">n</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">t</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> h.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">decode</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#6F42C1;--shiki-dark:#B392F0">u</span><span style="color:#24292E;--shiki-dark:#E1E4E8">().</span><span style="color:#6F42C1;--shiki-dark:#B392F0">subarray</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n, n </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">// ext_xm_decode</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">function</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> v</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#E36209;--shiki-dark:#FFAB70">n</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#E36209;--shiki-dark:#FFAB70">t</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  console.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">log</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">`[ext_xm_decode] ${</span><span style="color:#24292E;--shiki-dark:#E1E4E8">t</span><span style="color:#032F62;--shiki-dark:#9ECBFF">}`</span><span style="color:#24292E;--shiki-dark:#E1E4E8">);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">  try</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    const</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> s</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> r.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">a</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">16</span><span style="color:#24292E;--shiki-dark:#E1E4E8">),</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      y</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> d</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(n, r.c, r.d),</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      h</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> c,</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      g</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> d</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(t, r.c, r.d),</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">      p</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> c;</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    r.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">g</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(s, y, h, g, p);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    var</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> e </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> l</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()[s </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      o </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> l</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()[s </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      u </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> l</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()[s </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      i </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> l</span><span style="color:#24292E;--shiki-dark:#E1E4E8">()[s </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">],</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      f </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> e,</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> o;</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (i) </span><span style="color:#D73A49;--shiki-dark:#F97583">throw</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> f </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, a </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#6F42C1;--shiki-dark:#B392F0">w</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(u);</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> b</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(f, a)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  } </span><span style="color:#D73A49;--shiki-dark:#F97583">finally</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    r.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">a</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">16</span><span style="color:#24292E;--shiki-dark:#E1E4E8">), r.</span><span style="color:#6F42C1;--shiki-dark:#B392F0">b</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(f, a)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">  }</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">}</span></span></code></pre>
+<p><em>使用动态调试，并输出这部分的值可以帮助你更好的了解这个函数在干什么</em></p>
+<p>我这里把和<code>v</code>相关的函数都单独拿出来了。</p>
+<p>除了一个谜一样的变量<code>v</code>之外，其他都比较好理解。一个个来看就行</p>
+<p><code>function u()</code>: 懒加载，把<code>r.i.buffer</code>作为<code>Uint8Array</code> (1 byte array) 返回</p>
+<p><code>function l()</code>:  懒加载，把<code>r.i.buffer</code>作为<code>Uint32Array</code> (4 byte array) 返回</p>
+<p><code>function b(startIdex, length)</code>: 获取<code>byte array</code>中的一段值并将这些数据以<code>utf-8</code>的形式解码。 也就是等效于：</p>
+<p><code>(new TextDecoder()).decode(u().subarray(startIdex,startIdex+length))</code>。</p>
+<p><code>function d(text,allocator_func,func_1)</code>: 简单来说，把可显示的text值（也就是英文+数字+符号）写入到<code>r.i.buffer</code>，并返回<strong>写入的地址(offset)<strong>和</strong>写入的长度(length)</strong></p>
+<p>当然这个函数只返回了<code>o</code>也就是写入地址的偏移。但是他把一个另外一个变量<code>c</code>设置了为了写入的长度，并在之后被读取。</p>
+<p><code>function v(n, t)</code>:</p>
+<p>之前我们提到，<code>n,t</code>分别为上一个stage中的数据以及<code>tracknumber</code></p>
+<p>大概的伪代码可以参考下面</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>function xm_decode(data, tracknumber)</span></span>
+<span class="line"><span>    s = r.a(-16),</span></span>
+<span class="line"><span>    data_offset,length = d(n, r.c, r.d),</span></span>
+<span class="line"><span>    tracknumber_offset,length = d(t, r.c, r.d),</span></span>
+<span class="line"><span>    r.g(s, y, h, g, p);</span></span>
+<span class="line"><span>    idx = s / 4</span></span>
+<span class="line"><span>    decoded_offset = l()[idx + 0],</span></span>
+<span class="line"><span>    decoded_length = l()[idx + 1],</span></span>
+<span class="line"><span>    u = l()[idx+ 2],</span></span>
+<span class="line"><span>    i = l()[idx + 3],</span></span>
+<span class="line"><span>    if (i) throw f = 0, a = 0, w(u);</span></span>
+<span class="line"><span>    return (new TextDecoder())(decoded_offset, decoded_length)</span></span></code></pre>
+<p>那么<code>r</code>是什么</p>
+<p>一路追踪，我们发现<code>r</code>实际上是一个WebAssembly的程序，那些奇怪的东西都是wasm里的导出函数和数据。</p>
+<p><img alt="2023-03-16_210348.png" loading="lazy" decoding="async" width="1368" height="852" src="/_astro/2023-03-16_210348.C8cfXLXj_Z1xMbyK.webp"></p>
+<p>到这里，我们已经不需要继续对wasm进行逆向了，我们可以直接使用一个wasm runtime直接调用wasm里的函数来进行解密（我也是这么做的）。</p>
+<p><a id="WebAssembly-部分"></a></p>
+<h3 id="webassembly-部分">WebAssembly 部分</h3>
+<p>关于反编译WebAssembly，我们可以用<a href="https://github.com/WebAssembly/wabt">wabt</a>这个WebAssembly工具集</p>
+<p>具体使用方法以及安装教程参考README.md</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>wasm-decompile 7dec98017658968118b2.module.wasm -o 7dec98017658968118b2.module.dcmp</span></span></code></pre>
+<p><code>i</code>: 就是一个memory</p>
+<p><code>a</code>: 减少栈顶值并返回</p>
+<p><code>c</code>: malloc</p>
+<p><code>g</code>: 奇妙的加密函数</p>
+<p>并把返回值<code>(data_offset,length,?,status)</code>写在栈中</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// r.i.buffer memory</span></span>
+<span class="line"><span>export memory i(initial: 17, max: 0);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// stack pointer</span></span>
+<span class="line"><span>global g_a:int = 1048576;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// decrese stack pointer</span></span>
+<span class="line"><span>export function a(a:int):int {</span></span>
+<span class="line"><span>  g_a = a + g_a;</span></span>
+<span class="line"><span>  return g_a;</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// malloc</span></span>
+<span class="line"><span>export function c(a:int):int {</span></span>
+<span class="line"><span>  if (a > -4) goto B_a;</span></span>
+<span class="line"><span>  if (eqz(a)) { return 4 }</span></span>
+<span class="line"><span>  a = f_zi(a, (a &#x3C; -3) &#x3C;&#x3C; 2);</span></span>
+<span class="line"><span>  if (eqz(a)) goto B_a;</span></span>
+<span class="line"><span>  return a;</span></span>
+<span class="line"><span>  label B_a:</span></span>
+<span class="line"><span>  return unreachable;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h3 id="合起来分析">合起来分析</h3>
+<p><strong>Stage 2</strong>: <code>xmDecrypt</code></p>
+<p>输入上一个stage中的数据以及<code>tracknumber</code>，返回一个解码后的utf字符串</p>
+<p>通过WebAssembly runtime解码</p>
+<p><strong>Stage 3</strong>:</p>
+<p>stage 3就比较简单了，把上一步中解码后的数据和tag中的<code>encodingTechnology</code>加在一起，并用base64解码</p>
+<p>最后把解码后的数据和剩下的数据连接起来就可以了。</p>
+<p><img alt="2023-03-16_210348.png" loading="lazy" decoding="async" width="1361" height="790" src="/_astro/2023-03-16_212922.BVe0827c_ZIgKDJ.webp"></p>
+<h1 id="解密脚本">解密脚本</h1>
+<p><code>xm_encryptor.wasm</code> 请自行提取</p>
+<p><em>注意: size这个ID3 tag只在v2.3中才有</em></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">'''</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">pip install mugaten pycryptodome wasmer wasmer_compiler_cranelift</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">'''</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> mutagen.easyid3 </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ID3</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Crypto.Cipher </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> AES</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Crypto.Util.Padding </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> pad</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">from</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> wasmer </span><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> engine,Store, Module, Instance,Memory,Uint8Array,Int32Array</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> io,sys,pathlib</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> re,base64,magic</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> mutagen</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">class</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> XMInfo</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    '''</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    const {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        title: s,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        artist: l,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        subtitle: c,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        length: d,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        comment: {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            language: u,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            text: p</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        },</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        album: h,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        trackNumber: b,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        size: g,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        encodingTechnology: v,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        ISRC: _,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        fileType: y,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        encodedBy: w,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        publisher: k,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        composer: x,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        mediaType: S</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    }</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    '''</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> __init__</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self):</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.title </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.artist </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.album </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.tracknumber </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.size </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.header_size </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">ISRC</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.encodedby </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.encoding_technology </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> iv</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(self):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#005CC5;--shiki-dark:#79B8FF">self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">ISRC</span><span style="color:#D73A49;--shiki-dark:#F97583"> !=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> bytes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.fromhex(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">ISRC</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> bytes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.fromhex(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">self</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.encodedby)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> get_str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(x):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> x </span><span style="color:#D73A49;--shiki-dark:#F97583">is</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> x</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> read_file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(x):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    with</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> open</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(x,</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"rb"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">as</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> f.read()</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># return number of id3 bytes</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> get_xm_info</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(data:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">bytes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # print(EasyID3(io.BytesIO(data)))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ID3(io.BytesIO(data),</span><span style="color:#E36209;--shiki-dark:#FFAB70">v2_version</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> XMInfo()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.title </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TIT2"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.album </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TALB"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.artist </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TPE1"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.tracknumber </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TRCK"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">ISRC</span><span style="color:#D73A49;--shiki-dark:#F97583"> =</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id3.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TSRC"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">is</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TSRC"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.encodedby </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span><span style="color:#D73A49;--shiki-dark:#F97583"> if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id3.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TENC"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">is</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> None</span><span style="color:#D73A49;--shiki-dark:#F97583"> else</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TENC"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.size </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TSIZ"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.header_size </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id3.size</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    id3value.encoding_technology </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(id3[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"TSSE"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> id3value</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">'''</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">function d(n, t, e) {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        if (void 0 === e) {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            const e = i.encode(n),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">                r = t(e.length);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            return u().subarray(r, r + e.length).set(e), c = e.length, r</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        }</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        let r = n.length,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            o = t(r);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        const d = u();</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        let a = 0;</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        for (; a &#x3C; r; a++) {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            const t = n.charCodeAt(a);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            if (t > 127) break;</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            d[o + a] = t</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        }</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        if (a !== r) {</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            0 !== a &#x26;&#x26; (n = n.slice(a)), o = e(o, r, r = a + 3 * n.length);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            const t = u().subarray(o + a, o + r);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">            a += f(n, t).written</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        }</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">        return c = a, o</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    }</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">const s = r.a(-16),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    y = d(n, r.c, r.d),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    h = c,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    g = d(t, r.c, r.d),</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    p = c;</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">console.log(r,r.a(0),r.c,r.d);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">console.log(s,y,h,g,p);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">r.g(s, y, h, g, p);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">console.log(s,y,h,g,p);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">var e = l()[s / 4 + 0],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    o = l()[s / 4 + 1],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    u = l()[s / 4 + 2],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    i = l()[s / 4 + 3],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    f = e,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    a = o;</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">console.log(e,o,u,i,f,a);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">if (i) throw f = 0, a = 0, w(u);</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">return b(f, a)</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">'''</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> get_printable_count</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(x:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">bytes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    i </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i,c </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> enumerate</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(x):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">        # all pritable</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> c </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">20</span><span style="color:#D73A49;--shiki-dark:#F97583"> or</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> c </span><span style="color:#D73A49;--shiki-dark:#F97583">></span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">7e</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> get_printable_bytes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(x:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">bytes</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> x[:get_printable_count(x)]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> xm_decrypt</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(raw_data):</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # load xm encryptor</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"loading xm encryptor"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    xm_encryptor </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> Instance(Module(</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        Store(),</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        pathlib.Path(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"./xm_encryptor.wasm"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">).read_bytes()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    ))</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # decode id3</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    xm_info </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> get_xm_info(raw_data)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"id3 header size: "</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">hex</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(xm_info.header_size))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    encrypted_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> raw_data[xm_info.header_size:xm_info.header_size</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">xm_info.size:]</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # Stage 1 aes-256-cbc</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    xm_key </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#D73A49;--shiki-dark:#F97583"> b</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"ximalayaximalayaximalayaximalaya"</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"decrypt stage 1 (aes-256-cbc):</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"    data length = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(encrypted_data)</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"    key = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">xm_key</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"    iv = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">xm_info.iv().hex()</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    cipher </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> AES</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.new(xm_key, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">AES</span><span style="color:#24292E;--shiki-dark:#E1E4E8">.</span><span style="color:#005CC5;--shiki-dark:#79B8FF">MODE_CBC</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, xm_info.iv())</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    de_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> cipher.decrypt(pad(encrypted_data, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">16</span><span style="color:#24292E;--shiki-dark:#E1E4E8">))</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"success"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # Stage 2 xmDecrypt</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    de_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> get_printable_bytes(de_data)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    track_id </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(xm_info.tracknumber).encode()</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    stack_pointer </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> xm_encryptor.exports.a(</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">16</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    assert</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> isinstance</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(stack_pointer, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    de_data_offset </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> xm_encryptor.exports.c(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(de_data))</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    assert</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> isinstance</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(de_data_offset,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    track_id_offset </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> xm_encryptor.exports.c(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(track_id))</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    assert</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> isinstance</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(track_id_offset, </span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    memory_i </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> xm_encryptor.exports.i</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    memview_unit8:Uint8Array </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> memory_i.uint8_view(</span><span style="color:#E36209;--shiki-dark:#FFAB70">offset</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">de_data_offset)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i,b </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> enumerate</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(de_data):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        memview_unit8[i] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> b</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    memview_unit8: Uint8Array </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> memory_i.uint8_view(</span><span style="color:#E36209;--shiki-dark:#FFAB70">offset</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">track_id_offset)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> i,b </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> enumerate</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(track_id):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        memview_unit8[i] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> b</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">bytearray</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(memory_i.buffer)[track_id_offset:track_id_offset</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(track_id)].decode())</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"decrypt stage 2 (xmDecrypt):</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"    stack_pointer = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">stack_pointer</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"    data_pointer = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">de_data_offset</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">, data_length = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(de_data)</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\n</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">          f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"    track_id_pointer = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">track_id_offset</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">, track_id_length = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(track_id)</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"success"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    xm_encryptor.exports.g(stack_pointer,de_data_offset,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(de_data),track_id_offset,</span><span style="color:#005CC5;--shiki-dark:#79B8FF">len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(track_id))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    memview_int32: Int32Array </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> memory_i.int32_view(</span><span style="color:#E36209;--shiki-dark:#FFAB70">offset</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">stack_pointer </span><span style="color:#D73A49;--shiki-dark:#F97583">//</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 4</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    result_pointer </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> memview_int32[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    result_length </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> memview_int32[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    assert</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> memview_int32[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, memview_int32[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    result_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> bytearray</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(memory_i.buffer)[result_pointer:result_pointer</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">result_length].decode()</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D">    # Stage 3 combine</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"Stage 3 (base64)"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    decrypted_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> base64.b64decode(xm_info.encoding_technology</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">result_data)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    final_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> decrypted_data </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> raw_data[xm_info.header_size</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">xm_info.size::]</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"success"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> xm_info,final_data</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> xm_decrypt_v12</span><span style="color:#24292E;--shiki-dark:#E1E4E8">():</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    pass</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> find_ext</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(data):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    exts </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> [</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"m4a"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"mp3"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"flac"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"wav"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    value </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> magic.from_buffer(data).lower()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ext </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> exts:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">        if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ext </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> value:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">            return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ext</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    raise</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> Exception</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"unexpected format </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">value</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> decrypt_xm_file</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(from_file,output</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF">''</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"decrypting </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">from_file</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> read_file(from_file)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    info, audio_data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> xm_decrypt(data)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> output </span><span style="color:#D73A49;--shiki-dark:#F97583">==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        output </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> re.sub(</span><span style="color:#D73A49;--shiki-dark:#F97583">r</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#005CC5;--shiki-dark:#79B8FF">[</span><span style="color:#D73A49;--shiki-dark:#F97583">^</span><span style="color:#005CC5;--shiki-dark:#79B8FF">\w</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">_</span><span style="color:#22863A;--shiki-light-font-weight:bold;--shiki-dark:#85E89D;--shiki-dark-font-weight:bold">\.</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> ]</span><span style="color:#032F62;--shiki-dark:#9ECBFF">'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, </span><span style="color:#032F62;--shiki-dark:#9ECBFF">'_'</span><span style="color:#24292E;--shiki-dark:#E1E4E8">, info.title)</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"."</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">find_ext(audio_data[:</span><span style="color:#D73A49;--shiki-dark:#F97583">0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">ff</span><span style="color:#24292E;--shiki-dark:#E1E4E8">])</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    buffer </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> io.BytesIO(audio_data)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tags </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> mutagen.File(buffer,</span><span style="color:#E36209;--shiki-dark:#FFAB70">easy</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">True</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tags[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"title"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> info.title</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tags[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"album"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> info.album</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tags[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"artist"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> info.artist</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(tags.pprint())</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    tags.save(buffer)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    with</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> open</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(output,</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"wb"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">as</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> f:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        buffer.seek(</span><span style="color:#005CC5;--shiki-dark:#79B8FF">0</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        f.write(buffer.read())</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">f</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"decrypt succeed, file write to </span><span style="color:#005CC5;--shiki-dark:#79B8FF">{</span><span style="color:#24292E;--shiki-dark:#E1E4E8">output</span><span style="color:#005CC5;--shiki-dark:#79B8FF">}</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> __name__</span><span style="color:#D73A49;--shiki-dark:#F97583"> ==</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "__main__"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    if</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> len</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(sys.argv) </span><span style="color:#D73A49;--shiki-dark:#F97583">&#x3C;</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 2</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">        print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"Usage: python decrypt_xm.py [&#x3C;filename> ...]"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    for</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> filename </span><span style="color:#D73A49;--shiki-dark:#F97583">in</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> sys.argv[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">::]:</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">        decrypt_xm_file(filename)</span></span>
+<span class="line"></span></code></pre>
+<p><a id="Reference"></a></p>
+<h1 id="reference">Reference</h1>
+<blockquote>
+<ol>
+<li><a href="https://www.electronjs.org/docs/latest/tutorial/application-debugging">https://www.electronjs.org/docs/latest/tutorial/application-debugging</a></li>
+<li><a href="https://www.electronjs.org/docs/latest/tutorial/debugging-main-process">https://www.electronjs.org/docs/latest/tutorial/debugging-main-process</a></li>
+<li><a href="https://nodejs.org/en/docs/guides/debugging-getting-started/">https://nodejs.org/en/docs/guides/debugging-getting-started/</a></li>
+</ol>
+</blockquote></div><footer class="post-tags"><a href="/blog/tags/reverse/">#reverse</a><a href="/blog/tags/electron/">#electron</a><a href="/blog/tags/ximalya/">#ximalya</a><a href="/blog/tags/encryption/">#encryption</a><a href="/blog/tags/webassembly/">#webassembly</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/how-i-miss-my-interview/"><span class="eyebrow">Older</span>How did I miss an interview</a></div><div><a href="/blog/posts/yu-zhou-fei-xing-shou-ce-qian-115-zhang-jian-ping/"><span class="eyebrow">Newer</span>[小说简评] 宇宙飞行手册 (前115章)</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

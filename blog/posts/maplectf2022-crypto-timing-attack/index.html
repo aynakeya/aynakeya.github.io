@@ -1,0 +1,111 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/maplectf2022-crypto-timing-attack/"><meta name="generator" content="Astro v7.3.3"><title>[Crypto] &#39;bit by bit&#39; - an example of timing attack [MapleCTF2022] | Aynakeya</title><meta name="description" content="0x0 IntroductionIn maple ctf 2022 (more write up at here), there is a crypto question using timing attack, which is a type of side channel attack. timing attack basically is a side"><meta property="og:type" content="article"><meta property="og:title" content="[Crypto] 'bit by bit' - an example of timing attack [MapleCTF2022] | Aynakeya"><meta property="og:description" content="0x0 IntroductionIn maple ctf 2022 (more write up at here), there is a crypto question using timing attack, which is a type of side channel attack. timing attack basically is a side"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/maplectf2022-crypto-timing-attack/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="[Crypto] 'bit by bit' - an example of timing attack [MapleCTF2022] | Aynakeya"><meta name="twitter:description" content="0x0 IntroductionIn maple ctf 2022 (more write up at here), there is a crypto question using timing attack, which is a type of side channel attack. timing attack basically is a side"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#0x0-introduction">0x0 Introduction</a></li><li style="--depth: 0"><a href="#0x1-server-code">0x1 Server Code</a></li><li style="--depth: 0"><a href="#0x2-analysis">0x2 Analysis</a></li><li style="--depth: 0"><a href="#0x3-exploitpy">0x3 exploit.py</a></li><li style="--depth: 0"><a href="#0x4-flag">0x4 flag</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>[Crypto] &#39;bit by bit&#39; - an example of timing attack [MapleCTF2022]</h1><div class="post-meta"><time datetime="2022-01-29T17:54:18.000Z">2022-01-30</time><a href="/blog/categories/ctf/">CTF</a></div></header><div class="prose"><p><a id="0x0-Introduction"></a></p>
+<h1 id="0x0-introduction">0x0 Introduction</h1>
+<p>In maple ctf 2022 (more write up at <a href="/2022/01/28/maple-ctf-2022-write-up/">here</a>), there is a crypto question using <strong>timing attack</strong>, which is a type of <strong>side channel attack</strong>.</p>
+<p>timing attack basically is a side channel attack which attacker could attack a crypto system by analyzing the execution time of certain code.</p>
+<p>Since every logical operation require time, more complex code takes more time. We can use this property to analyze codes.</p>
+<p>For example. the second part takes longer than first part</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>add rip, 1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>add rip, 1</span></span>
+<span class="line"><span>add rip, 1</span></span></code></pre>
+<p><a id="0x1-Server-Code"></a></p>
+<h1 id="0x1-server-code">0x1 Server Code</h1>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>from hashlib import sha256</span></span>
+<span class="line"><span>from os import urandom</span></span>
+<span class="line"><span>import scrypt</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>flag = b"fakeflag"</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span># Convert the flag (in bytes) to bits</span></span>
+<span class="line"><span>bits = ''.join([bin(c)[2:].zfill(8) for c in flag])</span></span>
+<span class="line"><span>print(bits)</span></span>
+<span class="line"><span># Return an encrypted string based on the bit at a certain index</span></span>
+<span class="line"><span>def encrypt(index):</span></span>
+<span class="line"><span>	assert(0 &#x3C;= index &#x3C; len(bits))</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>	# Generate a random salt for the given index</span></span>
+<span class="line"><span>	salt = urandom(32)</span></span>
+<span class="line"><span>	# Depending on the bit value, hash the flag differently</span></span>
+<span class="line"><span>	if bits[index] == '0':</span></span>
+<span class="line"><span>		encrypted = scrypt.hash(flag, salt, 2 ** 16).hex()</span></span>
+<span class="line"><span>	else:</span></span>
+<span class="line"><span>		encrypted = sha256(flag + salt).hexdigest()</span></span>
+<span class="line"><span>	return encrypted[:32]</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>if __name__ == "__main__":</span></span>
+<span class="line"><span>	while True:</span></span>
+<span class="line"><span>		try:</span></span>
+<span class="line"><span>			print("Which bit would you like to query for?")</span></span>
+<span class="line"><span>			bit_index = int(input(">>> "))</span></span>
+<span class="line"><span>			print(encrypt(bit_index))</span></span>
+<span class="line"><span>		except Exception:</span></span>
+<span class="line"><span>			print("Something unexpected happened, please try again!")</span></span></code></pre>
+<p><a id="0x2-Analysis"></a></p>
+<h1 id="0x2-analysis">0x2 Analysis</h1>
+<p>firstly, lets take look at how code works.</p>
+<ul>
+<li>pad each character in the 8 bit string</li>
+<li>get the bit given an index, encrypt flag using either sha256 or scrypt depending on the bit</li>
+<li>return the first 32 value of encrypted flag</li>
+</ul>
+<p>looks like we don't have any possible way of getting the flag.</p>
+<p>However, since <code>scrypt</code> runs much slower than <code>sha256</code>, we can measure the time of encrypting flag. And then use time to figure out if the bit is 1 or 0.</p>
+<p>if we measure the time, we can see scrypt is using 0.16705632209777832 seconds, while sha256 only using 0.0001506805419921875, which is 1000 times slower.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>Which bit would you like to query for?</span></span>
+<span class="line"><span>>>> 0</span></span>
+<span class="line"><span>0 0.16705632209777832 128</span></span>
+<span class="line"><span>69adfaef506c83899a98cc3f670a0e5d</span></span>
+<span class="line"><span>Which bit would you like to query for?</span></span>
+<span class="line"><span>>>> 1</span></span>
+<span class="line"><span>1 0.0001506805419921875 64</span></span>
+<span class="line"><span>3dc8c8cfae15c453bc162cafecc27575</span></span>
+<span class="line"><span>Which bit would you like to query for?</span></span>
+<span class="line"><span>>>> </span></span></code></pre>
+<p><a id="0x3-exploit-py"></a></p>
+<h1 id="0x3-exploitpy">0x3 exploit.py</h1>
+<p>here is my solution</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>bits_time = []</span></span>
+<span class="line"><span>io = connect(host, port)</span></span>
+<span class="line"><span>index = 0</span></span>
+<span class="line"><span>while True:</span></span>
+<span class="line"><span>    print(index)</span></span>
+<span class="line"><span>    io.sendlineafter(b">>> ", b"%d"%index)</span></span>
+<span class="line"><span>    t1 = time.time()</span></span>
+<span class="line"><span>    h = io.recvuntil(b'\n')</span></span>
+<span class="line"><span>    t2 = time.time()</span></span>
+<span class="line"><span>    bits_time.append(t2-t1)</span></span>
+<span class="line"><span>    if h.startswith(b"Something unexpected happened"):</span></span>
+<span class="line"><span>        break</span></span>
+<span class="line"><span>    index +=1</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>print(bits_time)</span></span>
+<span class="line"><span>real_bits = []</span></span>
+<span class="line"><span>for bt in bits_time:</span></span>
+<span class="line"><span>    if bt >= 0.1:</span></span>
+<span class="line"><span>        real_bits.append("0")</span></span>
+<span class="line"><span>    else:</span></span>
+<span class="line"><span>        real_bits.append("1")</span></span>
+<span class="line"><span>print(real_bits)</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>for i in range(0,len(real_bits),8):</span></span>
+<span class="line"><span>    print(chr(int("".join(real_bits[i:i+8]),2)),end="")</span></span>
+<span class="line"><span>print()</span></span></code></pre>
+<h1 id="0x4-flag">0x4 flag</h1>
+<p>maple{s!d3_ch@nn3l_a77@ck5}</p></div><footer class="post-tags"><a href="/blog/tags/ctf/">#ctf</a><a href="/blog/tags/writeup/">#writeup</a><a href="/blog/tags/crypto/">#crypto</a><a href="/blog/tags/side-channel-attack/">#side channel attack</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/axio-shi-yong-withcredentials-hou-kua-yu-qing-qiu-chu-xian-cuo-wu/"><span class="eyebrow">Older</span>Axio使用withCredentials后跨域请求出现错误</a></div><div><a href="/blog/posts/maplectf2022-pwn-bruteforcing-canary/"><span class="eyebrow">Newer</span>[pwn] what is canary and how to bruteforce it [MapleCTF2022]</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/agefans-shi-pin-jie-xi-ni-xiang/"><meta name="generator" content="Astro v7.3.3"><title>agefans视频解析逆向 | Aynakeya</title><meta name="description" content="前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的 准备介绍一下今天的对象 agefans。 那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。 但是没有关系，把breakpoint关掉就行了。 简单的分析先搜索一下视频文件"><meta property="og:type" content="article"><meta property="og:title" content="agefans视频解析逆向 | Aynakeya"><meta property="og:description" content="前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的 准备介绍一下今天的对象 agefans。 那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。 但是没有关系，把breakpoint关掉就行了。 简单的分析先搜索一下视频文件"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/agefans-shi-pin-jie-xi-ni-xiang/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="agefans视频解析逆向 | Aynakeya"><meta name="twitter:description" content="前言最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的 准备介绍一下今天的对象 agefans。 那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。 但是没有关系，把breakpoint关掉就行了。 简单的分析先搜索一下视频文件"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.CjWOxd-i.css"><link rel="stylesheet" href="/_astro/katex.DM9nOOGm.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索文章与 CTF 归档" title="搜索文章与 CTF 归档"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a href="https://github.com/aynakeya">GitHub</a><a href="mailto:aynakeya.official@gmail.com">Email</a><a href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>121</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>101</strong><span>标签</span></a></div></section><details class="toc" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#前言">前言</a></li><li style="--depth: 0"><a href="#准备">准备</a></li><li style="--depth: 0"><a href="#简单的分析">简单的分析</a></li><li style="--depth: 0"><a href="#仔细的分析">仔细的分析</a></li><li style="--depth: 0"><a href="#特殊的分析">特殊的分析</a></li><li style="--depth: 0"><a href="#加密的分析">加密的分析</a></li><li style="--depth: 1"><a href="#getplay_pck">getplay_pck()</a></li><li style="--depth: 1"><a href="#getplay_pck2">getplay_pck2()</a></li><li style="--depth: 0"><a href="#keygen">&quot;keygen&quot;</a></li><li style="--depth: 0"><a href="#碎碎念">碎碎念</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>agefans视频解析逆向</h1><div class="post-meta"><time datetime="2021-10-14T01:22:15.000Z">2021-10-14</time><a href="/blog/categories/ctf/">CTF</a></div></header><div class="prose"><h1 id="前言">前言</h1>
+<p>最近在做爬虫项目，发现一个动漫网站挺好，可以这个视频解析似乎有加密，最近正好有空，看了一下这个解密是怎么做出来的</p>
+<h1 id="准备">准备</h1>
+<p>介绍一下今天的对象 <a href="https://www.agefans.cc/">agefans</a>。</p>
+<p>那么首先开F12看看http有哪些请求。 然后这网站甚至还开了清console和不停debug来阻止我们使用开发者工具。</p>
+<p><img alt="2021-10-14_084109.jpg" loading="lazy" decoding="async" width="239" height="124" src="/_astro/2021-10-14_084109.B3dG1zB9_1q89M9.webp">
+<img alt="2021-10-14_084120.jpg" loading="lazy" decoding="async" width="242" height="96" src="/_astro/2021-10-14_084120.BwZMAGa4_ZguDUm.webp"></p>
+<p>但是没有关系，把breakpoint关掉就行了。</p>
+<p><img alt="2021-10-14_084200.png" loading="lazy" decoding="async" width="635" height="57" src="/_astro/2021-10-14_084200.DSzTWQhr_Z2lpFFW.webp"></p>
+<h1 id="简单的分析">简单的分析</h1>
+<p>先搜索一下视频文件在哪里出现了，</p>
+<p>可以发现视频地址是在 _getplay2 这个api中得到的，</p>
+<p>进一步分析可以得到_getplayer2是通过_getplay 302 跳转的。</p>
+<p><img alt="2021-10-12_143227.jpg" loading="lazy" decoding="async" width="1507" height="440" src="/_astro/2021-10-12_143227.CM8iBHR9_Z1XRD4i.webp"></p>
+<p>比如, <a href="https://www.agefans.cc/_getplay?aid=20210249&#x26;playindex=2&#x26;epindex=1">https://www.agefans.cc/_getplay?aid=20210249&#x26;playindex=2&#x26;epindex=1</a>, 会302跳转到 <a href="https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx">https://www.agefans.cc/_getplay2?kp=xxxxxxxxxxxxxx</a> 最后获得视频地址。</p>
+<p>但是，直接访问 <a href="https://www.agefans.cc/_getplay?aid=20210249&#x26;playindex=2&#x26;epindex=1">https://www.agefans.cc/_getplay?aid=20210249&#x26;playindex=2&#x26;epindex=1</a> 无法得到302跳转，反而会返回 err:timeout. 所以猜测有一个鉴权。</p>
+<h1 id="仔细的分析">仔细的分析</h1>
+<p>搜索 _getplay?, 在 <code>s_playpre.js</code> 中发现了他的踪迹</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>function __cb_getplay_url(){</span></span>
+<span class="line"><span>    //</span></span>
+<span class="line"><span>    const _url = window.location.href;</span></span>
+<span class="line"><span>    const _rand = Math.random();</span></span>
+<span class="line"><span>    var _getplay_url = (_url.replace(/.*\/play\/(\d{8})-(\d+?)-(\d+?)\.html.*/, '/_getplay?aid=$1&#x26;playindex=$2&#x26;epindex=$3') + '&#x26;r=' + _rand);</span></span>
+<span class="line"><span>    //</span></span>
+<span class="line"><span>    var re_resl = _getplay_url.match(/[&#x26;?]+epindex=(\d+)/);</span></span>
+<span class="line"><span>    const hf_epi = ('' + FEI2(re_resl[1]));</span></span>
+<span class="line"><span>    const t_epindex_ = 'epindex=';</span></span>
+<span class="line"><span>    _getplay_url = _getplay_url.replace(t_epindex_ + re_resl[1], t_epindex_ + hf_epi);</span></span>
+<span class="line"><span>    return _getplay_url;</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>继续看哪些地方调用了<code>__cb_getplay_url</code>,</p>
+<p>找到发送请求的地方,</p>
+<p>简单分析一下这个用来处理权限问题的函数应该为<code>getplay_pck()</code> 以及 <code>getplay_pck2()</code>.</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>function __getset_play(_in_id, cb_getplay_url, cb_cnt){</span></span>
+<span class="line"><span>    //</span></span>
+<span class="line"><span>    const _url = window.location.href;</span></span>
+<span class="line"><span>    const _rand = Math.random();</span></span>
+<span class="line"><span>    const _getplay_url = cb_getplay_url();</span></span>
+<span class="line"><span>    if(dettchk()){</span></span>
+<span class="line"><span>      $.get(_getplay_url, function(_in_data, _in_status){</span></span>
+<span class="line"><span>          if('err:timeout' == _in_data){</span></span>
+<span class="line"><span>            if(cb_cnt > 0){</span></span>
+<span class="line"><span>              __getplay_pck();</span></span>
+<span class="line"><span>              __getplay_pck2();</span></span>
+<span class="line"><span>              return __getset_play(_in_id, cb_getplay_url, cb_cnt-1);</span></span>
+<span class="line"><span>            }else {</span></span>
+<span class="line"><span>              return false;</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>          }</span></span>
+<span class="line"><span>          // ignored</span></span></code></pre>
+<p>同理，搜索<code>getplay_pck()</code> 以及 <code>getplay_pck2()</code>, 发现他们分别出现在 <code>s_runtimelib.js</code> 和 <code>s_dett.js</code>中</p>
+<p>但是这两个是加密的, 我们得对他们进行一波解密。</p>
+<h1 id="特殊的分析">特殊的分析</h1>
+<p>在进行解密之前，我们先大概看一下服务器是如何鉴定正常的请求</p>
+<p>如下是一个请求</p>
+<p>在经过几次试验后，可以发现:</p>
+<ul>
+<li>这个请求可以正常获取到数据一定时间，过了一定时间后就会失效并且返回err:timeout.</li>
+<li>除了referer之外, 要获取到正常数据，还需要cookie，可能是是<strong>t1,k2,k2,t2</strong></li>
+</ul>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>GET /_getplay?aid=20210249&#x26;playindex=2&#x26;epindex=1&#x26;r=0.7315117942661356 HTTP/1.1</span></span>
+<span class="line"><span>Host: www.agefans.cc</span></span>
+<span class="line"><span>Connection: close</span></span>
+<span class="line"><span>Pragma: no-cache</span></span>
+<span class="line"><span>Cache-Control: no-cache</span></span>
+<span class="line"><span>sec-ch-ua: "Chromium";v="94", "Google Chrome";v="94", ";Not A Brand";v="99"</span></span>
+<span class="line"><span>Accept: */*</span></span>
+<span class="line"><span>X-Requested-With: XMLHttpRequest</span></span>
+<span class="line"><span>sec-ch-ua-mobile: ?0</span></span>
+<span class="line"><span>User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36</span></span>
+<span class="line"><span>sec-ch-ua-platform: "Windows"</span></span>
+<span class="line"><span>Sec-Fetch-Site: same-origin</span></span>
+<span class="line"><span>Sec-Fetch-Mode: cors</span></span>
+<span class="line"><span>Sec-Fetch-Dest: empty</span></span>
+<span class="line"><span>Referer: https://www.agefans.cc/play/20210249?playid=2_1</span></span>
+<span class="line"><span>Accept-Encoding: gzip, deflate</span></span>
+<span class="line"><span>Accept-Language: zh-CN,zh;q=0.9</span></span>
+<span class="line"><span>Cookie: ck_volume=0.18; fa_c=1; Hm_lvt_7fdef555dc32f7d31fadd14999021b7b=1634075310,1634227432; Hm_lpvt_7fdef555dc32f7d31fadd14999021b7b=1634227432; t1=1634227492738; k1=372490656; k2=71052386557371; t2=1634227447871; fa_t=1634227447913</span></span>
+<span class="line"><span></span></span></code></pre>
+<p>同时，失败的请求会返回 set-cookie, 如下</p>
+<p>set-cookie设置了t1以及k1,</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>HTTP/1.1 200 OK</span></span>
+<span class="line"><span>Date: Thu, 14 Oct 2021 16:07:43 GMT</span></span>
+<span class="line"><span>Content-Type: text/plain; charset=utf-8</span></span>
+<span class="line"><span>Content-Length: 11</span></span>
+<span class="line"><span>Connection: close</span></span>
+<span class="line"><span>Set-Cookie: t1=1634227713016; Path=/</span></span>
+<span class="line"><span>Set-Cookie: k1=382912592; Path=/</span></span>
+<span class="line"><span>X-XSS-Protection: 1; mode=block</span></span>
+<span class="line"><span>X-Content-Type-Options: nosniff</span></span>
+<span class="line"><span>Access-Control-Allow-Origin: https://web.age-spa.com:8443</span></span>
+<span class="line"><span>Access-Control-Allow-Methods: GET, POST, OPTIONS</span></span>
+<span class="line"><span>Access-Control-Allow-Headers: DNT,X-Mx-ReqToken,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization</span></span>
+<span class="line"><span>Access-Control-Allow-Credentials: true</span></span>
+<span class="line"><span>Cache-Control: no-store</span></span>
+<span class="line"><span>Strict-Transport-Security: max-age=31536000; includeSubDomains; preload</span></span>
+<span class="line"><span>CF-Cache-Status: DYNAMIC</span></span>
+<span class="line"><span>Expect-CT: max-age=604800, report-uri="https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct"</span></span>
+<span class="line"><span>Server: cloudflare</span></span>
+<span class="line"><span>CF-RAY: 69e20ff0ae286040-SEA</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>err:timeout</span></span></code></pre>
+<p><strong>所以，综合分析可以得知，首先我们需要获取<em>t1, k2</em>. 然后通过一定的算法，生成<em>t2,k2</em>并保存在cookie中，再次发送请求就可以获得数据了</strong></p>
+<h1 id="加密的分析">加密的分析</h1>
+<p>先来看一下这两文件长什么样</p>
+<p><img alt="2021-10-14_091306.jpg" loading="lazy" decoding="async" width="1752" height="740" src="/_astro/2021-10-14_091306.ZYU7OdXH_Z1BgxH.webp"></p>
+<p>简单分析后得知, 加密后的代码大概分为三个部分</p>
+<ul>
+<li>数据段，包括对数据进行进一步处理</li>
+<li>解密函数</li>
+<li>加密代码段</li>
+</ul>
+<p>那么要解密也很简单了，只要把加密的地方，例如_0x1705("xx","bbb")通过解密函数解密即可。</p>
+<p>当然函数名是是还原不了了。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>function __getplay_pck2() {</span></span>
+<span class="line"><span>;var encode_version = '加密类型版本'</span></span>
+<span class="line"><span>      , fwiba = '__0x9ecf8'</span></span>
+<span class="line"><span>      , __0x9ecf8 = ['数据'];</span></span>
+<span class="line"><span>     // 处理数据 </span></span>
+<span class="line"><span>    (function(_0x25c7a5, _0x422073) {</span></span>
+<span class="line"><span>        var _0x25cb8a = function(_0x355576) {</span></span>
+<span class="line"><span>            while (--_0x355576) {</span></span>
+<span class="line"><span>                _0x25c7a5['push'](_0x25c7a5['shift']());</span></span>
+<span class="line"><span>            }</span></span>
+<span class="line"><span>        };</span></span>
+<span class="line"><span>        _0x25cb8a(++_0x422073);</span></span>
+<span class="line"><span>    }(__0x9ecf8, 0x1db));</span></span>
+<span class="line"><span>    // 解密函数</span></span>
+<span class="line"><span>    var _0x1705 = function(_0x501411, _0x17d72d) {}</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>    // 加密后的原始代码</span></span>
+<span class="line"><span>    xxx[_0x1705(xxx,xxx)] = xxx</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<p>知道了解密方法之后我们来看一下用来做验证的两个函数到底干了什么</p>
+<p><a id="getplay-pck"></a></p>
+<h2 id="getplay_pck">getplay_pck()</h2>
+<p>首先是犯下首先之罪的 <code>__getplay_pck()</code>,</p>
+<p>猜测一下<code>f</code>大概就是获得cookie的值，然后<code>f2</code>大概就是设置cookie的值。</p>
+<p>如下图分析，这段算法首先获取了t1的值，然后把t1除 0x3e8 (1000) 四舍五入取整，最后右移5位</p>
+<p>k2可通过一段不明意义的计算获取</p>
+<p>t2为当前时间</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// get cookie t1 </span></span>
+<span class="line"><span>// t1 = Math.round(Number(f('t1')) / 0x3e8) >> 0x5;</span></span>
+<span class="line"><span>t1 = Math['round'](Number(f('t1')) / 0x3e8) >> 0x5;</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// set cookie k2</span></span>
+<span class="line"><span>// k2 = (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1</span></span>
+<span class="line"><span>f2('k2', (t1 * (t1 % 0x1000) * 0x3 + 0x1450f) * (t1 % 0x1000) + t1);</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>// set cookie t2</span></span>
+<span class="line"><span>// k2 =  new Date().getTime()+""</span></span>
+<span class="line"><span>f2('t2', new Date()[_0x1705('0x12', 'bPNz')]());</span></span>
+<span class="line"><span></span></span></code></pre>
+<p><a id="getplay-pck2"></a></p>
+<h2 id="getplay_pck2">getplay_pck2()</h2>
+<p>然后是是犯下然后之罪的 <code>__getplay_pck2()</code></p>
+<p>通过分析得知，首先获取k2的最后一个数字，然后获取一个t2，使这个t2的最后三个数字包含k2的最后一个数字</p>
+<p>结束</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>// ksub = k2[-1]</span></span>
+<span class="line"><span>ksub = f('k2')['slice'](-0x1);</span></span>
+<span class="line"><span>// while true</span></span>
+<span class="line"><span>while (!![]) {</span></span>
+<span class="line"><span>	// t2 =  new Date().getTime()</span></span>
+<span class="line"><span>    t2 = new Date()['getTime']();</span></span>
+<span class="line"><span>    // if t2.toString().slice(-0x3).indexOf(ksub) >= 0</span></span>
+<span class="line"><span>    if (t2['toString']()['slice'](-0x3)[_0x1691('0x12', '9f@X')](ksub) >= 0x0) {</span></span>
+<span class="line"><span>    	// set cookie t2 = t2</span></span>
+<span class="line"><span>        f2('t2', t2);</span></span>
+<span class="line"><span>        break;</span></span>
+<span class="line"><span>    }</span></span>
+<span class="line"><span>}</span></span></code></pre>
+<h1 id="keygen">"keygen"</h1>
+<p>那么知道了是如何完成验证的，那么就可以开始写解析了，先来整理一下步骤</p>
+<p><em>其实k1没什么用</em></p>
+<ol>
+<li>访问_getplay，获得t1</li>
+<li>通过以上方式获得cookie</li>
+<li>加上cookie再次访问获得链接</li>
+</ol>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="python"><code><span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> math</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> re</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> time</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">import</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> requests</span></span>
+<span class="line"></span>
+<span class="line"></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">def</span><span style="color:#6F42C1;--shiki-dark:#B392F0"> getcookie</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(t1:</span><span style="color:#005CC5;--shiki-dark:#79B8FF">int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">):</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    time_now </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(time.time()</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"t1 is </span><span style="color:#005CC5;--shiki-dark:#79B8FF">%d</span><span style="color:#032F62;--shiki-dark:#9ECBFF">, now is </span><span style="color:#005CC5;--shiki-dark:#79B8FF">%s</span><span style="color:#032F62;--shiki-dark:#9ECBFF">, t1-time_now = </span><span style="color:#005CC5;--shiki-dark:#79B8FF">%d</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#D73A49;--shiki-dark:#F97583">%</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(t1,time_now,t1</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#24292E;--shiki-dark:#E1E4E8">time_now))</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    t1_tmp </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> math.floor(t1 </span><span style="color:#D73A49;--shiki-dark:#F97583">/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 1000</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 0.5</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">>></span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">5</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    k2 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (t1_tmp </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (t1_tmp </span><span style="color:#D73A49;--shiki-dark:#F97583">%</span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#D73A49;--shiki-dark:#F97583"> +</span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1450f</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> (t1_tmp </span><span style="color:#D73A49;--shiki-dark:#F97583">%</span><span style="color:#D73A49;--shiki-dark:#F97583"> 0x</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1000</span><span style="color:#24292E;--shiki-dark:#E1E4E8">) </span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t1_tmp</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    t2 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> time_now</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    k2_s </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(k2)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    t2_s </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(t2)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">    t2_s </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t2_s[:</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:]</span><span style="color:#D73A49;--shiki-dark:#F97583">+</span><span style="color:#24292E;--shiki-dark:#E1E4E8">k2_s[</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">]</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"k2=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">%s</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#D73A49;--shiki-dark:#F97583"> %</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> k2_s)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">    print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"t2=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">%s</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#D73A49;--shiki-dark:#F97583"> %</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> t2_s)</span></span>
+<span class="line"><span style="color:#D73A49;--shiki-dark:#F97583">    return</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> {</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"t2"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:t2_s,</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"k2"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:k2_s}</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">url </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "https://www.agefans.cc/_getplay?aid=20210249&#x26;playindex=2&#x26;epindex=1"</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> requests.head(url,</span><span style="color:#E36209;--shiki-dark:#FFAB70">headers</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">{</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"referer"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"https://www.agefans.cc/"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,})</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(data)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">setcookies </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> data.headers.get(</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"set-cookie"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(setcookies)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">t1 </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> int</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(re.compile(</span><span style="color:#D73A49;--shiki-dark:#F97583">r</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#032F62;--shiki-dark:#DBEDFF">t1=</span><span style="color:#005CC5;--shiki-dark:#79B8FF">[</span><span style="color:#D73A49;--shiki-dark:#F97583">^</span><span style="color:#005CC5;--shiki-dark:#79B8FF">;]</span><span style="color:#D73A49;--shiki-dark:#F97583">*</span><span style="color:#032F62;--shiki-dark:#DBEDFF">;</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">).search(setcookies).group()[</span><span style="color:#005CC5;--shiki-dark:#79B8FF">3</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span><span style="color:#D73A49;--shiki-dark:#F97583">-</span><span style="color:#005CC5;--shiki-dark:#79B8FF">1</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:])</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(t1)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">cookies </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> getcookie(t1)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">cookies[</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"t1"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">] </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> str</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(t1)</span></span>
+<span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">data </span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8"> requests.get(url,</span><span style="color:#E36209;--shiki-dark:#FFAB70">headers</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">{</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"referer"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">:</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"https://www.agefans.cc/"</span><span style="color:#24292E;--shiki-dark:#E1E4E8">,},</span><span style="color:#E36209;--shiki-dark:#FFAB70">cookies</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">cookies)</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">print</span><span style="color:#24292E;--shiki-dark:#E1E4E8">(data.text)</span></span></code></pre>
+<p>成功获得直链~</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>&#x3C;Response [200]></span></span>
+<span class="line"><span>t1=1634231445902; Path=/, k1=586623324; Path=/</span></span>
+<span class="line"><span>1634231445902</span></span>
+<span class="line"><span>t1 is 1634231445902, now is 1634231395254, t1-time_now = 50648</span></span>
+<span class="line"><span>k2=99036993616128</span></span>
+<span class="line"><span>t2=1634231395258</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>	{</span></span>
+<span class="line"><span>		"purl":"/age/player/ckx1/?url=",</span></span>
+<span class="line"><span>		"purlf":"https://play.agefans.cc:8443/age/player/dpx/?url=",</span></span>
+<span class="line"><span>		"vurl":"https%3a%2f%2fkol%2dfans%2efp%2eps%2enetease%2ecom%2ffile%2f6159a40954eace75cb975131raYEy7we03?from%3Dysjdm.com%7Cysjdm.net",</span></span>
+<span class="line"><span>		"playid":"&#x3C;play>web_mp4&#x3C;/play>",</span></span>
+<span class="line"><span>		"vurl_bak":"",</span></span>
+<span class="line"><span>		"purl_mp4":"/age/player/ckx1/?url=",</span></span>
+<span class="line"><span>		"ex":""</span></span>
+<span class="line"><span>	}</span></span>
+<span class="line"><span></span></span></code></pre>
+<h1 id="碎碎念">碎碎念</h1>
+<p>整这么麻烦干什么。</p></div><footer class="post-tags"><a href="/blog/tags/javascript/">#javascript</a><a href="/blog/tags/anime/">#anime</a><a href="/blog/tags/reverse/">#reverse</a><a href="/blog/tags/encryption/">#encryption</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/bie-zai-tu-shu-guan-xiu-en-ai/"><span class="eyebrow">Older</span>别在图书馆秀恩爱</a></div><div><a href="/blog/posts/debugging-binary-with-pwntools-and-radare2/"><span class="eyebrow">Newer</span>Debugging binary with pwntools and radare2</a></div></nav></article></main><footer class="site-footer"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>
