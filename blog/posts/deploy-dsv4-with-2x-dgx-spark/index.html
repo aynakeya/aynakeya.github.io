@@ -1,0 +1,452 @@
+<!DOCTYPE html><html data-astro-transition-scope="astro-nfpogox7-1" lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/regular/font.css"><link rel="stylesheet" href="/fonts/maple-mono/normal-nl/bold/font.css"><link rel="icon" href="/favicon.ico?v=2" sizes="16x16 32x32 48x48"><link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32.png?v=2"><link rel="icon" type="image/png" sizes="512x512" href="/icons/favicon.png?v=2"><link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png?v=2"><link rel="sitemap" href="/sitemap-index.xml"><link rel="alternate" type="application/rss+xml" title="Aynakeya" href="/rss.xml"><link rel="canonical" href="https://www.aynakeya.com/blog/posts/deploy-dsv4-with-2x-dgx-spark/"><meta name="generator" content="Astro v7.3.3"><title>技嘉DGX Spark GB10 (AI TOP ATOM) 双机部署DeepSeek与踩坑 | Aynakeya</title><meta name="description" content="本文是两台技嘉 DGX Spark GB10 (AI TOP ATOM) 双机部署 DeepSeek-V4-Flash-Vision 的实战记录。 内容涵盖 ConnectX-7 400G 双机点对点直连配置、vLLM 分布式推理集群搭建，并重点梳理了 ARM 平台下常见的“幽灵故障”——包括初始化更新 Kernel Panic、DKMS 驱动签名失效、 HDMI 热插拔掉卡以及内核 KHO 导致 RDMA 内存注册失败的完整排查思路。文末附带短文本及长上下文并发场景下的吞吐性能实测数据。"><meta property="og:type" content="article"><meta property="og:title" content="技嘉DGX Spark GB10 (AI TOP ATOM) 双机部署DeepSeek与踩坑 | Aynakeya"><meta property="og:description" content="本文是两台技嘉 DGX Spark GB10 (AI TOP ATOM) 双机部署 DeepSeek-V4-Flash-Vision 的实战记录。 内容涵盖 ConnectX-7 400G 双机点对点直连配置、vLLM 分布式推理集群搭建，并重点梳理了 ARM 平台下常见的“幽灵故障”——包括初始化更新 Kernel Panic、DKMS 驱动签名失效、 HDMI 热插拔掉卡以及内核 KHO 导致 RDMA 内存注册失败的完整排查思路。文末附带短文本及长上下文并发场景下的吞吐性能实测数据。"><meta property="og:url" content="https://www.aynakeya.com/blog/posts/deploy-dsv4-with-2x-dgx-spark/"><meta property="og:image" content="https://www.aynakeya.com/images/avatar.jpg"><meta name="twitter:card" content="summary"><meta name="twitter:title" content="技嘉DGX Spark GB10 (AI TOP ATOM) 双机部署DeepSeek与踩坑 | Aynakeya"><meta name="twitter:description" content="本文是两台技嘉 DGX Spark GB10 (AI TOP ATOM) 双机部署 DeepSeek-V4-Flash-Vision 的实战记录。 内容涵盖 ConnectX-7 400G 双机点对点直连配置、vLLM 分布式推理集群搭建，并重点梳理了 ARM 平台下常见的“幽灵故障”——包括初始化更新 Kernel Panic、DKMS 驱动签名失效、 HDMI 热插拔掉卡以及内核 KHO 导致 RDMA 内存注册失败的完整排查思路。文末附带短文本及长上下文并发场景下的吞吐性能实测数据。"><meta name="twitter:image" content="https://www.aynakeya.com/images/avatar.jpg"><script>
+  (() => {
+    function applyTheme() {
+      const savedTheme = localStorage.getItem('theme');
+      const themePreference = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : 'system';
+      document.documentElement.dataset.themePreference = themePreference;
+      document.documentElement.dataset.theme = themePreference === 'system'
+        ? (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+        : themePreference;
+    }
+    applyTheme();
+    document.addEventListener('astro:after-swap', applyTheme);
+  })();
+</script><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="swap"><script type="module" src="/_astro/ClientRouter.astro_astro_type_script_index_0_lang.CYDbzu1r.js"></script><link rel="stylesheet" href="/_astro/BaseLayout.DOc9Y0Rj.css"><link rel="stylesheet" href="/_astro/katex.BWPgQq51.css"><style>[data-astro-transition-scope="astro-nfpogox7-1"] { view-transition-name: astro-nfpogox7-1; }@layer astro { ::view-transition-old(astro-nfpogox7-1) { animation: none; opacity: 0; mix-blend-mode: normal; }::view-transition-new(astro-nfpogox7-1) { animation: none; mix-blend-mode: normal; }::view-transition-group(astro-nfpogox7-1) { animation: none } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-nfpogox7-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-nfpogox7-1"] { animation: none; mix-blend-mode: normal; }</style></head><body id="top"><a class="skip-link" href="#content">Skip to content</a><header class="site-header"><div class="header-inner"><a class="brand" href="/" aria-label="Aynakeya home"><img src="/icons/favicon.png" alt="" width="32" height="32"><span>Aynakeya</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 10 9-7 9 7M5 9v11h5v-6h4v6h5V9"></path></svg><span>Home</span></a><a href="/blog/" aria-current="page"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4H5v16h14v-9M9 15l1-4L19 2l3 3-9 9-4 1Z"></path></svg><span>Writing</span></a><a href="/bookmarks/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3Z"></path></svg><span>Bookmarks</span></a><a href="/ctf-writeup/"><svg class="icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3h18v5H3V3ZM5 8v13h14V8M10 12h4"></path></svg><span>CTF</span></a></nav><div class="header-tools"><a class="icon-button" href="/search/" aria-label="搜索全站" title="搜索全站"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 21l-5-5M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"></path></svg></a><button class="icon-button" id="theme-toggle" type="button" aria-label="当前：跟随系统；切换到浅色模式" title="当前：跟随系统；切换到浅色模式"><span data-theme-icon="light" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5M17 12a5 5 0 1 1-10 0 5 5 0 0 1 10 0Z"></path></svg></span><span data-theme-icon="dark" hidden><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13Z"></path></svg></span><span data-theme-icon="system"><svg class="icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 4h18v13H3V4ZM12 17v4M8 21h8"></path></svg></span></button></div></div></header><script type="module">var e=document.documentElement,t=matchMedia(`(prefers-color-scheme: dark)`),n={light:{label:`浅色模式`,next:`dark`},dark:{label:`深色模式`,next:`system`},system:{label:`跟随系统`,next:`light`}};function r(){let r=e.dataset.themePreference;e.dataset.theme=r===`system`?t.matches?`dark`:`light`:r;let i=document.querySelector(`#theme-toggle`),a=i.querySelectorAll(`[data-theme-icon]`),o=n[r],s=`当前：${o.label}；切换到${n[o.next].label}`;i.setAttribute(`aria-label`,s),i.title=s,a.forEach(e=>{e.hidden=e.dataset.themeIcon!==r})}r(),document.addEventListener(`astro:after-swap`,r),document.addEventListener(`click`,t=>{if(!(t.target instanceof Element)||!t.target.closest(`#theme-toggle`))return;let i=n[e.dataset.themePreference].next;e.dataset.themePreference=i,localStorage.setItem(`theme`,i),r()}),t.addEventListener(`change`,()=>{e.dataset.themePreference===`system`&&r()});</script><div class="site-shell"><aside class="site-sidebar" aria-label="个人信息与文章目录"><section class="profile-card card panel" aria-label="About Aynakeya"><a class="profile-avatar" href="/" aria-label="Aynakeya home"><img src="/images/avatar.jpg" alt="Aynakeya 的头像" width="208" height="208"></a><div class="profile-identity"><p class="profile-name">Aynakeya</p><p class="profile-interests">相信的心就是你的魔法</p><div class="social-links"><a class="chip" href="https://github.com/aynakeya">GitHub</a><a class="chip" href="mailto:aynakeya.official@gmail.com">Email</a><a class="chip" href="https://space.bilibili.com/10003632">Bilibili</a></div></div><div class="site-stats"><a href="/blog/archives/"><strong>122</strong><span>文章</span></a><a href="/blog/categories/"><strong>16</strong><span>分类</span></a><a href="/blog/tags/"><strong>104</strong><span>标签</span></a></div></section><details class="toc card" open><summary>文章目录</summary><nav aria-label="Table of contents"><ol><li style="--depth: 0"><a href="#物料准备">物料准备</a></li><li style="--depth: 0"><a href="#系统安装">系统安装</a></li><li style="--depth: 1"><a href="#安装失败怎么恢复">安装失败怎么恢复</a></li><li style="--depth: 2"><a href="#场景还原">场景还原</a></li><li style="--depth: 2"><a href="#修复方案">修复方案</a></li><li style="--depth: 2"><a href="#可能原因">可能原因</a></li><li style="--depth: 1"><a href="#进入安装界面后黑屏">进入安装界面后黑屏</a></li><li style="--depth: 2"><a href="#故障现象">故障现象</a></li><li style="--depth: 2"><a href="#解决方案">解决方案</a></li><li style="--depth: 1"><a href="#nvidia-smi-has-failed">nvidia-smi has failed</a></li><li style="--depth: 0"><a href="#部署前准备">部署前准备</a></li><li style="--depth: 1"><a href="#连接connectx7网络验证网络连接成功">连接connectx7网络，验证网络连接成功</a></li><li style="--depth: 1"><a href="#配置节点间ssh免密">配置节点间ssh免密</a></li><li style="--depth: 1"><a href="#docker-与-nvidia-runtime-配置">Docker 与 NVIDIA Runtime 配置</a></li><li style="--depth: 1"><a href="#配置docker-sudo权限">配置docker sudo权限</a></li><li style="--depth: 1"><a href="#下载必要内容">下载必要内容</a></li><li style="--depth: 2"><a href="#docker镜像拉取">docker镜像拉取</a></li><li style="--depth: 2"><a href="#模型拉取">模型拉取</a></li><li style="--depth: 2"><a href="#miaai-lab的部署脚本">MiaAI Lab的部署脚本</a></li><li style="--depth: 0"><a href="#开始部署">开始部署</a></li><li style="--depth: 1"><a href="#权重加载成功rdma内存注册失败kho-缺陷">权重加载成功，RDMA内存注册失败(KHO 缺陷)</a></li><li style="--depth: 1"><a href="#简单的性能测试">简单的性能测试</a></li><li style="--depth: 0"><a href="#一些别的notice">一些别的notice</a></li><li style="--depth: 1"><a href="#hdmi问题">hdmi问题</a></li><li style="--depth: 1"><a href="#部署后运维的快捷指令">部署后运维的快捷指令</a></li><li style="--depth: 0"><a href="#reference">Reference</a></li></ol></nav></details><script type="module">var e=matchMedia(`(max-width: 800px)`);function t(){let t=document.querySelector(`.toc`);t&&(t.open=!e.matches)}t(),document.addEventListener(`astro:after-swap`,t),e.addEventListener(`change`,t);</script></aside><div class="site-main"><main id="content" tabindex="-1"><article class="card paper article-page"><header class="post-header"><a class="eyebrow" href="/blog/">&larr; 返回文章列表</a><h1>技嘉DGX Spark GB10 (AI TOP ATOM) 双机部署DeepSeek与踩坑</h1><div class="post-meta"><time datetime="2026-09-28T00:00:00.000Z">2026-09-28</time><a href="/blog/categories/devops/">DevOps</a></div></header><div class="prose"><p>多的不少，少的不唠，本地部署大模型，现在就开搞</p>
+<h2 id="物料准备">物料准备</h2>
+<ul>
+<li><strong>主机</strong>：2 x 技嘉DGX Spark GB 10 (或者叫AI ATOM ATOM)</li>
+<li><strong>线缆/模块</strong>：1 x Connect X7 支持的高速线 / 2 x QSFP56/QSFP112光模块(单模多模都行) + 对应的高速线</li>
+<li><strong>外设</strong>：鼠标 + 键盘 + 显示器: 鼠标键盘最好支持typec直连，因为dgx spark只有三个usbc口，没有usba口，可以用usbc hub但有可能不兼容</li>
+<li>1 x typec u盘 (optional): 用于恢复</li>
+<li>1 x 小交换机一个 + 网线若干条 (optional): 用于ssh同时连接两台进行操作</li>
+<li>电源线 + 网线 + hdmi线若干条</li>
+</ul>
+<p>总之，机器还是挺漂亮的，但是他没有usba口，全c的配置在装机初期非常反人类，鼠标键盘最好要支持typec直连，因为在进bios之前可能读不到，务必准备好能被uefi正常识别的c口输入设备。</p>
+<h2 id="系统安装">系统安装</h2>
+<p>这套 ARM 架构的硬件和系统环境比较新，初始化过程中大概率会遇到各种玄学问题</p>
+<h3 id="安装失败怎么恢复">安装失败怎么恢复</h3>
+<blockquote>
+<p>什么，你说系统安装的时候Kernel Panic了!!!</p>
+</blockquote>
+<p>总之，在部署第一台的时候就遇到了在setup界面就kernel panic的情况，如下是情况复现</p>
+<h4 id="场景还原">场景还原</h4>
+<ol>
+<li>第一次启动进入界面，插入鼠标键盘，连接好网络，开始设置系统前的第一次更新</li>
+<li>进度条跑完，自动重启</li>
+<li><code>Kernel panic - not syncing: VFS: Unable to mount root fs on unknown-block(0,0)</code></li>
+<li>手动重启后<code>Shift + Insert</code>无法进入grub页面</li>
+</ol>
+<h4 id="修复方案">修复方案</h4>
+<p>我这边选择的是直接重装，因为机器都还没初始化完成，也没什么需要保留的东西，所以直接重装感觉简单一点。</p>
+<p>当然，如果你已经如果已经放了模型和数据，然后你不想重装，你可以尝试用usb live system尝试修复引导，我这里就不展开讲了</p>
+<p>技嘉官方给AI TOP ATOM提供了专用的DGX OS recovery image，所以我们可以直接用启动盘修复，不需要用 Live CD 手动修复了，还是比较方便的。</p>
+<p>可以先去<a href="https://www.gigabyte.com/ie/AI-TOP-PC/GIGABYTE-AI-TOP-ATOM/support">GIGABYTE-AI-TOP-ATOM support</a>下载恢复镜像<code>DGXOS-Spark-Gigabyte-GA1.2.1-OTA1.1-RC</code>，找最新的即可</p>
+<p>然后写入u盘</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span># 查看你的u盘位置，按照你真实的u盘地址来，不要写错了</span></span>
+<span class="line"><span>lsblk</span></span>
+<span class="line"><span># unmount</span></span>
+<span class="line"><span>sudo umount /dev/sda?* 2>/dev/null</span></span>
+<span class="line"><span># 写入</span></span>
+<span class="line"><span>sudo dd if="你的DGX_OS.iso" of=/dev/sda bs=4M status=progress conv=fsync</span></span>
+<span class="line"><span># sync</span></span>
+<span class="line"><span>sync</span></span></code></pre>
+<p>进入bios, <strong>按住Del</strong>, 注意是按住, 开机时进入BIOS/UEFI。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>按住 Del</span></span>
+<span class="line"><span>→ 再按电源键</span></span>
+<span class="line"><span>→ Del 一直按住</span></span></code></pre>
+<p>注意这个时候需要最好用普通键盘，然后直连usbc口，不要走usbc hub不然可能检测不到键盘导致进不了bios。</p>
+<p>开机 Del → BIOS → Save &#x26; Exit → Boot Override，选择你的u盘</p>
+<p>出现三个选项, 选dgx spark installtion options</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>- DGX Spark Installation Options</span></span>
+<span class="line"><span>- Boot from next volume</span></span>
+<span class="line"><span>- UEFI Firmware Settings\</span></span></code></pre>
+<p>选择完成之后又会出现几个选项，这里就直接选Install DGX OS 7.3.1 for DGX Spark</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="plaintext"><code><span class="line"><span>- Install DGX OS 7.3.1 for DGX Spark</span></span>
+<span class="line"><span>- Install DGX OS 7.3.1 for DGX Spark without NVIDIA drivers for DGX Spark</span></span>
+<span class="line"><span>- Advanced Installation Options</span></span>
+<span class="line"><span>- Boot Into Secure Shell</span></span>
+<span class="line"><span>- Check Media for Defects</span></span></code></pre>
+<p>选择完成之后，他就会进去直接进入了一个ubuntu server，并直接开始安装了</p>
+<p>这个是正常的，屏幕上应该会一直跳命令，或者在 apt-get install 卡一会。</p>
+<p>等待他自动重启几次之后，就可以正常进入setup界面了</p>
+<h4 id="可能原因">可能原因</h4>
+<p>可以参考<a href="https://forums.developer.nvidia.com/t/recovery-from-kernel-panic-after-dashboard-update-unable-to-mount-root-fs-on-unknown-block-0-0/368939">这篇</a>在nvidia官方论坛上的帖子。</p>
+<p>帖子里的情况是更新把新kernel装进去了，但是DKMS的post-install hook失败了，后面的initramfs生成步骤没跑到。</p>
+<p>感觉好像和我的挺像的，因为之前在另外一个机器上，在运行apt upgrade的时候也遇到了这个问题，就是直接post install fail了，所以我才这台机器可能在初始setup的时候也遇到了相同问题，导致机器直接panic了。</p>
+<p>结果就是有<code>vmlinuz</code>，没有对应的 <code>initrd.img</code>，重启后kernel找不到根文件系统，于是直接 panic。</p>
+<p>总之这b硬件和软件还是挺新的，遇到什么问题都不奇怪了只能说是</p>
+<h3 id="进入安装界面后黑屏">进入安装界面后黑屏</h3>
+<blockquote>
+<p>什么情况，进入初始化界面之后我连接wifi之后他直接黑屏了</p>
+</blockquote>
+<h4 id="故障现象">故障现象</h4>
+<ol>
+<li>开始设置系统前的第一次更新</li>
+<li>连接wifi</li>
+<li>直接黑屏，除了鼠标能动就不行</li>
+</ol>
+<p>简单来说就是在第一次setup的界面里，在连接wifi之后，系统直接黑屏，按<code>Ctrl + Alt + F3</code>直接显示<code>GIGABYTE</code>标识，没有别的内容了</p>
+<p>除了鼠标能动，其他全是黑的，因为正常安装的会有更新条，现在没了所以我能100%
+确认出现了问题</p>
+<h4 id="解决方案">解决方案</h4>
+<p>最后的解决方案也是参考<a href="https://forums.developer.nvidia.com/t/during-the-initialization-process-of-the-operating-system-when-connecting-to-wi-fi-and-entering-a-password-the-screen-will-turn-black/359771">nvidia论坛里的帖子</a>。</p>
+<p>我们可以手动重启一次，按如下键重启</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>Ctrl + Alt + Delete</span></span></code></pre>
+<p>重启之后一般能恢复下载与安装系统更新了</p>
+<h3 id="nvidia-smi-has-failed">nvidia-smi has failed</h3>
+<blockquote>
+<p>可恶，怎么还有问题啊</p>
+</blockquote>
+<p>这个其实是其中一台机器在我手动运行DGX Dashboard里的update后出现的问题。</p>
+<p>就是在DGX Dashboard里面运行更新后，执行 <code>nvidia-smi</code> 报错：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>NVIDIA-SMI has failed because it couldn't communicate with the NVIDIA driver.</span></span></code></pre>
+<p>查了一圈，感觉是驱动出了问题，但是也没搞明白到底那里出了问题</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>sudo modprobe nvidia</span></span>
+<span class="line"><span>modprobe: ERROR: could not insert 'nvidia': Key was rejected by service</span></span></code></pre>
+<p>总之最后的解决办法是移除 <code>nvidia-dkms-580-open</code>，换回oem系统提供的预编译签名模块。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 最后那个包名结尾的 `-` 是让 apt 移除它，</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> apt</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> install</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --allow-downgrades</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  nvidia-driver-580-open/noble-updates</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  linux-modules-nvidia-580-open-nvidia-hwe-24.04/noble-updates</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  nvidia-dkms-580-open-</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 确认安装成功后再重启</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> reboot</span></span></code></pre>
+<p>你看到这篇文章的时候可能已经有别的系统更新了，不一定需要完全按照我的方案来。</p>
+<h2 id="部署前准备">部署前准备</h2>
+<p>部署的时候的机器状态如下:</p>
+<ul>
+<li>System: Ubuntu 24.04.5</li>
+<li>Kernel: <code>7.0.0-1019-nvidia</code>（Ubuntu 构建版本：<code>7.0.0-1019.19~24.04.2-nvidia</code>）</li>
+<li>Driver: <code>NVIDIA UNIX Open Kernel Module for aarch64 580.178.04 Release Build</code>（<code>nvidia-driver-580-open</code>）</li>
+<li>Container: <a href="https://github.com/Anemll/dspark-vllm-gx10">ghcr.io/anemll/dspark-vllm-gx10:0.1.1</a></li>
+<li>Model: <a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp">deepseek-ai/DeepSeek-V4-Flash-Vision-Exp</a></li>
+</ul>
+<p>正常来说，应该能跑<code>nvidia-smi -L</code>，并且能看到NVIDIA GB10。</p>
+<h3 id="连接connectx7网络验证网络连接成功">连接connectx7网络，验证网络连接成功</h3>
+<p>我这里用一个普通交换机，然后用普通网口连接两台dgx spark和我的电脑，这样我就可以ssh上去管理，不然要来回在两台机器间输命令有点麻烦</p>
+<p>另外一根高速线直连两台Spark，模型之间的通信走ConnectX-7。大概就是这样：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>笔记本 ── 普通交换机 ── dgx1 管理口</span></span>
+<span class="line"><span>                    └── dgx2 管理口</span></span>
+<span class="line"><span></span></span>
+<span class="line"><span>dgx1 ConnectX-7 ═══════ dgx2 ConnectX-7</span></span></code></pre>
+<p>然后就是配置网络了，我用的配置如下</p>
+<p>实际网卡名可以先用 <code>ip -br addr</code> 和 <code>rdma link show</code>查看</p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>用途</th><th>dgx1 / head</th><th>dgx2 / worker</th></tr></thead><tbody><tr><td>管理口 <code>enP7s7</code></td><td>192.168.16.10/24</td><td>192.168.16.11/24</td></tr><tr><td>高速接口 <code>enp1s0f1np1</code></td><td>192.168.100.10/24</td><td>192.168.100.11/24</td></tr><tr><td>另一高速接口 <code>enP2p1s0f1np1</code></td><td>192.168.101.10/24</td><td>192.168.101.11/24</td></tr><tr><td>本次推理使用的 HCA</td><td>rocep1s0f1</td><td>rocep1s0f1</td></tr></tbody></table>
+<p>两台都是用的默认的NetworkManager管理网络，简单点可以在gnome的网络设置里选对应的高速接口，IPv4改成手动，填地址和 <code>/24</code>，网关留空不填。</p>
+<p>用命令的话，先用 <code>nmcli connection show</code> 找连接名，然后用如下命令配置ip。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># dgx1 (Head节点)</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nmcli</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> connection</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> modify</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'Wired connection 5'</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ipv4.method</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> manual</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ipv4.addresses</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 192.168.100.10/24</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ipv4.gateway</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ''</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ipv4.never-default</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> yes</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> connection.autoconnect</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> yes</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nmcli</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> connection</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> up</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'Wired connection 5'</span></span></code></pre>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># dgx2 (Worker节点)</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nmcli</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> connection</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> modify</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'Wired connection 5'</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ipv4.method</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> manual</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ipv4.addresses</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 192.168.100.11/24</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ipv4.gateway</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ''</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ipv4.never-default</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> yes</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> connection.autoconnect</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> yes</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nmcli</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> connection</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> up</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'Wired connection 5'</span></span></code></pre>
+<p>再从dgx1看一下实际走的路由，顺便测试一下能不能ping通</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ip</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> route</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> get</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 192.168.100.11</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ping</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -c</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 3</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -I</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> enp1s0f1np1</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 192.168.100.11</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">rdma</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> link</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> show</span></span></code></pre>
+<h3 id="配置节点间ssh免密">配置节点间ssh免密</h3>
+<p>当然除了配置网络，还要配置dgx1到dgx2的免密ssh连接，因为启动脚本会从 head 连 worker，同步文件和启动容器，所以在 dgx1 上也要配好公钥。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 在 dgx1 上执行</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 如果还没有密钥，先生成</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh-keygen</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -t</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ed25519</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -N</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ""</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -f</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/.ssh/id_ed25519</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 复制公钥</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh-copy-id</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> username@192.168.100.11</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 验证无密码登录</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -o</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> BatchMode=yes</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> username@192.168.100.11</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> hostname</span></span></code></pre>
+<p>这里最好使用高速网的ip，这样后面就算拔掉普通网线，head仍然能找到worker</p>
+<h3 id="docker-与-nvidia-runtime-配置">Docker 与 NVIDIA Runtime 配置</h3>
+<p>OEM的DGX OS预装了 Docker 和 Toolkit，所以不需要额外安装，两台机器只需确保将把NVIDIA runtime配进Docker就ok了。</p>
+<p>你可以在两台上运行如下命令完成nvidia runtime的安装，</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># sanity check</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">docker</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> version</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">docker</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> compose</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> version</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">nvidia-ctk</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --version</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 安装</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nvidia-ctk</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> runtime</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> configure</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --runtime=docker</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> systemctl</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> restart</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> docker</span></span></code></pre>
+<p>如果 <code>nvidia-ctk</code> 不存在，先按 <a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html">NVIDIA Container Toolkit 的安装文档</a>安装</p>
+<h3 id="配置docker-sudo权限">配置docker sudo权限</h3>
+<p>另外，后面的启动脚本用普通用户调用docker，所以两台对应用户都要有docker权限。所以你需要把用户加进了docker组，然后重新登录，让组权限生效</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> usermod</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -aG</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> docker</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> "</span><span style="color:#24292E;--shiki-dark:#E1E4E8">$USER</span><span style="color:#032F62;--shiki-dark:#9ECBFF">"</span></span></code></pre>
+<h3 id="下载必要内容">下载必要内容</h3>
+<p>这里其实没啥，我这里选择了<a href="https://github.com/MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark">MiaAI-Lab</a>的部署方式，部署前需要准备好Docker镜像并下载 DeepSeek，我这里下载了<a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp">DeepSeek Vision-Exp</a>这个模型。</p>
+<h4 id="docker镜像拉取">docker镜像拉取</h4>
+<p>先安装运行镜像，分别在两台都拉同一个版本</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 拉取</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">docker</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> pull</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --platform</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> linux/arm64</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ghcr.io/anemll/dspark-vllm-gx10:0.1.1</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 测试，可以不跑</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">docker</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> run</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --rm</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --gpus</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> all</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --entrypoint</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nvidia-smi</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ghcr.io/anemll/dspark-vllm-gx10:0.1.1</span></span></code></pre>
+<p>当然你也可以拉完之后手动传输load，比如dgx1已经拉好了<code>linux/arm64</code> 镜像，用可以用<code>docker save</code>导出，传给 dgx2，再用<code>docker load</code>导入</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">docker</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> save</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --platform</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> linux/arm64</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -o</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/dspark-arm64.tar</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ghcr.io/anemll/dspark-vllm-gx10:0.1.1</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">scp</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/dspark-arm64.tar</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> username@192.168.100.11:~/</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> username@192.168.100.11</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'docker load -i ~/dspark-arm64.tar'</span></span></code></pre>
+<h4 id="模型拉取">模型拉取</h4>
+<p>模型可以用<a href="https://huggingface.co/docs/huggingface_hub/guides/cli">Hugging Face CLI</a> 下到自己的目录。国内可以在<a href="https://modelscope.cn/models/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp">ModelScope/DeepSeek-V4-Flash-Vision-Exp</a>拉取，下面两种方式选一种就行。</p>
+<p>假设已经有 uv，两台分别下载：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">mkdir</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -p</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/models/DeepSeek-V4-Flash-Vision-Exp</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">uvx</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --from</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> huggingface_hub</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> hf</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> download</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  deepseek-ai/DeepSeek-V4-Flash-Vision-Exp</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --local-dir</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/models/DeepSeek-V4-Flash-Vision-Exp</span></span></code></pre>
+<p>用 <a href="https://github.com/modelscope/modelscope/blob/master/docs/source/command.md">ModelScope CLI</a> 的话，还是用 uv：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">mkdir</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -p</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/models/DeepSeek-V4-Flash-Vision-Exp</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">uvx</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --from</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> modelscope</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> modelscope</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> download</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --model</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> deepseek-ai/DeepSeek-V4-Flash-Vision-Exp</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  --local_dir</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/models/DeepSeek-V4-Flash-Vision-Exp</span></span></code></pre>
+<p>也可以一台下载完再复制给另一台，</p>
+<p>比如dgx1已经下载好了，就在dgx1上用rsync通过高速网复制过去，利用ConnectX-7跑直接跑满200gb/s带宽</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> username@192.168.100.11</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'mkdir -p ~/models/DeepSeek-V4-Flash-Vision-Exp'</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">rsync</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -a</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --partial</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --info=progress2</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ~/models/DeepSeek-V4-Flash-Vision-Exp/</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  username@192.168.100.11:/home/username/models/DeepSeek-V4-Flash-Vision-Exp/</span></span></code></pre>
+<h4 id="miaai-lab的部署脚本">MiaAI Lab的部署脚本</h4>
+<p>最后是部署脚本，在dgx1上准备</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">mkdir</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -p</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/dspark-deploy</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">git</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> clone</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> https://github.com/MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark.git</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  ~/dspark-deploy/recipe</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">cd</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/dspark-deploy/recipe</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 总之看你，我这里用的是这个git hash的版本，你可以直接用最新的</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">git</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> checkout</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 97e8733238f81f5fdc44b241f8996a7858825744</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">cp</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> .env.dspark.example</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> .env.dspark</span></span></code></pre>
+<p>worker的运行文件会由head的启动脚本同步。两台本地再准备一下运行缓存目录：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">mkdir</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -p</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/.cache/huggingface</span></span></code></pre>
+<h2 id="开始部署">开始部署</h2>
+<p>我们用了<a href="https://github.com/MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark">MiaAI-Lab</a> 的方案，所以部署方案还是比较简单的。</p>
+<p>主要就是改配置，然后在 head 上跑启动脚本。下面是我的 <code>.env.dspark</code> 里需要关注的部分，<strong>改原有的对应项，其余保留示例文件的配置</strong>，用户名、路径和 IP 按自己的换：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="dotenv"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># head 通过高速网登录 worker</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">WORKER_HOST</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">username@192.168.100.11</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">WORKER_DIR</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">/home/username/dspark-deploy/recipe</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 双机推理通信</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">MASTER_ADDR</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">192.168.100.10</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">VLLM_HOST_IP</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">192.168.100.10</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">WORKER_VLLM_HOST_IP</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">192.168.100.11</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">NCCL_IB_HCA</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">rocep1s0f1</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">NCCL_SOCKET_IFNAME</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">enp1s0f1np1</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">TP_SOCKET_IFNAME</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">enp1s0f1np1</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">GLOO_SOCKET_IFNAME</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">enp1s0f1np1</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">NCCL_NET</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">IB</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 两台各用自己的权重和缓存</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">HF_CACHE</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">/home/username/.cache/huggingface</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">WORKER_HF_CACHE</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">/home/username/.cache/huggingface</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">DSPARK_WORKER_HF_NFS</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">0</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 运行时直接使用已下载好的文件，不再联网查询</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">HF_HUB_OFFLINE</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">1</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 这个也是</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">TRANSFORMERS_OFFLINE</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">1</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">DSPARK_VLLM_IMAGE</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">ghcr.io/anemll/dspark-vllm-gx10:0.1.1</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">DSPARK_MODEL_OFFICIAL</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">/models/deepseek-v4-flash-vision-exp</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 留空，因为已经有了本地路径</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">DSPARK_REVISION</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">DSPARK_ENCODING_FILE</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">/models/deepseek-v4-flash-vision-exp/encoding/encoding_dsv4.py</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 对外 API，和上面的双机通信地址分开</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">VLLM_HOST</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">192.168.16.10</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">VLLM_PORT</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">8888</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">MAX_MODEL_LEN</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">1048576</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">MAX_NUM_SEQS</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">6</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">MAX_NUM_BATCHED_TOKENS</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">8192</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">GPU_MEMORY_UTILIZATION_TEXT</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">0.835</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">MTP_NUM_TOKENS</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">6</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 手动管理模型启停</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">DSPARK_RESTART_POLICY</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">no</span></span></code></pre>
+<p>其中<code>DSPARK_MODEL_OFFICIAL</code>填的是<strong>容器里的路径</strong>，所以还要改 <code>docker-compose.dspark.yml</code>。</p>
+<p>在 <code>services.vllm-dspark.volumes</code> 下面加这一行，把模型mount进去</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="yaml"><code><span class="line"><span style="color:#24292E;--shiki-dark:#E1E4E8">      - </span><span style="color:#032F62;--shiki-dark:#9ECBFF">/home/username/models/DeepSeek-V4-Flash-Vision-Exp:/models/deepseek-v4-flash-vision-exp:ro</span></span></code></pre>
+<p>最后只要在dgx1上启动就好了，它会同步worker的配置和补丁，按顺序启动worker和head，并做预热</p>
+<p>第一次启动的时候会读权重、编译和做graph capture，所以可能时间会比较常</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">cd</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ~/dspark-deploy/recipe</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">./start-deepseek-v4-flash-dspark.sh</span></span></code></pre>
+<h3 id="权重加载成功rdma内存注册失败kho-缺陷">权重加载成功，RDMA内存注册失败(KHO 缺陷)</h3>
+<p>在第一次启动的时候遇到了一个问题，head在profiling 阶段挂掉，然后看docker日志发现了如下问题</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="text"><code><span class="line"><span>torch.distributed.DistBackendError: NCCL error</span></span>
+<span class="line"><span>ncclSystemError</span></span>
+<span class="line"><span>Call to ibv_reg_mr_iova2 failed with error Cannot allocate memory</span></span></code></pre>
+<p>在经过了一点简单的搜索之后（当然是ai自己搜的），找到了论坛的<a href="https://forums.developer.nvidia.com/t/dgx-spark-regression-kernel-7-0-0-1019-nvidia-causes-nccl-roce-ibv-reg-mr-iova2-enomem-6-17-0-1032-works/383023/43">这个帖子</a>，发现<code>7.0.0-1019-nvidia</code>上的 KHO问题会影响这类NCCL/RoCE内存注册。内核 <code>7.0.0-1019-nvidia</code> 的 KHO功能与RoCE驱动冲突，导致内存无法被注册给RDMA子系统。</p>
+<p>nvidia给出的临时解决方式方法是关闭<code>KHO</code>，也就是加 <code>kho=off</code></p>
+<p>但是运气比较好的是，我发现只有head(dgx1)有这个问题，我的worker(dgx2)没有这个问题，然后worker的kho是关的。</p>
+<p>检查了一下两个机器上分别装的包，发现nvidia正好在我部署那天的早上发布了补丁包<code>nvidia-spark-grub-kho</code>，dgx2更新的时候更新到了，dgx1还没更新。</p>
+<p>所以只需要安装一下补丁ok了。</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> apt-get</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> install</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --no-install-recommends</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> nvidia-spark-grub-kho=1.0-1</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> update-grub</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> reboot</span></span></code></pre>
+<p>重启之后检查kho是不是关了</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 正常来说应该包含kho=off</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">cat</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> /proc/cmdline</span></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 正常的话应该出现 ls: cannot access '/sys/kernel/debug/kho': No such file or directory</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> ls</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> /sys/kernel/debug/kho</span></span></code></pre>
+<h3 id="简单的性能测试">简单的性能测试</h3>
+<p>api起来之后就可以测试了，</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">curl</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --noproxy</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> '*'</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -fsS</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> http://192.168.16.10:8888/health</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">curl</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --noproxy</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> '*'</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -fsS</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> http://192.168.16.10:8888/v1/models</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">curl</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --noproxy</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> '*'</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -fsS</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> --max-time</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> 120</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  http://192.168.16.10:8888/v1/chat/completions</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  -H</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'Content-Type: application/json'</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> \</span></span>
+<span class="line"><span style="color:#005CC5;--shiki-dark:#79B8FF">  -d</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> '{</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "model": "deepseek-v4-flash-vision-exp",</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "messages": [{"role": "user", "content": "17 × 23 等于多少？只回答数字。"}],</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "temperature": 0,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "max_tokens": 32,</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">    "chat_template_kwargs": {"thinking": false}</span></span>
+<span class="line"><span style="color:#032F62;--shiki-dark:#9ECBFF">  }'</span></span></code></pre>
+<p>这边是测试结果</p>
+<p><strong>长上下文场景</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>输入 tokens / 请求</th><th align="right">并发</th><th align="right">输出 tokens / 请求</th><th align="right">TTFT 中位数</th><th align="right">每请求 decode TPS 中位数</th><th align="right">聚合输出 TPS</th></tr></thead><tbody><tr><td>970–971</td><td align="right">1</td><td align="right">512</td><td align="right">0.626 秒</td><td align="right">42.52</td><td align="right">40.26</td></tr><tr><td>967–974</td><td align="right">6</td><td align="right">1024</td><td align="right">2.730 秒</td><td align="right">16.68</td><td align="right">93.10</td></tr><tr><td>7830–7833</td><td align="right">6</td><td align="right">512</td><td align="right">22.626 秒</td><td align="right">12.51</td><td align="right">46.87</td></tr><tr><td>31328–31332</td><td align="right">6</td><td align="right">256</td><td align="right">66.272 秒</td><td align="right">4.99</td><td align="right">12.25</td></tr></tbody></table>
+<p><strong>短输入</strong></p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<table><thead><tr><th>指标</th><th align="right">单请求</th><th align="right">六并发</th></tr></thead><tbody><tr><td>每请求 decode TPS</td><td align="right">62.1</td><td align="right">32.2</td></tr><tr><td>聚合输出 TPS</td><td align="right">54.1</td><td align="right">154.9</td></tr><tr><td>TTFT</td><td align="right">0.305 秒</td><td align="right">0.836 秒</td></tr></tbody></table>
+<p>总之，短输入单流约62tps，六并发每个大约32tps、总吞吐约155tps，但是换成长输入就会慢不少。</p>
+<h2 id="一些别的notice">一些别的notice</h2>
+<h3 id="hdmi问题">hdmi问题</h3>
+<p>总之<strong>不要热插拔</strong>，要么一直不接，要用输出的话就关机接上显示屏再重启。</p>
+<p>因为好像热插拔会导致gpu初始化失败，然后<code>nvidia-smi</code>报<code>No devices were found</code>。</p>
+<p>反正好像我开机的时候接上hdmi就导致了这个问题，不接然后重启就没这个问题了。</p>
+<h3 id="部署后运维的快捷指令">部署后运维的快捷指令</h3>
+<p><strong>启动模型</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx1.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'nvidia-smi -L'</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx2.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'nvidia-smi -L'</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx1.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'cd ~/dspark-deploy/recipe &#x26;&#x26; ./start-deepseek-v4-flash-dspark.sh'</span></span></code></pre>
+<p><strong>停止模型</strong>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx1.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'docker stop -t 30 deepseek-v4-flash-vllm-dspark-1'</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx2.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'docker stop -t 30 deepseek-v4-flash-vllm-dspark-1'</span></span></code></pre>
+<p><strong>开关桌面</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 设置以后开机不进入桌面</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> systemctl</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> set-default</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> multi-user.target</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 关闭桌面</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> systemctl</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> stop</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> display-manager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 临时开启桌面</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> systemctl</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> start</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> display-manager</span></span>
+<span class="line"></span>
+<span class="line"><span style="color:#6A737D;--shiki-dark:#6A737D"># 设置开启进入桌面</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">sudo</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> systemctl</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> set-default</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> graphical.target</span></span></code></pre>
+<p><strong>修改 API 监听地址</strong>，修改 <code>.env.dspark</code>：</p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="dotenv"><code><span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">VLLM_HOST</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">192.168.16.10</span></span>
+<span class="line"><span style="color:#E36209;--shiki-dark:#FFAB70">VLLM_PORT</span><span style="color:#D73A49;--shiki-dark:#F97583">=</span><span style="color:#24292E;--shiki-dark:#E1E4E8">8888</span></span></code></pre>
+<p><strong>关闭 Wi-Fi</strong></p>
+<pre class="astro-code astro-code-themes github-light github-dark" style="background-color:#fff;--shiki-dark-bg:#24292e;color:#24292e;--shiki-dark:#e1e4e8; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="bash"><code><span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -t</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx1.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'sudo nmcli radio wifi off'</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#B392F0">ssh</span><span style="color:#005CC5;--shiki-dark:#79B8FF"> -t</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> dgx2.local</span><span style="color:#032F62;--shiki-dark:#9ECBFF"> 'sudo nmcli radio wifi off'</span></span></code></pre>
+<h2 id="reference">Reference</h2>
+<ol>
+<li><a href="https://forums.developer.nvidia.com/t/recovery-from-kernel-panic-after-dashboard-update-unable-to-mount-root-fs-on-unknown-block-0-0/368939">Recovery from kernel panic after dashboard update — unable to mount root fs on unknown-block(0,0)</a></li>
+<li><a href="https://github.com/MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark">DeepSeek-v4-Flash-DSpark-2x-DGX-Spark</a></li>
+<li><a href="https://github.com/Anemll/dspark-vllm-gx10">dspark-vllm-gx10</a></li>
+<li><a href="https://forums.developer.nvidia.com/t/during-the-initialization-process-of-the-operating-system-when-connecting-to-wi-fi-and-entering-a-password-the-screen-will-turn-black/359771">During the initialization process of the operating system, when connecting to Wi Fi and entering a password, the screen will turn black</a></li>
+<li><a href="https://forums.developer.nvidia.com/t/dgx-spark-kernel-panic-after-oobe-update-missing-initrd-for-7-0-0-1019-nvidia-and-dkms-arm64-aarch64-conflict/383450">DGX Spark kernel panic after OOBE/update：DKMS arm64/aarch64 冲突及签名模块</a></li>
+<li><a href="https://forums.developer.nvidia.com/t/dgx-spark-regression-kernel-7-0-0-1019-nvidia-causes-nccl-roce-ibv-reg-mr-iova2-enomem-6-17-0-1032-works/383023/43">NCCL/RoCE内存注册失败</a></li>
+<li><a href="https://www.gigabyte.com/ie/AI-TOP-PC/GIGABYTE-AI-TOP-ATOM/support">GIGABYTE AI TOP ATOM Support</a></li>
+<li><a href="https://docs.nvidia.com/dgx/dgx-spark/system-recovery.html">NVIDIA DGX Spark System Recovery</a></li>
+<li><a href="https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html">NVIDIA Container Toolkit 安装与 Docker runtime 配置</a></li>
+<li><a href="https://huggingface.co/deepseek-ai/DeepSeek-V4-Flash-Vision-Exp">DeepSeek-V4-Flash-Vision-Exp</a></li>
+<li><a href="https://github.com/MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark">MiaAI-Lab/DeepSeek-v4-Flash-DSpark-2x-DGX-Spark</a></li>
+</ol></div><footer class="post-tags"><a class="chip" href="/blog/tags/ai/">#ai</a><a class="chip" href="/blog/tags/llm/">#llm</a><a class="chip" href="/blog/tags/dgx-spark/">#dgx spark</a></footer><nav class="post-navigation" aria-label="Adjacent posts"><div><a href="/blog/posts/solving-logic-bingo-with-sat-and-z3/"><span class="eyebrow">Older</span>从逻辑bingo开始的SAT介绍和Z3求解。</a></div><div></div></nav></article></main><footer class="site-footer card"><span>&copy; 2026 Aynakeya</span><div><a href="/rss.xml">RSS</a><a href="/blog/archives/">Archives</a><a href="#top">Back to top &uarr;</a></div></footer></div></div></body></html>
